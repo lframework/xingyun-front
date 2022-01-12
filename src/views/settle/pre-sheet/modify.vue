@@ -1,0 +1,333 @@
+<template>
+  <div v-if="visible" class="app-container">
+    <div v-permission="['settle:pre-sheet:modify']" v-loading="loading">
+      <j-border>
+        <j-form>
+          <j-form-item label="供应商" required>
+            <supplier-selector
+              v-model="formData.supplier"
+              :request-params="{
+                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code
+              }"
+            />
+          </j-form-item>
+          <j-form-item :span="16" />
+          <j-form-item label="审核状态">
+            <span v-if="$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.SETTLE_PRE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.SETTLE_PRE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else style="color: #303133;">{{ $enums.SETTLE_PRE_SHEET_STATUS.getDesc(formData.status) }}</span>
+          </j-form-item>
+          <j-form-item label="拒绝理由" :content-nest="false" :span="16">
+            <el-input v-if="$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+          </j-form-item>
+          <j-form-item label="操作人">
+            <span>{{ formData.createBy }}</span>
+          </j-form-item>
+          <j-form-item label="操作时间">
+            <span>{{ formData.createTime }}</span>
+          </j-form-item>
+          <j-form-item v-if="$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核人">
+            <span>{{ formData.approveBy }}</span>
+          </j-form-item>
+          <j-form-item v-if="$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核时间" :span="16">
+            <span>{{ formData.approveTime }}</span>
+          </j-form-item>
+        </j-form>
+      </j-border>
+      <!-- 数据列表 -->
+      <vxe-grid
+        ref="grid"
+        resizable
+        show-overflow
+        highlight-hover-row
+        keep-source
+        row-id="id"
+        height="500"
+        :data="tableData"
+        :columns="tableColumn"
+        :toolbar-config="toolbarConfig"
+        style="margin-top: 10px;"
+      >
+        <!-- 工具栏 -->
+        <template v-slot:toolbar_buttons>
+          <el-form :inline="true">
+            <el-form-item>
+              <el-button type="primary" @click="addItem">新增</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="danger" @click="delItem">删除</el-button>
+            </el-form-item>
+          </el-form>
+        </template>
+
+        <!-- 项目 列自定义内容 -->
+        <template v-slot:item_default="{ row }">
+          <settle-out-item-selector v-model="row.item" @input="itemInput" />
+        </template>
+
+        <!-- 金额 列自定义内容 -->
+        <template v-slot:amount_default="{ row }">
+          <el-input v-model="row.amount" class="number-input" tabindex="2" @input="e => amountInput(row, e)" />
+        </template>
+      </vxe-grid>
+
+      <j-border title="合计">
+        <j-form label-width="140px">
+          <j-form-item label="总金额" :span="6">
+            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+          </j-form-item>
+        </j-form>
+      </j-border>
+
+      <j-border>
+        <j-form label-width="140px">
+          <j-form-item label="备注" :span="24" :content-nest="false">
+            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+          </j-form-item>
+        </j-form>
+      </j-border>
+      <div style="text-align: center;">
+        <el-button v-permission="['settle:pre-sheet:modify']" type="primary" :loading="loading" @click="updateOrder">保存</el-button>
+        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import SettleOutItemSelector from '@/components/Selector/SettleOutItemSelector'
+import SupplierSelector from '@/components/Selector/SupplierSelector'
+export default {
+  name: 'ModifySettlePreSheet',
+  components: {
+    SupplierSelector, SettleOutItemSelector
+  },
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      // 是否可见
+      visible: false,
+      // 是否显示加载框
+      loading: false,
+      // 表单数据
+      formData: {},
+      // 工具栏配置
+      toolbarConfig: {
+        // 自定义左侧工具栏
+        slots: {
+          buttons: 'toolbar_buttons'
+        }
+      },
+      // 列表数据配置
+      tableColumn: [
+        { type: 'checkbox', width: 40 },
+        { type: 'seq', width: 40 },
+        { field: 'item', title: '项目', width: 200, slots: { default: 'item_default' }},
+        { field: 'amount', title: '金额', align: 'right', width: 120, slots: { default: 'amount_default' }}
+      ],
+      tableData: []
+    }
+  },
+  computed: {
+  },
+  created() {
+    // 初始化表单数据
+    this.initFormData()
+  },
+  methods: {
+    // 打开对话框 由父页面触发
+    openDialog() {
+      // 初始化表单数据
+      this.initFormData()
+      this.visible = true
+      this.loadData()
+    },
+    // 关闭对话框
+    closeDialog() {
+      this.visible = false
+      this.$emit('close')
+    },
+    // 初始化表单数据
+    initFormData() {
+      this.formData = {
+        supplier: {},
+        totalNum: 0,
+        giftNum: 0,
+        totalAmount: 0,
+        description: ''
+      }
+
+      this.tableData = []
+    },
+    // 加载数据
+    loadData() {
+      this.loading = true
+      this.$api.settle.preSheet.get(this.id).then(res => {
+        if (!this.$enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(res.status) && !this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)) {
+          this.$msg.error('单据已审核通过，无法修改！')
+          this.closeDialog()
+          return
+        }
+        this.formData = {
+          supplier: {
+            id: res.supplierId,
+            name: res.supplierName
+          },
+          description: res.description,
+          status: res.status,
+          createBy: res.createBy,
+          createTime: res.createTime,
+          approveBy: res.approveBy,
+          approveTime: res.approveTime,
+          refuseReason: res.refuseReason,
+          totalAmount: 0
+        }
+        const details = res.details.map(item => {
+          return {
+            id: item.id,
+            item: {
+              id: item.itemId,
+              name: item.itemName
+            },
+            amount: item.amount
+          }
+        })
+
+        this.tableData = details
+
+        this.calcSum()
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    emptyLine() {
+      return {
+        id: this.$utils.uuid(),
+        item: {},
+        amount: ''
+      }
+    },
+    // 新增项目
+    addItem() {
+      if (this.$utils.isEmpty(this.formData.supplier)) {
+        this.$msg.error('请先选择供应商！')
+        return
+      }
+      this.tableData.push(this.emptyLine())
+    },
+    // 删除项目
+    delItem() {
+      const records = this.$refs.grid.getCheckboxRecords()
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择要删除的数据！')
+        return
+      }
+      this.$msg.confirm('是否确定删除选中的数据？').then(() => {
+        const tableData = this.tableData.filter(t => {
+          const tmp = records.filter(item => item.id === t.id)
+          return this.$utils.isEmpty(tmp)
+        })
+
+        this.tableData = tableData
+
+        this.calcSum()
+      })
+    },
+    itemInput(value) {
+      this.calcSum()
+    },
+    amountInput(row, value) {
+      this.calcSum()
+    },
+    // 计算汇总数据
+    calcSum() {
+      let totalAmount = 0
+
+      this.tableData.filter(t => {
+        return this.$utils.isFloatGeZero(t.amount) && !this.$utils.isEmpty(t.item)
+      }).forEach(t => {
+        totalAmount = this.$utils.add(totalAmount, t.amount)
+      })
+
+      this.formData.totalAmount = totalAmount
+    },
+    // 校验数据
+    validData() {
+      if (this.$utils.isEmpty(this.formData.supplier.id)) {
+        this.$msg.error('供应商不允许为空！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.tableData)) {
+        this.$msg.error('请录入项目！')
+        return false
+      }
+
+      for (let i = 0; i < this.tableData.length; i++) {
+        const item = this.tableData[i]
+
+        if (this.$utils.isEmpty(item.id)) {
+          this.$msg.error('第' + (i + 1) + '行项目不允许为空！')
+          return false
+        }
+
+        if (this.$utils.isEmpty(item.amount)) {
+          this.$msg.error('第' + (i + 1) + '行金额不允许为空！')
+          return false
+        }
+
+        if (!this.$utils.isFloat(item.amount)) {
+          this.$msg.error('第' + (i + 1) + '行金额必须为数字！')
+          return false
+        }
+
+        if (!this.$utils.isFloatGtZero(item.amount)) {
+          this.$msg.error('第' + (i + 1) + '行金额必须大于0！')
+          return false
+        }
+
+        if (!this.$utils.isNumberPrecision(item.amount, 2)) {
+          this.$msg.error('第' + (i + 1) + '行金额最多允许2位小数！')
+          return false
+        }
+      }
+
+      return true
+    },
+    // 创建订单
+    updateOrder() {
+      if (!this.validData()) {
+        return
+      }
+
+      const params = {
+        id: this.id,
+        supplierId: this.formData.supplier.id,
+        description: this.formData.description,
+        items: this.tableData.map(t => {
+          return {
+            id: t.item.id,
+            amount: t.amount
+          }
+        })
+      }
+
+      this.loading = true
+      this.$api.settle.preSheet.updateOrder(params).then(res => {
+        this.$msg.success('保存成功！')
+
+        this.$emit('confirm')
+        this.closeDialog()
+      }).finally(() => {
+        this.loading = false
+      })
+    }
+  }
+}
+</script>
+<style>
+</style>

@@ -1,0 +1,318 @@
+<template>
+  <div v-if="visible" class="app-container">
+    <div v-permission="['retail:out:approve']" v-loading="loading">
+      <j-border>
+        <j-form>
+          <j-form-item label="仓库" :span="6">
+            <el-input
+              v-model="formData.scName"
+              readonly
+            />
+          </j-form-item>
+          <j-form-item label="会员" :span="6">
+            <el-input
+              v-model="formData.memberName"
+              readonly
+            />
+          </j-form-item>
+          <j-form-item label="销售员" :span="6">
+            <el-input
+              v-model="formData.salerName"
+              readonly
+            />
+          </j-form-item>
+          <j-form-item label="付款日期" :span="6">
+            <el-input
+              v-model="formData.paymentDate"
+              readonly
+            />
+          </j-form-item>
+          <j-form-item label="审核状态">
+            <span v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else style="color: #303133;">{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span>
+          </j-form-item>
+          <j-form-item label="拒绝理由" :span="16" :content-nest="false">
+            <el-input v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+          </j-form-item>
+          <j-form-item label="操作人">
+            <span>{{ formData.createBy }}</span>
+          </j-form-item>
+          <j-form-item label="操作时间" :span="16">
+            <span>{{ formData.createTime }}</span>
+          </j-form-item>
+          <j-form-item v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核人">
+            <span>{{ formData.approveBy }}</span>
+          </j-form-item>
+          <j-form-item v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核时间" :span="16">
+            <span>{{ formData.approveTime }}</span>
+          </j-form-item>
+        </j-form>
+      </j-border>
+      <!-- 数据列表 -->
+      <vxe-grid
+        ref="grid"
+        resizable
+        show-overflow
+        highlight-hover-row
+        keep-source
+        row-id="id"
+        height="500"
+        :data="tableData"
+        :columns="tableColumn"
+        style="margin-top: 10px;"
+      >
+        <!-- 库存数量 列自定义内容 -->
+        <template v-slot:stockNum_default="{ row }">
+          <span v-if="checkStockNum(row)">{{ row.stockNum }}</span>
+          <span v-else style="color: #F56C6C;">{{ row.stockNum }}</span>
+        </template>
+
+        <!-- 含税金额 列自定义内容 -->
+        <template v-slot:taxAmount_default="{ row }">
+          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.outNum)">{{ $utils.mul(row.taxPrice, row.outNum) }}</span>
+        </template>
+      </vxe-grid>
+
+      <j-border title="合计">
+        <j-form label-width="140px">
+          <j-form-item label="出库数量" :span="6">
+            <el-input v-model="formData.totalNum" class="number-input" readonly />
+          </j-form-item>
+          <j-form-item label="赠品数量" :span="6">
+            <el-input v-model="formData.giftNum" class="number-input" readonly />
+          </j-form-item>
+          <j-form-item label="含税总金额" :span="6">
+            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+          </j-form-item>
+        </j-form>
+      </j-border>
+
+      <j-border>
+        <j-form label-width="140px">
+          <j-form-item label="备注" :span="24" :content-nest="false">
+            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+          </j-form-item>
+        </j-form>
+      </j-border>
+
+      <div v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center;">
+        <el-button v-permission="['retail:out:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</el-button>
+        <el-button v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['retail:out:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</el-button>
+        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      </div>
+    </div>
+    <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
+  </div>
+</template>
+<script>
+import ApproveRefuse from '@/components/ApproveRefuse'
+
+export default {
+  components: {
+    ApproveRefuse
+  },
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      // 是否可见
+      visible: false,
+      // 是否显示加载框
+      loading: false,
+      // 表单数据
+      formData: {},
+      // 列表数据配置
+      tableColumn: [
+        { field: 'productCode', title: '商品编号', width: 120 },
+        { field: 'productName', title: '商品名称', width: 260 },
+        { field: 'skuCode', title: '商品SKU编号', width: 120 },
+        { field: 'externalCode', title: '商品外部编号', width: 120 },
+        { field: 'unit', title: '单位', width: 80 },
+        { field: 'spec', title: '规格', width: 80 },
+        { field: 'categoryName', title: '商品类目', width: 120 },
+        { field: 'brandName', title: '商品品牌', width: 120 },
+        { field: 'retailPrice', title: '参考零售价（元）', align: 'right', width: 150 },
+        { field: 'isGift', title: '是否赠品', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
+        { field: 'stockNum', title: '库存数量', align: 'right', width: 100, slots: { default: 'stockNum_default' }},
+        { field: 'discountRate', title: '折扣（%）', align: 'right', width: 120 },
+        { field: 'taxPrice', title: '价格（元）', align: 'right', width: 120 },
+        { field: 'orderNum', title: '零售数量', align: 'right', width: 100, formatter: ({ cellValue }) => { return this.$utils.isEmpty(cellValue) ? '-' : cellValue } },
+        { field: 'outNum', title: '出库数量', align: 'right', width: 100 },
+        { field: 'taxAmount', title: '含税金额', align: 'right', width: 120, slots: { default: 'taxAmount_default' }},
+        { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
+        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
+        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
+        { field: 'description', title: '备注', width: 200 }
+      ],
+      tableData: []
+    }
+  },
+  computed: {
+  },
+  created() {
+    // 初始化表单数据
+    this.initFormData()
+  },
+  methods: {
+    // 打开对话框 由父页面触发
+    openDialog() {
+      // 初始化表单数据
+      this.initFormData()
+      this.visible = true
+      this.loadData()
+    },
+    // 关闭对话框
+    closeDialog() {
+      this.visible = false
+      this.$emit('close')
+    },
+    // 初始化表单数据
+    initFormData() {
+      this.formData = {
+        scName: '',
+        memberName: '',
+        salerName: '',
+        paymentDate: '',
+        totalNum: 0,
+        giftNum: 0,
+        totalAmount: 0,
+        description: ''
+      }
+    },
+    // 加载数据
+    loadData() {
+      this.loading = true
+      this.$api.sc.retail.outSheet.get(this.id).then(res => {
+        if (!this.$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(res.status) && !this.$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)) {
+          this.$msg.error('零售出库单已审核通过，无需重复审核！')
+          this.closeDialog()
+          return
+        }
+        this.formData = {
+          scName: res.scName,
+          memberName: res.memberName,
+          salerName: res.salerName || '',
+          paymentDate: res.paymentDate || '',
+          description: res.description,
+          status: res.status,
+          createBy: res.createBy,
+          createTime: res.createTime,
+          approveBy: res.approveBy,
+          approveTime: res.approveTime,
+          refuseReason: res.refuseReason,
+          totalNum: 0,
+          giftNum: 0,
+          totalAmount: 0
+        }
+        this.tableData = res.details || []
+
+        this.calcSum()
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    // 计算汇总数据
+    calcSum() {
+      let totalNum = 0
+      let giftNum = 0
+      let totalAmount = 0
+
+      this.tableData.filter(t => {
+        return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.outNum)
+      }).forEach(t => {
+        const num = parseInt(t.outNum)
+        if (t.isGift) {
+          giftNum = this.$utils.add(giftNum, num)
+        } else {
+          totalNum = this.$utils.add(totalNum, num)
+        }
+
+        totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice))
+      })
+
+      this.formData.totalNum = totalNum
+      this.formData.giftNum = giftNum
+      this.formData.totalAmount = totalAmount
+    },
+    // 审核通过
+    approvePassOrder() {
+      const checkStockNumArr = []
+      this.tableData.filter(item => this.$utils.isIntegerGtZero(item.outNum)).forEach(item => {
+        if (checkStockNumArr.map(v => item.productId).includes(item.productId)) {
+          checkStockNumArr.filter(v => v.productId === item.productId).forEach(v => {
+            v.outNum = this.$utils.add(v.outNum, item.outNum)
+          })
+        } else {
+          checkStockNumArr.push({
+            productId: item.productId,
+            productCode: item.productCode,
+            productName: item.productName,
+            stockNum: item.stockNum,
+            outNum: item.outNum
+          })
+        }
+      })
+
+      const unValidStockNumArr = checkStockNumArr.filter(item => item.stockNum < item.outNum)
+      if (!this.$utils.isEmpty(unValidStockNumArr)) {
+        this.$msg.error('商品（' + unValidStockNumArr[0].productCode + '）' + unValidStockNumArr[0].productName + '当前库存为' + unValidStockNumArr[0].stockNum + '，总退货数量为' + unValidStockNumArr[0].outNum + '，无法完成采购退货！')
+        return false
+      }
+
+      this.$msg.confirm('对零售出库单执行审核通过操作？').then(() => {
+        this.loading = true
+        this.$api.sc.retail.outSheet.approvePassOrder({
+          id: this.id,
+          description: this.formData.description
+        }).then(res => {
+          this.$msg.success('审核通过！')
+
+          this.$emit('confirm')
+          this.closeDialog()
+        }).finally(() => {
+          this.loading = false
+        })
+      })
+    },
+    // 审核拒绝
+    approveRefuseOrder() {
+      this.$refs.approveRefuseDialog.openDialog()
+    },
+    // 开始审核拒绝
+    doApproveRefuse(reason) {
+      this.loading = true
+      this.$api.sc.retail.outSheet.approveRefuseOrder({
+        id: this.id,
+        refuseReason: reason
+      }).then(() => {
+        this.$msg.success('审核拒绝！')
+
+        this.$emit('confirm')
+        this.closeDialog()
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    // 检查库存数量
+    checkStockNum(row) {
+      const checkArr = this.tableData.filter(item => item.productId === row.productId)
+      if (this.$utils.isEmpty(checkArr)) {
+        checkArr.push({ outNum: 0 })
+      }
+      const totalOutNum = checkArr.reduce((total, item) => {
+        const outNum = this.$utils.isIntegerGtZero(item.outNum) ? item.outNum : 0
+        return total + outNum
+      }, 0)
+
+      return totalOutNum <= row.stockNum
+    }
+  }
+}
+</script>
+<style>
+</style>

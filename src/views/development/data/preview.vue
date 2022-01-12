@@ -1,0 +1,79 @@
+<template>
+  <div v-if="visible">
+    <div v-loading="loading">
+      <el-tabs :active-name="activeName" type="border-card">
+        <el-tab-pane v-for="(obj, index) in formData" :key="index" :label="index" :name="index">
+          <span style="white-space: pre-wrap;">{{ obj }}</span>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <div style="text-align: center;">
+      <el-button :loading="loading" type="primary" @click="download">下载</el-button>
+      <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+    </div>
+  </div>
+</template>
+<script>
+
+export default {
+  // 使用组件
+  components: {
+  },
+
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      // 是否显示加载框
+      loading: false,
+      visible: false,
+      // 表单数据
+      formData: {},
+      activeName: ''
+    }
+  },
+  created() {
+    this.initFormData()
+  },
+  methods: {
+    // 打开对话框 由父页面触发
+    openDialog() {
+      // 初始化表单数据
+      this.initFormData()
+      this.visible = true
+      this.loadData()
+    },
+    // 关闭对话框
+    closeDialog() {
+      this.visible = false
+      this.$emit('close')
+    },
+    // 初始化表单数据
+    initFormData() {
+      this.formData = []
+    },
+    // 查询数据
+    loadData() {
+      this.loading = true
+      this.$api.development.data.preView(this.id).then(data => {
+        this.formData = data
+        this.activeName = this.$utils.keys(this.formData)[0]
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    download() {
+      this.loading = true
+      this.$api.development.data.download(this.id).then(() => {
+        this.$msg.success('下载成功！')
+      }).finally(() => {
+        this.loading = false
+      })
+    }
+  }
+}
+</script>

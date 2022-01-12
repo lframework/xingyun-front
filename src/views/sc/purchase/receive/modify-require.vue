@@ -1,0 +1,670 @@
+<template>
+  <div v-if="visible" class="app-container">
+    <div v-permission="['purchase:receive:modify']" v-loading="loading">
+      <j-border>
+        <j-form>
+          <j-form-item label="仓库" required>
+            <store-center-selector
+              v-model="formData.sc"
+              :disabled="true"
+            />
+          </j-form-item>
+          <j-form-item label="供应商" required>
+            <supplier-selector
+              v-model="formData.supplier"
+              :disabled="true"
+            />
+          </j-form-item>
+          <j-form-item label="采购员">
+            <user-selector
+              v-model="formData.purchaser"
+            />
+          </j-form-item>
+          <j-form-item label="付款日期" required>
+            <el-date-picker
+              v-model="formData.paymentDate"
+              value-format="yyyy-MM-dd"
+              type="date"
+              :disabled="!formData.allowModifyPaymentDate"
+              :picker-options="{
+                disabledDate(time) {
+                  return time.getTime() < $utils.getCurrentDate().valueOf();
+                }
+              }"
+            />
+          </j-form-item>
+          <j-form-item label="实际到货日期" required>
+            <el-date-picker
+              v-model="formData.receiveDate"
+              value-format="yyyy-MM-dd"
+              type="date"
+            />
+          </j-form-item>
+          <j-form-item label="采购订单" required>
+            <purchase-order-selector
+              v-model="formData.purchaseOrder"
+              :disabled="true"
+            />
+          </j-form-item>
+          <j-form-item label="审核状态">
+            <span v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else style="color: #303133;">{{ $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span>
+          </j-form-item>
+          <j-form-item :span="16" :content-nest="false" label="拒绝理由">
+            <el-input v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+          </j-form-item>
+          <j-form-item label="操作人">
+            <span>{{ formData.createBy }}</span>
+          </j-form-item>
+          <j-form-item label="操作时间" :span="16">
+            <span>{{ formData.createTime }}</span>
+          </j-form-item>
+          <j-form-item v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核人">
+            <span>{{ formData.approveBy }}</span>
+          </j-form-item>
+          <j-form-item v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核时间" :span="16">
+            <span>{{ formData.approveTime }}</span>
+          </j-form-item>
+        </j-form>
+      </j-border>
+      <!-- 数据列表 -->
+      <vxe-grid
+        ref="grid"
+        resizable
+        show-overflow
+        highlight-hover-row
+        keep-source
+        row-id="id"
+        height="500"
+        :data="tableData"
+        :columns="tableColumn"
+        :toolbar-config="toolbarConfig"
+        style="margin-top: 10px;"
+      >
+        <!-- 工具栏 -->
+        <template v-slot:toolbar_buttons>
+          <el-form :inline="true">
+            <el-form-item>
+              <el-button type="primary" @click="addProduct">新增</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="danger" @click="delProduct">删除</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="openBatchAddProductDialog">批量添加商品</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="batchInputReceiveNum">批量录入数量</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="quickSettingReceiveNum">快捷设置数量</el-button>
+            </el-form-item>
+          </el-form>
+        </template>
+
+        <!-- 商品名称 列自定义内容 -->
+        <template v-slot:productName_default="{ row, rowIndex }">
+          <el-autocomplete
+            v-if="!row.isFixed"
+            v-model="row.productName"
+            style="width: 100%;"
+            :fetch-suggestions="queryProduct"
+            placeholder=""
+            value-key="productName"
+            @select="e => handleSelectProduct(rowIndex, e)"
+          >
+            <template slot-scope="{ item }">
+              <span>{{ item.productCode }} {{ item.productName }}</span>
+            </template>
+          </el-autocomplete>
+          <span v-else>{{ row.productName }}</span>
+        </template>
+
+        <!-- 采购价 列自定义内容 -->
+        <template v-slot:purchasePrice_default="{ row }">
+          <span>{{ row.purchasePrice }}</span>
+        </template>
+
+        <!-- 剩余收货数量 列自定义内容 -->
+        <template v-slot:remainNum_default="{ row }">
+          <span v-if="$utils.isEmpty(row.remainNum)">-</span>
+          <span v-else-if="$utils.isIntegerGeZero(row.receiveNum)">{{ Math.max(0, $utils.sub(row.remainNum, row.receiveNum)) }}</span>
+          <span v-else>{{ row.remainNum }}</span>
+        </template>
+
+        <!-- 收货数量 列自定义内容 -->
+        <template v-slot:receiveNum_default="{ row }">
+          <el-input v-model="row.receiveNum" class="number-input" @input="receiveNumInput" />
+        </template>
+
+        <!-- 含税金额 列自定义内容 -->
+        <template v-slot:taxAmount_default="{ row }">
+          <span v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isIntegerGeZero(row.receiveNum)">{{ $utils.mul(row.purchasePrice, row.receiveNum) }}</span>
+        </template>
+
+        <!-- 备注 列自定义内容 -->
+        <template v-slot:description_default="{ row }">
+          <el-input v-model="row.description" />
+        </template>
+      </vxe-grid>
+
+      <j-border title="合计">
+        <j-form label-width="140px">
+          <j-form-item label="收货数量" :span="6">
+            <el-input v-model="formData.totalNum" class="number-input" readonly />
+          </j-form-item>
+          <j-form-item label="赠品数量" :span="6">
+            <el-input v-model="formData.giftNum" class="number-input" readonly />
+          </j-form-item>
+          <j-form-item label="含税总金额" :span="6">
+            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+          </j-form-item>
+        </j-form>
+      </j-border>
+
+      <j-border>
+        <j-form label-width="140px">
+          <j-form-item label="备注" :span="24" :content-nest="false">
+            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+          </j-form-item>
+        </j-form>
+      </j-border>
+      <batch-add-product
+        ref="batchAddProductDialog"
+        :sc-id="formData.sc.id"
+        @confirm="batchAddProduct"
+      />
+
+      <div style="text-align: center;">
+        <el-button v-permission="['purchase:receive:modify']" type="primary" :loading="loading" @click="updateOrder">保存</el-button>
+        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
+import SupplierSelector from '@/components/Selector/SupplierSelector'
+import UserSelector from '@/components/Selector/UserSelector'
+import PurchaseOrderSelector from './PurchaseOrderSelector'
+import BatchAddProduct from '@/views/sc/purchase/batch-add-product'
+export default {
+  name: 'ModifyPurchaseReceiveRequire',
+  components: {
+    StoreCenterSelector, SupplierSelector, UserSelector, PurchaseOrderSelector, BatchAddProduct
+  },
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      // 是否可见
+      visible: false,
+      // 是否显示加载框
+      loading: false,
+      // 表单数据
+      formData: {},
+      // 工具栏配置
+      toolbarConfig: {
+        // 自定义左侧工具栏
+        slots: {
+          buttons: 'toolbar_buttons'
+        }
+      },
+      // 列表数据配置
+      tableColumn: [
+        { type: 'checkbox', width: 40 },
+        { field: 'productCode', title: '商品编号', width: 120 },
+        { field: 'productName', title: '商品名称', width: 260, slots: { default: 'productName_default' }},
+        { field: 'skuCode', title: '商品SKU编号', width: 120 },
+        { field: 'externalCode', title: '商品外部编号', width: 120 },
+        { field: 'unit', title: '单位', width: 80 },
+        { field: 'spec', title: '规格', width: 80 },
+        { field: 'categoryName', title: '商品类目', width: 120 },
+        { field: 'brandName', title: '商品品牌', width: 120 },
+        { field: 'isGift', title: '是否赠品', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
+        { field: 'purchasePrice', title: '采购价（元）', align: 'right', width: 120, slots: { default: 'purchasePrice_default' }},
+        { field: 'taxCostPrice', title: '含税成本价（元）', align: 'right', width: 140 },
+        { field: 'stockNum', title: '库存数量', align: 'right', width: 100 },
+        { field: 'orderNum', title: '采购数量', align: 'right', width: 100, formatter: ({ cellValue }) => { return this.$utils.isEmpty(cellValue) ? '-' : cellValue } },
+        { field: 'remainNum', title: '剩余收货数量', align: 'right', width: 120, slots: { default: 'remainNum_default' }},
+        { field: 'receiveNum', title: '收货数量', align: 'right', width: 100, slots: { default: 'receiveNum_default' }},
+        { field: 'taxAmount', title: '含税金额', align: 'right', width: 120, slots: { default: 'taxAmount_default' }},
+        { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
+        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
+        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
+        { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
+      ],
+      tableData: []
+    }
+  },
+  computed: {
+  },
+  created() {
+    // 初始化表单数据
+    this.initFormData()
+  },
+  methods: {
+    // 打开对话框 由父页面触发
+    openDialog() {
+      // 初始化表单数据
+      this.initFormData()
+      this.visible = true
+      this.loadData()
+    },
+    // 关闭对话框
+    closeDialog() {
+      this.visible = false
+      this.$emit('close')
+    },
+    // 初始化表单数据
+    initFormData() {
+      this.formData = {
+        sc: {},
+        supplier: {},
+        purchaseOrder: {},
+        purchaser: {},
+        paymentDate: '',
+        receiveDate: '',
+        totalNum: 0,
+        giftNum: 0,
+        totalAmount: 0,
+        description: '',
+        // 是否允许修改付款日期
+        allowModifyPaymentDate: false
+      }
+
+      this.tableData = []
+    },
+    // 加载数据
+    loadData() {
+      this.loading = true
+      this.$api.sc.purchase.receiveSheet.get(this.id).then(res => {
+        if (!this.$enums.RECEIVE_SHEET_STATUS.CREATED.equalsCode(res.status) && !this.$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)) {
+          this.$msg.error('采购收货单已审核通过，无法修改！')
+          this.closeDialog()
+          return
+        }
+        this.formData = {
+          sc: {
+            id: res.scId,
+            name: res.scName
+          },
+          supplier: {
+            id: res.supplierId,
+            name: res.supplierName
+          },
+          purchaser: {
+            id: res.purchaserId || '',
+            name: res.purchaserName || ''
+          },
+          paymentDate: res.paymentDate || '',
+          receiveDate: res.receiveDate,
+          purchaseOrder: {
+            id: res.purchaseOrderId,
+            code: res.purchaseOrderCode
+          },
+          description: res.description,
+          status: res.status,
+          createBy: res.createBy,
+          createTime: res.createTime,
+          approveBy: res.approveBy,
+          approveTime: res.approveTime,
+          refuseReason: res.refuseReason,
+          totalNum: 0,
+          giftNum: 0,
+          totalAmount: 0
+        }
+
+        const tableData = res.details || []
+        tableData.forEach(item => {
+          item.isFixed = !this.$utils.isEmpty(item.purchaseOrderDetailId)
+
+          if (item.isFixed) {
+            // 接口返回的剩余收货数量是最新的数据，应加上当前收货数量
+            item.remainNum = this.$utils.add(item.remainNum, item.receiveNum)
+          }
+
+          return item
+        })
+        this.tableData = tableData
+
+        this.supplierChange(this.formData.supplier.id)
+
+        this.calcSum()
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    emptyProduct() {
+      return {
+        id: this.$utils.uuid(),
+        productId: '',
+        productCode: '',
+        productName: '',
+        skuCode: '',
+        externalCode: '',
+        unit: '',
+        spec: '',
+        categoryName: '',
+        brandName: '',
+        purchasePrice: 0,
+        taxCostPrice: '',
+        stockNum: '',
+        orderNum: '',
+        remainNum: '',
+        receiveNum: '',
+        taxRate: '',
+        isGift: true,
+        taxAmount: '',
+        salePropItemName1: '',
+        salePropItemName2: '',
+        description: '',
+        isFixed: false
+      }
+    },
+    // 新增商品
+    addProduct() {
+      if (this.$utils.isEmpty(this.formData.purchaseOrder)) {
+        this.$msg.error('请先选择采购订单！')
+        return
+      }
+      this.tableData.push(this.emptyProduct())
+    },
+    // 搜索商品
+    queryProduct(queryString, cb) {
+      if (this.$utils.isEmpty(queryString)) {
+        return cb([])
+      }
+
+      this.$api.sc.purchase.purchaseOrder.searchProduct(this.formData.sc.id, queryString).then(res => {
+        cb(res)
+      })
+    },
+    // 选择商品
+    handleSelectProduct(index, value) {
+      this.tableData[index] = Object.assign(this.tableData[index], value, {
+        isGift: true,
+        purchasePrice: 0
+      })
+
+      this.purchasePriceInput(this.tableData[index], this.tableData[index].purchasePrice)
+    },
+    // 删除商品
+    delProduct() {
+      const records = this.$refs.grid.getCheckboxRecords()
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择要删除的商品数据！')
+        return
+      }
+
+      for (let i = 0; i < records.length; i++) {
+        if (records[i].isFixed) {
+          this.$msg.error('第' + (i + 1) + '行商品是采购订单中的商品，不允许删除！')
+          return
+        }
+      }
+      this.$msg.confirm('是否确定删除选中的商品？').then(() => {
+        const tableData = this.tableData.filter(t => {
+          const tmp = records.filter(item => item.id === t.id)
+          return this.$utils.isEmpty(tmp)
+        })
+
+        this.tableData = tableData
+
+        this.calcSum()
+      })
+    },
+    openBatchAddProductDialog() {
+      if (this.$utils.isEmpty(this.formData.purchaseOrder)) {
+        this.$msg.error('请先选择采购订单！')
+        return
+      }
+      this.$refs.batchAddProductDialog.openDialog()
+    },
+    purchasePriceInput(row, value) {
+      this.calcSum()
+    },
+    receiveNumInput(value) {
+      this.calcSum()
+    },
+    // 计算汇总数据
+    calcSum() {
+      let totalNum = 0
+      let giftNum = 0
+      let totalAmount = 0
+
+      this.tableData.filter(t => {
+        return this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isIntegerGeZero(t.receiveNum)
+      }).forEach(t => {
+        const num = parseInt(t.receiveNum)
+        if (t.isGift) {
+          giftNum = this.$utils.add(giftNum, num)
+        } else {
+          totalNum = this.$utils.add(totalNum, num)
+        }
+
+        totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice))
+      })
+
+      this.formData.totalNum = totalNum
+      this.formData.giftNum = giftNum
+      this.formData.totalAmount = totalAmount
+    },
+    // 批量录入数量
+    batchInputReceiveNum() {
+      const records = this.$refs.grid.getCheckboxRecords()
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择商品数据！')
+        return
+      }
+
+      this.$msg.prompt('请输入收货数量', {
+        inputPattern: this.$utils.PATTERN_IS_INTEGER_GE_ZERO,
+        inputErrorMessage: '收货数量必须为整数并且不小于0',
+        title: '批量录入数量'
+      }).then(({ value }) => {
+        records.forEach(t => {
+          t.receiveNum = value
+
+          this.receiveNumInput(value)
+        })
+      })
+    },
+    // 快捷设置数量
+    quickSettingReceiveNum() {
+      const records = this.$refs.grid.getCheckboxRecords()
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择商品数据！')
+        return
+      }
+
+      for (let i = 0; i < records.length; i++) {
+        const record = records[i]
+        if (record.isFixed) {
+          record.outNum = record.remainNum
+        }
+      }
+
+      this.calcSum()
+    },
+    // 批量新增商品
+    batchAddProduct(productList) {
+      productList.forEach(item => {
+        this.tableData.push(this.emptyProduct())
+        this.handleSelectProduct(this.tableData.length - 1, item)
+      })
+    },
+    // 校验数据
+    validData() {
+      if (this.$utils.isEmpty(this.formData.sc.id)) {
+        this.$msg.error('仓库不允许为空！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.formData.supplier.id)) {
+        this.$msg.error('供应商不允许为空！')
+        return false
+      }
+
+      if (this.formData.allowModifyPaymentDate) {
+        if (this.$utils.isEmpty(this.formData.paymentDate)) {
+          this.$msg.error('付款日期不允许为空！')
+          return false
+        }
+      }
+
+      if (this.$utils.isEmpty(this.formData.receiveDate)) {
+        this.$msg.error('实际到货日期不允许为空！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.formData.purchaseOrder.id)) {
+        this.$msg.error('采购订单不允许为空！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.tableData)) {
+        this.$msg.error('请录入商品！')
+        return false
+      }
+
+      for (let i = 0; i < this.tableData.length; i++) {
+        const product = this.tableData[i]
+
+        if (this.$utils.isEmpty(product.productId)) {
+          this.$msg.error('第' + (i + 1) + '行商品不允许为空！')
+          return false
+        }
+
+        if (this.$utils.isEmpty(product.purchasePrice)) {
+          this.$msg.error('第' + (i + 1) + '行商品采购价不允许为空！')
+          return false
+        }
+
+        if (!this.$utils.isFloat(product.purchasePrice)) {
+          this.$msg.error('第' + (i + 1) + '行商品采购价必须为数字！')
+          return false
+        }
+
+        if (product.isGift) {
+          if (parseFloat(product.purchasePrice) !== 0) {
+            this.$msg.error('第' + (i + 1) + '行商品采购价必须等于0！')
+            return false
+          }
+        } else {
+          if (!this.$utils.isFloatGtZero(product.purchasePrice)) {
+            this.$msg.error('第' + (i + 1) + '行商品采购价必须大于0！')
+            return false
+          }
+        }
+
+        if (!this.$utils.isNumberPrecision(product.purchasePrice, 2)) {
+          this.$msg.error('第' + (i + 1) + '行商品采购价最多允许2位小数！')
+          return false
+        }
+
+        if (!this.$utils.isEmpty(product.receiveNum)) {
+          if (!this.$utils.isInteger(product.receiveNum)) {
+            this.$msg.error('第' + (i + 1) + '行商品收货数量必须为整数！')
+            return false
+          }
+
+          if (product.isFixed) {
+            if (!this.$utils.isIntegerGeZero(product.receiveNum)) {
+              this.$msg.error('第' + (i + 1) + '行商品收货数量不允许小于0！')
+              return false
+            }
+          } else {
+            if (!this.$utils.isIntegerGtZero(product.receiveNum)) {
+              this.$msg.error('第' + (i + 1) + '行商品收货数量必须大于0！')
+              return false
+            }
+          }
+
+          if (product.isFixed) {
+            if (product.receiveNum > product.remainNum) {
+              this.$msg.error('第' + (i + 1) + '行商品累计收货数量为' + (product.orderNum - product.remainNum) + '，剩余收货数量为' + product.remainNum + '，本次收货数量不允许大于' + product.remainNum + '！')
+              return false
+            }
+          }
+        } else {
+          if (!product.isFixed) {
+            this.$msg.error('第' + (i + 1) + '行商品收货数量不允许为空！')
+            return false
+          }
+        }
+      }
+
+      if (this.tableData.filter(item => item.isFixed && this.$utils.isIntegerGtZero(item.receiveNum)).length === 0) {
+        this.$msg.error('采购订单中的商品必须全部或部分收货！')
+        return false
+      }
+
+      return true
+    },
+    // 修改订单
+    updateOrder() {
+      if (!this.validData()) {
+        return
+      }
+
+      const params = {
+        id: this.id,
+        scId: this.formData.sc.id,
+        supplierId: this.formData.supplier.id,
+        purchaserId: this.formData.purchaser.id || '',
+        paymentDate: this.formData.paymentDate || '',
+        receiveDate: this.formData.receiveDate,
+        purchaseOrderId: this.formData.purchaseOrder.id,
+        description: this.formData.description,
+        products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.receiveNum)).map(t => {
+          const product = {
+            productId: t.productId,
+            receiveNum: t.receiveNum,
+            description: t.description
+          }
+
+          if (t.isFixed) {
+            product.purchaseOrderDetailId = t.purchaseOrderDetailId
+          }
+
+          return product
+        })
+      }
+
+      this.loading = true
+      this.$api.sc.purchase.receiveSheet.updateOrder(params).then(res => {
+        this.$msg.success('保存成功！')
+
+        this.$emit('confirm')
+        this.closeDialog()
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    // 供应商改变时触发
+    supplierChange(supplierId) {
+      this.$api.sc.purchase.receiveSheet.getPaymentDate(supplierId).then(res => {
+        if (res.allowModify) {
+          // 如果允许修改付款日期
+          if (this.$utils.isEmpty(this.formData.paymentDate)) {
+            this.formData.paymentDate = res.paymentDate || ''
+          }
+        } else {
+          // 不允许修改则按默认日期
+          this.formData.paymentDate = res.paymentDate || ''
+        }
+
+        this.formData.allowModifyPaymentDate = res.allowModify
+      })
+    }
+  }
+}
+</script>
+<style>
+</style>
