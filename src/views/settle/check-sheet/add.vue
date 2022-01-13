@@ -147,6 +147,7 @@ export default {
         id: this.$utils.uuid(),
         code: '',
         bizType: '',
+        calcType: '',
         totalAmount: '',
         payAmount: '',
         approveTime: '',
@@ -163,11 +164,11 @@ export default {
       const records = this.$refs.grid.getCheckboxRecords()
       if (!this.$utils.isEmpty(records)) {
         records.forEach(item => {
-          if (this.$utils.isFloatGeZero(item.totalAmount)) {
+          if (this.$utils.isFloat(item.totalAmount)) {
             totalAmount = this.$utils.add(totalAmount, item.totalAmount)
           }
 
-          if (this.$utils.isFloatGeZero(item.payAmount)) {
+          if (this.$utils.isFloat(item.payAmount)) {
             totalPayAmount = this.$utils.add(totalPayAmount, item.payAmount)
           }
         })
@@ -217,14 +218,14 @@ export default {
           return false
         }
 
-        if (this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(item.bizType) || this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(item.bizType)) {
+        if (this.$enums.SETTLE_CHECK_SHEET_CALC_TYPE.SUB.equalsCode(item.calcType)) {
           if (item.payAmount > 0) {
             this.$msg.error('第' + (i + 1) + '行应付金额不允许大于0！')
             return false
           }
         }
 
-        if (this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(item.bizType) || this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(item.bizType)) {
+        if (this.$enums.SETTLE_CHECK_SHEET_CALC_TYPE.ADD.equalsCode(item.calcType)) {
           if (item.payAmount < 0) {
             this.$msg.error('第' + (i + 1) + '行应付金额不允许小于0！')
             return false

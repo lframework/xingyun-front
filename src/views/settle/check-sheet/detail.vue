@@ -190,11 +190,11 @@ export default {
       let totalAmount = 0
       let totalPayAmount = 0
       this.tableData.forEach(item => {
-        if (this.$utils.isFloatGeZero(item.totalAmount)) {
+        if (this.$utils.isFloat(item.totalAmount)) {
           totalAmount = this.$utils.add(totalAmount, item.totalAmount)
         }
 
-        if (this.$utils.isFloatGeZero(item.payAmount)) {
+        if (this.$utils.isFloat(item.payAmount)) {
           totalPayAmount = this.$utils.add(totalPayAmount, item.payAmount)
         }
       })
