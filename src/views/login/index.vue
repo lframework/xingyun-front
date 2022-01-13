@@ -7,7 +7,7 @@
           <p class="sub-title">{{ subTitle }}</p>
           <p class="des">{{ description }}</p>
           <div class="bottom" />
-        </div>c
+        </div>
       </div>
       <div class="container-right">
         <el-form>

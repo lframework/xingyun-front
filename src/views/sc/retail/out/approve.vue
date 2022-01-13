@@ -260,7 +260,7 @@ export default {
 
       const unValidStockNumArr = checkStockNumArr.filter(item => item.stockNum < item.outNum)
       if (!this.$utils.isEmpty(unValidStockNumArr)) {
-        this.$msg.error('商品（' + unValidStockNumArr[0].productCode + '）' + unValidStockNumArr[0].productName + '当前库存为' + unValidStockNumArr[0].stockNum + '，总退货数量为' + unValidStockNumArr[0].outNum + '，无法完成采购退货！')
+        this.$msg.error('商品（' + unValidStockNumArr[0].productCode + '）' + unValidStockNumArr[0].productName + '当前库存为' + unValidStockNumArr[0].stockNum + '，总出库数量为' + unValidStockNumArr[0].outNum + '，无法完成零售出库！')
         return false
       }
 
