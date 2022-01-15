@@ -12,7 +12,7 @@
             />
           </j-form-item>
           <j-form-item label="收支方式" required>
-            <el-select v-model="formData.sheetType">
+            <el-select v-model="formData.sheetType" :disabled="!$utils.isEmpty(tableData)">
               <el-option v-for="item in $enums.SETTLE_FEE_SHEET_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
             </el-select>
           </j-form-item>
@@ -67,7 +67,8 @@
 
         <!-- 项目 列自定义内容 -->
         <template v-slot:item_default="{ row }">
-          <settle-out-item-selector v-model="row.item" @input="itemInput" />
+          <settle-in-item-selector v-if="$enums.SETTLE_FEE_SHEET_TYPE.RECEIVE.equalsCode(formData.sheetType)" v-model="row.item" @input="itemInput" />
+          <settle-out-item-selector v-if="$enums.SETTLE_FEE_SHEET_TYPE.PAY.equalsCode(formData.sheetType)" v-model="row.item" @input="itemInput" />
         </template>
 
         <!-- 金额 列自定义内容 -->
@@ -100,11 +101,12 @@
 </template>
 <script>
 import SettleOutItemSelector from '@/components/Selector/SettleOutItemSelector'
+import SettleInItemSelector from '@/components/Selector/SettleInItemSelector'
 import SupplierSelector from '@/components/Selector/SupplierSelector'
 export default {
   name: 'ModifySettleFeeSheet',
   components: {
-    SupplierSelector, SettleOutItemSelector
+    SupplierSelector, SettleOutItemSelector, SettleInItemSelector
   },
   props: {
     id: {
@@ -222,6 +224,10 @@ export default {
     addItem() {
       if (this.$utils.isEmpty(this.formData.supplier)) {
         this.$msg.error('请先选择供应商！')
+        return
+      }
+      if (this.$utils.isEmpty(this.formData.sheetType)) {
+        this.$msg.error('请先选择收支方式！')
         return
       }
       this.tableData.push(this.emptyLine())
