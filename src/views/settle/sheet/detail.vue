@@ -59,7 +59,15 @@
         :data="tableData"
         :columns="tableColumn"
         style="margin-top: 10px;"
-      />
+      >
+        <!-- 业务单据号 列自定义内容 -->
+        <template v-slot:bizCode_default="{ row }">
+          <span v-no-permission="['settle:check-sheet:query']">{{ row.bizCode }}</span>
+          <el-button v-permission="['settle:check-sheet:query']" type="text" @click="e => { $refs.viewSettleCheckSheetDetailDialog.id = row.bizId; $refs.viewSettleCheckSheetDetailDialog.openDialog() }">
+            {{ row.bizCode }}
+          </el-button>
+        </template>
+      </vxe-grid>
 
       <j-border title="合计">
         <j-form label-width="140px">
@@ -83,11 +91,15 @@
         </j-form>
       </j-border>
     </div>
+    <!-- 供应商对账单详情 -->
+    <settle-check-sheet-detail :id="''" ref="viewSettleCheckSheetDetailDialog" />
   </el-dialog>
 </template>
 <script>
+import SettleCheckSheetDetail from '@/views/settle/check-sheet/detail'
 export default {
   components: {
+    SettleCheckSheetDetail
   },
   props: {
     id: {
@@ -107,7 +119,7 @@ export default {
       tableColumn: [
         { type: 'seq', width: 40 },
         { type: 'seq', width: 40 },
-        { field: 'bizCode', title: '业务单据号', width: 200 },
+        { field: 'bizCode', title: '业务单据号', width: 200, slots: { default: 'bizCode_default' }},
         { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return '供应商对账单' } },
         { field: 'approveTime', title: '审核时间', width: 150 },
         { field: 'totalPayAmount', title: '应付金额', align: 'right', width: 100 },

@@ -60,6 +60,29 @@
         :columns="tableColumn"
         style="margin-top: 10px;"
       >
+        <!-- 业务单据号 列自定义内容 -->
+        <template v-slot:bizCode_default="{ row }">
+          <span v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)" v-no-permission="['purchase:receive:query']">{{ row.bizCode }}</span>
+          <el-button v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)" v-permission="['purchase:receive:query']" type="text" @click="e => { $refs.viewPurchaseReceiveSheetDetailDialog.id = row.bizId; $refs.viewPurchaseReceiveSheetDetailDialog.openDialog() }">
+            {{ row.bizCode }}
+          </el-button>
+
+          <span v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)" v-no-permission="['purchase:return:query']">{{ row.bizCode }}</span>
+          <el-button v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)" v-permission="['purchase:return:query']" type="text" @click="e => { $refs.viewPurchaseReturnDetailDialog.id = row.bizId; $refs.viewPurchaseReturnDetailDialog.openDialog() }">
+            {{ row.bizCode }}
+          </el-button>
+
+          <span v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:fee-sheet:query']">{{ row.bizCode }}</span>
+          <el-button v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-permission="['settle:fee-sheet:query']" type="text" @click="e => { $refs.viewSettleFeeSheetDetailDialog.id = row.bizId; $refs.viewSettleFeeSheetDetailDialog.openDialog() }">
+            {{ row.bizCode }}
+          </el-button>
+
+          <span v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:pre-sheet:query']">{{ row.bizCode }}</span>
+          <el-button v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-permission="['settle:pre-sheet:query']" type="text" @click="e => { $refs.viewSettlePreSheetDetailDialog.id = row.bizId; $refs.viewSettlePreSheetDetailDialog.openDialog() }">
+            {{ row.bizCode }}
+          </el-button>
+        </template>
+
         <!-- 项目 列自定义内容 -->
         <template v-slot:item_default="{ row }">
           <span>{{ row.item.name }}</span>
@@ -97,13 +120,25 @@
       </div>
     </div>
     <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
+    <!-- 采购收货单详情 -->
+    <purchase-receive-sheet-detail :id="''" ref="viewPurchaseReceiveSheetDetailDialog" />
+    <!-- 采购退货单详情 -->
+    <purchase-return-detail :id="''" ref="viewPurchaseReturnDetailDialog" />
+    <!-- 供应商费用单详情 -->
+    <settle-fee-sheet-detail :id="''" ref="viewSettleFeeSheetDetailDialog" />
+    <!-- 供应商预付款单详情 -->
+    <settle-pre-sheet-detail :id="''" ref="viewSettlePreSheetDetailDialog" />
   </div>
 </template>
 <script>
 import ApproveRefuse from '@/components/ApproveRefuse'
+import PurchaseReceiveSheetDetail from '@/views/sc/purchase/receive/detail'
+import PurchaseReturnDetail from '@/views/sc/purchase/return/detail'
+import SettleFeeSheetDetail from '@/views/settle/fee-sheet/detail'
+import SettlePreSheetDetail from '@/views/settle/pre-sheet/detail'
 export default {
   components: {
-    ApproveRefuse
+    ApproveRefuse, PurchaseReceiveSheetDetail, PurchaseReturnDetail, SettleFeeSheetDetail, SettlePreSheetDetail
   },
   props: {
     id: {
@@ -122,7 +157,7 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'seq', width: 40 },
-        { field: 'bizCode', title: '业务单据号', width: 200 },
+        { field: 'bizCode', title: '业务单据号', width: 200, slots: { default: 'bizCode_default' }},
         { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue) } },
         { field: 'approveTime', title: '审核时间', width: 150 },
         { field: 'totalAmount', title: '单据金额', align: 'right', width: 100 },

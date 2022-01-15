@@ -60,6 +60,14 @@
         :columns="tableColumn"
         style="margin-top: 10px;"
       >
+        <!-- 业务单据号 列自定义内容 -->
+        <template v-slot:bizCode_default="{ row }">
+          <span v-no-permission="['settle:check-sheet:query']">{{ row.bizCode }}</span>
+          <el-button v-permission="['settle:check-sheet:query']" type="text" @click="e => { $refs.viewSettleCheckSheetDetailDialog.id = row.bizId; $refs.viewSettleCheckSheetDetailDialog.openDialog() }">
+            {{ row.bizCode }}
+          </el-button>
+        </template>
+
         <!-- 已付款金额 列自定义内容 -->
         <template v-slot:totalPayedAmount_default="{ row }">
           <span v-if="$utils.isFloat(row.payAmount)">{{ $utils.add(row.totalPayedAmount, row.payAmount) }}</span>
@@ -107,13 +115,16 @@
       </div>
     </div>
     <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
+    <!-- 供应商对账单详情 -->
+    <settle-check-sheet-detail :id="''" ref="viewSettleCheckSheetDetailDialog" />
   </div>
 </template>
 <script>
 import ApproveRefuse from '@/components/ApproveRefuse'
+import SettleCheckSheetDetail from '@/views/settle/check-sheet/detail'
 export default {
   components: {
-    ApproveRefuse
+    ApproveRefuse, SettleCheckSheetDetail
   },
   props: {
     id: {
@@ -132,7 +143,7 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'seq', width: 40 },
-        { field: 'bizCode', title: '业务单据号', width: 200 },
+        { field: 'bizCode', title: '业务单据号', width: 200, slots: { default: 'bizCode_default' }},
         { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return '供应商对账单' } },
         { field: 'approveTime', title: '审核时间', width: 150 },
         { field: 'totalPayAmount', title: '应付金额', align: 'right', width: 100 },
