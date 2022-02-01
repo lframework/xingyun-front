@@ -118,7 +118,7 @@ export default {
         brand: {},
         startTime: '',
         endTime: '',
-        available: true
+        available: this.$enums.AVAILABLE.ENABLE.code
       },
       // 分页配置
       pagerConfig: {

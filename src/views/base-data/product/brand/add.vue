@@ -2,16 +2,16 @@
   <el-dialog :visible.sync="visible" :close-on-click-modal="false" :modal="false" width="40%" top="5vh" title="新增" @open="open">
     <div v-if="visible" v-permission="['base-data:product:brand:add']">
       <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="品牌编号" prop="code">
+        <el-form-item label="编号" prop="code">
           <el-input v-model.trim="formData.code" maxlength="20" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="品牌名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model.trim="formData.name" maxlength="20" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="品牌简称" prop="shortName">
+        <el-form-item label="简称" prop="shortName">
           <el-input v-model.trim="formData.shortName" maxlength="20" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="品牌简介" prop="introduction">
+        <el-form-item label="简介" prop="introduction">
           <el-input v-model.trim="formData.introduction" maxlength="400" show-word-limit type="textarea" rows="4" resize="none" />
         </el-form-item>
         <el-form-item label="备注" prop="description">
@@ -40,10 +40,10 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入品牌编号' }
+          { required: true, message: '请输入编号' }
         ],
         name: [
-          { required: true, message: '请输入品牌名称' }
+          { required: true, message: '请输入名称' }
         ]
       }
     }

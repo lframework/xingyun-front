@@ -18,10 +18,10 @@
       <template v-slot:form>
         <j-border>
           <j-form>
-            <j-form-item label="品牌编号" :span="6">
+            <j-form-item label="编号" :span="6">
               <el-input v-model="searchFormData.code" clearable />
             </j-form-item>
-            <j-form-item label="品牌名称" :span="6">
+            <j-form-item label="名称" :span="6">
               <el-input v-model="searchFormData.name" clearable />
             </j-form-item>
             <j-form-item label="状态" :span="6">
@@ -96,7 +96,9 @@ export default {
       id: '',
       ids: [],
       // 查询列表的查询条件
-      searchFormData: {},
+      searchFormData: {
+        available: this.$enums.AVAILABLE.ENABLE.code
+      },
       // 分页配置
       pagerConfig: {
         // 默认每页条数
@@ -116,8 +118,8 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'checkbox', width: 40 },
-        { field: 'code', title: '品牌编号', width: 120 },
-        { field: 'name', title: '品牌名称', minWidth: 160 },
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'name', title: '名称', minWidth: 160 },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'description', title: '备注', minWidth: 160 },
         { title: '操作', width: 140, fixed: 'right', slots: { default: 'action_default' }}

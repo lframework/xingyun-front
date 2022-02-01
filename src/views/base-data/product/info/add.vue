@@ -19,7 +19,7 @@
                 <el-input v-model.trim="formData.shortName" maxlength="100" show-word-limit clearable />
               </el-form-item>
               <el-form-item label="商品类目" prop="category.id">
-                <product-category-selector v-model="formData.category" @input="selectCategory" />
+                <product-category-selector v-model="formData.category" :only-final="false" @input="selectCategory" />
               </el-form-item>
               <el-form-item label="商品品牌" prop="brand.id">
                 <product-brand-selector v-model="formData.brand" :request-params="{ available: true }" />

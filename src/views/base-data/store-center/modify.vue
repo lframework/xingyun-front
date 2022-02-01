@@ -2,10 +2,10 @@
   <el-dialog :visible.sync="visible" :close-on-click-modal="false" width="40%" title="修改" top="5vh" @open="open">
     <div v-if="visible" v-permission="['base-data:store-center:modify']">
       <el-form ref="form" v-loading="loading" label-width="120px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="仓库编号" prop="code">
+        <el-form-item label="编号" prop="code">
           <el-input v-model.trim="formData.code" maxlength="20" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="仓库名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model.trim="formData.name" maxlength="20" show-word-limit clearable />
         </el-form-item>
         <el-form-item label="联系人" prop="contact">
@@ -65,10 +65,10 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入仓库编号' }
+          { required: true, message: '请输入编号' }
         ],
         name: [
-          { required: true, message: '请输入仓库名称' }
+          { required: true, message: '请输入名称' }
         ],
         peopleNum: [
           { validator: constants.validPeopleNum }

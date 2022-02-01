@@ -18,10 +18,10 @@
       <template v-slot:form>
         <j-border>
           <j-form>
-            <j-form-item label="属性编号" :span="6">
+            <j-form-item label="编号" :span="6">
               <el-input v-model="searchFormData.code" clearable />
             </j-form-item>
-            <j-form-item label="属性名称" :span="6">
+            <j-form-item label="名称" :span="6">
               <el-input v-model="searchFormData.name" clearable />
             </j-form-item>
             <j-form-item label="状态" :span="6">
@@ -99,7 +99,7 @@ export default {
       searchFormData: {
         code: '',
         name: '',
-        available: true
+        available: this.$enums.AVAILABLE.ENABLE.code
       },
       // 分页配置
       pagerConfig: {
@@ -120,11 +120,11 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'checkbox', width: 40 },
-        { field: 'code', title: '属性编号', width: 120 },
-        { field: 'name', title: '属性名称', minWidth: 160 },
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'name', title: '名称', minWidth: 160 },
         { field: 'isRequired', title: '是否必填', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
         { field: 'columnType', title: '字段类型', width: 100, formatter: ({ cellValue }) => { return this.$enums.COLUMN_TYPE.getDesc(cellValue) } },
-        { field: 'propertyType', title: '属性类别', width: 100, formatter: ({ cellValue }) => { return this.$enums.PROPERTY_TYPE.getDesc(cellValue) } },
+        { field: 'propertyType', title: '类别', width: 100, formatter: ({ cellValue }) => { return this.$enums.PROPERTY_TYPE.getDesc(cellValue) } },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'description', title: '备注', minWidth: 160 },
         { title: '操作', width: 210, fixed: 'right', slots: { default: 'action_default' }}

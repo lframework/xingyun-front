@@ -2,16 +2,16 @@
   <el-dialog :visible.sync="visible" :close-on-click-modal="false" width="40%" title="修改" top="5vh" @open="open">
     <div v-if="visible" v-permission="['base-data:product:brand:modify']">
       <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="品牌编号" prop="code">
+        <el-form-item label="编号" prop="code">
           <el-input v-model.trim="formData.code" maxlength="20" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="品牌名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model.trim="formData.name" maxlength="20" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="品牌简称" prop="shortName">
+        <el-form-item label="简称" prop="shortName">
           <el-input v-model.trim="formData.shortName" maxlength="20" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="品牌简介" prop="introduction">
+        <el-form-item label="简介" prop="introduction">
           <el-input v-model.trim="formData.introduction" maxlength="400" show-word-limit rows="4" type="textarea" resize="none" />
         </el-form-item>
         <el-form-item label="状态" prop="available">

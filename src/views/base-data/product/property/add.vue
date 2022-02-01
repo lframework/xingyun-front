@@ -2,10 +2,10 @@
   <el-dialog :visible.sync="visible" :close-on-click-modal="false" :modal="false" width="40%" title="新增" top="5vh" @open="open">
     <div v-if="visible" v-permission="['base-data:product:property:add']">
       <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="属性编号" prop="code">
+        <el-form-item label="编号" prop="code">
           <el-input v-model.trim="formData.code" maxlength="20" show-word-limit clearable />
         </el-form-item>
-        <el-form-item label="属性名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model.trim="formData.name" maxlength="20" show-word-limit clearable />
         </el-form-item>
         <el-form-item label="是否必填" prop="isRequired">
@@ -24,7 +24,7 @@
             <el-option v-for="item in $enums.COLUMN_DATA_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
           </el-select>
         </el-form-item>
-        <el-form-item label="属性类别" prop="propertyType">
+        <el-form-item label="类别" prop="propertyType">
           <el-select v-model="formData.propertyType" clearable>
             <el-option v-for="item in $enums.PROPERTY_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
           </el-select>
@@ -60,10 +60,10 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入属性编号' }
+          { required: true, message: '请输入编号' }
         ],
         name: [
-          { required: true, message: '请输入属性名称' }
+          { required: true, message: '请输入名称' }
         ],
         isRequired: [
           { required: true, message: '请选择是否必填' }
@@ -75,7 +75,7 @@ export default {
           { required: true, message: '请选择数据类型' }
         ],
         propertyType: [
-          { required: true, message: '请选择属性类别' }
+          { required: true, message: '请选择类别' }
         ]
       }
     }

@@ -36,10 +36,10 @@
       <template v-slot:form>
         <j-border>
           <j-form>
-            <j-form-item label="类目编号" :span="6">
+            <j-form-item label="编号" :span="6">
               <el-input v-model="searchFormData.code" clearable />
             </j-form-item>
-            <j-form-item label="类目名称" :span="6">
+            <j-form-item label="名称" :span="6">
               <el-input v-model="searchFormData.name" clearable />
             </j-form-item>
             <j-form-item label="状态" :span="6">
@@ -104,7 +104,7 @@ export default {
       searchFormData: {
         code: '',
         name: '',
-        available: true
+        available: this.$enums.AVAILABLE.ENABLE.code
       },
       originData: [],
       tableProxy: {
@@ -127,8 +127,8 @@ export default {
       },
       tableColumn: [
         { type: 'checkbox', width: 40 },
-        { field: 'code', title: '类目编号', width: 120 },
-        { field: 'name', title: '类目名称', minWidth: 160, treeNode: true },
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'name', title: '名称', minWidth: 160, treeNode: true },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'description', title: '备注', minWidth: 160 },
         { field: 'action', title: '操作', width: 200, slots: { default: 'action_default' }, fixed: 'right' }
