@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" :append-to-body="true" :modal="false" width="80%" top="5vh" title="属性值管理" @open="open">
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" :append-to-body="true" width="80%" top="5vh" title="属性值管理" @open="open">
     <div v-if="visible" v-permission="['base-data:product:property-item:query']">
       <!-- 数据列表 -->
       <vxe-grid

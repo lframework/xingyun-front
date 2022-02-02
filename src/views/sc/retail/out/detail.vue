@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" :modal="false" width="75%" title="零售出库单查看" top="5vh" @open="open">
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" width="75%" title="零售出库单查看" top="5vh" @open="open">
     <div v-if="visible" v-permission="['retail:out:query']" v-loading="loading">
       <j-border>
         <j-form>

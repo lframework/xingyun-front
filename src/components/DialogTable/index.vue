@@ -18,7 +18,7 @@
       append-to-body
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      :modal="false"
+
       top="5vh"
       @open="open"
     >
