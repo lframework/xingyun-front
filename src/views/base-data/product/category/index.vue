@@ -13,7 +13,7 @@
       :toolbar-config="tableToolbar"
       :tree-config="{ expandAll: true }"
       :loading="loading"
-      :max-height="$defaultTableHeight"
+      :height="$defaultTableHeight"
     >
       <template v-slot:icon_default="{ row }">
         <span v-if="!$utils.isEmpty(row.icon)">

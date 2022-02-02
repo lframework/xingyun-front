@@ -13,7 +13,7 @@
       :columns="tableColumn"
       :toolbar-config="tableToolbar"
       :loading="loading"
-      :max-height="$defaultTableHeight"
+      :height="$defaultTableHeight"
     >
       <template v-slot:menuDisplay_default="{ row }">
         <menu-display-tag :menu-display="row.display" />
