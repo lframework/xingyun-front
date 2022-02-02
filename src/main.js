@@ -55,6 +55,8 @@ Vue.use(permission)
 Vue.component('JForm', JForm)
 Vue.component('JFormItem', JFormItem)
 Vue.component('JBorder', JBorder)
+Vue.prototype.$vh = parseInt(window.innerHeight / 100)
+Vue.prototype.$defaultTableHeight = Vue.prototype.$vh * 100 - 110
 
 new Vue({
   el: '#app',

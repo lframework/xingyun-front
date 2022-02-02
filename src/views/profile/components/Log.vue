@@ -12,6 +12,7 @@
       :columns="tableColumn"
       :pager-config="pagerConfig"
       :loading="loading"
+      :max-height="$defaultTableHeight"
     >
       <template v-slot:form>
         <j-border>

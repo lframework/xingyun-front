@@ -14,6 +14,7 @@
         :toolbar-config="toolbarConfig"
         :pager-config="pagerConfig"
         :loading="loading"
+        :max-height="$defaultTableHeight"
       >
         <template v-slot:form>
           <el-form :model="searchFormData" label-width="60px" :inline="true">
