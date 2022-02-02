@@ -19,7 +19,7 @@
         <template v-slot:form>
           <j-border>
             <j-form>
-              <j-form-item label="零售退货单号">
+              <j-form-item label="业务单据号">
                 <el-input v-model="searchFormData.code" clearable />
               </j-form-item>
 
@@ -221,7 +221,7 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'checkbox', width: 40 },
-        { field: 'code', title: '零售退货单号', width: 180 },
+        { field: 'code', title: '业务单据号', width: 180 },
         { field: 'scCode', title: '仓库编号', width: 100 },
         { field: 'scName', title: '仓库名称', width: 120 },
         { field: 'memberCode', title: '会员编号', width: 100 },
