@@ -190,10 +190,10 @@ export default {
         { field: 'totalAmount', title: '单据总金额', align: 'right', width: 100 },
         { field: 'totalNum', title: '商品数量', align: 'right', width: 120 },
         { field: 'totalGiftNum', title: '赠品数量', align: 'right', width: 120 },
-        { field: 'createTime', title: '操作时间', width: 150 },
+        { field: 'createTime', title: '操作时间', width: 170 },
         { field: 'createBy', title: '操作人', width: 100 },
         { field: 'status', title: '审核状态', width: 100, formatter: ({ cellValue }) => { return this.$enums.SALE_ORDER_STATUS.getDesc(cellValue) } },
-        { field: 'approveTime', title: '审核时间', width: 150 },
+        { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'approveBy', title: '审核人', width: 100 },
         { field: 'description', title: '备注', width: 200 },
         { title: '操作', width: 280, fixed: 'right', slots: { default: 'action_default' }}

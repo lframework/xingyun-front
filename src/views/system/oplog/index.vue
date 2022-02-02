@@ -108,7 +108,7 @@ export default {
         { field: 'logType', title: '日志类型', width: 100, formatter: ({ cellValue }) => { return this.$enums.OP_LOG_TYPE.getDesc(cellValue) } },
         { field: 'createBy', title: '创建人', width: 100 },
         { field: 'ip', title: 'IP地址', width: 130 },
-        { field: 'createTime', title: '创建时间', width: 150 },
+        { field: 'createTime', title: '创建时间', width: 170 },
         { title: '操作', width: 70, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 工具栏配置

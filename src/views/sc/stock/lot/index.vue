@@ -131,7 +131,7 @@ export default {
         { field: 'salePropItem2', title: '销售属性2', width: 120 },
         { field: 'stockNum', title: '库存数量', align: 'right', width: 100 },
         { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
-        { field: 'createTime', title: '生成时间', width: 150 }
+        { field: 'createTime', title: '生成时间', width: 170 }
       ],
       // 请求接口配置
       proxyConfig: {

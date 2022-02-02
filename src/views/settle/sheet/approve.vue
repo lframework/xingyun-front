@@ -145,7 +145,7 @@ export default {
         { type: 'seq', width: 40 },
         { field: 'bizCode', title: '业务单据号', width: 200, slots: { default: 'bizCode_default' }},
         { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return '供应商对账单' } },
-        { field: 'approveTime', title: '审核时间', width: 150 },
+        { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'totalPayAmount', title: '应付金额', align: 'right', width: 100 },
         { field: 'totalPayedAmount', title: '已付款金额', align: 'right', width: 100, slots: { default: 'totalPayedAmount_default' }},
         { field: 'totalDiscountAmount', title: '已优惠金额', align: 'right', width: 100, slots: { default: 'totalDiscountAmount_default' }},

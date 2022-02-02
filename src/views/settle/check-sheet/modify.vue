@@ -128,7 +128,7 @@ export default {
         { type: 'seq', width: 40 },
         { field: 'bizCode', title: '业务单据号', width: 200 },
         { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue) } },
-        { field: 'approveTime', title: '审核时间', width: 150 },
+        { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'totalAmount', title: '单据金额', align: 'right', width: 100 },
         { field: 'payAmount', title: '应付金额', align: 'right', width: 100, slots: { default: 'payAmount_default' }},
         { field: 'description', title: '备注', width: 260, slots: { default: 'description_default' }}

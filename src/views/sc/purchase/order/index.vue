@@ -191,10 +191,10 @@ export default {
         { field: 'totalNum', title: '采购商品数量', align: 'right', width: 120 },
         { field: 'totalGiftNum', title: '采购赠品数量', align: 'right', width: 120 },
         { field: 'expectArriveDate', title: '预计到货日期', width: 120 },
-        { field: 'createTime', title: '操作时间', width: 150 },
+        { field: 'createTime', title: '操作时间', width: 170 },
         { field: 'createBy', title: '操作人', width: 100 },
         { field: 'status', title: '审核状态', width: 100, formatter: ({ cellValue }) => { return this.$enums.PURCHASE_ORDER_STATUS.getDesc(cellValue) } },
-        { field: 'approveTime', title: '审核时间', width: 150 },
+        { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'approveBy', title: '审核人', width: 100 },
         { field: 'description', title: '备注', width: 200 },
         { title: '操作', width: 280, fixed: 'right', slots: { default: 'action_default' }}

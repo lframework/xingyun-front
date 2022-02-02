@@ -173,10 +173,10 @@ export default {
         { field: 'supplierName', title: '供应商名称', width: 120 },
         { field: 'totalAmount', title: '实付总金额', align: 'right', width: 100 },
         { field: 'totalDiscountAmount', title: '优惠总金额', align: 'right', width: 100 },
-        { field: 'createTime', title: '操作时间', width: 150 },
+        { field: 'createTime', title: '操作时间', width: 170 },
         { field: 'createBy', title: '操作人', width: 100 },
         { field: 'status', title: '审核状态', width: 100, formatter: ({ cellValue }) => { return this.$enums.SETTLE_SHEET_STATUS.getDesc(cellValue) } },
-        { field: 'approveTime', title: '审核时间', width: 150 },
+        { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'approveBy', title: '审核人', width: 100 },
         { field: 'description', title: '备注', width: 200 },
         { title: '操作', width: 280, fixed: 'right', slots: { default: 'action_default' }}

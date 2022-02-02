@@ -60,7 +60,7 @@ export default {
         { field: 'name', title: '日志名称', minWidth: 220 },
         { field: 'logType', title: '日志类型', width: 100, formatter: ({ cellValue }) => { return this.$enums.OP_LOG_TYPE.getDesc(cellValue) } },
         { field: 'ip', title: 'IP地址', width: 130 },
-        { field: 'createTime', title: '创建时间', width: 150 }
+        { field: 'createTime', title: '创建时间', width: 170 }
       ],
       // 请求接口配置
       proxyConfig: {

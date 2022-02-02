@@ -145,8 +145,8 @@ export default {
         { field: 'categoryName', title: '商品类目', width: 120 },
         { field: 'brandName', title: '商品品牌', width: 120 },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
-        { field: 'createTime', title: '创建时间', width: 150 },
-        { field: 'updateTime', title: '修改时间', width: 150 },
+        { field: 'createTime', title: '创建时间', width: 170 },
+        { field: 'updateTime', title: '修改时间', width: 170 },
         { title: '操作', width: 140, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
