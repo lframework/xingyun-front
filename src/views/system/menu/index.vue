@@ -11,7 +11,7 @@
       :export-config="{}"
       :proxy-config="tableProxy"
       :columns="tableColumn"
-      :toolbar-config="tableToolbar"
+      :toolbar-config="toolBarConfig"
       :loading="loading"
       :height="$defaultTableHeight"
     >
@@ -111,7 +111,7 @@ export default {
           })
         }
       },
-      tableToolbar: {
+      toolBarConfig: {
         custom: true,
         refresh: true,
         slots: {

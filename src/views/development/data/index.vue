@@ -152,6 +152,7 @@ export default {
       },
       // 工具栏配置
       toolbarConfig: {
+        custom: true,
         // 右侧是否显示刷新按钮
         refresh: true,
         // 自定义左侧工具栏
