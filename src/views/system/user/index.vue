@@ -124,6 +124,7 @@ export default {
       },
       // 工具栏配置
       toolbarConfig: {
+        zoom: true,
         custom: true,
         // 右侧是否显示刷新按钮
         refresh: true,

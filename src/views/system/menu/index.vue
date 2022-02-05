@@ -112,6 +112,7 @@ export default {
         }
       },
       toolBarConfig: {
+        zoom: true,
         custom: true,
         refresh: true,
         slots: {
