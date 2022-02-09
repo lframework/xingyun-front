@@ -3,13 +3,13 @@
     <div v-permission="['retail:config:modify']">
       <el-card>
         <el-form ref="form" v-loading="loading" label-width="260px" title-align="right" :model="formData" :rules="rules">
-          <el-form-item label="销售退货单是否关联销售出库单" prop="retailReturnRequireOutStock">
+          <el-form-item label="零售退货单是否关联零售出库单" prop="retailReturnRequireOutStock">
             <el-select v-model="formData.retailReturnRequireOutStock" placeholder="">
               <el-option label="是" :value="true" />
               <el-option label="否" :value="false" />
             </el-select>
           </el-form-item>
-          <el-form-item label="销售退货单是否多次关联销售出库单" prop="retailReturnMultipleRelateOutStock">
+          <el-form-item label="零售退货单是否多次关联零售出库单" prop="retailReturnMultipleRelateOutStock">
             <el-select v-model="formData.retailReturnMultipleRelateOutStock" placeholder="">
               <el-option label="是" :value="true" />
               <el-option label="否" :value="false" />
@@ -43,10 +43,10 @@ export default {
       // 表单校验规则
       rules: {
         retailReturnRequireOutStock: [
-          { required: true, message: '请选择销售退货单是否关联销售出库单' }
+          { required: true, message: '请选择零售退货单是否关联零售出库单' }
         ],
         retailReturnMultipleRelateOutStock: [
-          { required: true, message: '请选择销售退货单是否多次关联销售出库单' }
+          { required: true, message: '请选择零售退货单是否多次关联零售出库单' }
         ]
       }
     }
