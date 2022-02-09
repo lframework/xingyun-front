@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" width="50%" title="修改" top="5vh" @open="open">
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="50%" title="修改" top="5vh" @open="open">
     <div v-if="visible" v-permission="['base-data:product:info:modify']" v-loading="loading">
       <el-descriptions :column="4" label-class-name="descriptions-label" content-class-name="descriptions-content" border>
         <el-descriptions-item :span="2">

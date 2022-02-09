@@ -74,21 +74,21 @@
     </vxe-grid>
 
     <!-- 新增窗口 -->
-    <el-dialog :visible.sync="addDialogVisible" :close-on-click-modal="false" width="30%" title="新增" top="5vh">
+    <el-dialog :visible.sync="addDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="新增" top="5vh">
       <template v-slot>
         <add @confirm="e => {addDialogVisible = false;search()}" @close="addDialogVisible = false" />
       </template>
     </el-dialog>
 
     <!-- 修改窗口 -->
-    <el-dialog :visible.sync="updateDialogVisible" :close-on-click-modal="false" width="30%" title="修改" top="5vh" @open="$nextTick(() => $refs.updateDialog.open())">
+    <el-dialog :visible.sync="updateDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="修改" top="5vh" @open="$nextTick(() => $refs.updateDialog.open())">
       <template v-slot>
         <modify :id="currentRow.id" ref="updateDialog" @confirm="e => {updateDialogVisible = false;search()}" @close="updateDialogVisible = false" />
       </template>
     </el-dialog>
 
     <!-- 查看窗口 -->
-    <el-dialog :visible.sync="viewDialogVisible" :close-on-click-modal="false" width="30%" title="查看" top="5vh" @open="$nextTick(() => $refs.viewDialog.open())">
+    <el-dialog :visible.sync="viewDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="查看" top="5vh" @open="$nextTick(() => $refs.viewDialog.open())">
       <template v-slot>
         <detail :id="currentRow.id" ref="viewDialog" @confirm="e => viewDialogVisible = false" @close="viewDialogVisible = false" />
       </template>
