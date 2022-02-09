@@ -121,3 +121,10 @@
 .el-menu-item {
   padding-left: 30px !important;
 }
+
+// el-form-item在vxe-table工具栏内不需要margin-bottom
+.vxe-buttons--wrapper {
+  .el-form-item {
+    margin-bottom: 0;
+  }
+}

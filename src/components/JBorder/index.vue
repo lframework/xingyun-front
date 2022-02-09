@@ -29,7 +29,6 @@ export default {
 .j-border {
   border: 1px solid #eee;
   border-radius: 4px;
-  margin: 8px;
   padding: 5px;
 
   .j-border-title {
