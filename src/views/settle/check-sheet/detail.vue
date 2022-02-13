@@ -62,23 +62,23 @@
       >
         <!-- 业务单据号 列自定义内容 -->
         <template v-slot:bizCode_default="{ row }">
-          <span v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)" v-no-permission="['purchase:receive:query']">{{ row.bizCode }}</span>
-          <el-button v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)" v-permission="['purchase:receive:query']" type="text" @click="e => { $refs.viewPurchaseReceiveSheetDetailDialog.id = row.bizId; $refs.viewPurchaseReceiveSheetDetailDialog.openDialog() }">
+          <span v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)" v-no-permission="['purchase:receive:query']">{{ row.bizCode }}</span>
+          <el-button v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)" v-permission="['purchase:receive:query']" type="text" @click="e => { $refs.viewPurchaseReceiveSheetDetailDialog.id = row.bizId; $refs.viewPurchaseReceiveSheetDetailDialog.openDialog() }">
             {{ row.bizCode }}
           </el-button>
 
-          <span v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)" v-no-permission="['purchase:return:query']">{{ row.bizCode }}</span>
-          <el-button v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)" v-permission="['purchase:return:query']" type="text" @click="e => { $refs.viewPurchaseReturnDetailDialog.id = row.bizId; $refs.viewPurchaseReturnDetailDialog.openDialog() }">
+          <span v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)" v-no-permission="['purchase:return:query']">{{ row.bizCode }}</span>
+          <el-button v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)" v-permission="['purchase:return:query']" type="text" @click="e => { $refs.viewPurchaseReturnDetailDialog.id = row.bizId; $refs.viewPurchaseReturnDetailDialog.openDialog() }">
             {{ row.bizCode }}
           </el-button>
 
-          <span v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:fee-sheet:query']">{{ row.bizCode }}</span>
-          <el-button v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-permission="['settle:fee-sheet:query']" type="text" @click="e => { $refs.viewSettleFeeSheetDetailDialog.id = row.bizId; $refs.viewSettleFeeSheetDetailDialog.openDialog() }">
+          <span v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:fee-sheet:query']">{{ row.bizCode }}</span>
+          <el-button v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-permission="['settle:fee-sheet:query']" type="text" @click="e => { $refs.viewSettleFeeSheetDetailDialog.id = row.bizId; $refs.viewSettleFeeSheetDetailDialog.openDialog() }">
             {{ row.bizCode }}
           </el-button>
 
-          <span v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:pre-sheet:query']">{{ row.bizCode }}</span>
-          <el-button v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-permission="['settle:pre-sheet:query']" type="text" @click="e => { $refs.viewSettlePreSheetDetailDialog.id = row.bizId; $refs.viewSettlePreSheetDetailDialog.openDialog() }">
+          <span v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:pre-sheet:query']">{{ row.bizCode }}</span>
+          <el-button v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-permission="['settle:pre-sheet:query']" type="text" @click="e => { $refs.viewSettlePreSheetDetailDialog.id = row.bizId; $refs.viewSettlePreSheetDetailDialog.openDialog() }">
             {{ row.bizCode }}
           </el-button>
         </template>
