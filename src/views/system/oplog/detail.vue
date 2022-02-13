@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" width="50%" title="查看" top="5vh" @open="open">
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="50%" title="查看" top="5vh" @open="open">
     <div v-if="visible" v-permission="['system:oplog:query']">
       <el-descriptions :column="4" label-class-name="descriptions-label" content-class-name="descriptions-content" border>
         <el-descriptions-item label="日志名称" :span="4">{{ formData.name }}</el-descriptions-item>

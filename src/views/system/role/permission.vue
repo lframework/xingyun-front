@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" width="60%" title="授权" top="5vh" @open="open">
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="60%" title="授权" top="5vh" @open="open">
     <div v-if="visible" v-permission="['system:role:permission']">
       <vxe-grid
         ref="grid"

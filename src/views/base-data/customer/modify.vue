@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" width="40%" title="修改" top="5vh" @open="open">
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="修改" top="5vh" @open="open">
     <div v-if="visible" v-permission="['base-data:customer:modify']">
       <el-form ref="form" v-loading="loading" label-width="140px" title-align="right" :model="formData" :rules="rules">
         <el-form-item label="编号" prop="code">

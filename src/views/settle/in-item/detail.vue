@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" width="40%" title="查看" top="5vh" @open="open">
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="查看" top="5vh" @open="open">
     <div v-if="visible" v-permission="['settle:in-item:query']">
       <el-descriptions :column="4" border label-class-name="descriptions-label" content-class-name="descriptions-content">
         <el-descriptions-item label="编号" :span="2">
