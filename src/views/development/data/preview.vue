@@ -1,7 +1,7 @@
 <template>
-  <div v-if="visible">
+  <div v-if="visible" class="app-container">
     <div v-loading="loading">
-      <el-tabs :active-name="activeName" type="border-card">
+      <el-tabs :active-name="activeName" tab-position="left">
         <el-tab-pane v-for="(obj, index) in formData" :key="index" :label="index" :name="index">
           <span style="white-space: pre-wrap;">{{ obj }}</span>
         </el-tab-pane>
