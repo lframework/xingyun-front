@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="gen-container">
     <!-- 数据列表 -->
     <vxe-grid
       ref="grid"

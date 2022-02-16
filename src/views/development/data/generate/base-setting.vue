@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-form ref="form" v-loading="loading" label-width="260px" title-align="right" :model="formData" :rules="rules" style="max-width: 560px;">
+  <div class="gen-container">
+    <el-form ref="form" v-loading="loading" label-width="150px" title-align="right" :model="formData" :rules="rules" style="padding: 0 25%;">
       <el-form-item label="生成模板类型" prop="templateType">
         <el-select v-model="formData.templateType" placeholder="" clearable>
           <el-option v-for="item in $enums.GEN_TEMPLATE_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />

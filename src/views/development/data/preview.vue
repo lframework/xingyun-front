@@ -1,15 +1,17 @@
 <template>
   <div v-if="visible" class="app-container">
-    <div v-loading="loading">
+    <div class="gen-container" v-loading="loading">
       <el-tabs :active-name="activeName" tab-position="left">
         <el-tab-pane v-for="(obj, index) in formData" :key="index" :label="index" :name="index">
-          <span style="white-space: pre-wrap;">{{ obj }}</span>
+          <div class="gen-container">
+            <span style="white-space: pre-wrap;">{{ obj }}</span>
+          </div>
         </el-tab-pane>
       </el-tabs>
-    </div>
-    <div style="text-align: center;">
-      <el-button :loading="loading" type="primary" @click="download">下载</el-button>
-      <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; margin-top: 10px;">
+        <el-button :loading="loading" type="primary" @click="download">下载</el-button>
+        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      </div>
     </div>
   </div>
 </template>

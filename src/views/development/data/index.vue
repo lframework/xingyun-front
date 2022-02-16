@@ -173,7 +173,7 @@ export default {
         { field: 'createTime', title: '创建时间', width: 170 },
         { field: 'updateBy', title: '修改人', width: 100 },
         { field: 'updateTime', title: '修改时间', width: 170 },
-        { title: '操作', width: 270, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 320, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {

@@ -1,7 +1,7 @@
 <template>
-  <div v-if="visible">
-    <div v-loading="loading">
-      <el-tabs v-model="activeName" type="border-card">
+  <div v-if="visible" class="app-container">
+    <div class="gen-container" v-loading="loading">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="基本设置" name="baseSetting">
           <base-setting ref="baseSettingDialog" :form-data="formData.generateInfo" />
         </el-tab-pane>
@@ -24,10 +24,10 @@
           <detail-setting ref="detailSettingDialog" :columns="formData.columns" />
         </el-tab-pane>
       </el-tabs>
-    </div>
-    <div style="text-align: center;">
-      <el-button :loading="loading" type="primary" @click="submitEvent">保存</el-button>
-      <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; margin-top: 10px;">
+        <el-button :loading="loading" type="primary" @click="submitEvent">保存</el-button>
+        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -184,3 +184,10 @@ export default {
   }
 }
 </script>
+<style>
+.gen-container {
+  border: 1px solid #ebebeb;
+  border-radius: 3px;
+  padding: 10px;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="gen-container">
     <el-row>
       <el-col :span="4">
         <el-tree
