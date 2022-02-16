@@ -3,6 +3,7 @@
     <!-- 数据列表 -->
     <vxe-grid
       ref="grid"
+      stripe
       resizable
       show-overflow
       highlight-hover-row
@@ -26,14 +27,14 @@
 
       <!-- 显示类型 列自定义内容 -->
       <template v-slot:viewType_default="{ row }">
-        <el-select v-model="row.viewType">
+        <el-select v-model="row.viewType" :disabled="row.fixEnum" @change="e => changeViewType(row, e)">
           <el-option v-for="item in $enums.GEN_VIEW_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
         </el-select>
       </template>
 
       <!-- 是否内置枚举 列自定义内容 -->
       <template v-slot:fixEnum_default="{ row }">
-        <el-select v-model="row.fixEnum">
+        <el-select v-model="row.fixEnum" @change="e => changeFixEnum(row, e)">
           <el-option label="是" :value="true" />
           <el-option label="否" :value="false" />
         </el-select>
@@ -56,12 +57,12 @@
 
       <!-- 正则表达式 列自定义内容 -->
       <template v-slot:regularExpression_default="{ row }">
-        <el-input v-model="row.regularExpression" class="number-input" />
+        <el-input v-model="row.regularExpression" class="number-input" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" />
       </template>
 
       <!-- 是否排序字段 列自定义内容 -->
       <template v-slot:isOrder_default="{ row }">
-        <el-select v-model="row.isOrder">
+        <el-select v-model="row.isOrder" @change="e => changeIsOrder(row, e)">
           <el-option label="是" :value="true" />
           <el-option label="否" :value="false" />
         </el-select>
@@ -173,6 +174,25 @@ export default {
       }
 
       return true
+    },
+    changeFixEnum(row, val) {
+      if (val) {
+        // 是内置枚举
+        // viewType必须是SELECT
+        row.viewType = this.$enums.GEN_VIEW_TYPE.SELECT.code
+        this.changeViewType(row, this.$enums.GEN_VIEW_TYPE.SELECT.code)
+      }
+    },
+    changeViewType(row, val) {
+      if (val !== this.$enums.GEN_VIEW_TYPE.INPUT.code && val !== this.$enums.GEN_VIEW_TYPE.TEXTAREA.code) {
+        // 如果viewType不是INPUT、TEAXTAREA，正则必须是空
+        row.regularExpression = ''
+      }
+    },
+    changeIsOrder(row, val) {
+      if (!val) {
+        row.orderType = ''
+      }
     }
   }
 }

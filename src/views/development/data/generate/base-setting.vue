@@ -43,6 +43,15 @@
           }"
         />
       </el-form-item>
+      <el-form-item label="本级菜单编号" prop="menuCode">
+        <el-input v-model.trim="formData.menuCode" />
+      </el-form-item>
+      <el-form-item label="本级菜单名称" prop="menuName">
+        <el-input v-model.trim="formData.menuName" />
+      </el-form-item>
+      <el-form-item label="详情页Span总数量" prop="detailSpan">
+        <el-input v-model.trim="formData.detailSpan" />
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -86,6 +95,15 @@ export default {
         ],
         keyType: [
           { required: true, message: '请选择主键类型' }
+        ],
+        menuCode: [
+          { required: true, message: '请输入本级菜单编号' }
+        ],
+        menuName: [
+          { required: true, message: '请输入本级菜单名称' }
+        ],
+        detailSpan: [
+          { required: true, message: '请输入详情页Span总数量' }
         ]
       }
     }
@@ -155,6 +173,26 @@ export default {
 
       if (this.$utils.isEmpty(this.formData.bizName)) {
         this.$msg.error('请输入业务名！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.formData.menuCode)) {
+        this.$msg.error('请输入本级菜单编号！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.formData.menuName)) {
+        this.$msg.error('请输入本级菜单名称！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.formData.detailSpan)) {
+        this.$msg.error('请输入详情页Span总数量！')
+        return false
+      }
+
+      if (!this.$utils.isIntegerGtZero(this.formData.detailSpan)) {
+        this.$msg.error('详情页Span总数量必须是整数并且大于0！')
         return false
       }
 

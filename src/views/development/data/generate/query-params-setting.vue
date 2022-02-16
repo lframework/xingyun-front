@@ -24,6 +24,13 @@
           :data="tableData"
           :loading="loading"
         >
+          <!-- 查询类型 列自定义内容 -->
+          <template v-slot:queryType_default="{ row }">
+            <el-select v-model="row.queryType">
+              <el-option v-for="item in $enums.GEN_QUERY_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
+            </el-select>
+          </template>
+
           <!-- 是否必填 列自定义内容 -->
           <template v-slot:orderNo_default="{ row, rowIndex }">
             <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><svg-icon icon-class="el-icon-caret-top" /></span>
@@ -56,6 +63,7 @@ export default {
       tableColumn: [
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).name } },
         { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
+        { field: 'queryType', title: '查询类型', width: 120, slots: { default: 'queryType_default' }},
         { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
       tableData: []
@@ -71,11 +79,19 @@ export default {
   },
   methods: {
     validDate() {
+      for (let i = 0; i < this.tableData.length; i++) {
+        const column = this.tableData[i]
+        if (this.$utils.isEmpty(column.queryType)) {
+          this.$msg.error('字段【' + column.name + '】查询类型不能为空')
+          return false
+        }
+      }
       return true
     },
     emptyLine() {
       return {
         id: '',
+        queryType: this.$enums.GEN_QUERY_TYPE.EQ.code,
         orderNo: ''
       }
     },

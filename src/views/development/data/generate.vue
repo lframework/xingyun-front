@@ -91,7 +91,10 @@ export default {
           classDescription: '',
           parentMenuId: '',
           keyType: '',
-          author: ''
+          author: '',
+          menuCode: '9000',
+          menuName: '',
+          detailSpan: 4
         },
         createConfigs: [],
         updateConfigs: [],
@@ -144,7 +147,7 @@ export default {
     submitEvent() {
       if (this.validData()) {
         this.loading = true
-        this.$api.development.data.updateGenerate({
+        const params = {
           id: this.id,
           columns: this.formData.columns,
           generateInfo: this.formData.generateInfo,
@@ -153,7 +156,9 @@ export default {
           queryParamsConfigs: this.$refs.queryParamsSettingDialog.getTableData(),
           queryConfigs: this.$refs.querySettingDialog.getTableData(),
           detailConfigs: this.$refs.detailSettingDialog.getTableData()
-        }).then(() => {
+        }
+
+        this.$api.development.data.updateGenerate(params).then(() => {
           this.$msg.success('修改成功！')
           this.$emit('confirm')
           this.closeDialog()

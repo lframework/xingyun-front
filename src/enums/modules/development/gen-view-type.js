@@ -2,7 +2,7 @@ const GEN_VIEW_TYPE = {
   INPUT: {
     code: 0, desc: '输入框'
   },
-  TEXTATREA: {
+  TEXTAREA: {
     code: 1, desc: '文本域'
   },
   DATETIME: {

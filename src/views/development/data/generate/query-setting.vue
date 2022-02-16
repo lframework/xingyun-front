@@ -24,6 +24,18 @@
           :data="tableData"
           :loading="loading"
         >
+          <!-- 宽度类型 列自定义内容 -->
+          <template v-slot:widthType_default="{ row }">
+            <el-select v-model="row.widthType" placeholder="">
+              <el-option v-for="item in $enums.GEN_QUERY_WIDTH_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
+            </el-select>
+          </template>
+
+          <!-- 宽度 列自定义内容 -->
+          <template v-slot:width_default="{ row }">
+            <el-input v-model="row.width" class="number-input" />
+          </template>
+
           <!-- 是否必填 列自定义内容 -->
           <template v-slot:orderNo_default="{ row, rowIndex }">
             <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><svg-icon icon-class="el-icon-caret-top" /></span>
@@ -56,6 +68,8 @@ export default {
       tableColumn: [
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).name } },
         { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
+        { field: 'widthType', title: '宽度类型', width: 140, slots: { default: 'widthType_default' }},
+        { field: 'width', title: '宽度', width: 100, slots: { default: 'width_default' }, align: 'right'},
         { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
       tableData: []
@@ -71,11 +85,35 @@ export default {
   },
   methods: {
     validDate() {
+      if (this.$utils.isEmpty(this.tableData)) {
+        this.$msg.error('查询功能必须配置')
+        return false
+      }
+
+      for (let i = 0; i < this.tableData.length; i++) {
+        const column = this.tableData[i]
+        if (this.$utils.isEmpty(column.widthType)) {
+          this.$msg.error('字段【' + column.name + '】宽度类型不能为空')
+          return false
+        }
+
+        if (this.$utils.isEmpty(column.width)) {
+          this.$msg.error('字段【' + column.name + '】宽度不能为空')
+          return false
+        }
+
+        if (!this.$utils.isIntegerGtZero(column.width)) {
+          this.$msg.error('字段【' + column.name + '】宽度必须是整数并且大于0')
+          return false
+        }
+      }
       return true
     },
     emptyLine() {
       return {
         id: '',
+        widthType: this.$enums.GEN_QUERY_WIDTH_TYPE.FIX.code,
+        width: 100,
         orderNo: ''
       }
     },

@@ -26,7 +26,7 @@
         >
           <!-- 列宽 列自定义内容 -->
           <template v-slot:span_default="{ row }">
-            <el-input v-model="row.span" />
+            <el-input v-model="row.span" class="number-input" />
           </template>
 
           <!-- 是否必填 列自定义内容 -->
@@ -61,7 +61,7 @@ export default {
       tableColumn: [
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).name } },
         { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
-        { field: 'span', title: '列宽', width: 80, slots: { default: 'span_default' }},
+        { field: 'span', title: '列宽', width: 80, slots: { default: 'span_default' }, align: 'right'},
         { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
       tableData: []
@@ -81,17 +81,17 @@ export default {
         for (let i = 0; i < this.tableData.length; i++) {
           const obj = this.tableData[i]
           if (!this.$utils.isInteger(obj.span)) {
-            this.$msg.error('第' + (i + 1) + '行列宽必须为数字！')
+            this.$msg.error('字段【' + obj.name + '】列宽必须为数字！')
             return false
           }
 
           if (!this.$utils.isIntegerGtZero(obj.span)) {
-            this.$msg.error('第' + (i + 1) + '行列宽必须大于0！')
+            this.$msg.error('字段【' + obj.name + '】列宽必须大于0！')
             return false
           }
 
           if (obj.span > 24) {
-            this.$msg.error('第' + (i + 1) + '行列宽不能超过24！')
+            this.$msg.error('字段【' + obj.name + '】列宽不能超过24！')
             return false
           }
         }
