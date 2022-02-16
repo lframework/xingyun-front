@@ -4,7 +4,7 @@
       <el-tabs :active-name="activeName" tab-position="left">
         <el-tab-pane v-for="(obj, index) in formData" :key="index" :label="index" :name="index">
           <div class="gen-container">
-            <span style="white-space: pre-wrap;">{{ obj }}</span>
+            <span style="white-space: pre-wrap; line-height: 1.5;">{{ obj }}</span>
           </div>
         </el-tab-pane>
       </el-tabs>
