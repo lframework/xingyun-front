@@ -1,5 +1,5 @@
 <template>
-  <div :class="'item item--' + $globalSize" :style="{width: itemWidth}">
+  <div v-show="visible" :class="'item item--' + $globalSize" :style="{width: itemWidth}">
     <span :class="'label label--' + $globalSize" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : label }}</span>
     <div v-if="contentNest" class="content" :style="{width: contentWidth}">
       <slot />
@@ -59,6 +59,7 @@ export default {
   },
   data() {
     return {
+      visible: true
     }
   },
   computed: {
@@ -77,9 +78,14 @@ export default {
       return (span / 24 * 100) + '%'
     }
   },
+  mounted() {
+    if (!this.$utils.isEmpty(this.form)) {
+      this.form.addItem(this)
+    }
+  },
   methods: {
-    testaa() {
-
+    setVisible(v) {
+      this.visible = v
     }
   }
 }
