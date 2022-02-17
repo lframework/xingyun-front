@@ -140,7 +140,14 @@ export default {
   created() {
   },
   methods: {
-    validDate() {
+    async validDate() {
+      let flag = true
+      await this.$refs.form.validate((valid) => {
+        flag = valid
+      })
+      if (!flag) {
+        return false
+      }
       if (this.$utils.isEmpty(this.formData.templateType)) {
         this.$msg.error('请选择生成模板类型！')
         return false

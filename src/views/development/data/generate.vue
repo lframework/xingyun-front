@@ -105,13 +105,13 @@ export default {
 
       this.activeName = 'baseSetting'
     },
-    validData() {
+    async validData() {
       if (!this.$refs.generateColumnsDialog.validDate()) {
         this.activeName = 'generate'
         return false
       }
 
-      if (!this.$refs.baseSettingDialog.validDate()) {
+      if (!await this.$refs.baseSettingDialog.validDate()) {
         this.activeName = 'baseSetting'
         return false
       }
@@ -144,8 +144,8 @@ export default {
       return true
     },
     // 提交表单事件
-    submitEvent() {
-      if (this.validData()) {
+    async submitEvent() {
+      if (await this.validData()) {
         this.loading = true
         const params = {
           id: this.id,
