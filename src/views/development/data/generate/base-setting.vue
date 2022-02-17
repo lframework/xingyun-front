@@ -7,10 +7,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="后端完整包名">
-        <el-input :value="fullPackageNameBack" readonly />
+        <el-input :value="fullPackageNameBack" disabled />
       </el-form-item>
       <el-form-item label="前端完整路径">
-        <el-input :value="fullPackageNameFront" readonly />
+        <el-input :value="fullPackageNameFront" disabled />
       </el-form-item>
       <el-form-item label="作者" prop="author">
         <el-input v-model.trim="formData.author" />
