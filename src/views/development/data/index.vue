@@ -17,6 +17,7 @@
         :height="$defaultTableHeight"
       >
         <template v-slot:form>
+        <j-border>
           <j-form label-width="60px">
             <j-form-item label="编号" :span="6">
               <el-input v-model="searchFormData.code" clearable />
@@ -35,6 +36,7 @@
               </el-select>
             </j-form-item>
           </j-form>
+          </j-border>
         </template>
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
