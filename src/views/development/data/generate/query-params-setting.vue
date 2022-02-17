@@ -79,6 +79,10 @@ export default {
   },
   methods: {
     validDate() {
+      if (this.$utils.isEmpty(this.tableData)) {
+        this.$msg.error('查询功能参数必须配置')
+        return false
+      }
       for (let i = 0; i < this.tableData.length; i++) {
         const column = this.tableData[i]
         if (this.$utils.isEmpty(column.queryType)) {

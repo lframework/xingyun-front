@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="item-container">
-      <slot />
+    <div class="item-container" :class="a">
+      <slot ref="children" />
     </div>
   </div>
 </template>
@@ -22,6 +22,19 @@ export default {
   },
   data() {
     return {
+    }
+  },
+  computed: {
+    a() {
+      let children = this.$slots.default
+      if (!this.$utils.isEmpty(children)) {
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i]
+          console.log(child)
+        }
+      }
+
+      return children
     }
   },
   methods: {

@@ -17,24 +17,24 @@
         :height="$defaultTableHeight"
       >
         <template v-slot:form>
-          <el-form :model="searchFormData" label-width="60px" :inline="true">
-            <el-form-item label="编号">
+          <j-form label-width="60px">
+            <j-form-item label="编号" :span="6">
               <el-input v-model="searchFormData.code" clearable />
-            </el-form-item>
-            <el-form-item label="名称">
+            </j-form-item>
+            <j-form-item label="名称" :span="6">
               <el-input v-model="searchFormData.name" clearable />
-            </el-form-item>
-            <el-form-item label="类型">
+            </j-form-item>
+            <j-form-item label="类型" :span="6">
               <el-select v-model="searchFormData.type" placeholder="全部" clearable>
                 <el-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
               </el-select>
-            </el-form-item>
-            <el-form-item label="状态">
+            </j-form-item>
+            <j-form-item label="状态" :span="6">
               <el-select v-model="searchFormData.available" placeholder="全部" clearable>
                 <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
               </el-select>
-            </el-form-item>
-          </el-form>
+            </j-form-item>
+          </j-form>
         </template>
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
