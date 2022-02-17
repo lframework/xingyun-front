@@ -1,6 +1,6 @@
 <template>
   <div v-if="visible" class="app-container">
-    <div class="gen-container" v-loading="loading">
+    <div v-loading="loading" class="gen-container">
       <el-tabs :active-name="activeName" tab-position="left">
         <el-tab-pane v-for="(obj, index) in formData" :key="index" :label="index" :name="index">
           <div class="gen-container">

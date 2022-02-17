@@ -1,6 +1,6 @@
 <template>
   <div v-if="visible" class="app-container">
-    <div class="gen-container" v-loading="loading">
+    <div v-loading="loading" class="gen-container">
       <el-tabs v-model="activeName">
         <el-tab-pane label="基本设置" name="baseSetting">
           <base-setting ref="baseSettingDialog" :form-data="formData.generateInfo" />

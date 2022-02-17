@@ -61,7 +61,7 @@ export default {
       tableColumn: [
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).name } },
         { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
-        { field: 'span', title: '列宽', width: 80, slots: { default: 'span_default' }, align: 'right'},
+        { field: 'span', title: '列宽', width: 80, slots: { default: 'span_default' }, align: 'right' },
         { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
       tableData: []

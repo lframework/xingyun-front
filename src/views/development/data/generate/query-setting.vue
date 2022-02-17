@@ -69,7 +69,7 @@ export default {
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).name } },
         { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
         { field: 'widthType', title: '宽度类型', width: 140, slots: { default: 'widthType_default' }},
-        { field: 'width', title: '宽度', width: 100, slots: { default: 'width_default' }, align: 'right'},
+        { field: 'width', title: '宽度', width: 100, slots: { default: 'width_default' }, align: 'right' },
         { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
       tableData: []
