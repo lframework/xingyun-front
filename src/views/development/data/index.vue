@@ -43,7 +43,7 @@
               <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
             </el-form-item>
             <el-form-item v-permission="['development:data:add']">
-              <el-button type="primary" icon="el-icon-plus" @click="addDialogVisible = true">新增</el-button>
+              <el-button type="primary" icon="el-icon-plus" @click="$refs.addDialog.openDialog()">新增</el-button>
             </el-form-item>
             <el-form-item v-permission="['development:data:delete']">
               <el-button icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
@@ -69,45 +69,29 @@
 
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
-          <el-button v-permission="['system:menu:query']" type="text" icon="el-icon-view" @click="e => { currentRow = row;viewDialogVisible = true }">查看</el-button>
-          <el-button v-permission="['system:menu:modify']" type="text" icon="el-icon-edit" @click="e => { currentRow = row;updateDialogVisible = true }">修改</el-button>
-          <el-button v-if="!row.hasColumns" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { currentRow = row;settingsDialogVisible = true }">设置</el-button>
-          <el-button v-if="row.hasColumns" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { currentRow = row;visible=false;$nextTick(() => $refs.generateDialog.openDialog()) }">生成</el-button>
-          <el-button v-if="row.hasColumns" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { currentRow = row;visible=false;$nextTick(() => $refs.previewDialog.openDialog()) }">预览</el-button>
+          <el-button v-permission="['system:menu:query']" type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
+          <el-button v-permission="['system:menu:modify']" type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.updateDialog.openDialog() }">修改</el-button>
+          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.CREATED.code" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { id = row.id;type=row.type;$refs.settingsDialog.openDialog() }">设置</el-button>
+          <el-button v-else-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_TABLE.code || row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.generateDialog.openDialog()) }">生成</el-button>
+          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.previewDialog.openDialog()) }">预览</el-button>
           <el-button v-permission="['system:menu:delete']" type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
         </template>
       </vxe-grid>
 
       <!-- 新增窗口 -->
-      <el-dialog :visible.sync="addDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="新增" top="5vh">
-        <template v-slot>
-          <add @confirm="e => {addDialogVisible = false;search()}" @close="addDialogVisible = false" />
-        </template>
-      </el-dialog>
+      <add ref="addDialog" @confirm="search" />
 
       <!-- 修改窗口 -->
-      <el-dialog :visible.sync="updateDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="修改" top="5vh" @open="$nextTick(() => $refs.updateDialog.open())">
-        <template v-slot>
-          <modify :id="currentRow.id || ''" ref="updateDialog" @confirm="e => {updateDialogVisible = false;search()}" @close="updateDialogVisible = false" />
-        </template>
-      </el-dialog>
+      <modify :id="id" ref="updateDialog" @confirm="search" />
 
       <!-- 查看窗口 -->
-      <el-dialog :visible.sync="viewDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="查看" top="5vh" @open="$nextTick(() => $refs.viewDialog.open())">
-        <template v-slot>
-          <detail :id="currentRow.id || ''" ref="viewDialog" @confirm="e => viewDialogVisible = false" @close="viewDialogVisible = false" />
-        </template>
-      </el-dialog>
+      <detail :id="id" ref="viewDialog" />
 
       <!-- 设置窗口 -->
-      <el-dialog :visible.sync="settingsDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="设置" top="5vh" @open="$nextTick(() => $refs.settingsDialog.open())">
-        <template v-slot>
-          <settings :id="currentRow.id || ''" ref="settingsDialog" :type="currentRow.type" @confirm="e => {settingsDialogVisible = false;search()}" @close="settingsDialogVisible = false" />
-        </template>
-      </el-dialog>
+      <settings :id="id" ref="settingsDialog" :type="type" @confirm="search" />
     </div>
-    <generate :id="currentRow.id || ''" ref="generateDialog" @confirm="search" @close="visible = true" />
-    <preview :id="currentRow.id || ''" ref="previewDialog" @close="visible = true" />
+    <generate :id="id" ref="generateDialog" @confirm="search" @close="visible = true" />
+    <preview :id="id" ref="previewDialog" @close="visible = true" />
   </div>
 </template>
 
@@ -129,18 +113,11 @@ export default {
   data() {
     return {
       // 当前行数据
-      currentRow: {},
+      id: '',
+      type: this.$enums.DATAOBJECT_TYPE.SIMPLE_DB.code,
       // 是否显示加载框
       loading: false,
       visible: true,
-      // 是否显示新增窗口
-      addDialogVisible: false,
-      // 是否显示修改窗口
-      updateDialogVisible: false,
-      // 是否显示详情窗口
-      viewDialogVisible: false,
-      // 是否显示设置窗口
-      settingsDialogVisible: false,
       // 查询列表的查询条件
       searchFormData: {},
       // 分页配置

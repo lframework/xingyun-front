@@ -1,31 +1,33 @@
 <template>
-  <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData">
-    <el-form-item label="编号" prop="code">
-      <el-input v-model="formData.code" readonly />
-    </el-form-item>
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="formData.name" readonly />
-    </el-form-item>
-    <el-form-item label="类型" prop="type">
-      <el-select v-model="formData.type" disabled>
-        <el-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-      </el-select>
-    </el-form-item>
-    <el-form-item label="状态" prop="available">
-      <el-select v-model="formData.available" disabled>
-        <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-      </el-select>
-    </el-form-item>
-    <el-form-item label="备注" prop="description">
-      <el-input v-model="formData.description" type="textarea" resize="none" readonly />
-    </el-form-item>
-  </el-form>
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="查看" top="5vh" @open="open">
+    <div v-if="visible">
+      <el-descriptions :column="4" border label-class-name="descriptions-label" content-class-name="descriptions-content">
+        <el-descriptions-item label="编号" :span="2">
+          {{ formData.code }}
+        </el-descriptions-item>
+        <el-descriptions-item label="名称" :span="2">
+          {{ formData.name }}
+        </el-descriptions-item>
+        <el-descriptions-item label="类型" :span="2">
+          {{ $enums.DATAOBJECT_TYPE.getDesc(formData.type) }}
+        </el-descriptions-item>
+        <el-descriptions-item label="状态" :span="2">
+          <available-tag :available="formData.available" />
+        </el-descriptions-item>
+        <el-descriptions-item label="备注" :span="4">
+          {{ formData.description }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </div>
+  </el-dialog>
 </template>
 <script>
 
+import AvailableTag from '@/components/Tag/Available'
 export default {
   // 使用组件
   components: {
+    AvailableTag
   },
 
   props: {
@@ -36,6 +38,8 @@ export default {
   },
   data() {
     return {
+      // 是否可见
+      visible: false,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -46,6 +50,15 @@ export default {
     this.initFormData()
   },
   methods: {
+    // 打开对话框 由父页面触发
+    openDialog() {
+      this.visible = true
+    },
+    // 关闭对话框
+    closeDialog() {
+      this.visible = false
+      this.$emit('close')
+    },
     // 初始化表单数据
     initFormData() {
       this.formData = {
@@ -65,9 +78,9 @@ export default {
       this.loadFormData()
     },
     // 查询数据
-    loadFormData() {
+    async loadFormData() {
       this.loading = true
-      this.$api.development.data.get(this.id).then(data => {
+      await this.$api.development.data.get(this.id).then(data => {
         this.formData = data
       }).finally(() => {
         this.loading = false

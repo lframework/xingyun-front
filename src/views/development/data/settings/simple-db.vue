@@ -36,7 +36,7 @@
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="submitEvent">保存</el-button>
-      <el-button @click="$emit('close')">取消</el-button>
+      <el-button @click="closeDialog">取消</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -84,15 +84,15 @@ export default {
     this.initFormData()
   },
   methods: {
+    // 关闭对话框
+    closeDialog() {
+      this.$emit('close')
+    },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        id: '',
-        code: '',
-        name: '',
-        available: '',
-        description: '',
         dbType: constants.DB_TYPE.CURRENT.code,
+        convertType: this.$enums.GEN_CONVERT_TYPE.UNDERLINE_TO_CAMEL.code,
         table: ''
       }
 
@@ -117,6 +117,7 @@ export default {
           this.$api.development.simpledb.create(params).then(() => {
             this.$msg.success('设置成功！')
             this.$emit('confirm')
+            this.closeDialog()
           }).finally(() => {
             this.loading = false
           })

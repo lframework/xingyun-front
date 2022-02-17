@@ -1,5 +1,9 @@
 <template>
-  <simple-db v-if="$enums.DATAOBJECT_TYPE.SIMPLE_DB.equalsCode(type)" :id="id" ref="setting" @confirm="$emit('confirm')" @close="$emit('close')" />
+  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="设置" top="5vh" @open="open">
+    <div v-if="visible">
+      <simple-db v-if="$enums.DATAOBJECT_TYPE.SIMPLE_DB.equalsCode(type)" :id="id" ref="setting" @confirm="e => {$emit('confirm', e);closeDialog()}" @close="closeDialog" />
+    </div>
+  </el-dialog>
 </template>
 <script>
 
@@ -22,54 +26,27 @@ export default {
   },
   data() {
     return {
+      // 是否可见
+      visible: false,
       // 是否显示加载框
-      loading: false,
-      // 表单数据
-      formData: {},
-      // 表单校验规则
-      rules: {
-        code: [
-          { required: true, message: '请输入编号' }
-        ],
-        name: [
-          { required: true, message: '请输入名称' }
-        ],
-        type: [
-          { required: true, message: '请选择类型' }
-        ],
-        available: [
-          { required: true, message: '请选择状态' }
-        ]
-      }
+      loading: false
     }
   },
   created() {
     this.initFormData()
   },
   methods: {
+    // 打开对话框 由父页面触发
+    openDialog() {
+      this.visible = true
+    },
+    // 关闭对话框
+    closeDialog() {
+      this.visible = false
+      this.$emit('close')
+    },
     // 初始化表单数据
     initFormData() {
-      this.formData = {
-        id: '',
-        code: '',
-        name: '',
-        available: '',
-        description: ''
-      }
-    },
-    // 提交表单事件
-    submitEvent() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.$api.development.data.modify(this.formData).then(() => {
-            this.$msg.success('修改成功！')
-            this.$emit('confirm')
-          }).finally(() => {
-            this.loading = false
-          })
-        }
-      })
     },
     // 页面显示时由父页面触发
     open() {
@@ -84,13 +61,7 @@ export default {
       })
     },
     // 查询数据
-    loadFormData() {
-      this.loading = true
-      this.$api.development.data.get(this.id).then(data => {
-        this.formData = data
-      }).finally(() => {
-        this.loading = false
-      })
+    async loadFormData() {
     }
   }
 }
