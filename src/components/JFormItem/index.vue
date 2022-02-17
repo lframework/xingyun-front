@@ -11,7 +11,7 @@
 export default {
   name: 'JFormItem',
 
-  componentName: 'JBorderJFormItem',
+  componentName: 'JFormItem',
 
   props: {
     /**
@@ -78,7 +78,9 @@ export default {
     }
   },
   methods: {
+    testaa() {
 
+    }
   }
 }
 </script>
