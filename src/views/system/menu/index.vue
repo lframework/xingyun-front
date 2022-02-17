@@ -31,7 +31,7 @@
 
       <template v-slot:form>
         <j-border>
-          <j-form label-width="60px">
+          <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
             <j-form-item label="标题" :span="6">
               <el-input v-model="searchFormData.searchMenuName" clearable />
             </j-form-item>

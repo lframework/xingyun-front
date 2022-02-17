@@ -18,7 +18,7 @@
     >
       <template v-slot:form>
         <j-border>
-          <j-form label-width="80px">
+          <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
             <j-form-item label="仓库">
               <store-center-selector v-model="searchFormData.sc" />
             </j-form-item>

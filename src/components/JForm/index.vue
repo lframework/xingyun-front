@@ -58,6 +58,7 @@ export default {
         }
       }
       this.collapseStatus = !this.collapseStatus
+      this.$emit('collapse')
     },
     expand() {
       let totalSpan = 0

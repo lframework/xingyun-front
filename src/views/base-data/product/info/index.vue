@@ -18,7 +18,7 @@
       >
         <template v-slot:form>
           <j-border>
-            <j-form>
+            <j-form @collapse="$refs.grid.refreshColumn()">
               <j-form-item label="商品编号">
                 <el-input v-model="searchFormData.code" clearable />
               </j-form-item>
