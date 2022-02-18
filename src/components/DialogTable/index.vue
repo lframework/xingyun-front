@@ -40,10 +40,7 @@
               buttons: 'toolbar_buttons'
             }
           }"
-          :pager-config="{
-            pageSize: 20,
-            pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-          }"
+          :pager-config="{}"
           :loading="loading"
         >
           <template v-slot:form>

@@ -12,30 +12,30 @@
         :proxy-config="proxyConfig"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
-        :pager-config="pagerConfig"
+        :pager-config="{}"
         :loading="loading"
         :height="$defaultTableHeight"
       >
         <template v-slot:form>
-        <j-border>
-          <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
-            <j-form-item label="编号" :span="6">
-              <el-input v-model="searchFormData.code" clearable />
-            </j-form-item>
-            <j-form-item label="名称" :span="6">
-              <el-input v-model="searchFormData.name" clearable />
-            </j-form-item>
-            <j-form-item label="类型" :span="6">
-              <el-select v-model="searchFormData.type" placeholder="全部" clearable>
-                <el-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-              </el-select>
-            </j-form-item>
-            <j-form-item label="状态" :span="6">
-              <el-select v-model="searchFormData.available" placeholder="全部" clearable>
-                <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-              </el-select>
-            </j-form-item>
-          </j-form>
+          <j-border>
+            <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
+              <j-form-item label="编号" :span="6">
+                <el-input v-model="searchFormData.code" clearable />
+              </j-form-item>
+              <j-form-item label="名称" :span="6">
+                <el-input v-model="searchFormData.name" clearable />
+              </j-form-item>
+              <j-form-item label="类型" :span="6">
+                <el-select v-model="searchFormData.type" placeholder="全部" clearable>
+                  <el-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
+                </el-select>
+              </j-form-item>
+              <j-form-item label="状态" :span="6">
+                <el-select v-model="searchFormData.available" placeholder="全部" clearable>
+                  <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
+                </el-select>
+              </j-form-item>
+            </j-form>
           </j-border>
         </template>
         <!-- 工具栏 -->
@@ -131,10 +131,6 @@ export default {
       },
       // 工具栏配置
       toolbarConfig: {
-        zoom: true,
-        custom: true,
-        // 右侧是否显示刷新按钮
-        refresh: true,
         // 自定义左侧工具栏
         slots: {
           buttons: 'toolbar_buttons'

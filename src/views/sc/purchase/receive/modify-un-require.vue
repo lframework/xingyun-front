@@ -198,6 +198,12 @@ export default {
       formData: {},
       // 工具栏配置
       toolbarConfig: {
+        // 缩放
+        zoom: false,
+        // 自定义表头
+        custom: false,
+        // 右侧是否显示刷新按钮
+        refresh: false,
         // 自定义左侧工具栏
         slots: {
           buttons: 'toolbar_buttons'

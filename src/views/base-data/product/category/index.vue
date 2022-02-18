@@ -121,9 +121,6 @@ export default {
         }
       },
       toolBarConfig: {
-        zoom: true,
-        custom: true,
-        refresh: true,
         slots: {
           buttons: 'toolbar_buttons'
         }

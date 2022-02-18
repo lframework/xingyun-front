@@ -10,7 +10,7 @@
       row-id="id"
       :proxy-config="proxyConfig"
       :columns="tableColumn"
-      :pager-config="pagerConfig"
+      :pager-config="{}"
       :loading="loading"
       :height="$defaultTableHeight"
     >

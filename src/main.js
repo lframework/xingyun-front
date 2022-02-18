@@ -48,7 +48,26 @@ Vue.prototype.$utils = utils
 Vue.use(enums, enumParse())
 Vue.use(api, apiParse())
 VXETable.setup({
-  size: Vue.prototype.$globalSize
+  size: Vue.prototype.$globalSize,
+  table: {
+    sortConfig: {
+      trigger: 'cell'
+    }
+  },
+  grid: {
+    pagerConfig: {
+      pageSize: 20,
+      pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
+    },
+    toolbarConfig: {
+      // 缩放
+      zoom: true,
+      // 自定义表头
+      custom: true,
+      // 右侧是否显示刷新按钮
+      refresh: true
+    }
+  }
 })
 Vue.use(VXETable)
 Vue.use(permission)

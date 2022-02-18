@@ -13,7 +13,7 @@
         height="500"
         :proxy-config="proxyConfig"
         :columns="tableColumn"
-        :pager-config="pagerConfig"
+        :pager-config="{}"
         :loading="loading"
         style="margin-top: 10px;"
       >
