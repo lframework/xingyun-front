@@ -36,7 +36,15 @@
             <el-input v-model="row.width" class="number-input" />
           </template>
 
-          <!-- 是否必填 列自定义内容 -->
+          <!-- 是否页面排序 列自定义内容 -->
+          <template v-slot:sortable_default="{ row }">
+            <el-select v-model="row.sortable" placeholder="">
+              <el-option label="是" :value="true" />
+              <el-option label="否" :value="false" />
+            </el-select>
+          </template>
+
+          <!-- 排序 列自定义内容 -->
           <template v-slot:orderNo_default="{ row, rowIndex }">
             <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><svg-icon icon-class="el-icon-caret-top" /></span>
             <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><svg-icon icon-class="el-icon-caret-bottom" /></span>
@@ -70,6 +78,7 @@ export default {
         { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
         { field: 'widthType', title: '宽度类型', width: 140, slots: { default: 'widthType_default' }},
         { field: 'width', title: '宽度', width: 100, slots: { default: 'width_default' }, align: 'right' },
+        { field: 'sortable', title: '是否页面排序', width: 140, slots: { default: 'sortable_default' }},
         { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
       tableData: []
@@ -102,6 +111,11 @@ export default {
           return false
         }
 
+        if (this.$utils.isEmpty(column.sortable)) {
+          this.$msg.error('字段【' + column.name + '】是否页面排序不能为空')
+          return false
+        }
+
         if (!this.$utils.isIntegerGtZero(column.width)) {
           this.$msg.error('字段【' + column.name + '】宽度必须是整数并且大于0')
           return false
@@ -114,6 +128,7 @@ export default {
         id: '',
         widthType: this.$enums.GEN_QUERY_WIDTH_TYPE.FIX.code,
         width: 100,
+        sortable: false,
         orderNo: ''
       }
     },

@@ -1,5 +1,5 @@
 <template>
-  <div v-permission="['system:menu:add']">
+  <div>
     <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
       <el-form-item label="编号" prop="code">
         <el-input v-model="formData.code" clearable />

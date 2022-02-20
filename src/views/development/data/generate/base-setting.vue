@@ -52,6 +52,36 @@
       <el-form-item label="详情页Span总数量" prop="detailSpan">
         <el-input v-model.trim="formData.detailSpan" />
       </el-form-item>
+      <el-form-item label="是否应用缓存" prop="isCache">
+        <el-select v-model="formData.isCache" placeholder="">
+          <el-option label="是" :value="true" />
+          <el-option label="否" :value="false" />
+        </el-select>
+        <el-popover
+          class="tip-question"
+          placement="top-start"
+          width="200"
+          trigger="click"
+          content="表示后端查询、修改等功能是否使用缓存"
+        >
+          <el-button slot="reference" type="text" icon="el-icon-question" />
+        </el-popover>
+      </el-form-item>
+      <el-form-item label="是否内置删除功能" prop="hasDelete">
+        <el-select v-model="formData.hasDelete" placeholder="">
+          <el-option label="是" :value="true" />
+          <el-option label="否" :value="false" />
+        </el-select>
+        <el-popover
+          class="tip-question"
+          placement="top-start"
+          width="200"
+          trigger="click"
+          content="表示是否内置deleteById功能"
+        >
+          <el-button slot="reference" type="text" icon="el-icon-question" />
+        </el-popover>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -104,6 +134,12 @@ export default {
         ],
         detailSpan: [
           { required: true, message: '请输入详情页Span总数量' }
+        ],
+        isCache: [
+          { required: true, message: '请选择是否应用缓存' }
+        ],
+        hasDelete: [
+          { required: true, message: '清选择是否内置删除功能' }
         ]
       }
     }
@@ -200,6 +236,16 @@ export default {
 
       if (!this.$utils.isIntegerGtZero(this.formData.detailSpan)) {
         this.$msg.error('详情页Span总数量必须是整数并且大于0！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.formData.isCache)) {
+        this.$msg.error('请选择是否应用缓存！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.formData.hasDelete)) {
+        this.$msg.error('请选择是否内置删除功能！')
         return false
       }
 

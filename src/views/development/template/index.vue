@@ -40,13 +40,13 @@
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
           </el-form-item>
-          <el-form-item v-permission="['development:data:add']">
+          <el-form-item>
             <el-button type="primary" icon="el-icon-plus" @click="addDialogVisible = true">新增</el-button>
           </el-form-item>
-          <el-form-item v-permission="['development:data:delete']">
+          <el-form-item>
             <el-button icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
           </el-form-item>
-          <el-form-item v-permission="['system:menu:modify']">
+          <el-form-item>
             <el-dropdown trigger="click" @command="handleCommand">
               <el-button>
                 更多<i class="el-icon-more el-icon--right" />
@@ -67,9 +67,9 @@
 
       <!-- 操作 列自定义内容 -->
       <template v-slot:action_default="{ row }">
-        <el-button v-permission="['system:menu:query']" type="text" icon="el-icon-view" @click="e => { currentRow = row;viewDialogVisible = true }">查看</el-button>
-        <el-button v-permission="['system:menu:modify']" type="text" icon="el-icon-edit" @click="e => { currentRow = row;updateDialogVisible = true }">修改</el-button>
-        <el-button v-permission="['system:menu:delete']" type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
+        <el-button type="text" icon="el-icon-view" @click="e => { currentRow = row;viewDialogVisible = true }">查看</el-button>
+        <el-button type="text" icon="el-icon-edit" @click="e => { currentRow = row;updateDialogVisible = true }">修改</el-button>
+        <el-button type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
       </template>
     </vxe-grid>
 

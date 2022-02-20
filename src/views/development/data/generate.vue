@@ -6,7 +6,7 @@
           <base-setting ref="baseSettingDialog" :form-data="formData.generateInfo" />
         </el-tab-pane>
         <el-tab-pane label="字段配置" name="generate">
-          <generate-columns ref="generateColumnsDialog" :columns="formData.columns" />
+          <generate-columns ref="generateColumnsDialog" :columns="formData.columns" @sortColumns="e => formData.columns = e" />
         </el-tab-pane>
         <el-tab-pane label="新增功能配置" name="addSetting">
           <add-setting ref="addSettingDialog" :columns="formData.columns" />

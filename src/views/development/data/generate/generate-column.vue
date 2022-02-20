@@ -26,6 +26,20 @@
       </template>
 
       <!-- 显示类型 列自定义内容 -->
+      <template v-slot:viewType_header>
+        <span>显示类型</span>
+        <el-popover
+          class="tip-question"
+          placement="top-start"
+          width="200"
+          trigger="click"
+          content="表示前端使用的组件类型。注：当属性名是available并且显示类型是选择器时，会将该字段转换为内置的状态字段"
+        >
+          <el-button slot="reference" type="text" icon="el-icon-question" />
+        </el-popover>
+      </template>
+
+      <!-- 显示类型 列自定义内容 -->
       <template v-slot:viewType_default="{ row }">
         <el-select v-model="row.viewType" :disabled="row.fixEnum" @change="e => changeViewType(row, e)">
           <el-option v-for="item in $enums.GEN_VIEW_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
@@ -34,15 +48,43 @@
 
       <!-- 是否内置枚举 列自定义内容 -->
       <template v-slot:fixEnum_default="{ row }">
-        <el-select v-model="row.fixEnum" @change="e => changeFixEnum(row, e)">
+        <el-select v-model="row.fixEnum" :disabled="row.isKey" @change="e => changeFixEnum(row, e)">
           <el-option label="是" :value="true" />
           <el-option label="否" :value="false" />
         </el-select>
       </template>
 
       <!-- 后端枚举名 列自定义内容 -->
+      <template v-slot:enumBack_header>
+        <span>后端枚举名</span>
+        <el-popover
+          class="tip-question"
+          placement="top-start"
+          width="200"
+          trigger="click"
+          content="填写后端枚举类的全名称，如：com.lframework.xingyun.enums.BizType"
+        >
+          <el-button slot="reference" type="text" icon="el-icon-question" />
+        </el-popover>
+      </template>
+
+      <!-- 后端枚举名 列自定义内容 -->
       <template v-slot:enumBack_default="{ row }">
         <el-input v-if="row.fixEnum" v-model="row.enumBack" />
+      </template>
+
+      <!-- 前端枚举名 列自定义内容 -->
+      <template v-slot:enumFront_header>
+        <span>前端枚举名</span>
+        <el-popover
+          class="tip-question"
+          placement="top-start"
+          width="200"
+          trigger="click"
+          content="填写前端枚举的全名称，如：BIZ_TYPE"
+        >
+          <el-button slot="reference" type="text" icon="el-icon-question" />
+        </el-popover>
       </template>
 
       <!-- 前端枚举名 列自定义内容 -->
@@ -56,8 +98,22 @@
       </template>
 
       <!-- 正则表达式 列自定义内容 -->
+      <template v-slot:regularExpression_header>
+        <span>正则表达式</span>
+        <el-popover
+          class="tip-question"
+          placement="top-start"
+          width="200"
+          trigger="click"
+          content="填写正则表达式，如：^[0-9]*$"
+        >
+          <el-button slot="reference" type="text" icon="el-icon-question" />
+        </el-popover>
+      </template>
+
+      <!-- 正则表达式 列自定义内容 -->
       <template v-slot:regularExpression_default="{ row }">
-        <el-input v-model="row.regularExpression" class="number-input" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" />
+        <el-input v-model="row.regularExpression" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" />
       </template>
 
       <!-- 是否排序字段 列自定义内容 -->
@@ -73,6 +129,12 @@
         <el-select v-if="row.isOrder" v-model="row.orderType">
           <el-option v-for="item in $enums.GEN_ORDER_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
         </el-select>
+      </template>
+
+      <!-- 排序 列自定义内容 -->
+      <template v-slot:orderNo_default="{ row, rowIndex }">
+        <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><svg-icon icon-class="el-icon-caret-top" /></span>
+        <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><svg-icon icon-class="el-icon-caret-bottom" /></span>
       </template>
     </vxe-grid>
   </div>
@@ -98,14 +160,15 @@ export default {
         { field: 'columnName', title: '属性名', width: 120 },
         { field: 'isKey', title: '是否主键', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
         { field: 'dataType', title: '数据类型', width: 180, slots: { default: 'dataType_default' }},
-        { field: 'viewType', title: '显示类型', width: 180, slots: { default: 'viewType_default' }},
+        { field: 'viewType', title: '显示类型', width: 180, slots: { default: 'viewType_default', header: 'viewType_header' }},
         { field: 'fixEnum', title: '是否内置枚举', width: 120, slots: { default: 'fixEnum_default' }},
-        { field: 'enumBack', title: '后端枚举名', width: 180, slots: { default: 'enumBack_default' }},
-        { field: 'enumFront', title: '前端枚举名', width: 180, slots: { default: 'enumFront_default' }},
-        { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }},
-        { field: 'regularExpression', title: '正则表达式', width: 200, slots: { default: 'regularExpression_default' }},
+        { field: 'enumBack', title: '后端枚举名', width: 180, slots: { default: 'enumBack_default', header: 'enumBack_header' }},
+        { field: 'enumFront', title: '前端枚举名', width: 180, slots: { default: 'enumFront_default', header: 'enumFront_header' }},
+        { field: 'regularExpression', title: '正则表达式', width: 200, slots: { default: 'regularExpression_default', header: 'regularExpression_header' }},
         { field: 'isOrder', title: '是否排序字段', width: 120, slots: { default: 'isOrder_default' }},
-        { field: 'orderType', title: '排序类型', width: 120, slots: { default: 'orderType_default' }}
+        { field: 'orderType', title: '排序类型', width: 120, slots: { default: 'orderType_default' }},
+        { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }},
+        { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
       tableData: []
     }
@@ -175,12 +238,24 @@ export default {
 
       return true
     },
+    moveRowTop(rowIndex) {
+      const tableData = this.columns
+      this.columns = this.$utils.swapArrayItem(tableData, rowIndex, rowIndex - 1)
+      this.$emit('sortColumns', this.columns)
+    },
+    moveRowBottom(rowIndex) {
+      this.columns = this.$utils.swapArrayItem(this.columns, rowIndex, rowIndex + 1)
+      this.$emit('sortColumns', this.columns)
+    },
     changeFixEnum(row, val) {
       if (val) {
         // 是内置枚举
         // viewType必须是SELECT
         row.viewType = this.$enums.GEN_VIEW_TYPE.SELECT.code
         this.changeViewType(row, this.$enums.GEN_VIEW_TYPE.SELECT.code)
+      } else {
+        row.enumBack = ''
+        row.enumFront = ''
       }
     },
     changeViewType(row, val) {
@@ -197,3 +272,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.sort-btn {
+  margin: 0 5px;
+  cursor: pointer;
+}
+</style>

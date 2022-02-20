@@ -4,6 +4,9 @@
       <el-tabs :active-name="activeName" tab-position="left">
         <el-tab-pane v-for="(obj, index) in formData" :key="index" :label="index" :name="index">
           <div class="gen-container">
+            <div class="gen-toolbar">
+              <el-button type="text" icon="el-icon-document-copy" @click="handleClipboard(obj, $event)">复制</el-button>
+            </div>
             <span style="white-space: pre-wrap; line-height: 1.5;">{{ obj }}</span>
           </div>
         </el-tab-pane>
@@ -16,6 +19,8 @@
   </div>
 </template>
 <script>
+
+import clipboard from '@/utils/clipboard'
 
 export default {
   // 使用组件
@@ -75,7 +80,15 @@ export default {
       }).finally(() => {
         this.loading = false
       })
+    },
+    handleClipboard(text, event) {
+      clipboard(text, event)
     }
   }
 }
 </script>
+<style scoped>
+.gen-toolbar{
+  margin-bottom: 5px;
+}
+</style>

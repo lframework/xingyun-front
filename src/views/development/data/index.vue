@@ -44,13 +44,13 @@
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
             </el-form-item>
-            <el-form-item v-permission="['development:data:add']">
+            <el-form-item>
               <el-button type="primary" icon="el-icon-plus" @click="$refs.addDialog.openDialog()">新增</el-button>
             </el-form-item>
-            <el-form-item v-permission="['development:data:delete']">
+            <el-form-item>
               <el-button icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
             </el-form-item>
-            <el-form-item v-permission="['system:menu:modify']">
+            <el-form-item>
               <el-dropdown trigger="click" @command="handleCommand">
                 <el-button>
                   更多<i class="el-icon-more el-icon--right" />
@@ -71,12 +71,13 @@
 
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
-          <el-button v-permission="['system:menu:query']" type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
-          <el-button v-permission="['system:menu:modify']" type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.updateDialog.openDialog() }">修改</el-button>
-          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.CREATED.code" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { id = row.id;type=row.type;$refs.settingsDialog.openDialog() }">设置</el-button>
-          <el-button v-else-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_TABLE.code || row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.generateDialog.openDialog()) }">生成</el-button>
-          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" v-permission="['system:menu:modify']" type="text" icon="el-icon-setting" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.previewDialog.openDialog()) }">预览</el-button>
-          <el-button v-permission="['system:menu:delete']" type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
+          <el-button type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
+          <el-button type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.updateDialog.openDialog() }">修改</el-button>
+          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.CREATED.code" type="text" icon="el-icon-setting" @click="e => { id = row.id;type=row.type;$refs.settingsDialog.openDialog() }">设置</el-button>
+          <el-button v-else-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_TABLE.code || row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="text" icon="el-icon-setting" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.generateDialog.openDialog()) }">生成</el-button>
+          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="text" icon="el-icon-setting" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.previewDialog.openDialog()) }">预览</el-button>
+          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="text" icon="el-icon-download" @click="e => { download(row.id) }">下载</el-button>
+          <el-button type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
         </template>
       </vxe-grid>
 
@@ -148,7 +149,7 @@ export default {
         { field: 'createTime', title: '创建时间', width: 170 },
         { field: 'updateBy', title: '修改人', width: 100 },
         { field: 'updateTime', title: '修改时间', width: 170 },
-        { title: '操作', width: 320, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 390, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
@@ -262,6 +263,14 @@ export default {
         }).finally(() => {
           this.loading = false
         })
+      })
+    },
+    download(id) {
+      this.loading = true
+      this.$api.development.data.download(id).then(() => {
+        this.$msg.success('下载成功！')
+      }).finally(() => {
+        this.loading = false
       })
     }
   }

@@ -31,7 +31,7 @@
             </el-select>
           </template>
 
-          <!-- 是否必填 列自定义内容 -->
+          <!-- 排序 列自定义内容 -->
           <template v-slot:orderNo_default="{ row, rowIndex }">
             <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><svg-icon icon-class="el-icon-caret-top" /></span>
             <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><svg-icon icon-class="el-icon-caret-bottom" /></span>
