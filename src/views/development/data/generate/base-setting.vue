@@ -126,6 +126,9 @@ export default {
         keyType: [
           { required: true, message: '请选择主键类型' }
         ],
+        parentMenuId: [
+          { required: true, message: '请选择父级菜单' }
+        ],
         menuCode: [
           { required: true, message: '请输入本级菜单编号' }
         ],
@@ -216,6 +219,11 @@ export default {
 
       if (this.$utils.isEmpty(this.formData.bizName)) {
         this.$msg.error('请输入业务名！')
+        return false
+      }
+
+      if (this.$utils.isEmpty(this.formData.parentMenuId)) {
+        this.$msg.error('请选择父级菜单！')
         return false
       }
 

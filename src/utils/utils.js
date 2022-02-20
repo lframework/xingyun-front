@@ -222,6 +222,7 @@ utils.buildMenus = function(oriMenus = []) {
     obj.hidden = menu.hidden
     obj.children = this.buildMenus(menu.children)
     obj.isCollect = menu.isCollect || false
+    obj.display = menu.display
     obj.id = menu.id
     result.push(obj)
   })
