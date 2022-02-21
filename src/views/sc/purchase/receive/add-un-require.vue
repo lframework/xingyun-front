@@ -540,6 +540,7 @@ export default {
         paymentDate: this.formData.paymentDate || '',
         receiveDate: this.formData.receiveDate,
         description: this.formData.description,
+        required: false,
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.receiveNum)).map(t => {
           const product = {
             productId: t.productId,

@@ -555,6 +555,7 @@ export default {
         salerId: this.formData.saler.id || '',
         paymentDate: this.formData.paymentDate || '',
         description: this.formData.description,
+        required: false,
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.outNum)).map(t => {
           const product = {
             productId: t.productId,

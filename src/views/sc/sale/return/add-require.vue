@@ -508,6 +508,7 @@ export default {
         paymentDate: this.formData.paymentDate || '',
         outSheetId: this.formData.outSheet.id,
         description: this.formData.description,
+        required: true,
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.returnNum)).map(t => {
           const product = {
             productId: t.productId,

@@ -543,6 +543,7 @@ export default {
         receiveDate: this.formData.receiveDate,
         purchaseOrderId: this.formData.purchaseOrder.id,
         description: this.formData.description,
+        required: true,
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.receiveNum)).map(t => {
           const product = {
             productId: t.productId,
