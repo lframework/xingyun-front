@@ -111,7 +111,8 @@
 
         <!-- 采购价 列自定义内容 -->
         <template v-slot:purchasePrice_default="{ row }">
-          <span>{{ row.purchasePrice }}</span>
+          <span v-if="row.isGift">{{ row.purchasePrice }}</span>
+          <el-input v-else v-model="row.purchasePrice" class="number-input" @input="purchasePriceInput" />
         </template>
 
         <!-- 库存数量 列自定义内容 -->

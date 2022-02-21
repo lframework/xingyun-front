@@ -511,6 +511,7 @@ export default {
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.returnNum)).map(t => {
           const product = {
             productId: t.productId,
+            oriPrice: t.salePrice,
             returnNum: t.returnNum,
             description: t.description,
             supplierId: t.supplier.id

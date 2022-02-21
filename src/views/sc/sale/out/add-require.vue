@@ -536,7 +536,8 @@ export default {
           const product = {
             productId: t.productId,
             orderNum: t.outNum,
-            description: t.description
+            description: t.description,
+            oriPrice: t.salePrice
           }
 
           if (t.isFixed) {
