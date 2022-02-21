@@ -44,7 +44,7 @@ utils.PATTERN_IS_INTEGER_GE_ZERO = /^([1-9]\d*|[0]{1})$/
  * 是否 浮点数
  * @type {RegExp}
  */
-utils.PATTERN_IS_FLOAT = /^(-?\d+)(\.\d+)?$/
+utils.PATTERN_IS_FLOAT = /^((-?([1-9]\d*\.\d*|0\.\d*[1-9]\d*|0?\.0+|0))|((-?[1-9]\d*|[0])))$/
 /**
  * 是否 正浮点数
  * @type {RegExp}
