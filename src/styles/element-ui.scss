@@ -128,3 +128,8 @@
     margin-bottom: 0;
   }
 }
+
+.el-tree-node__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
