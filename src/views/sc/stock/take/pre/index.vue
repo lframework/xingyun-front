@@ -62,6 +62,12 @@
             <el-form-item v-permission="['stock:take:pre:add']">
               <el-button type="primary" icon="el-icon-plus" @click="e => {visible = false; $refs.addDialog.openDialog();}">新增</el-button>
             </el-form-item>
+            <el-form-item v-permission="['stock:take:pre:delete']">
+              <el-button type="danger" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
+            </el-form-item>
+            <el-form-item v-permission="['stock:take:pre:export']">
+              <el-button icon="el-icon-download" @click="exportList">导出</el-button>
+            </el-form-item>
           </el-form>
         </template>
 
@@ -69,6 +75,7 @@
         <template v-slot:action_default="{ row }">
           <el-button v-permission="['stock:take:pre:query']" type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
           <el-button v-permission="['stock:take:pre:modify']" type="text" icon="el-icon-edit" @click="e => { id = row.id;visible = false;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</el-button>
+          <el-button v-permission="['stock:take:pre:delete']" type="text" icon="el-icon-delete" @click="e => deleteRow(row) ">删除</el-button>
         </template>
       </vxe-grid>
     </div>
@@ -128,7 +135,7 @@ export default {
         { field: 'updateTime', title: '操作时间', width: 170 },
         { field: 'updateBy', title: '操作人', width: 100 },
         { field: 'description', title: '备注', minWidth: 200 },
-        { title: '操作', width: 140, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 210, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
@@ -169,6 +176,45 @@ export default {
       delete params.sc
 
       return params
+    },
+    exportList() {
+      this.loading = true
+      this.$api.sc.stock.take.preTakeStockSheet.exportList(this.buildQueryParams({})).then(() => {
+        this.$msg.success('导出成功！')
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    deleteRow(row) {
+      this.$msg.confirm('对选中的预先盘点单执行删除操作？').then(() => {
+        this.loading = true
+        this.$api.sc.stock.take.preTakeStockSheet.deleteById(row.id).then(() => {
+          this.$msg.success('删除成功！')
+          this.search()
+        }).finally(() => {
+          this.loading = false
+        })
+      })
+    },
+    // 批量删除
+    batchDelete() {
+      const records = this.$refs.grid.getCheckboxRecords()
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择要执行操作的预先盘点单！')
+        return
+      }
+
+      this.$msg.confirm('对选中的预先盘点单执行批量删除操作？').then(valid => {
+        if (valid) {
+          this.loading = true
+          this.$api.sc.stock.take.preTakeStockSheet.batchDelete(records.map(item => item.id)).then(() => {
+            this.$msg.success('删除成功！')
+            this.search()
+          }).finally(() => {
+            this.loading = false
+          })
+        }
+      })
     }
   }
 }

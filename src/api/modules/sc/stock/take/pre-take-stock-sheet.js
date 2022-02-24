@@ -16,6 +16,20 @@ export default {
   },
 
   /**
+   * 导出列表
+   * @param params
+   * @returns {AxiosPromise}
+   */
+  exportList: (params) => {
+    return request({
+      url: '/stock/take/pre/export',
+      method: 'post',
+      responseType: 'blob',
+      params: params
+    })
+  },
+
+  /**
    * 根据ID查询
    * @param id
    * @returns {AxiosPromise}
@@ -80,6 +94,33 @@ export default {
     return request({
       url: '/stock/take/pre/product/list',
       method: 'get',
+      params: params
+    })
+  },
+  /**
+   * 根据ID删除
+   * @param id
+   * @returns {*}
+   */
+  deleteById: (id) => {
+    return request({
+      url: '/stock/take/pre/',
+      method: 'delete',
+      params: {
+        id: id
+      }
+    })
+  },
+  /**
+   * 根据ID批量删除
+   * @param id
+   * @returns {*}
+   */
+  batchDelete: (params) => {
+    return request({
+      url: '/stock/take/pre/batch',
+      method: 'delete',
+      dataType: 'json',
       params: params
     })
   }
