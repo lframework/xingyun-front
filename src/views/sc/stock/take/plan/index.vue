@@ -84,6 +84,9 @@
             <el-form-item v-permission="['stock:take:plan:add']">
               <el-button type="primary" icon="el-icon-plus" @click="$refs.addDialog.openDialog()">新增</el-button>
             </el-form-item>
+            <el-form-item v-permission="['stock:take:plan:export']">
+              <el-button icon="el-icon-download" @click="exportList">导出</el-button>
+            </el-form-item>
           </el-form>
         </template>
 
@@ -227,6 +230,14 @@ export default {
         }).finally(() => {
           this.loading = false
         })
+      })
+    },
+    exportList() {
+      this.loading = true
+      this.$api.sc.stock.take.takeStockPlan.exportList(this.buildQueryParams({})).then(() => {
+        this.$msg.success('导出成功！')
+      }).finally(() => {
+        this.loading = false
       })
     }
   }

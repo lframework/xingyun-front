@@ -31,6 +31,20 @@ export default {
   },
 
   /**
+   * 导出列表
+   * @param params
+   * @returns {AxiosPromise}
+   */
+  exportList: (params) => {
+    return request({
+      url: '/stock/take/plan/export',
+      method: 'post',
+      responseType: 'blob',
+      params: params
+    })
+  },
+
+  /**
    * 根据ID查询
    * @param id
    * @returns {AxiosPromise}

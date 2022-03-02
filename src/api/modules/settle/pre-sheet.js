@@ -57,9 +57,9 @@ export default {
    * @param params
    * @returns {*}
    */
-  redirectApprovePassOrder: (params) => {
+  directApprovePassOrder: (params) => {
     return request({
-      url: '/settle/presheet/approve/pass/redirect',
+      url: '/settle/presheet/approve/pass/direct',
       method: 'post',
       dataType: 'json',
       data: params

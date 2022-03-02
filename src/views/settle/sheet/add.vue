@@ -99,7 +99,7 @@
       </j-border>
       <div style="text-align: center;">
         <el-button v-permission="['settle:sheet:add']" type="primary" :loading="loading" @click="createOrder">保存</el-button>
-        <el-button v-permission="['settle:sheet:approve']" type="primary" :loading="loading" @click="redirectApprovePassOrder">审核通过</el-button>
+        <el-button v-permission="['settle:sheet:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</el-button>
         <el-button :loading="loading" @click="closeDialog">关闭</el-button>
       </div>
     </div>
@@ -357,7 +357,7 @@ export default {
       })
     },
     // 直接审核通过订单
-    redirectApprovePassOrder() {
+    directApprovePassOrder() {
       if (!this.validData()) {
         return
       }
@@ -381,7 +381,7 @@ export default {
 
       this.$msg.confirm('确定执行审核通过操作？').then(() => {
         this.loading = true
-        this.$api.settle.sheet.redirectApprovePassOrder(params).then(res => {
+        this.$api.settle.sheet.directApprovePassOrder(params).then(res => {
           this.$msg.success('审核通过！')
 
           this.$emit('confirm')

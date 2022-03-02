@@ -57,9 +57,9 @@ export default {
    * @param params
    * @returns {*}
    */
-  redirectApprovePassOrder: (params) => {
+  directApprovePassOrder: (params) => {
     return request({
-      url: '/sale/return/approve/pass/redirect',
+      url: '/sale/return/approve/pass/direct',
       method: 'post',
       dataType: 'json',
       data: params

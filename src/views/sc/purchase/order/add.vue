@@ -132,7 +132,7 @@
 
       <div style="text-align: center;">
         <el-button v-permission="['purchase:order:add']" type="primary" :loading="loading" @click="createOrder">保存</el-button>
-        <el-button v-permission="['purchase:order:approve']" type="primary" :loading="loading" @click="redirectApprovePassOrder">审核通过</el-button>
+        <el-button v-permission="['purchase:order:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</el-button>
         <el-button :loading="loading" @click="closeDialog">关闭</el-button>
       </div>
     </div>
@@ -510,7 +510,7 @@ export default {
       })
     },
     // 直接审核通过订单
-    redirectApprovePassOrder() {
+    directApprovePassOrder() {
       if (!this.validData()) {
         return
       }
@@ -533,7 +533,7 @@ export default {
 
       this.$msg.confirm('对采购单据执行审核通过操作？').then(() => {
         this.loading = true
-        this.$api.sc.purchase.purchaseOrder.redirectApprovePassOrder(params).then(res => {
+        this.$api.sc.purchase.purchaseOrder.directApprovePassOrder(params).then(res => {
           this.$msg.success('审核通过！')
 
           this.$emit('confirm')
