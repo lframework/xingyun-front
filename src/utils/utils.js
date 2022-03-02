@@ -555,6 +555,24 @@ utils.isNumberPrecision = function(value, precision) {
 }
 
 /**
+ * 判断{func}是否是Promise
+ * @param func
+ * @returns {*}
+ */
+utils.isPromise = function(func) {
+  return !this.isNull(func) && XEUtils.isFunction(func.then) && XEUtils.isFunction(func.catch)
+}
+
+/**
+ * 判断{func}是否是Function
+ * @param func
+ * @returns {*}
+ */
+utils.isFunction = function(func) {
+  return XEUtils.isFunction(func)
+}
+
+/**
  * 文字全拼音
  * @param str
  * @returns {string}

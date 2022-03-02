@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Clipboard from 'clipboard'
 
 function clipboardSuccess() {
-  Vue.prototype.$msg.success('复制成功')
+  Vue.prototype.$msg.successTip('复制成功')
 }
 
 function clipboardError() {
