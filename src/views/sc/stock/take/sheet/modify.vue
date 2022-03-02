@@ -113,7 +113,7 @@
 
       <batch-add-product
         ref="batchAddProductDialog"
-        :plan-id="this.formData.planId"
+        :plan-id="formData.planId"
         @confirm="batchAddProduct"
       />
 
@@ -126,12 +126,10 @@
 </template>
 <script>
 import BatchAddProduct from '@/views/sc/stock/take/sheet/batch-add-product'
-import TakeStockPlanSelector from '@/components/Selector/TakeStockPlanSelector'
-import PreTakeStockSheetSelector from '@/components/Selector/PreTakeStockSheetSelector'
 
 export default {
   components: {
-    BatchAddProduct, TakeStockPlanSelector, PreTakeStockSheetSelector
+    BatchAddProduct
   },
   props: {
     id: {

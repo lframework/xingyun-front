@@ -65,8 +65,7 @@
         :data="tableData"
         :columns="tableColumn"
         style="margin-top: 10px;"
-      >
-      </vxe-grid>
+      />
 
       <div v-if="$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center;">
         <el-button v-permission="['stock:take:sheet:approve']" type="primary" :loading="loading" @click="approvePass">审核通过</el-button>

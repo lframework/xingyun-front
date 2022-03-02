@@ -101,7 +101,7 @@
 
       <batch-add-product
         ref="batchAddProductDialog"
-        :plan-id="this.formData.takeStockPlan.id || ''"
+        :plan-id="formData.takeStockPlan.id || ''"
         @confirm="batchAddProduct"
       />
 
@@ -408,7 +408,6 @@ export default {
       }
     },
     afterSelectTakeStockPlan(e) {
-
       this.formData.preTakeStockSheet = {}
 
       this.formData.scId = ''
