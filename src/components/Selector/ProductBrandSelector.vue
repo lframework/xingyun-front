@@ -5,6 +5,7 @@
       v-model="model"
       :request="getList"
       :request-params="_requestParams"
+      :multiple="multiple"
       :disabled="disabled"
       :before-open="beforeOpen"
       @input="e => $emit('input', e)"
@@ -69,7 +70,8 @@ export default {
       default: e => {
         return {}
       }
-    }
+    },
+    multiple: { type: Boolean, default: false }
   },
   data() {
     return {

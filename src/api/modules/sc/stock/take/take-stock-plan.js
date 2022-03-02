@@ -9,22 +9,8 @@ export default {
    */
   query: (params) => {
     return request({
-      url: '/stock/take/pre/query',
+      url: '/stock/take/plan/query',
       method: 'get',
-      params: params
-    })
-  },
-
-  /**
-   * 导出列表
-   * @param params
-   * @returns {AxiosPromise}
-   */
-  exportList: (params) => {
-    return request({
-      url: '/stock/take/pre/export',
-      method: 'post',
-      responseType: 'blob',
       params: params
     })
   },
@@ -36,7 +22,22 @@ export default {
    */
   get: (id) => {
     return request({
-      url: '/stock/take/pre',
+      url: '/stock/take/plan',
+      method: 'get',
+      params: {
+        id: id
+      }
+    })
+  },
+
+  /**
+   * 根据ID查询
+   * @param id
+   * @returns {AxiosPromise}
+   */
+  getDetail: (id) => {
+    return request({
+      url: '/stock/take/plan/detail',
       method: 'get',
       params: {
         id: id
@@ -51,7 +52,7 @@ export default {
    */
   create: (params) => {
     return request({
-      url: '/stock/take/pre',
+      url: '/stock/take/plan',
       method: 'post',
       dataType: 'json',
       params: params
@@ -65,38 +66,71 @@ export default {
    */
   modify: (params) => {
     return request({
-      url: '/stock/take/pre',
+      url: '/stock/take/plan',
       method: 'put',
+      params: params
+    })
+  },
+
+  /**
+   * 查询盘点任务中的商品信息
+   * @param id
+   * @returns {*}
+   */
+  getProducts: (id) => {
+    return request({
+      url: '/stock/take/plan/products',
+      method: 'get',
+      params: {
+        id: id
+      }
+    })
+  },
+
+  /**
+   * 差异生成
+   * @param id
+   * @returns {*}
+   */
+  createDiff: (id) => {
+    return request({
+      url: '/stock/take/plan/diff',
+      method: 'patch',
+      params: {
+        id: id
+      }
+    })
+  },
+
+  /**
+   * 差异处理
+   * @param id
+   * @returns {*}
+   */
+  handleDiff: (params) => {
+    return request({
+      url: '/stock/take/plan/handle',
+      method: 'patch',
       dataType: 'json',
       params: params
     })
   },
+
   /**
-   * 根据关键字查询商品
-   * @param params
-   * @returns {AxiosPromise}
+   * 作废
+   * @param id
+   * @returns {*}
    */
-  searchProduct: (condition) => {
+  cancel: (id) => {
     return request({
-      url: '/stock/take/pre/product/search',
-      method: 'get',
+      url: '/stock/take/plan/cancel',
+      method: 'patch',
       params: {
-        condition: condition
+        id: id
       }
     })
   },
-  /**
-   * 查询商品列表
-   * @param params
-   * @returns {AxiosPromise}
-   */
-  queryProduct: (params) => {
-    return request({
-      url: '/stock/take/pre/product/list',
-      method: 'get',
-      params: params
-    })
-  },
+
   /**
    * 根据ID删除
    * @param id
@@ -104,37 +138,11 @@ export default {
    */
   deleteById: (id) => {
     return request({
-      url: '/stock/take/pre/',
+      url: '/stock/take/plan',
       method: 'delete',
       params: {
         id: id
       }
-    })
-  },
-  /**
-   * 根据ID批量删除
-   * @param id
-   * @returns {*}
-   */
-  batchDelete: (params) => {
-    return request({
-      url: '/stock/take/pre/batch',
-      method: 'delete',
-      dataType: 'json',
-      params: params
-    })
-  },
-
-  /**
-   * 根据预先盘点单、盘点任务查询商品信息
-   * @param params
-   * @returns {*}
-   */
-  getProducts: (params) => {
-    return request({
-      url: '/stock/take/pre/products',
-      method: 'get',
-      params: params
     })
   }
 }

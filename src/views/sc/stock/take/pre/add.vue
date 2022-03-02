@@ -6,6 +6,8 @@
           <j-form-item label="仓库" required>
             <store-center-selector
               v-model="formData.sc"
+              :before-open="beforeSelectSc"
+              @input="afterSelectSc"
             />
           </j-form-item>
           <j-form-item label="预先盘点状态" required :span="16">
@@ -212,8 +214,8 @@ export default {
             return
           }
 
-          if (!this.$utils.isInteger(data.firstNum)) {
-            this.$msg.error('第' + (i + 1) + '行商品的初盘数量必须是整数！')
+          if (!this.$utils.isIntegerGeZero(data.firstNum)) {
+            this.$msg.error('第' + (i + 1) + '行商品的初盘数量不允许小于0！')
             return
           }
         }
@@ -226,8 +228,8 @@ export default {
             return
           }
 
-          if (!this.$utils.isInteger(data.secondNum)) {
-            this.$msg.error('第' + (i + 1) + '行商品的复盘数量必须是整数！')
+          if (!this.$utils.isIntegerGeZero(data.secondNum)) {
+            this.$msg.error('第' + (i + 1) + '行商品的复盘数量不允许小于0！')
             return
           }
         }
@@ -240,8 +242,8 @@ export default {
             return
           }
 
-          if (!this.$utils.isInteger(data.randNum)) {
-            this.$msg.error('第' + (i + 1) + '行商品的抽盘数量必须是整数！')
+          if (!this.$utils.isIntegerGeZero(data.randNum)) {
+            this.$msg.error('第' + (i + 1) + '行商品的抽盘数量不允许小于0！')
             return
           }
         }
@@ -388,6 +390,21 @@ export default {
         this.tableData.push(this.emptyProduct())
         this.handleSelectProduct(this.tableData.length - 1, item)
       })
+    },
+    async beforeSelectSc() {
+      let flag = false
+      if (!this.$utils.isEmpty(this.formData.sc)) {
+        return this.$msg.confirm('更改盘点任务，会清空商品数据，是否确认更改？')
+      } else {
+        flag = true
+      }
+
+      return flag
+    },
+    afterSelectSc(e) {
+      if (!this.$utils.isEmpty(e)) {
+        this.tableData = []
+      }
     }
   }
 }

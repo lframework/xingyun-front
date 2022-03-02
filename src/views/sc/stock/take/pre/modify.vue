@@ -248,7 +248,7 @@ export default {
             return
           }
 
-          if (!this.$utils.isInteger(data.randNum)) {
+          if (!this.$utils.isIntegerGe(data.randNum)) {
             this.$msg.error('第' + (i + 1) + '行商品的抽盘数量必须是整数！')
             return
           }

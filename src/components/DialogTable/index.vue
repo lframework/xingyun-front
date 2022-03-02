@@ -6,7 +6,7 @@
       readonly
       :placeholder="placeholder"
       :disabled="disabled"
-      @focus="onOpen"
+      @click.native="onOpen"
     >
       <i slot="suffix" class="el-input__icon el-icon-search" />
     </el-input>
@@ -167,8 +167,15 @@ export default {
   },
   methods: {
     onOpen() {
-      if (this.beforeOpen()) {
-        this.dialogVisible = true
+      const result = this.beforeOpen()
+      if (this.$utils.isPromise(result)) {
+        result.then(() => {
+          this.dialogVisible = true
+        })
+      } else {
+        if (result) {
+          this.dialogVisible = true
+        }
       }
     },
     clear() {
