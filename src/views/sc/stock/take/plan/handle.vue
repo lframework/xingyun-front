@@ -13,7 +13,7 @@
             <el-input :value="$enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus)" readonly />
           </j-form-item>
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" type="textarea" resize="none" readonly />
+            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
           </j-form-item>
           <j-form-item label="创建人">
             <span>{{ formData.createBy }}</span>
@@ -68,7 +68,7 @@
       </vxe-grid>
 
       <div style="text-align: center;">
-        <el-button v-permission="['stock:take:plan:create-diff']" type="primary" :loading="loading" @click="submit">差异生成</el-button>
+        <el-button v-permission="['stock:take:plan:create-diff']" type="primary" :loading="loading" @click="submit">差异处理</el-button>
         <el-button :loading="loading" @click="closeDialog">关闭</el-button>
       </div>
     </div>
@@ -252,10 +252,37 @@ export default {
       }
     },
     doSubmit() {
-      this.$msg.confirm('确认对此盘点任务进行差异生成？').then(() => {
+      for (let i = 0; i < this.oriTableData.length; i++) {
+        const data = this.oriTableData[i]
+        if (this.config.allowChangeNum) {
+          if (!this.$utils.isEmpty(data.takeNum)) {
+            if (!this.$utils.isInteger(data.takeNum)) {
+              this.$msg.error('第' + (i + 1) + '行商品修改后盘点数量必须是整数！')
+              return
+            }
+
+            if (!this.$utils.isIntegerGeZero(data.takeNum)) {
+              this.$msg.error('第' + (i + 1) + '行商品修改后盘点数量不允许小于0！')
+              return
+            }
+          }
+        }
+
+      }
+      const params = {
+        id: this.id,
+        products: this.oriTableData.map(item => {
+          return {
+            productId: item.productId,
+            takeNum: this.config.allowChangeNum ? item.takeNum : '',
+            description: this.formData.description
+          }
+        })
+      }
+      this.$msg.confirm('确认对此盘点任务进行差异处理？').then(() => {
         this.loading = true
-        this.$api.sc.stock.take.takeStockPlan.createDiff(this.id).then(() => {
-          this.$msg.success('盘点任务完成差异生成！')
+        this.$api.sc.stock.take.takeStockPlan.handleDiff(params).then(() => {
+          this.$msg.success('盘点任务完成差异处理！')
           this.$emit('confirm')
 
           this.closeDialog()
