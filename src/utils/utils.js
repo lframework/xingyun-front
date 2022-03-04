@@ -142,6 +142,16 @@ utils.toArrayTree = function(array, options) {
 }
 
 /**
+ * 将一个树结构转成数组列表
+ * @param array
+ * @param options
+ * @returns {*}
+ */
+utils.toTreeArray = function(array, options) {
+  return XEUtils.toTreeArray(array, options)
+}
+
+/**
  * 获取对象所有属性
  * @param obj
  * @returns {*}
@@ -224,6 +234,7 @@ utils.buildMenus = function(oriMenus = []) {
     obj.isCollect = menu.isCollect || false
     obj.display = menu.display
     obj.id = menu.id
+    obj.meta.id = menu.id
     result.push(obj)
   })
 
@@ -254,6 +265,58 @@ utils.buildCollectMenus = function(menus) {
   myCollect.children = collectMenus || []
 
   return myCollect
+}
+
+/**
+ * 拍平Routers
+ * @param accessRoutes
+ * @returns {*[]}
+ */
+utils.buildFlagRouters = function(accessRoutes) {
+  const flatRoutes = []
+
+  for (const item of accessRoutes) {
+    let childrenFlatRoutes = []
+    if (item.children && item.children.length > 0) {
+      childrenFlatRoutes = this.castToFlatRoute(item.children, '')
+    }
+
+    // 一级路由是布局路由,需要处理的只是其子路由数据
+    flatRoutes.push({
+      name: item.name,
+      path: item.path,
+      component: item.component,
+      redirect: item.redirect,
+      children: childrenFlatRoutes
+    })
+  }
+
+  return flatRoutes
+}
+
+utils.castToFlatRoute = function(routes, parentPath, flatRoutes = []) {
+  for (const item of routes) {
+    if (item.children && item.children.length > 0) {
+      if (item.redirect && item.redirect !== 'noRedirect') {
+        flatRoutes.push({
+          name: item.name,
+          path: (parentPath + '/' + item.path).substring(1),
+          redirect: item.redirect,
+          meta: item.meta
+        })
+      }
+      this.castToFlatRoute(item.children, parentPath + '/' + item.path, flatRoutes)
+    } else {
+      flatRoutes.push({
+        name: item.name,
+        path: (parentPath + '/' + item.path).substring(1),
+        component: item.component,
+        meta: item.meta
+      })
+    }
+  }
+
+  return flatRoutes
 }
 
 /**

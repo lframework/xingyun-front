@@ -65,8 +65,10 @@ const actions = {
         const myCollect = utils.buildCollectMenus(accessedRoutes)
         accessedRoutes = [myCollect, ...accessedRoutes]
 
+        const flatRoutes = utils.buildFlagRouters(accessedRoutes)
+
         commit('SET_ROUTES', accessedRoutes)
-        resolve(accessedRoutes)
+        resolve(flatRoutes)
       })
     })
   }

@@ -33,7 +33,16 @@ export default {
   methods: {
     getBreadcrumb() {
       // only show routes with meta.title
-      let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
+      const routes = this.$store.state.permission.routes
+      const lastMatched = this.$route.matched[this.$route.matched.length - 1]
+
+      let matched = this.$utils.searchTree(routes, item => !this.$utils.isEmpty(item.meta) && !this.$utils.isEmpty(item.meta.id) && item.meta.id === lastMatched.meta.id)
+      if (this.$utils.isEmpty(matched)) {
+        matched = this.$route.matched.filter(item => item.meta && item.meta.title)
+      } else {
+        matched = this.$utils.toTreeArray([matched[matched.length - 1]])
+      }
+
       const first = matched[0]
 
       if (!this.isDashboard(first)) {
