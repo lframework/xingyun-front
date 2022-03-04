@@ -277,7 +277,9 @@ export default {
             takeNum: this.config.allowChangeNum ? item.takeNum : '',
             description: this.formData.description
           }
-        })
+        }),
+        allowChangeNum: this.config.allowChangeNum,
+        autoChangeStock: this.config.autoChangeStock
       }
       this.$msg.confirm('确认对此盘点任务进行差异处理？').then(() => {
         this.loading = true

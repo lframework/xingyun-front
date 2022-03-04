@@ -93,9 +93,9 @@
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
           <el-button v-permission="['stock:take:plan:query']" type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
-          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:create-diff']" type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.diffDialog.openDialog() }">差异生成</el-button>
-          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:handle-diff']" type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.handleDialog.openDialog() }">差异处理</el-button>
-          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) || $enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:cancel']" type="text" icon="el-icon-edit" @click="e => { cancelRow(row) }">作废</el-button>
+          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:create-diff']" type="text" icon="el-icon-s-check" @click="e => { id = row.id;$refs.diffDialog.openDialog() }">差异生成</el-button>
+          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:handle-diff']" type="text" icon="el-icon-s-check" @click="e => { id = row.id;$refs.handleDialog.openDialog() }">差异处理</el-button>
+          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) || $enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:cancel']" type="text" icon="el-icon-circle-close" @click="e => { cancelRow(row) }">作废</el-button>
           <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:delete']" type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
         </template>
       </vxe-grid>

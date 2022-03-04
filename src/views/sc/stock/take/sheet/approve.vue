@@ -157,8 +157,6 @@ export default {
         approveTime: ''
       }
 
-      this.config = {}
-
       this.tableData = []
     },
     // 审核通过
@@ -275,17 +273,6 @@ export default {
       filterProductList.forEach(item => {
         this.tableData.push(this.emptyProduct())
         this.handleSelectProduct(this.tableData.length - 1, item)
-      })
-    },
-    async loadConfig() {
-      this.loading = true
-      await this.$api.sc.stock.take.takeStockConfig.get().then(res => {
-        this.config = {
-          showProduct: res.showProduct,
-          showStock: res.showStock
-        }
-      }).finally(() => {
-        this.loading = false
       })
     },
     // 查询数据

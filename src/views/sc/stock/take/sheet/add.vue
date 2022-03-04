@@ -175,9 +175,6 @@ export default {
       // 初始化表单数据
       this.initFormData()
       this.visible = true
-
-      // 查询设置信息
-      this.loadConfig()
     },
     // 关闭对话框
     closeDialog() {
@@ -196,8 +193,6 @@ export default {
         takeStatus: '',
         bizName: ''
       }
-
-      this.config = {}
 
       this.tableData = []
     },
@@ -375,17 +370,6 @@ export default {
       filterProductList.forEach(item => {
         this.tableData.push(this.emptyProduct())
         this.handleSelectProduct(this.tableData.length - 1, item)
-      })
-    },
-    async loadConfig() {
-      this.loading = true
-      await this.$api.sc.stock.take.takeStockConfig.get().then(res => {
-        this.config = {
-          showProduct: res.showProduct,
-          showStock: res.showStock
-        }
-      }).finally(() => {
-        this.loading = false
       })
     },
     beforeSelectPreTakeStockSheet() {
