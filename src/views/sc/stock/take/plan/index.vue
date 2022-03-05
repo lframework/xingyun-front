@@ -166,7 +166,7 @@ export default {
         { field: 'updateTime', title: '操作时间', width: 170 },
         { field: 'updateBy', title: '操作人', width: 100 },
         { field: 'description', title: '备注', minWidth: 200 },
-        { title: '操作', width: 210, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 220, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
