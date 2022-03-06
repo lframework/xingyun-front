@@ -312,7 +312,7 @@ export default {
 
       for (let i = 0; i < records.length; i++) {
         if (this.$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-          this.$msg.error('第' + (i + 1) + '个采购单已审核通过，不允许继续执行审核！')
+          this.$msg.error('第' + (i + 1) + '个零售出库单已审核通过，不允许继续执行审核！')
           return
         }
       }

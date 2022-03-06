@@ -391,10 +391,10 @@ export default {
         this.handleSelectProduct(this.tableData.length - 1, item)
       })
     },
-    async beforeSelectSc() {
+    beforeSelectSc() {
       let flag = false
       if (!this.$utils.isEmpty(this.formData.sc)) {
-        return this.$msg.confirm('更改盘点任务，会清空商品数据，是否确认更改？')
+        return this.$msg.confirm('更改仓库，会清空商品数据，是否确认更改？')
       } else {
         flag = true
       }
