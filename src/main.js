@@ -1,63 +1,61 @@
 import Vue from 'vue'
-
-import Cookies from 'js-cookie'
-
-import 'normalize.css/normalize.css' // a modern alternative to CSS resets
-
-import Element from 'element-ui'
-import './styles/element-variables.scss'
-
-import 'vxe-table/lib/style.css' // vxe-table样式
-
-import '@/styles/index.scss' // global css
-
-import App from './App'
+import App from './App.vue'
+import { initRouter } from './router'
+import './theme/index.less'
+import Antd from 'ant-design-vue'
+import Viser from 'viser-vue'
 import store from './store'
-import router from './router'
-
-import './icons' // icon
-import './permission' // permission control
-import './utils/error-log' // error log
-import permission from '@/directive/permission/index.js' // 权限判断指令
-
-import msg from '@/utils/msg' // 消息提示工具类
+import 'animate.css/source/animate.css'
+import Plugins from '@/plugins'
+import { initI18n } from '@/utils/i18n'
+import bootstrap from '@/bootstrap'
+import 'moment/locale/zh-cn'
 import { enumParse } from '@/enums/parser' // 枚举解析工具
 import enums from '@/enums' // 枚举
+import msg from '@/utils/msg' // 消息提示工具类
+import utils from '@/utils/utils'
 
 import { apiParse } from '@/api/parser' // api解析工具
 import api from '@/api' // api
-
-import 'xe-utils' // vxe-table需要依赖此工具类
+import './icons'
+import 'vxe-table/lib/style.css' // vxe-table样式
 import VXETable from 'vxe-table' // vxe-table
-
-import utils from '@/utils/utils'
+import VXETablePluginAntd from 'vxe-table-plugin-antd'
+import 'vxe-table-plugin-antd/dist/style.css'
+import { Empty } from 'ant-design-vue'
+import loading from '@/directive/loading'
+import permission from '@/directive/permission/index.js' // 权限判断指令
 import JForm from '@/components/JForm'
 import JFormItem from '@/components/JFormItem'
 import JBorder from '@/components/JBorder'
 
-Vue.prototype.$globalSize = Cookies.get('size') || 'medium'
+const router = initRouter(store.state.setting.asyncRoutes)
+const i18n = initI18n('CN', 'US')
 
-Vue.use(Element, {
-  size: Vue.prototype.$globalSize // set element-ui default size
-})
-
+Vue.use(Antd)
 Vue.config.productionTip = false
-
+Vue.use(Viser)
+Vue.use(Plugins)
 Vue.prototype.$msg = msg
 Vue.prototype.$utils = utils
+
 Vue.use(enums, enumParse())
 Vue.use(api, apiParse())
+Vue.use(loading)
+Vue.use(permission)
 VXETable.setup({
-  size: Vue.prototype.$globalSize,
   table: {
     sortConfig: {
       trigger: 'cell'
+    },
+    emptyRender: {
+      name: 'NotData'
     }
   },
   grid: {
     pagerConfig: {
       pageSize: 20,
-      pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
+      pageSizes: [5, 15, 20, 50, 100]
     },
     toolbarConfig: {
       // 缩放
@@ -69,17 +67,31 @@ VXETable.setup({
     }
   }
 })
+VXETable.use(VXETablePluginAntd)
+VXETable.renderer.add('NotData', {
+  // 空内容模板
+  renderEmpty() {
+    return [
+      <a-empty image={ Empty.PRESENTED_IMAGE_SIMPLE } />
+    ]
+  }
+})
 Vue.use(VXETable)
-Vue.use(permission)
-Vue.component('JForm', JForm)
-Vue.component('JFormItem', JFormItem)
-Vue.component('JBorder', JBorder)
+
 Vue.prototype.$vh = (document.documentElement.clientHeight || document.body.clientHeight) / 100
 Vue.prototype.$defaultTableHeight = Vue.prototype.$vh * 100 - 140
 
+Vue.component('JForm', JForm)
+Vue.component('JFormItem', JFormItem)
+Vue.component('JBorder', JBorder)
+
+bootstrap({ router, store, i18n, message: Vue.prototype.$message })
+
+Vue.config.silent = true
+
 new Vue({
-  el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
-})
+}).$mount('#app')

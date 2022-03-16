@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 
 export default {
   /**
@@ -100,6 +100,20 @@ export default {
       method: 'post',
       dataType: 'json',
       data: params
+    })
+  },
+  /**
+   * 根据ID解锁
+   * @param id
+   * @returns {*}
+   */
+  unlock: (id) => {
+    return request({
+      url: '/system/user/unlock',
+      method: 'patch',
+      params: {
+        id: id
+      }
     })
   }
 }

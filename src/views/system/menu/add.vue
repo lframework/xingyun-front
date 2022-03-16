@@ -1,61 +1,62 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="30%" title="新增" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['system:menu:add']">
-      <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="编号" prop="code">
-          <el-input v-model.trim="formData.code" clearable />
-        </el-form-item>
-        <el-form-item label="标题" prop="title">
-          <el-input v-model.trim="formData.title" clearable />
-        </el-form-item>
-        <el-form-item label="类型" prop="display">
-          <el-radio-group v-model="formData.display" @change="displayChange">
-            <el-radio v-for="item in $enums.MENU_DISPLAY.values()" :key="item.code" :label="item.code">{{ item.desc }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="父级菜单" prop="parentId">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }">
+    <div v-if="visible" v-permission="['system:menu:add']" v-loading="loading">
+      <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
+        <a-form-model-item label="编号" prop="code">
+          <a-input v-model.trim="formData.code" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="标题" prop="title">
+          <a-input v-model.trim="formData.title" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="类型" prop="display">
+          <a-radio-group v-model="formData.display" @change="displayChange">
+            <a-radio v-for="item in $enums.MENU_DISPLAY.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-radio>
+          </a-radio-group>
+        </a-form-model-item>
+        <a-form-model-item label="父级菜单" prop="parentId">
           <sys-menu-selector v-model="formData.parentId" :only-final="false" />
-        </el-form-item>
-        <el-form-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) || $enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="权限" prop="permission">
-          <el-input v-model.trim="formData.permission" clearable />
-        </el-form-item>
-        <el-form-item label="备注" prop="description">
-          <el-input v-model.trim="formData.description" type="textarea" resize="none" />
-        </el-form-item>
+        </a-form-model-item>
+        <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) || $enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="权限" prop="permission">
+          <a-input v-model.trim="formData.permission" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="备注" prop="description">
+          <a-textarea v-model.trim="formData.description" />
+        </a-form-model-item>
         <div v-if="!$utils.isEmpty(formData.display) && !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)">
-          <el-divider>以下均为前端配置项</el-divider>
-          <el-form-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由名称" prop="name">
-            <el-input v-model.trim="formData.name" placeholder="对应路由当中的name属性" clearable />
-          </el-form-item>
-          <el-form-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="组件" prop="component">
-            <el-input v-model.trim="formData.component" placeholder="对应路由当中的component属性" clearable />
-          </el-form-item>
-          <el-form-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由路径" prop="path">
-            <el-input v-model.trim="formData.path" placeholder="对应路由当中的path属性" clearable />
-          </el-form-item>
-          <el-form-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="是否不缓存" prop="noCache">
-            <el-switch
+          <a-divider>以下均为前端配置项</a-divider>
+          <a-form-model-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由名称" prop="name">
+            <a-input v-model.trim="formData.name" placeholder="对应路由当中的name属性" allow-clear />
+          </a-form-model-item>
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="组件" prop="component">
+            <a-input v-model.trim="formData.component" placeholder="对应路由当中的component属性" allow-clear />
+          </a-form-model-item>
+          <a-form-model-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由路径" prop="path">
+            <a-input v-model.trim="formData.path" placeholder="对应路由当中的path属性" allow-clear />
+          </a-form-model-item>
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="是否不缓存" prop="noCache">
+            <a-switch
               v-model="formData.noCache"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
             />
-          </el-form-item>
-          <el-form-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="是否隐藏" prop="hidden">
-            <el-switch
+          </a-form-model-item>
+          <a-form-model-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="是否隐藏" prop="hidden">
+            <a-switch
               v-model="formData.hidden"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
             />
-          </el-form-item>
-          <el-divider />
+          </a-form-model-item>
+          <a-divider />
         </div>
-        <el-form-item>
-          <el-button type="primary" @click="submit">保存</el-button>
-          <el-button @click="closeDialog">取消</el-button>
-        </el-form-item>
-      </el-form>
+      </a-form-model>
     </div>
-  </el-dialog>
+
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">取消</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
 import SysMenuSelector from '@/components/Selector/SysMenuSelector'
@@ -110,6 +111,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

@@ -1,28 +1,22 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="75%" title="供应商费用单查看" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['settle:fee-sheet:query']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="供应商">
-            <el-input
-              v-model="formData.supplierName"
-              readonly
-            />
+            {{ formData.supplierName }}
           </j-form-item>
           <j-form-item label="收支方式">
-            <el-input
-              v-model="formData.sheetType"
-              readonly
-            />
+            {{ formData.sheetType }}
           </j-form-item>
           <j-form-item />
-          <j-form-item label="审核状态">
-            <span v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态">
+            <span v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
-            <el-input v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.createBy }}</span>
@@ -49,13 +43,12 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
       />
 
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -63,12 +56,12 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" readonly />
+            <a-textarea v-model.trim="formData.description" read-only />
           </j-form-item>
         </j-form>
       </j-border>
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 export default {
@@ -107,6 +100,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

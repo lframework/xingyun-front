@@ -1,78 +1,82 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="新增" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['base-data:supplier:add']">
-      <el-form ref="form" v-loading="loading" label-width="140px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="编号" prop="code">
-          <el-input v-model.trim="formData.code" maxlength="20" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model.trim="formData.name" maxlength="20" show-word-limit clearable @input="changeName" />
-        </el-form-item>
-        <el-form-item label="助记码" prop="mnemonicCode">
-          <el-input v-model.trim="formData.mnemonicCode" maxlength="20" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="联系人" prop="contact">
-          <el-input v-model.trim="formData.contact" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="联系电话" prop="telephone">
-          <el-input v-model.trim="formData.telephone" maxlength="20" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="电子邮箱" prop="email">
-          <el-input v-model.trim="formData.email" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="邮编" prop="zipCode">
-          <el-input v-model.trim="formData.zipCode" maxlength="20" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="传真" prop="fax">
-          <el-input v-model.trim="formData.fax" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="地区" prop="cityId">
-          <city-selector v-model="formData.cityId" :only-final="true" />
-        </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model.trim="formData.address" maxlength="200" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="发货地址" prop="deliveryAddress">
-          <el-input v-model.trim="formData.deliveryAddress" maxlength="200" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="送货周期（天）" prop="deliveryCycle">
-          <el-input v-model="formData.deliveryCycle" clearable />
-        </el-form-item>
-        <el-form-item label="经营方式" prop="manageType">
-          <el-select v-model="formData.manageType" clearable>
-            <el-option v-for="item in $enums.MANAGE_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="结账方式" prop="settleType">
-          <el-select v-model="formData.settleType" clearable>
-            <el-option v-for="item in $enums.SETTLE_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="统一社会信用代码" prop="creditCode">
-          <el-input v-model.trim="formData.creditCode" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="纳税人识别号" prop="taxIdentifyNo">
-          <el-input v-model.trim="formData.taxIdentifyNo" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="开户银行" prop="bankName">
-          <el-input v-model.trim="formData.bankName" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="户名" prop="accountName">
-          <el-input v-model.trim="formData.accountName" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="银行账号" prop="accountNo">
-          <el-input v-model.trim="formData.accountNo" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="备注" prop="description">
-          <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submit">保存</el-button>
-          <el-button @click="closeDialog">取消</el-button>
-        </el-form-item>
-      </el-form>
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }">
+    <div v-if="visible" v-permission="['base-data:supplier:add']" v-loading="loading">
+      <a-form-model ref="form" :label-col="{span: 6}" :wrapper-col="{span: 14}" :model="formData" :rules="rules">
+        <a-form-model-item label="编号" prop="code">
+          <a-input v-model.trim="formData.code" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="名称" prop="name">
+          <a-input v-model.trim="formData.name" allow-clear @input="e => changeName(e.target.value)" />
+        </a-form-model-item>
+        <a-form-model-item label="助记码" prop="mnemonicCode">
+          <a-input v-model.trim="formData.mnemonicCode" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="联系人" prop="contact">
+          <a-input v-model.trim="formData.contact" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="联系电话" prop="telephone">
+          <a-input v-model.trim="formData.telephone" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="电子邮箱" prop="email">
+          <a-input v-model.trim="formData.email" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="邮编" prop="zipCode">
+          <a-input v-model.trim="formData.zipCode" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="传真" prop="fax">
+          <a-input v-model.trim="formData.fax" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="地区" prop="city">
+          <city-selector v-model="formData.city" :only-final="true" />
+        </a-form-model-item>
+        <a-form-model-item label="地址" prop="address">
+          <a-input v-model.trim="formData.address" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="发货地址" prop="deliveryAddress">
+          <a-input v-model.trim="formData.deliveryAddress" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="送货周期（天）" prop="deliveryCycle">
+          <a-input v-model="formData.deliveryCycle" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="经营方式" prop="manageType">
+          <a-select v-model="formData.manageType" allow-clear>
+            <a-select-option v-for="item in $enums.MANAGE_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item label="结账方式" prop="settleType">
+          <a-select v-model="formData.settleType" allow-clear>
+            <a-select-option v-for="item in $enums.SETTLE_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item label="统一社会信用代码" prop="creditCode">
+          <a-input v-model.trim="formData.creditCode" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="纳税人识别号" prop="taxIdentifyNo">
+          <a-input v-model.trim="formData.taxIdentifyNo" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="开户银行" prop="bankName">
+          <a-input v-model.trim="formData.bankName" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="户名" prop="accountName">
+          <a-input v-model.trim="formData.accountName" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="银行账号" prop="accountNo">
+          <a-input v-model.trim="formData.accountNo" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="备注" prop="description">
+          <a-textarea v-model.trim="formData.description" />
+        </a-form-model-item>
+      </a-form-model>
     </div>
-  </el-dialog>
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">取消</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
 import * as constants from './constants'
@@ -122,6 +126,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {
@@ -139,7 +145,7 @@ export default {
         email: '',
         zipCode: '',
         fax: '',
-        cityId: '',
+        city: [],
         address: '',
         deliveryAddress: '',
         deliveryCycle: '',
@@ -158,7 +164,10 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.baseData.supplier.create(Object.assign({}, this.formData)).then(() => {
+          const params = Object.assign({}, this.formData)
+          params.cityId = this.$utils.isEmpty(params.city) ? '' : params.city[params.city.length - 1]
+          delete params.city
+          this.$api.baseData.supplier.create(params).then(() => {
             this.$msg.success('新增成功！')
             // 初始化表单数据
             this.initFormData()

@@ -1,49 +1,54 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="新增" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['system:user:add']">
-      <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="编号" prop="code">
-          <el-input v-model.trim="formData.code" clearable />
-        </el-form-item>
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model.trim="formData.username" clearable />
-        </el-form-item>
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model.trim="formData.name" clearable />
-        </el-form-item>
-        <el-form-item label="部门" prop="dept">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }">
+    <div v-if="visible" v-permission="['system:user:add']" v-loading="loading">
+      <a-form-model ref="form" v-loading="loading" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
+        <a-form-model-item label="编号" prop="code">
+          <a-input v-model.trim="formData.code" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="用户名" prop="username">
+          <a-input v-model.trim="formData.username" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="姓名" prop="name">
+          <a-input v-model.trim="formData.name" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="部门" prop="dept">
           <sys-dept-selector v-model="formData.depts" :only-final="true" :multiple="true" />
-        </el-form-item>
-        <el-form-item label="角色" prop="role">
+        </a-form-model-item>
+        <a-form-model-item label="角色" prop="role">
           <sys-role-selector v-model="formData.roles" :multiple="true" />
-        </el-form-item>
-        <el-form-item label="岗位" prop="position">
+        </a-form-model-item>
+        <a-form-model-item label="岗位" prop="position">
           <sys-position-selector v-model="formData.positions" :multiple="true" />
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="formData.password" type="password" clearable />
-        </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-select v-model="formData.gender">
-            <el-option v-for="item in $enums.GENDER.values()" :key="item.code" :label="item.desc" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model.trim="formData.email" clearable />
-        </el-form-item>
-        <el-form-item label="联系电话" prop="telephone">
-          <el-input v-model.trim="formData.telephone" clearable />
-        </el-form-item>
-        <el-form-item label="备注" prop="description">
-          <el-input v-model.trim="formData.description" type="textarea" resize="none" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submit">保存</el-button>
-          <el-button @click="closeDialog">取消</el-button>
-        </el-form-item>
-      </el-form>
+        </a-form-model-item>
+        <a-form-model-item label="密码" prop="password">
+          <a-input-password v-model="formData.password" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="性别" prop="gender">
+          <a-select v-model="formData.gender">
+            <a-select-option v-for="item in $enums.GENDER.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item label="邮箱" prop="email">
+          <a-input v-model.trim="formData.email" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="联系电话" prop="telephone">
+          <a-input v-model.trim="formData.telephone" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="备注" prop="description">
+          <a-textarea v-model.trim="formData.description" />
+        </a-form-model-item>
+      </a-form-model>
     </div>
-  </el-dialog>
+
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">取消</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
 import * as constants from './constants'
@@ -99,6 +104,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

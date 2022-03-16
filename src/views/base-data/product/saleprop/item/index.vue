@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="80%" title="销售属性管理" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="80%" title="销售属性管理" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['base-data:product:saleprop-item:query']">
       <!-- 数据列表 -->
       <vxe-grid
@@ -17,31 +17,27 @@
       >
         <template v-slot:form>
           <j-border>
-            <j-form>
-              <j-form-item label="编号" :span="6">
-                <el-input v-model="searchFormData.code" clearable />
+            <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+              <j-form-item label="编号">
+                <a-input v-model="searchFormData.code" allow-clear />
               </j-form-item>
-              <j-form-item label="名称" :span="6">
-                <el-input v-model="searchFormData.name" clearable />
+              <j-form-item label="名称">
+                <a-input v-model="searchFormData.name" allow-clear />
               </j-form-item>
-              <j-form-item label="状态" :span="6">
-                <el-select v-model="searchFormData.available" placeholder="全部" clearable>
-                  <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-                </el-select>
+              <j-form-item label="状态">
+                <a-select v-model="searchFormData.available" placeholder="全部" allow-clear>
+                  <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                </a-select>
               </j-form-item>
             </j-form>
           </j-border>
         </template>
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-            </el-form-item>
-            <el-form-item v-permission="['base-data:product:saleprop-item:add']">
-              <el-button type="primary" icon="el-icon-plus" @click="$refs.addDialog.openDialog()">新增</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="search" @click="search">查询</a-button>
+            <a-button v-permission="['base-data:product:saleprop-item:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          </a-space>
         </template>
 
         <!-- 状态 列自定义内容 -->
@@ -51,7 +47,7 @@
 
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
-          <el-button v-permission="['base-data:product:saleprop-item:modify']" type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.updateDialog.openDialog() }">修改</el-button>
+          <a-button v-permission="['base-data:product:saleprop-item:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
         </template>
       </vxe-grid>
 
@@ -61,7 +57,7 @@
       <!-- 修改窗口 -->
       <modify ref="updateDialog" :group-id="groupId" :item-id="id" @confirm="search" />
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 import AvailableTag from '@/components/Tag/Available'
@@ -91,13 +87,6 @@ export default {
         code: '',
         name: '',
         available: this.$enums.AVAILABLE.ENABLE.code
-      },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
       },
       // 工具栏配置
       toolbarConfig: {
@@ -140,6 +129,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

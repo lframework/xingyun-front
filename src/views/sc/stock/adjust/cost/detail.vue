@@ -1,22 +1,22 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="75%" title="查看" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['stock:adjust:cost:query']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="仓库" required>
-            <el-input v-model="formData.scName" readonly />
+            {{ formData.scName }}
           </j-form-item>
           <j-form-item :span="16" />
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" type="textarea" resize="none" readonly />
+            <a-textarea v-model.trim="formData.description" read-only />
           </j-form-item>
-          <j-form-item label="审核状态">
-            <span v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态">
+            <span v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
-            <el-input v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.updateBy }}</span>
@@ -44,22 +44,20 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
-      >
-      </vxe-grid>
+      />
 
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="调价品种数" :span="6">
-            <el-input v-model="formData.productNum" class="number-input" readonly />
+            <a-input v-model="formData.productNum" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="库存调价差额" :span="6">
-            <el-input v-model="formData.diffAmount" class="number-input" readonly />
+            <a-input v-model="formData.diffAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 
@@ -84,7 +82,7 @@ export default {
       tableColumn: [
         { type: 'seq', width: 40 },
         { field: 'productCode', title: '商品编号', width: 120 },
-        { field: 'productName', title: '商品名称', width: 260},
+        { field: 'productName', title: '商品名称', width: 260 },
         { field: 'skuCode', title: '商品SKU编号', width: 120 },
         { field: 'externalCode', title: '商品外部编号', width: 120 },
         { field: 'unit', title: '单位', width: 80 },
@@ -113,6 +111,7 @@ export default {
       // 初始化表单数据
       this.initFormData()
       this.visible = true
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

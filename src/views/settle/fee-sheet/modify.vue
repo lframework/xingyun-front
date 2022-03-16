@@ -12,18 +12,18 @@
             />
           </j-form-item>
           <j-form-item label="收支方式" required>
-            <el-select v-model="formData.sheetType" :disabled="!$utils.isEmpty(tableData)">
-              <el-option v-for="item in $enums.SETTLE_FEE_SHEET_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-            </el-select>
+            <a-select v-model="formData.sheetType" :disabled="!$utils.isEmpty(tableData)">
+              <a-select-option v-for="item in $enums.SETTLE_FEE_SHEET_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+            </a-select>
           </j-form-item>
           <j-form-item />
-          <j-form-item label="审核状态">
-            <span v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态">
+            <span v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
-            <el-input v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.createBy }}</span>
@@ -51,18 +51,13 @@
         :data="tableData"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
-        style="margin-top: 10px;"
       >
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" @click="addItem">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" @click="delItem">删除</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="plus" @click="addItem">新增</a-button>
+            <a-button type="danger" icon="delete" @click="delItem">删除</a-button>
+          </a-space>
         </template>
 
         <!-- 项目 列自定义内容 -->
@@ -73,14 +68,14 @@
 
         <!-- 金额 列自定义内容 -->
         <template v-slot:amount_default="{ row }">
-          <el-input v-model="row.amount" class="number-input" tabindex="2" @input="e => amountInput(row, e)" />
+          <a-input v-model="row.amount" class="number-input" tabindex="2" @input="e => amountInput(row, e.target.value)" />
         </template>
       </vxe-grid>
 
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -88,13 +83,15 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
-      <div style="text-align: center;">
-        <el-button v-permission="['settle:fee-sheet:modify']" type="primary" :loading="loading" @click="updateOrder">保存</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['settle:fee-sheet:modify']" type="primary" :loading="loading" @click="updateOrder">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>

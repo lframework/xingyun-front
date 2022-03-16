@@ -1,4 +1,4 @@
-import { MessageBox, Message } from 'element-ui'
+import Vue from 'vue'
 
 const msg = {}
 
@@ -7,22 +7,26 @@ const msg = {}
  * @param message
  */
 msg.error = function(message) {
-  Message({
-    message: message,
-    type: 'error',
-    duration: 5 * 1000
-  })
+  Vue.prototype.$message.error(message)
 }
 
 /**
  * confirm框
  * @param message
  * @param title
- * @param options
  * @returns {Promise<MessageBoxData>}
  */
-msg.confirm = function(message, title, options) {
-  return MessageBox.confirm(message, title || '提示信息', options)
+msg.confirm = function(message, title, options = {}) {
+  return new Promise((resolve, reject) => {
+    Vue.prototype.$confirm({
+      title: title || '提示信息',
+      content: message,
+      onOk: () => resolve(),
+      onCancel: () => reject(),
+      okText: options.okText || '确定',
+      cancelText: options.cancelText || '取消'
+    })
+  })
 }
 
 /**
@@ -30,9 +34,9 @@ msg.confirm = function(message, title, options) {
  * @param message
  */
 msg.success = function(message) {
-  MessageBox.alert(message, {
+  Vue.prototype.$success({
     title: '提示信息',
-    type: 'success'
+    content: message
   })
 }
 
@@ -41,11 +45,7 @@ msg.success = function(message) {
  * @param message
  */
 msg.successTip = function(message) {
-  Message({
-    message: message,
-    type: 'success',
-    duration: 5 * 1000
-  })
+  Vue.prototype.$message.success(message)
 }
 
 /**
@@ -54,14 +54,40 @@ msg.successTip = function(message) {
  * @param options
  * @returns {Promise<MessageBoxData>}
  */
-msg.prompt = function(message, options) {
-  const _options = Object.assign({
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    closeOnClickModal: false,
-    title: '消息提示'
-  }, options)
+msg.prompt = function(message, { inputPattern, inputErrorMessage, title, inputValue }) {
+  return new Promise((resolve, reject) => {
+    const datas = {
+      input: undefined,
+      text: inputValue || ''
+    }
+    const change = (e) => {
+      datas.text = e.target.value
+    }
+    Vue.prototype.$confirm({
+      title: title,
+      content: (h) => {
+        datas.input = h(
+          'div',
+          [h('a-input', { props: { value: inputValue }, on: { input: change }})]
+        )
 
-  return MessageBox.prompt(message, _options.title, _options)
+        return datas.input
+      },
+      icon: 'exclamation-circle',
+      okText: '确定',
+      cancelText: '取消',
+      onOk() {
+        if (inputPattern) {
+          if (!inputPattern.test(datas.text)) {
+            const errorMsg = inputErrorMessage || '输入信息格式有误'
+            msg.error(errorMsg)
+            throw new Error(errorMsg)
+          }
+        }
+
+        resolve({ value: datas.text })
+      }
+    })
+  })
 }
 export default msg

@@ -1,45 +1,33 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="75%" title="销售退货单查看" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['sale:return:query']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="仓库">
-            <el-input
-              v-model="formData.scName"
-              readonly
-            />
+            {{ formData.scName }}
           </j-form-item>
           <j-form-item label="客户">
-            <el-input
-              v-model="formData.customerName"
-              readonly
-            />
+            {{ formData.customerName }}
           </j-form-item>
           <j-form-item label="销售员">
-            <el-input
-              v-model="formData.salerName"
-              readonly
-            />
+            {{ formData.salerName }}
           </j-form-item>
           <j-form-item label="付款日期">
-            <el-input
-              v-model="formData.paymentDate"
-              readonly
-            />
+            {{ formData.paymentDate }}
           </j-form-item>
           <j-form-item label="销售出库单" :span="16">
             <div v-if="!$utils.isEmpty(formData.outSheetCode)">
-              <el-button v-permission="['sale:out:query']" type="text" @click="e => $refs.viewOutSheetDetailDialog.openDialog()">{{ formData.outSheetCode }}</el-button>
+              <a v-permission="['sale:out:query']" @click="e => $refs.viewOutSheetDetailDialog.openDialog()">{{ formData.outSheetCode }}</a>
               <span v-no-permission="['sale:out:query']">{{ formData.outSheetCode }}</span>
             </div>
           </j-form-item>
-          <j-form-item label="审核状态">
-            <span v-if="$enums.SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.SALE_RETURN_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.SALE_RETURN_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态">
+            <span v-if="$enums.SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.SALE_RETURN_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.SALE_RETURN_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.SALE_RETURN_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
-            <el-input v-if="$enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.createBy }}</span>
@@ -66,7 +54,6 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
       >
         <!-- 含税金额 列自定义内容 -->
         <template v-slot:taxAmount_default="{ row }">
@@ -77,13 +64,13 @@
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="退货数量" :span="6">
-            <el-input v-model="formData.totalNum" class="number-input" readonly />
+            <a-input v-model="formData.totalNum" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="赠品数量" :span="6">
-            <el-input v-model="formData.giftNum" class="number-input" readonly />
+            <a-input v-model="formData.giftNum" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="含税总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -91,14 +78,14 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" readonly />
+            <a-textarea v-model.trim="formData.description" maxlength="200" read-only />
           </j-form-item>
         </j-form>
       </j-border>
     </div>
     <!-- 销售出库单查看窗口 -->
     <out-sheet-detail :id="formData.outSheetId" ref="viewOutSheetDetailDialog" />
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 import OutSheetDetail from '@/views/sc/sale/out/detail'
@@ -123,6 +110,7 @@ export default {
       formData: {},
       // 列表数据配置
       tableColumn: [
+        { type: 'seq', width: 40 },
         { field: 'productCode', title: '商品编号', width: 120 },
         { field: 'productName', title: '商品名称', width: 260 },
         { field: 'skuCode', title: '商品SKU编号', width: 120 },

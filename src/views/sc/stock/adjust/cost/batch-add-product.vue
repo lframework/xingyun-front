@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="70%" title="批量添加商品" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="70%" title="批量添加商品" :dialog-style="{ top: '20px' }">
     <div v-if="visible" v-permission="['stock:adjust:cost:add', 'stock:adjust:cost:modify']">
       <!-- 数据列表 -->
       <vxe-grid
@@ -15,33 +15,37 @@
         :columns="tableColumn"
         :pager-config="{}"
         :loading="loading"
-        style="margin-top: 10px;"
       >
         <template v-slot:form>
-          <el-form :model="searchFormData" label-width="80px" :inline="true">
-            <el-form-item label="商品">
-              <el-input v-model="searchFormData.condition" clearable />
-            </el-form-item>
-            <el-form-item label="商品类目">
-              <product-category-selector v-model="searchFormData.category" :only-final="false" />
-            </el-form-item>
-            <el-form-item label="商品品牌">
-              <product-brand-selector v-model="searchFormData.brand" :request-params="{ available: true }" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-            </el-form-item>
-          </el-form>
+          <j-border>
+            <j-form>
+              <j-form-item label="商品">
+                <a-input v-model="searchFormData.condition" allow-clear />
+              </j-form-item>
+              <j-form-item label="商品类目">
+                <product-category-selector v-model="searchFormData.category" :only-final="false" />
+              </j-form-item>
+              <j-form-item label="商品品牌">
+                <product-brand-selector v-model="searchFormData.brand" :request-params="{ available: true }" />
+              </j-form-item>
+            </j-form>
+          </j-border>
+        </template>
+        <!-- 工具栏 -->
+        <template v-slot:toolbar_buttons>
+          <a-space>
+            <a-button type="primary" icon="search" @click="search">查询</a-button>
+          </a-space>
         </template>
       </vxe-grid>
     </div>
-    <template v-slot:footer>
-      <div>
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button v-permission="['stock:adjust:cost:add', 'stock:adjust:cost:modify']" type="primary" :loading="loading" @click="doSelect">确 定</el-button>
-      </div>
+    <template slot="footer">
+      <a-space>
+        <a-button @click="closeDialog">取 消</a-button>
+        <a-button v-permission="['stock:adjust:cost:add', 'stock:adjust:cost:modify']" type="primary" :loading="loading" @click="doSelect">确 定</a-button>
+      </a-space>
     </template>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 import ProductCategorySelector from '@/components/Selector/ProductCategorySelector'
@@ -138,6 +142,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

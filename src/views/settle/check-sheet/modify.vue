@@ -12,30 +12,30 @@
             />
           </j-form-item>
           <j-form-item label="审核日期" :content-nest="false" required>
-            <el-date-picker
-              v-model="formData.startTime"
-              type="date"
-              value-format="yyyy-MM-dd 00:00:00"
-              disabled
-            />
-            <span class="date-split">至</span>
-            <el-date-picker
-              v-model="formData.endTime"
-              type="date"
-              value-format="yyyy-MM-dd 23:59:59"
-              disabled
-            />
+            <div class="date-range-container">
+              <a-date-picker
+                v-model="formData.startTime"
+                placeholder=""
+                value-format="YYYY-MM-DD 00:00:00"
+                disabled
+              />
+              <span class="date-split">至</span>
+              <a-date-picker
+                v-model="formData.endTime"
+                placeholder=""
+                value-format="YYYY-MM-DD 23:59:59"
+                disabled
+              />
+            </div>
           </j-form-item>
-          <j-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="searchUnCheckItems">搜索</el-button>
-          </j-form-item>
-          <j-form-item label="审核状态">
-            <span v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item />
+          <j-form-item label="状态">
+            <span v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
-            <el-input v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.createBy }}</span>
@@ -62,27 +62,33 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
         @checkbox-change="calcSum"
       >
+        <!-- 工具栏 -->
+        <template v-slot:toolbar_buttons>
+          <a-space>
+            <a-button type="primary" icon="search" @click="searchUnCheckItems">查询</a-button>
+          </a-space>
+        </template>
+
         <!-- 应付金额 列自定义内容 -->
         <template v-slot:payAmount_default="{ row }">
-          <el-input v-model="row.payAmount" class="number-input" tabindex="1" @change="e => payAmountInput(row, e)" />
+          <a-input v-model="row.payAmount" class="number-input" tabindex="1" @change="e => payAmountInput(row, e.target.value)" />
         </template>
 
         <!-- 备注 列自定义内容 -->
         <template v-slot:description_default="{ row }">
-          <el-input v-model="row.description" tabindex="2" />
+          <a-input v-model="row.description" tabindex="2" />
         </template>
       </vxe-grid>
 
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="单据总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="应付总金额" :span="6">
-            <el-input v-model="formData.totalPayAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalPayAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -90,13 +96,15 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
-      <div style="text-align: center;">
-        <el-button v-permission="['settle:check-sheet:modify']" type="primary" :loading="loading" @click="updateOrder">保存</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['settle:check-sheet:modify']" type="primary" :loading="loading" @click="updateOrder">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>
@@ -120,13 +128,20 @@ export default {
       visible: false,
       // 是否显示加载框
       loading: false,
+      // 工具栏配置
+      toolbarConfig: {
+        // 自定义左侧工具栏
+        slots: {
+          buttons: 'toolbar_buttons'
+        }
+      },
       // 表单数据
       formData: {},
       // 列表数据配置
       tableColumn: [
         { type: 'checkbox', width: 40 },
         { type: 'seq', width: 40 },
-        { field: 'bizCode', title: '业务单据号', width: 200 },
+        { field: 'bizCode', title: '单据号', width: 200 },
         { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue) } },
         { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'totalAmount', title: '单据金额', align: 'right', width: 100 },

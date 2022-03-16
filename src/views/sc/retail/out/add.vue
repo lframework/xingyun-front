@@ -20,15 +20,13 @@
             />
           </j-form-item>
           <j-form-item label="付款日期" required>
-            <el-date-picker
+            <a-date-picker
               v-model="formData.paymentDate"
-              value-format="yyyy-MM-dd"
-              type="date"
+              placeholder=""
+              value-format="YYYY-MM-DD"
               :disabled="!formData.allowModifyPaymentDate"
-              :picker-options="{
-                disabledDate(time) {
-                  return time.getTime() < $utils.getCurrentDate().valueOf();
-                }
+              :disabled-date="(current) => {
+                return current && current < moment().endOf('day');
               }"
             />
           </j-form-item>
@@ -46,69 +44,58 @@
         :data="tableData"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
-        style="margin-top: 10px;"
       >
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" @click="addProduct">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" @click="delProduct">删除</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="openBatchAddProductDialog">批量添加商品</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="batchInputOutNum">批量录入数量</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="batchInputTaxPrice">批量调整价格</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="setGift">设置赠品</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="plus" @click="addProduct">新增</a-button>
+            <a-button type="danger" icon="delete" @click="delProduct">删除</a-button>
+            <a-button icon="plus" @click="openBatchAddProductDialog">批量添加商品</a-button>
+            <a-button icon="number" @click="batchInputOutNum">批量录入数量</a-button>
+            <a-button icon="edit" @click="batchInputTaxPrice">批量调整价格</a-button>
+            <a-button icon="alert" @click="setGift">设置赠品</a-button>
+          </a-space>
         </template>
 
         <!-- 商品名称 列自定义内容 -->
         <template v-slot:productName_default="{ row, rowIndex }">
-          <el-autocomplete
+          <a-auto-complete
             v-model="row.productName"
             style="width: 100%;"
-            :fetch-suggestions="queryProduct"
             placeholder=""
             value-key="productName"
-            @select="e => handleSelectProduct(rowIndex, e)"
+            @search="e => queryProduct(e, row)"
+            @select="e => handleSelectProduct(rowIndex, e, row)"
           >
-            <template slot-scope="{ item }">
-              <span>{{ item.productCode }} {{ item.productName }}</span>
+            <template slot="dataSource">
+              <a-select-option v-for="(item, index) in row.products" :key="index" :value="item.productId">
+                {{ item.productCode }} {{ item.productName }}
+              </a-select-option>
             </template>
-          </el-autocomplete>
+          </a-auto-complete>
         </template>
 
         <!-- 折扣 列自定义内容 -->
         <template v-slot:discountRate_default="{ row }">
           <span v-if="row.retailPrice === 0 || row.isGift">{{ row.discountRate }}</span>
-          <el-input v-else v-model="row.discountRate" class="number-input" @change="e => changeDiscountRate(row, e)" />
+          <a-input v-else v-model="row.discountRate" class="number-input" @change="e => changeDiscountRate(row, e.target.value)" />
         </template>
 
         <!-- 价格 列自定义内容 -->
         <template v-slot:taxPrice_default="{ row }">
           <span v-if="row.isGift">{{ row.taxPrice }}</span>
-          <el-input v-else v-model="row.taxPrice" class="number-input" @input="value => taxPriceInput(row, value)" />
+          <a-input v-else v-model="row.taxPrice" class="number-input" @input="e => taxPriceInput(row, e.target.value)" />
         </template>
 
         <!-- 出库数量 列自定义内容 -->
         <template v-slot:outNum_default="{ row }">
-          <el-input v-model="row.outNum" class="number-input" @input="outNumInput" />
+          <a-input v-model="row.outNum" class="number-input" @input="e => outNumInput(e.target.value)" />
         </template>
 
         <!-- 库存数量 列自定义内容 -->
         <template v-slot:stockNum_default="{ row }">
           <span v-if="checkStockNum(row)">{{ row.stockNum }}</span>
-          <span v-else style="color: #F56C6C;">{{ row.stockNum }}</span>
+          <span v-else style="color: #F5222D;">{{ row.stockNum }}</span>
         </template>
 
         <!-- 含税金额 列自定义内容 -->
@@ -118,20 +105,20 @@
 
         <!-- 备注 列自定义内容 -->
         <template v-slot:description_default="{ row }">
-          <el-input v-model="row.description" />
+          <a-input v-model="row.description" />
         </template>
       </vxe-grid>
 
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="出库数量" :span="6">
-            <el-input v-model="formData.totalNum" class="number-input" readonly />
+            <a-input v-model="formData.totalNum" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="赠品数量" :span="6">
-            <el-input v-model="formData.giftNum" class="number-input" readonly />
+            <a-input v-model="formData.giftNum" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="含税总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -139,7 +126,7 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
@@ -149,10 +136,12 @@
         :sc-id="formData.sc.id"
         @confirm="batchAddProduct"
       />
-      <div style="text-align: center;">
-        <el-button v-permission="['retail:out:add']" type="primary" :loading="loading" @click="createOrder">保存</el-button>
-        <el-button v-permission="['retail:out:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['retail:out:add']" type="primary" :loading="loading" @click="createOrder">保存</a-button>
+          <a-button v-permission="['retail:out:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>
@@ -216,6 +205,9 @@ export default {
     }
   },
   computed: {
+    moment() {
+      return Moment
+    }
   },
   created() {
     // 初始化表单数据
@@ -274,7 +266,8 @@ export default {
         salePropItemName1: '',
         salePropItemName2: '',
         description: '',
-        isFixed: false
+        isFixed: false,
+        products: []
       }
     },
     // 新增商品
@@ -286,17 +279,19 @@ export default {
       this.tableData.push(this.emptyProduct())
     },
     // 搜索商品
-    queryProduct(queryString, cb) {
+    queryProduct(queryString, row) {
       if (this.$utils.isEmpty(queryString)) {
-        return cb([])
+        row.products = []
+        return
       }
 
       this.$api.sc.retail.retailOrder.searchProduct(this.formData.sc.id, queryString).then(res => {
-        cb(res)
+        row.products = res
       })
     },
     // 选择商品
-    handleSelectProduct(index, value) {
+    handleSelectProduct(index, value, row) {
+      value = row ? row.products.filter(item => item.productId === value)[0] : value
       this.tableData[index] = Object.assign(this.tableData[index], value, {
         isGift: false,
         taxPrice: value.retailPrice
@@ -436,6 +431,7 @@ export default {
 
       records.forEach(item => {
         item.taxPrice = 0
+        item.discountRate = 0
         item.isGift = true
       })
 

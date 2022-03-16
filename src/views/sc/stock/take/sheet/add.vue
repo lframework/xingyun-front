@@ -2,7 +2,7 @@
   <div v-if="visible" class="app-container">
     <div v-permission="['stock:take:sheet:add']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form label-width="120px">
           <j-form-item label="关联盘点任务" required>
             <take-stock-plan-selector
               v-model="formData.takeStockPlan"
@@ -24,19 +24,19 @@
             />
           </j-form-item>
           <j-form-item label="仓库">
-            <el-input :value="formData.scName" readonly />
+            {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            <el-input :value="$enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType)" readonly />
+            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            <el-input :value="$enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus)" readonly />
+            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="类目/品牌">
-            <el-input :value="formData.bizName" readonly />
+            {{ formData.bizName }}
           </j-form-item>
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
@@ -53,49 +53,44 @@
         :data="tableData"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
-        style="margin-top: 10px;"
       >
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" @click="addProduct">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" @click="delProduct">删除</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="openBatchAddProductDialog">批量添加商品</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="plus" @click="addProduct">新增</a-button>
+            <a-button type="danger" icon="delete" @click="delProduct">删除</a-button>
+            <a-button icon="plus" @click="openBatchAddProductDialog">批量添加商品</a-button>
+          </a-space>
         </template>
 
         <!-- 商品名称 列自定义内容 -->
         <template v-slot:productName_default="{ row, rowIndex }">
-          <el-autocomplete
+          <a-auto-complete
             v-if="!row.isFixed"
             v-model="row.productName"
             style="width: 100%;"
-            :fetch-suggestions="queryProduct"
             placeholder=""
             value-key="productName"
-            @select="e => handleSelectProduct(rowIndex, e)"
+            @search="e => queryProduct(e, row)"
+            @select="e => handleSelectProduct(rowIndex, e, row)"
           >
-            <template slot-scope="{ item }">
-              <span>{{ item.productCode }} {{ item.productName }}</span>
+            <template slot="dataSource">
+              <a-select-option v-for="(item, index) in row.products" :key="index" :value="item.productId">
+                {{ item.productCode }} {{ item.productName }}
+              </a-select-option>
             </template>
-          </el-autocomplete>
+          </a-auto-complete>
           <span v-else>{{ row.productName }}</span>
         </template>
 
         <!-- 盘点数量 列自定义内容 -->
         <template v-slot:takeNum_default="{ row }">
-          <el-input v-model="row.takeNum" class="number-input" />
+          <a-input v-model="row.takeNum" class="number-input" />
         </template>
 
         <!-- 备注 列自定义内容 -->
         <template v-slot:description_default="{ row }">
-          <el-input v-model="row.description" />
+          <a-input v-model="row.description" />
         </template>
       </vxe-grid>
 
@@ -105,10 +100,12 @@
         @confirm="batchAddProduct"
       />
 
-      <div style="text-align: center;">
-        <el-button v-permission="['stock:take:sheet:add']" type="primary" :loading="loading" @click="submit">保存</el-button>
-        <el-button v-permission="['stock:take:sheet:approve']" type="primary" :loading="loading" @click="directApprovePass">审核通过</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['stock:take:sheet:add']" type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button v-permission="['stock:take:sheet:approve']" type="primary" :loading="loading" @click="directApprovePass">审核通过</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>
@@ -300,7 +297,8 @@ export default {
         brandName: '',
         stockNum: '',
         takeNum: '',
-        description: ''
+        description: '',
+        products: []
       }
     },
     // 新增商品
@@ -313,17 +311,19 @@ export default {
       this.tableData.push(this.emptyProduct())
     },
     // 搜索商品
-    queryProduct(queryString, cb) {
+    queryProduct(queryString, row) {
       if (this.$utils.isEmpty(queryString)) {
-        return cb([])
+        row.products = []
+        return
       }
 
       this.$api.sc.stock.take.takeStockSheet.searchProduct(this.formData.takeStockPlan.id, queryString).then(res => {
-        cb(res)
+        row.products = res
       })
     },
     // 选择商品
-    handleSelectProduct(index, value) {
+    handleSelectProduct(index, value, row) {
+      value = row ? row.products.filter(item => item.productId === value)[0] : value
       for (let i = 0; i < this.tableData.length; i++) {
         const data = this.tableData[i]
         if (data.productId === value.productId) {

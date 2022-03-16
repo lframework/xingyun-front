@@ -1,61 +1,62 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="新增" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['base-data:member:add']">
-      <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="编号" prop="code">
-          <el-input v-model.trim="formData.code" maxlength="20" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model.trim="formData.name" maxlength="20" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-select v-model="formData.gender" clearable>
-            <el-option v-for="item in $enums.GENDER.values()" :key="item.code" :label="item.desc" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="会员手机号" prop="telephone">
-          <el-input v-model.trim="formData.telephone" maxlength="20" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="电子邮箱" prop="email">
-          <el-input v-model.trim="formData.email" maxlength="100" show-word-limit clearable />
-        </el-form-item>
-        <el-form-item label="出生日期" prop="birthday">
-          <el-date-picker
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }">
+    <div v-if="visible" v-permission="['base-data:member:add']" v-loading="loading">
+      <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
+        <a-form-model-item label="编号" prop="code">
+          <a-input v-model.trim="formData.code" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="名称" prop="name">
+          <a-input v-model.trim="formData.name" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="性别" prop="gender">
+          <a-select v-model="formData.gender" allow-clear>
+            <a-select-option v-for="item in $enums.GENDER.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item label="会员手机号" prop="telephone">
+          <a-input v-model.trim="formData.telephone" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="电子邮箱" prop="email">
+          <a-input v-model.trim="formData.email" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="出生日期" prop="birthday">
+          <a-date-picker
             v-model="formData.birthday"
-            :picker-options="{
-              disabledDate(time) {
-                return time.getTime() > Date.now();
-              }
+            placeholder=""
+            value-format="YYYY-MM-DD"
+            :disabled-date="(current) => {
+              return current && current > moment().endOf('day');
             }"
-            value-format="yyyy-MM-dd"
-            type="date"
           />
-        </el-form-item>
-        <el-form-item label="入会日期" prop="joinDay">
-          <el-date-picker
+        </a-form-model-item>
+        <a-form-model-item label="入会日期" prop="joinDay">
+          <a-date-picker
             v-model="formData.joinDay"
-            :picker-options="{
-              disabledDate(time) {
-                return time.getTime() > Date.now();
-              }
+            placeholder=""
+            value-format="YYYY-MM-DD"
+            :disabled-date="(current) => {
+              return current && current > moment().endOf('day');
             }"
-            value-format="yyyy-MM-dd"
-            type="date"
           />
-        </el-form-item>
-        <el-form-item label="备注" prop="description">
-          <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submit">保存</el-button>
-          <el-button @click="closeDialog">取消</el-button>
-        </el-form-item>
-      </el-form>
+        </a-form-model-item>
+        <a-form-model-item label="备注" prop="description">
+          <a-textarea v-model.trim="formData.description" />
+        </a-form-model-item>
+      </a-form-model>
     </div>
-  </el-dialog>
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">取消</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
 import * as constants from './constants'
+import moment from 'moment'
 
 export default {
   components: {
@@ -89,6 +90,9 @@ export default {
     }
   },
   computed: {
+    moment() {
+      return moment
+    }
   },
   created() {
     // 初始化表单数据
@@ -98,6 +102,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

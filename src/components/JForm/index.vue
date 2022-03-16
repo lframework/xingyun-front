@@ -4,8 +4,8 @@
       <slot />
     </div>
     <div v-if="showCollapse" class="item-footer">
-      <el-link v-if="collapseStatus" icon="el-icon-arrow-up" :class="'item-footer--' + $globalSize" type="info" :underline="false" @click="collapse">收起</el-link>
-      <el-link v-else icon="el-icon-arrow-down" type="info" :class="'item-footer--' + $globalSize" :underline="false" @click="expand">展开</el-link>
+      <a v-if="collapseStatus" :class="'item-footer--default'" type="info" @click="collapse">收起<a-icon type="up" /></a>
+      <a v-else type="info" :class="'item-footer--default'" @click="expand">展开<a-icon type="down" /></a>
     </div>
   </div>
 </template>
@@ -74,19 +74,10 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="less">
 .item-footer {
   .item-footer--default{
     font-size: 14px;
-  }
-  .item-footer--medium{
-    font-size: 14px;
-  }
-  .item-footer--small{
-    font-size: 13px;
-  }
-  .item-footer--mini{
-    font-size: 12px;
   }
 }
 

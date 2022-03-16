@@ -1,32 +1,34 @@
 <template>
   <div v-if="visible" class="app-container">
     <div v-loading="loading" class="gen-container">
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="基本设置" name="baseSetting">
+      <a-tabs v-model="activeName">
+        <a-tab-pane key="baseSetting" tab="基本设置" :force-render="true">
           <base-setting ref="baseSettingDialog" :form-data="formData.generateInfo" />
-        </el-tab-pane>
-        <el-tab-pane label="字段配置" name="generate">
+        </a-tab-pane>
+        <a-tab-pane key="generate" tab="字段配置" :force-render="true">
           <generate-columns ref="generateColumnsDialog" :columns="formData.columns" @sortColumns="e => formData.columns = e" />
-        </el-tab-pane>
-        <el-tab-pane label="新增功能配置" name="addSetting">
+        </a-tab-pane>
+        <a-tab-pane key="addSetting" tab="新增功能配置" :force-render="true">
           <add-setting ref="addSettingDialog" :columns="formData.columns" />
-        </el-tab-pane>
-        <el-tab-pane label="修改功能配置" name="updateSetting">
+        </a-tab-pane>
+        <a-tab-pane key="updateSetting" tab="修改功能配置" :force-render="true">
           <update-setting ref="updateSettingDialog" :columns="formData.columns" />
-        </el-tab-pane>
-        <el-tab-pane label="查询功能参数配置" name="queryParamsSetting">
+        </a-tab-pane>
+        <a-tab-pane key="queryParamsSetting" tab="查询功能参数配置" :force-render="true">
           <query-params-setting ref="queryParamsSettingDialog" :columns="formData.columns" />
-        </el-tab-pane>
-        <el-tab-pane label="查询功能配置" name="querySetting">
+        </a-tab-pane>
+        <a-tab-pane key="querySetting" tab="查询功能配置" :force-render="true">
           <query-setting ref="querySettingDialog" :columns="formData.columns" />
-        </el-tab-pane>
-        <el-tab-pane label="详情功能配置" name="detailSetting">
+        </a-tab-pane>
+        <a-tab-pane key="detailSetting" tab="详情功能配置" :force-render="true">
           <detail-setting ref="detailSettingDialog" :columns="formData.columns" />
-        </el-tab-pane>
-      </el-tabs>
-      <div style="text-align: center; margin-top: 10px;">
-        <el-button :loading="loading" type="primary" @click="submitEvent">保存</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+        </a-tab-pane>
+      </a-tabs>
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button :loading="loading" type="primary" @click="submitEvent">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>

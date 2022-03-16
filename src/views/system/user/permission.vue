@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="60%" title="授权" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['system:user:permission']">
+  <a-modal v-model="visible" :mask-closable="false" width="60%" title="授权" :dialog-style="{ top: '20px' }">
+    <div v-if="visible" v-permission="['system:user:permission']" v-loading="loading">
       <vxe-grid
         ref="grid"
         v-loading="loading"
@@ -17,11 +17,15 @@
       />
     </div>
 
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" :loading="loading" @click="submit">保存</el-button>
-      <el-button :loading="loading" @click="closeDialog">取消</el-button>
-    </span>
-  </el-dialog>
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">取消</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
 
@@ -58,6 +62,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

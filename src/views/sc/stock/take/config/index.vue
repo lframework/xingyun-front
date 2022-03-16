@@ -1,43 +1,49 @@
 <template>
   <div class="app-container">
     <div v-permission="['stock:take:config:modify']">
-      <el-card>
-        <el-form ref="form" v-loading="loading" label-width="420px" title-align="right" :model="formData" :rules="rules" style="width: 720px;">
-          <el-form-item label="库存盘点单关联盘点任务后，是否显示盘点任务中的商品数据" prop="showProduct">
-            <el-select v-model="formData.showProduct" clearable>
-              <el-option label="显示" :value="true" />
-              <el-option label="不显示" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="库存盘点单是否显示盘点任务创建时商品的系统库存数量" prop="showStock">
-            <el-select v-model="formData.showStock" clearable>
-              <el-option label="显示" :value="true" />
-              <el-option label="不显示" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="盘点差异生成时是否自动调整盘点任务中商品的系统库存数量" prop="autoChangeStock">
-            <el-select v-model="formData.autoChangeStock" clearable>
-              <el-option label="调整" :value="true" />
-              <el-option label="不调整" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="盘点差异单中的盘点数量是否允许手动修改" prop="allowChangeNum">
-            <el-select v-model="formData.allowChangeNum" clearable>
-              <el-option label="允许" :value="true" />
-              <el-option label="不允许" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="盘点任务自动作废时间" prop="cancelHours">
-            <el-input v-model="formData.cancelHours" style="width: 195px;" clearable>
-              <template slot="append">小时</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submit">保存</el-button>
-            <el-button @click="closeDialog">取消</el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
+      <a-row>
+        <a-col :md="16" :sm="24">
+          <a-card v-loading="loading">
+            <a-form-model ref="form" :label-col="{span: 14}" :wrapper-col="{span: 4}" :model="formData" :rules="rules">
+              <a-form-model-item label="库存盘点单关联盘点任务后，是否显示盘点任务中的商品数据" prop="showProduct">
+                <a-select v-model="formData.showProduct" allow-clear>
+                  <a-select-option :value="true">显示</a-select-option>
+                  <a-select-option :value="false">不显示</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="库存盘点单是否显示盘点任务创建时商品的系统库存数量" prop="showStock">
+                <a-select v-model="formData.showStock" allow-clear>
+                  <a-select-option :value="true">显示</a-select-option>
+                  <a-select-option :value="false">不显示</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="盘点差异生成时是否自动调整盘点任务中商品的系统库存数量" prop="autoChangeStock">
+                <a-select v-model="formData.autoChangeStock" allow-clear>
+                  <a-select-option :value="true">调整</a-select-option>
+                  <a-select-option :value="false">不调整</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="盘点差异单中的盘点数量是否允许手动修改" prop="allowChangeNum">
+                <a-select v-model="formData.allowChangeNum" allow-clear>
+                  <a-select-option :value="true">允许</a-select-option>
+                  <a-select-option :value="false">不允许</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="盘点任务自动作废时间" prop="cancelHours">
+                <a-input v-model="formData.cancelHours" allow-clear>
+                  <template slot="suffix">小时</template>
+                </a-input>
+              </a-form-model-item>
+            </a-form-model>
+            <div class="form-modal-footer">
+              <a-space>
+                <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+                <a-button :loading="loading" @click="closeDialog">取消</a-button>
+              </a-space>
+            </div>
+          </a-card>
+        </a-col>
+      </a-row>
     </div>
   </div>
 </template>
@@ -85,8 +91,7 @@ export default {
     },
     // 关闭对话框
     closeDialog() {
-      this.$store.dispatch('tagsView/delView', this.$route)
-      this.$router.go(-1)
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {

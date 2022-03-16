@@ -1,19 +1,21 @@
 <template>
   <div v-if="visible" class="app-container">
     <div v-loading="loading" class="gen-container">
-      <el-tabs :active-name="activeName" tab-position="left">
-        <el-tab-pane v-for="(obj, index) in formData" :key="index" :label="index" :name="index">
+      <a-tabs v-model="activeName" tab-position="left">
+        <a-tab-pane v-for="(obj, index) in formData" :key="index" :tab="index">
           <div class="gen-container">
             <div class="gen-toolbar">
-              <el-button type="text" icon="el-icon-document-copy" @click="handleClipboard(obj, $event)">复制</el-button>
+              <a-button type="link" icon="copy" @click="handleClipboard(obj, $event)">复制</a-button>
             </div>
             <span style="white-space: pre-wrap; line-height: 1.5;">{{ obj }}</span>
           </div>
-        </el-tab-pane>
-      </el-tabs>
-      <div style="text-align: center; margin-top: 10px;">
-        <el-button :loading="loading" type="primary" @click="download">下载</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+        </a-tab-pane>
+      </a-tabs>
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button :loading="loading" type="primary" @click="download">下载</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>

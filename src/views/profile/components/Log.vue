@@ -1,40 +1,34 @@
 <template>
-  <div class="app-container">
-    <!-- 数据列表 -->
-    <vxe-grid
-      ref="grid"
-      resizable
-      show-overflow
-      highlight-hover-row
-      keep-source
-      row-id="id"
-      :proxy-config="proxyConfig"
-      :columns="tableColumn"
-      :pager-config="{}"
-      :loading="loading"
-      :height="$defaultTableHeight"
+  <div>
+    <a-list
+      :grid="{gutter: 24}"
+      :data-source="opLogs"
     >
-      <template v-slot:form>
-        <j-border>
-          <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
-            <j-form-item label="日志名称">
-              <el-input
-                v-model="searchFormData.name"
-                clearable
-              />
-            </j-form-item>
-            <j-form-item label="日志类型">
-              <el-select v-model="searchFormData.logType" placeholder="全部" clearable>
-                <el-option v-for="item in $enums.OP_LOG_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-              </el-select>
-            </j-form-item>
-            <j-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-            </j-form-item>
-          </j-form>
-        </j-border>
-      </template>
-    </vxe-grid>
+      <a-list-item slot="renderItem" slot-scope="item">
+        <a-card :hoverable="true">
+          <a-card-meta>
+            <div slot="title" style="margin-bottom: 3px"><a-tooltip :title="item.name"><div class="meta-title">{{ item.name }}</div></a-tooltip></div>
+            <svg-icon slot="avatar" icon-class="log" style="font-size: 16px;" />
+            <div slot="description" class="meta-content">
+              <a-row>
+                <a-col :span="24" class="meta-content-item">
+                  日志类型: {{ $enums.OP_LOG_TYPE.getDesc(item.logType) }}
+                </a-col>
+                <a-col :span="24" class="meta-content-item">
+                  IP: {{ item.ip }}
+                </a-col>
+                <a-col :span="24" class="meta-content-item">
+                  创建时间: {{ item.createTime }}
+                </a-col>
+              </a-row>
+            </div>
+          </a-card-meta>
+        </a-card>
+      </a-list-item>
+    </a-list>
+    <div style="text-align: center;">
+      <a-button v-if="hasNext" type="link" @click="loadOpLogs">加载更多<a-icon :type="loading ? 'loading' : 'down'" /></a-button>
+    </div>
   </div>
 </template>
 
@@ -45,61 +39,48 @@ export default {
   data() {
     return {
       loading: false,
-      // 当前行数据
-      id: '',
-      // 查询列表的查询条件
-      searchFormData: {},
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-      },
-      // 列表数据配置
-      tableColumn: [
-        { field: 'name', title: '日志名称', minWidth: 220 },
-        { field: 'logType', title: '日志类型', width: 100, formatter: ({ cellValue }) => { return this.$enums.OP_LOG_TYPE.getDesc(cellValue) } },
-        { field: 'ip', title: 'IP地址', width: 130 },
-        { field: 'createTime', title: '创建时间', width: 170 }
-      ],
-      // 请求接口配置
-      proxyConfig: {
-        props: {
-          // 响应结果列表字段
-          result: 'datas',
-          // 响应结果总条数字段
-          total: 'totalCount'
-        },
-        ajax: {
-          // 查询接口
-          query: ({ page, sorts, filters }) => {
-            return this.$api.userCenter.queryOpLogs(this.buildQueryParams(page))
-          }
-        }
-      }
+      opLogs: [],
+      pageIndex: 1,
+      pageSize: 10,
+      hasNext: true
     }
   },
   created() {
+    this.loadOpLogs()
   },
   methods: {
-    // 列表发生查询时的事件
-    search() {
-      this.$refs.grid.commitProxy('reload')
-    },
-    // 查询前构建查询参数结构
-    buildQueryParams(page) {
-      return Object.assign({
-        pageIndex: page.currentPage,
-        pageSize: page.pageSize
-      }, this.buildSearchFormData())
-    },
-    // 查询前构建具体的查询参数
-    buildSearchFormData() {
-      return Object.assign({ }, this.searchFormData)
+    loadOpLogs() {
+      if (this.loading) {
+        return
+      }
+      this.loading = true
+      this.$api.userCenter.queryOpLogs({
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize
+      }).then(res => {
+        res.datas.forEach(item => this.opLogs.push(item))
+        this.hasNext = res.hasNext
+        if (this.hasNext) {
+          this.pageIndex++
+        }
+
+        this.$emit('loaded', this.opLogs.length)
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
+.meta-title {
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis;
+}
+.meta-content {
+  .meta-content-item {
+    line-height: 2;
+  }
+}
 </style>

@@ -1,38 +1,44 @@
 <template>
   <div class="app-container">
     <div v-permission="['purchase:config:modify']">
-      <el-card>
-        <el-form ref="form" v-loading="loading" label-width="260px" title-align="right" :model="formData" :rules="rules">
-          <el-form-item label="采购收货单是否关联采购订单" prop="receiveRequirePurchase">
-            <el-select v-model="formData.receiveRequirePurchase" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="采购收货单是否多次关联采购订单" prop="receiveMultipleRelatePurchase">
-            <el-select v-model="formData.receiveMultipleRelatePurchase" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="采购退货单是否关联采购收货单" prop="purchaseReturnRequireReceive">
-            <el-select v-model="formData.purchaseReturnRequireReceive" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="采购退货单是否多次关联采购收货单" prop="purchaseReturnMultipleRelateReceive">
-            <el-select v-model="formData.purchaseReturnMultipleRelateReceive" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submit">保存</el-button>
-            <el-button @click="close">取消</el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
+      <a-row>
+        <a-col :md="16" :sm="24">
+          <a-card v-loading="loading">
+            <a-form-model ref="form" :label-col="{span: 10}" :wrapper-col="{span: 8}" :model="formData" :rules="rules">
+              <a-form-model-item label="采购收货单是否关联采购订单" prop="receiveRequirePurchase">
+                <a-select v-model="formData.receiveRequirePurchase" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="采购收货单是否多次关联采购订单" prop="receiveMultipleRelatePurchase">
+                <a-select v-model="formData.receiveMultipleRelatePurchase" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="采购退货单是否关联采购收货单" prop="purchaseReturnRequireReceive">
+                <a-select v-model="formData.purchaseReturnRequireReceive" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="采购退货单是否多次关联采购收货单" prop="purchaseReturnMultipleRelateReceive">
+                <a-select v-model="formData.purchaseReturnMultipleRelateReceive" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+            </a-form-model>
+            <div class="form-modal-footer">
+              <a-space>
+                <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+                <a-button :loading="loading" @click="close">取消</a-button>
+              </a-space>
+            </div>
+          </a-card>
+        </a-col>
+      </a-row>
     </div>
   </div>
 </template>
@@ -108,8 +114,7 @@ export default {
       })
     },
     close() {
-      this.$store.dispatch('tagsView/delView', this.$route)
-      this.$router.go(-1)
+      this.$utils.closeCurrentPage(this.$parent)
     }
   }
 }

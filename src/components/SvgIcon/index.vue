@@ -1,13 +1,14 @@
 <template>
   <div v-if="isExternal" :style="styleExternalIcon" class="svg-external-icon svg-icon" v-on="$listeners" />
-  <i v-else-if="iconClass.includes('el-icon')" :class="iconClass" />
-  <svg v-else-if="!$utils.isEmpty(iconClass)" :class="svgClass" aria-hidden="true" v-on="$listeners">
-    <use :xlink:href="iconName" />
-  </svg>
+  <i v-else-if="!$utils.isEmpty(iconClass)" class="anticon">
+    <svg :class="svgClass" aria-hidden="true" focusable="false" v-on="$listeners">
+      <use :xlink:href="iconName" />
+    </svg>
+  </i>
+
 </template>
 
 <script>
-// doc: https://panjiachen.github.io/vue-element-admin-site/feature/component/svg-icon.html#usage
 import { isExternal } from '@/utils/validate'
 
 export default {
@@ -48,9 +49,10 @@ export default {
 
 <style scoped>
 .svg-icon {
+  display: inline-block;
   width: 1em;
   height: 1em;
-  vertical-align: -0.15em;
+  vertical-align: -0.125em;
   fill: currentColor;
   overflow: hidden;
 }

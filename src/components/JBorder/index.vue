@@ -1,6 +1,6 @@
 <template>
-  <div class="j-border" style="background-color: #F2F6FC;">
-    <div v-if="!$utils.isEmpty(title)" :class="'j-border-title j-border-title--' + $globalSize">{{ title }}</div>
+  <div class="j-border" style="background-color: #FFFFFF;">
+    <div v-if="!$utils.isEmpty(title)" :class="'j-border-title j-border-title--default'">{{ title }}</div>
     <slot />
   </div>
 </template>
@@ -25,44 +25,25 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="less">
 .j-border {
   border: 1px solid #eee;
   border-radius: 4px;
   padding: 5px;
 
   .j-border-title {
-    position: absolute;
-    font-weight: 500;
-    color: #909399;
+    margin-left: 20px;
+    color: rgba(0,0,0,.85);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.5;
   }
 
-  .j-border-title--default {
+  /*.j-border-title--default {
     font-size: 12px;
     padding: 0 20px;
 
-    transform: translateY(-95%);
-  }
-
-  .j-border-title--medium {
-    font-size: 12px;
-    padding: 0 20px;
-
-    transform: translateY(-95%);
-  }
-
-  .j-border-title--small {
-    font-size: 12px;
-    padding: 0 18px;
-
-    transform: translateY(-95%);
-  }
-
-  .j-border-title--mini {
-    font-size: 12px;
-    padding: 0 16px;
-
-    transform: translateY(-95%);
-  }
+    transform: translateY(-80%);
+  }*/
 }
 </style>

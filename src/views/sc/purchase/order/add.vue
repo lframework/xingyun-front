@@ -1,32 +1,6 @@
 <template>
   <div v-if="visible" class="app-container">
     <div v-permission="['purchase:order:add']" v-loading="loading">
-      <j-border>
-        <j-form>
-          <j-form-item label="仓库" required>
-            <store-center-selector
-              v-model="formData.sc"
-            />
-          </j-form-item>
-          <j-form-item label="供应商" required>
-            <supplier-selector
-              v-model="formData.supplier"
-            />
-          </j-form-item>
-          <j-form-item label="采购员">
-            <user-selector
-              v-model="formData.purchaser"
-            />
-          </j-form-item>
-          <j-form-item label="预计到货日期" required>
-            <el-date-picker
-              v-model="formData.expectArriveDate"
-              value-format="yyyy-MM-dd"
-              type="date"
-            />
-          </j-form-item>
-        </j-form>
-      </j-border>
       <!-- 数据列表 -->
       <vxe-grid
         ref="grid"
@@ -39,57 +13,74 @@
         :data="tableData"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
-        style="margin-top: 10px;"
       >
+        <template v-slot:form>
+          <j-border>
+            <j-form>
+              <j-form-item label="仓库" required>
+                <store-center-selector
+                  v-model="formData.sc"
+                />
+              </j-form-item>
+              <j-form-item label="供应商" required>
+                <supplier-selector
+                  v-model="formData.supplier"
+                />
+              </j-form-item>
+              <j-form-item label="采购员">
+                <user-selector
+                  v-model="formData.purchaser"
+                />
+              </j-form-item>
+              <j-form-item label="预计到货日期" required>
+                <a-date-picker
+                  v-model="formData.expectArriveDate"
+                  placeholder=""
+                  value-format="YYYY-MM-DD"
+                />
+              </j-form-item>
+            </j-form>
+          </j-border>
+        </template>
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" @click="addProduct">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" @click="delProduct">删除</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="openBatchAddProductDialog">批量添加商品</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="batchInputPurchaseNum">批量录入数量</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="batchInputPurchasePrice">批量调整采购价</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="setGift">设置赠品</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="plus" @click="addProduct">新增</a-button>
+            <a-button type="danger" icon="delete" @click="delProduct">删除</a-button>
+            <a-button icon="plus" @click="openBatchAddProductDialog">批量添加商品</a-button>
+            <a-button icon="number" @click="batchInputPurchaseNum">批量录入数量</a-button>
+            <a-button icon="edit" @click="batchInputPurchasePrice">批量调整采购价</a-button>
+            <a-button icon="alert" @click="setGift">设置赠品</a-button>
+          </a-space>
         </template>
 
         <!-- 商品名称 列自定义内容 -->
         <template v-slot:productName_default="{ row, rowIndex }">
-          <el-autocomplete
+          <a-auto-complete
             v-model="row.productName"
             style="width: 100%;"
-            :fetch-suggestions="queryProduct"
             placeholder=""
             value-key="productName"
-            @select="e => handleSelectProduct(rowIndex, e)"
+            @search="e => queryProduct(e, row)"
+            @select="e => handleSelectProduct(rowIndex, e, row)"
           >
-            <template slot-scope="{ item }">
-              <span>{{ item.productCode }} {{ item.productName }}</span>
+            <template slot="dataSource">
+              <a-select-option v-for="(item, index) in row.products" :key="index" :value="item.productId">
+                {{ item.productCode }} {{ item.productName }}
+              </a-select-option>
             </template>
-          </el-autocomplete>
+          </a-auto-complete>
         </template>
 
         <!-- 采购价 列自定义内容 -->
         <template v-slot:purchasePrice_default="{ row }">
           <span v-if="row.isGift">{{ row.purchasePrice }}</span>
-          <el-input v-else v-model="row.purchasePrice" class="number-input" @input="value => purchasePriceInput(row, value)" />
+          <a-input v-else v-model="row.purchasePrice" class="number-input" @input="e => purchasePriceInput(row, e.target.value)" />
         </template>
 
         <!-- 采购数量 列自定义内容 -->
         <template v-slot:purchaseNum_default="{ row }">
-          <el-input v-model="row.purchaseNum" class="number-input" @input="purchaseNumInput" />
+          <a-input v-model="row.purchaseNum" class="number-input" @input="e => purchaseNumInput(e.target.value)" />
         </template>
 
         <!-- 采购含税金额 列自定义内容 -->
@@ -99,20 +90,20 @@
 
         <!-- 备注 列自定义内容 -->
         <template v-slot:description_default="{ row }">
-          <el-input v-model="row.description" />
+          <a-input v-model="row.description" />
         </template>
       </vxe-grid>
 
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="采购数量" :span="6">
-            <el-input v-model="formData.totalNum" class="number-input" readonly />
+            <a-input v-model="formData.totalNum" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="赠品数量" :span="6">
-            <el-input v-model="formData.giftNum" class="number-input" readonly />
+            <a-input v-model="formData.giftNum" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="采购含税总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -120,7 +111,7 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
@@ -130,10 +121,12 @@
         @confirm="batchAddProduct"
       />
 
-      <div style="text-align: center;">
-        <el-button v-permission="['purchase:order:add']" type="primary" :loading="loading" @click="createOrder">保存</el-button>
-        <el-button v-permission="['purchase:order:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['purchase:order:add']" type="primary" :loading="loading" @click="createOrder">保存</a-button>
+          <a-button v-permission="['purchase:order:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>
@@ -250,7 +243,8 @@ export default {
         purchaseAmount: '',
         saleProp1: '',
         saleProp2: '',
-        description: ''
+        description: '',
+        products: []
       }
     },
     // 新增商品
@@ -262,18 +256,19 @@ export default {
       this.tableData.push(this.emptyProduct())
     },
     // 搜索商品
-    queryProduct(queryString, cb) {
+    queryProduct(queryString, row) {
       if (this.$utils.isEmpty(queryString)) {
-        return cb([])
+        row.products = []
+        return
       }
 
       this.$api.sc.purchase.purchaseOrder.searchProduct(this.formData.sc.id, queryString).then(res => {
-        cb(res)
+        row.products = res
       })
     },
     // 选择商品
-    handleSelectProduct(index, value) {
-      this.tableData[index] = Object.assign(this.tableData[index], value)
+    handleSelectProduct(index, value, row) {
+      this.tableData[index] = Object.assign(this.tableData[index], row ? row.products.filter(item => item.productId === value)[0] : value)
 
       this.purchasePriceInput(this.tableData[index], this.tableData[index].purchasePrice)
     },

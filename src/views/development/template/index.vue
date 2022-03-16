@@ -15,49 +15,49 @@
       :loading="loading"
     >
       <template v-slot:form>
-        <el-form :model="searchFormData" label-width="60px" :inline="true">
-          <el-form-item label="编号">
-            <el-input v-model="searchFormData.code" clearable />
-          </el-form-item>
-          <el-form-item label="名称">
-            <el-input v-model="searchFormData.name" clearable />
-          </el-form-item>
-          <el-form-item label="类型">
-            <el-select v-model="searchFormData.type" clearable>
-              <el-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="状态">
-            <el-select v-model="searchFormData.available" clearable>
-              <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-            </el-select>
-          </el-form-item>
-        </el-form>
+        <a-form-model :model="searchFormData" label-width="60px" :inline="true">
+          <a-form-model-item label="编号">
+            <a-input v-model="searchFormData.code" allow-clear />
+          </a-form-model-item>
+          <a-form-model-item label="名称">
+            <a-input v-model="searchFormData.name" allow-clear />
+          </a-form-model-item>
+          <a-form-model-item label="类型">
+            <a-select v-model="searchFormData.type" allow-clear>
+              <a-select-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+            </a-select>
+          </a-form-model-item>
+          <a-form-model-item label="状态">
+            <a-select v-model="searchFormData.available" allow-clear>
+              <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+            </a-select>
+          </a-form-model-item>
+        </a-form-model>
       </template>
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>
-        <el-form :inline="true">
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-plus" @click="addDialogVisible = true">新增</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
-          </el-form-item>
-          <el-form-item>
+        <a-form-model :inline="true">
+          <a-form-model-item>
+            <a-button type="primary" icon="search" @click="search">查询</a-button>
+          </a-form-model-item>
+          <a-form-model-item>
+            <a-button type="primary" icon="plus" @click="addDialogVisible = true">新增</a-button>
+          </a-form-model-item>
+          <a-form-model-item>
+            <a-button icon="delete" @click="batchDelete">批量删除</a-button>
+          </a-form-model-item>
+          <a-form-model-item>
             <el-dropdown trigger="click" @command="handleCommand">
-              <el-button>
+              <a-button>
                 更多<i class="el-icon-more el-icon--right" />
-              </el-button>
+              </a-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="batchEnable"><i class="el-icon-check" />批量启用</el-dropdown-item>
                 <el-dropdown-item command="batchUnable"><i class="el-icon-s-release" />批量停用</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </el-form-item>
-        </el-form>
+          </a-form-model-item>
+        </a-form-model>
       </template>
 
       <!-- 状态 列自定义内容 -->
@@ -67,32 +67,32 @@
 
       <!-- 操作 列自定义内容 -->
       <template v-slot:action_default="{ row }">
-        <el-button type="text" icon="el-icon-view" @click="e => { currentRow = row;viewDialogVisible = true }">查看</el-button>
-        <el-button type="text" icon="el-icon-edit" @click="e => { currentRow = row;updateDialogVisible = true }">修改</el-button>
-        <el-button type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
+        <a-button type="text" icon="el-icon-view" @click="e => { currentRow = row;viewDialogVisible = true }">查看</a-button>
+        <a-button type="text" icon="el-icon-edit" @click="e => { currentRow = row;updateDialogVisible = true }">修改</a-button>
+        <a-button type="text" icon="delete" @click="e => { deleteRow(row) }">删除</a-button>
       </template>
     </vxe-grid>
 
     <!-- 新增窗口 -->
-    <el-dialog :visible.sync="addDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="新增" top="5vh">
+    <a-modal v-model="addDialogVisible" :mask-closable="false" width="30%" title="新增" :dialog-style="{ top: '20px' }">
       <template v-slot>
         <add @confirm="e => {addDialogVisible = false;search()}" @close="addDialogVisible = false" />
       </template>
-    </el-dialog>
+    </a-modal>
 
     <!-- 修改窗口 -->
-    <el-dialog :visible.sync="updateDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="修改" top="5vh" @open="$nextTick(() => $refs.updateDialog.open())">
+    <a-modal v-model="updateDialogVisible" :mask-closable="false" width="30%" title="修改" :dialog-style="{ top: '20px' }" @open="$nextTick(() => $refs.updateDialog.open())">
       <template v-slot>
         <modify :id="currentRow.id" ref="updateDialog" @confirm="e => {updateDialogVisible = false;search()}" @close="updateDialogVisible = false" />
       </template>
-    </el-dialog>
+    </a-modal>
 
     <!-- 查看窗口 -->
-    <el-dialog :visible.sync="viewDialogVisible" :close-on-click-modal="false" append-to-body width="30%" title="查看" top="5vh" @open="$nextTick(() => $refs.viewDialog.open())">
+    <a-modal v-model="viewDialogVisible" :mask-closable="false" width="30%" title="查看" :dialog-style="{ top: '20px' }" @open="$nextTick(() => $refs.viewDialog.open())">
       <template v-slot>
         <detail :id="currentRow.id" ref="viewDialog" @confirm="e => viewDialogVisible = false" @close="viewDialogVisible = false" />
       </template>
-    </el-dialog>
+    </a-modal>
   </div>
 </template>
 

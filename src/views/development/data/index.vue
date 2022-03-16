@@ -20,48 +20,42 @@
           <j-border>
             <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
               <j-form-item label="编号" :span="6">
-                <el-input v-model="searchFormData.code" clearable />
+                <a-input v-model="searchFormData.code" allow-clear />
               </j-form-item>
               <j-form-item label="名称" :span="6">
-                <el-input v-model="searchFormData.name" clearable />
+                <a-input v-model="searchFormData.name" allow-clear />
               </j-form-item>
               <j-form-item label="类型" :span="6">
-                <el-select v-model="searchFormData.type" placeholder="全部" clearable>
-                  <el-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-                </el-select>
+                <a-select v-model="searchFormData.type" placeholder="全部" allow-clear>
+                  <a-select-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                </a-select>
               </j-form-item>
               <j-form-item label="状态" :span="6">
-                <el-select v-model="searchFormData.available" placeholder="全部" clearable>
-                  <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-                </el-select>
+                <a-select v-model="searchFormData.available" placeholder="全部" allow-clear>
+                  <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                </a-select>
               </j-form-item>
             </j-form>
           </j-border>
         </template>
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-plus" @click="$refs.addDialog.openDialog()">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-dropdown trigger="click" @command="handleCommand">
-                <el-button>
-                  更多<i class="el-icon-more el-icon--right" />
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="batchEnable"><i class="el-icon-check" />批量启用</el-dropdown-item>
-                  <el-dropdown-item command="batchUnable"><i class="el-icon-s-release" />批量停用</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="search" @click="search">查询</a-button>
+            <a-button type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+            <a-button type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
+            <a-dropdown>
+              <a-menu slot="overlay" @click="handleCommand">
+                <a-menu-item key="batchEnable">
+                  <a-icon type="check" />批量启用
+                </a-menu-item>
+                <a-menu-item key="batchUnable">
+                  <a-icon type="stop" />批量停用
+                </a-menu-item>
+              </a-menu>
+              <a-button>更多<a-icon type="down" /></a-button>
+            </a-dropdown>
+          </a-space>
         </template>
 
         <!-- 状态 列自定义内容 -->
@@ -71,13 +65,13 @@
 
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
-          <el-button type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
-          <el-button type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.updateDialog.openDialog() }">修改</el-button>
-          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.CREATED.code" type="text" icon="el-icon-setting" @click="e => { id = row.id;type=row.type;$refs.settingsDialog.openDialog() }">设置</el-button>
-          <el-button v-else-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_TABLE.code || row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="text" icon="el-icon-setting" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.generateDialog.openDialog()) }">生成</el-button>
-          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="text" icon="el-icon-setting" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.previewDialog.openDialog()) }">预览</el-button>
-          <el-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="text" icon="el-icon-download" @click="e => { download(row.id) }">下载</el-button>
-          <el-button type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
+          <a-button type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
+          <a-button type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
+          <a-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.CREATED.code" type="link" @click="e => { id = row.id;type=row.type;$refs.settingsDialog.openDialog() }">设置</a-button>
+          <a-button v-else-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_TABLE.code || row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="link" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.generateDialog.openDialog()) }">生成</a-button>
+          <a-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="link" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.previewDialog.openDialog()) }">预览</a-button>
+          <a-button v-if="row.genStatus === $enums.DATAOBJECT_GEN_STATUS.SET_GEN.code" type="link" @click="e => { download(row.id) }">下载</a-button>
+          <a-button type="link" class="ant-btn-link-danger" @click="e => { deleteRow(row) }">删除</a-button>
         </template>
       </vxe-grid>
 
@@ -149,7 +143,7 @@ export default {
         { field: 'createTime', title: '创建时间', width: 170 },
         { field: 'updateBy', title: '修改人', width: 100 },
         { field: 'updateTime', title: '修改时间', width: 170 },
-        { title: '操作', width: 390, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 280, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
@@ -186,10 +180,10 @@ export default {
     buildSearchFormData() {
       return Object.assign({ }, this.searchFormData)
     },
-    handleCommand(command) {
-      if (command === 'batchEnable') {
+    handleCommand({ key }) {
+      if (key === 'batchEnable') {
         this.batchEnable()
-      } else if (command === 'batchUnable') {
+      } else if (key === 'batchUnable') {
         this.batchUnable()
       }
     },

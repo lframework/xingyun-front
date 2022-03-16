@@ -12,15 +12,15 @@
           </j-form-item>
           <j-form-item :span="16" />
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
-          <j-form-item label="审核状态">
-            <span v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态">
+            <span v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
-            <el-input v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.updateBy }}</span>
@@ -49,44 +49,39 @@
         :data="tableData"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
-        style="margin-top: 10px;"
       >
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" @click="addProduct">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" @click="delProduct">删除</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="openBatchAddProductDialog">批量添加商品</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="plus" @click="addProduct">新增</a-button>
+            <a-button type="danger" icon="delete" @click="delProduct">删除</a-button>
+            <a-button icon="plus" @click="openBatchAddProductDialog">批量添加商品</a-button>
+          </a-space>
         </template>
 
         <!-- 商品名称 列自定义内容 -->
         <template v-slot:productName_default="{ row, rowIndex }">
-          <el-autocomplete
+          <a-auto-complete
             v-if="!row.isFixed"
             v-model="row.productName"
             style="width: 100%;"
-            :fetch-suggestions="queryProduct"
             placeholder=""
             value-key="productName"
-            @select="e => handleSelectProduct(rowIndex, e)"
+            @search="e => queryProduct(e, row)"
+            @select="e => handleSelectProduct(rowIndex, e, row)"
           >
-            <template slot-scope="{ item }">
-              <span>{{ item.productCode }} {{ item.productName }}</span>
+            <template slot="dataSource">
+              <a-select-option v-for="(item, index) in row.products" :key="index" :value="item.productId">
+                {{ item.productCode }} {{ item.productName }}
+              </a-select-option>
             </template>
-          </el-autocomplete>
+          </a-auto-complete>
           <span v-else>{{ row.productName }}</span>
         </template>
 
         <!-- 调整后成本价 列自定义内容 -->
         <template v-slot:price_default="{ row }">
-          <el-input v-model="row.price" class="number-input" @input="priceInput" />
+          <a-input v-model="row.price" class="number-input" @input="e => priceInput(e.target.value)" />
         </template>
 
         <!-- 库存调价差额 列自定义内容 -->
@@ -96,30 +91,32 @@
 
         <!-- 备注 列自定义内容 -->
         <template v-slot:description_default="{ row }">
-          <el-input v-model="row.description" />
+          <a-input v-model="row.description" />
         </template>
       </vxe-grid>
 
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="调价品种数" :span="6">
-            <el-input v-model="formData.productNum" class="number-input" readonly />
+            <a-input v-model="formData.productNum" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="库存调价差额" :span="6">
-            <el-input v-model="formData.diffAmount" class="number-input" readonly />
+            <a-input v-model="formData.diffAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
 
       <batch-add-product
         ref="batchAddProductDialog"
-        :sc-id="this.formData.sc.id || ''"
+        :sc-id="formData.sc.id || ''"
         @confirm="batchAddProduct"
       />
 
-      <div style="text-align: center;">
-        <el-button v-permission="['stock:adjust:cost:modify']" type="primary" :loading="loading" @click="submit">保存</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['stock:adjust:cost:modify']" type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>
@@ -309,20 +306,22 @@ export default {
       this.tableData.push(this.emptyProduct())
     },
     // 搜索商品
-    queryProduct(queryString, cb) {
+    queryProduct(queryString, row) {
       if (this.$utils.isEmpty(queryString)) {
-        return cb([])
+        row.products = []
+        return
       }
 
       this.$api.sc.stock.adjust.stockCostAdjustSheet.searchProduct({
         scId: this.formData.sc.id,
         condition: queryString
       }).then(res => {
-        cb(res)
+        row.products = res
       })
     },
     // 选择商品
-    handleSelectProduct(index, value) {
+    handleSelectProduct(index, value, row) {
+      value = row ? row.products.filter(item => item.productId === value)[0] : value
       for (let i = 0; i < this.tableData.length; i++) {
         const data = this.tableData[i]
         if (data.productId === value.productId) {
@@ -431,7 +430,6 @@ export default {
       }).finally(() => {
         this.loading = false
       })
-
     }
   }
 }

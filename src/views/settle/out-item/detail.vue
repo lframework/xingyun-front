@@ -1,22 +1,22 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="查看" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['settle:out-item:query']">
-      <el-descriptions :column="4" border label-class-name="descriptions-label" content-class-name="descriptions-content">
-        <el-descriptions-item label="编号" :span="2">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
+    <div v-if="visible" v-permission="['settle:out-item:query']" v-loading="loading">
+      <a-descriptions :column="4" bordered>
+        <a-descriptions-item label="编号" :span="2">
           {{ formData.code }}
-        </el-descriptions-item>
-        <el-descriptions-item label="名称" :span="2">
+        </a-descriptions-item>
+        <a-descriptions-item label="名称" :span="2">
           {{ formData.name }}
-        </el-descriptions-item>
-        <el-descriptions-item label="状态" :span="4">
+        </a-descriptions-item>
+        <a-descriptions-item label="状态" :span="4">
           <available-tag :available="formData.available" />
-        </el-descriptions-item>
-        <el-descriptions-item label="备注" :span="4">
+        </a-descriptions-item>
+        <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
-        </el-descriptions-item>
-      </el-descriptions>
+        </a-descriptions-item>
+      </a-descriptions>
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 import AvailableTag from '@/components/Tag/Available'
@@ -49,6 +49,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

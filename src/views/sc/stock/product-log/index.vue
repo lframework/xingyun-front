@@ -18,7 +18,7 @@
     >
       <template v-slot:form>
         <j-border>
-          <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+          <j-form label-width="100px" @collapse="$refs.grid.refreshColumn()">
             <j-form-item label="仓库">
               <store-center-selector v-model="searchFormData.sc" />
             </j-form-item>
@@ -26,13 +26,13 @@
               <supplier-selector v-model="searchFormData.supplier" />
             </j-form-item>
             <j-form-item label="批次号">
-              <el-input v-model="searchFormData.lotCode" clearable />
+              <a-input v-model="searchFormData.lotCode" allow-clear />
             </j-form-item>
             <j-form-item label="商品编号">
-              <el-input v-model="searchFormData.productCode" clearable />
+              <a-input v-model="searchFormData.productCode" allow-clear />
             </j-form-item>
             <j-form-item label="商品名称">
-              <el-input v-model="searchFormData.productName" clearable />
+              <a-input v-model="searchFormData.productName" allow-clear />
             </j-form-item>
             <j-form-item label="商品类目">
               <product-category-selector v-model="searchFormData.category" :only-final="false" />
@@ -41,51 +41,53 @@
               <product-brand-selector v-model="searchFormData.brand" />
             </j-form-item>
             <j-form-item label="操作日期" :content-nest="false">
-              <el-date-picker
-                v-model="searchFormData.createStartTime"
-                type="date"
-                value-format="yyyy-MM-dd 00:00:00"
-              />
-              <span class="date-split">至</span>
-              <el-date-picker
-                v-model="searchFormData.createEndTime"
-                type="date"
-                value-format="yyyy-MM-dd 23:59:59"
-              />
+              <div class="date-range-container">
+                <a-date-picker
+                  v-model="searchFormData.createStartTime"
+                  placeholder=""
+                  value-format="YYYY-MM-DD 00:00:00"
+                />
+                <span class="date-split">至</span>
+                <a-date-picker
+                  v-model="searchFormData.createEndTime"
+                  placeholder=""
+                  value-format="YYYY-MM-DD 23:59:59"
+                />
+              </div>
             </j-form-item>
             <j-form-item label="业务类型">
-              <el-select v-model="searchFormData.bizType" placeholder="全部" clearable>
-                <el-option v-for="item in $enums.PRODUCT_STOCK_BIZ_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-              </el-select>
+              <a-select v-model="searchFormData.bizType" placeholder="全部" allow-clear>
+                <a-select-option v-for="item in $enums.PRODUCT_STOCK_BIZ_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
             </j-form-item>
           </j-form>
         </j-border>
       </template>
 
-      <!-- 业务单据号 列自定义内容 -->
+      <!-- 单据号 列自定义内容 -->
       <template v-slot:bizCode_default="{ row }">
         <div v-if="$enums.PRODUCT_STOCK_BIZ_TYPE.PURCHASE.equalsCode(row.bizType)">
-          <el-button v-permission="['purchase:receive:query']" type="text" @click="e => {currentRow = row;$refs.viewPurchaseRecevieSheetDetailDialog.openDialog()}">{{ row.bizCode }}</el-button>
+          <a v-permission="['purchase:receive:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewPurchaseRecevieSheetDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['purchase:receive:query']">{{ row.bizCode }}</span>
         </div>
         <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)">
-          <el-button v-permission="['purchase:return:query']" type="text" @click="e => {currentRow = row;$refs.viewPurchaseReturnDetailDialog.openDialog()}">{{ row.bizCode }}</el-button>
+          <a v-permission="['purchase:return:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewPurchaseReturnDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['purchase:return:query']">{{ row.bizCode }}</span>
         </div>
         <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.SALE.equalsCode(row.bizType)">
-          <el-button v-permission="['sale:out:query']" type="text" @click="e => {currentRow = row;$refs.viewSaleOutSheetDetailDialog.openDialog()}">{{ row.bizCode }}</el-button>
+          <a v-permission="['sale:out:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewSaleOutSheetDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['sale:out:query']">{{ row.bizCode }}</span>
         </div>
         <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.SALE_RETURN.equalsCode(row.bizType)">
-          <el-button v-permission="['sale:return:query']" type="text" @click="e => {currentRow = row;$refs.viewSaleReturnDetailDialog.openDialog()}">{{ row.bizCode }}</el-button>
+          <a v-permission="['sale:return:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewSaleReturnDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['sale:return:query']">{{ row.bizCode }}</span>
         </div>
         <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.RETAIL.equalsCode(row.bizType)">
-          <el-button v-permission="['retail:out:query']" type="text" @click="e => {currentRow = row;$refs.viewRetailOutSheetDetailDialog.openDialog()}">{{ row.bizCode }}</el-button>
+          <a v-permission="['retail:out:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewRetailOutSheetDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['retail:out:query']">{{ row.bizCode }}</span>
         </div>
         <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.RETAIL_RETURN.equalsCode(row.bizType)">
-          <el-button v-permission="['retail:return:query']" type="text" @click="e => {currentRow = row;$refs.viewRetailReturnDetailDialog.openDialog()}">{{ row.bizCode }}</el-button>
+          <a v-permission="['retail:return:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewRetailReturnDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['retail:return:query']">{{ row.bizCode }}</span>
         </div>
         <span v-else>{{ row.bizCode }}</span>
@@ -93,14 +95,10 @@
 
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>
-        <el-form :inline="true">
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-          </el-form-item>
-          <el-form-item v-permission="['stock:product-log:export']">
-            <el-button type="primary" icon="el-icon-download" @click="exportList">导出</el-button>
-          </el-form-item>
-        </el-form>
+        <a-space>
+          <a-button type="primary" icon="search" @click="search">查询</a-button>
+          <a-button v-permission="['stock:product-log:export']" type="primary" icon="download" @click="exportList">导出</a-button>
+        </a-space>
       </template>
     </vxe-grid>
     <purchase-receive-sheet-detail :id="currentRow.bizId" ref="viewPurchaseRecevieSheetDetailDialog" />
@@ -146,7 +144,7 @@ export default {
         lotCode: '',
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(Moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(Moment())),
-        bizType: ''
+        bizType: undefined
       },
       // 分页配置
       pagerConfig: {
@@ -184,9 +182,9 @@ export default {
         { field: 'curUnTaxPrice', title: '变动后无税成本价', align: 'right', width: 140 },
         { field: 'taxAmount', title: '变动含税金额', align: 'right', width: 140 },
         { field: 'unTaxAmount', title: '变动无税金额', align: 'right', width: 140 },
-        { field: 'createTime', title: '操作时间', minWidth: 150 },
+        { field: 'createTime', title: '操作时间', minWidth: 170 },
         { field: 'createBy', title: '操作人', minWidth: 100 },
-        { field: 'bizCode', title: '业务单据号', width: 180, slots: { default: 'bizCode_default' }},
+        { field: 'bizCode', title: '单据号', width: 180, slots: { default: 'bizCode_default' }},
         { field: 'bizType', title: '业务类型', width: 100, formatter: ({ cellValue }) => { return this.$enums.PRODUCT_STOCK_BIZ_TYPE.getDesc(cellValue) } }
       ],
       // 请求接口配置
@@ -239,7 +237,7 @@ export default {
     exportList() {
       this.loading = true
       this.$api.sc.stock.productStockLog.exportList(this.buildQueryParams({})).then(() => {
-        this.$msg.success('导出成功！')
+        this.$msg.successTip('导出成功！')
       }).finally(() => {
         this.loading = false
       })

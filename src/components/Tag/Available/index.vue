@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <el-badge :type="$enums.AVAILABLE.ENABLE.equalsCode(available) ? 'primary' : 'danger'" class="dot-tag" is-dot />
-    <span>{{ $enums.AVAILABLE.getDesc(available) }}</span>
-  </div>
+  <a-badge :status="$enums.AVAILABLE.ENABLE.equalsCode(available) ? 'success' : 'error'" :text="$enums.AVAILABLE.getDesc(available)" />
 </template>
 <script>
 export default {

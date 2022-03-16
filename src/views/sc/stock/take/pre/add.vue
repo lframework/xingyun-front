@@ -11,14 +11,14 @@
             />
           </j-form-item>
           <j-form-item label="预先盘点状态" required :span="16">
-            <el-checkbox-group v-model="checkedStatus" @change="changeCheckedStatus">
-              <el-checkbox :label="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc }}</el-checkbox>
-              <el-checkbox :label="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code" :disabled="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</el-checkbox>
-              <el-checkbox :label="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code" :disabled="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code">{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</el-checkbox>
-            </el-checkbox-group>
+            <a-checkbox-group v-model="checkedStatus" @change="changeCheckedStatus">
+              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc }}</a-checkbox>
+              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code" :disabled="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</a-checkbox>
+              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code" :disabled="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code">{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</a-checkbox>
+            </a-checkbox-group>
           </j-form-item>
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
@@ -35,56 +35,51 @@
         :data="tableData"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
-        style="margin-top: 10px;"
       >
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" @click="addProduct">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" @click="delProduct">删除</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="openBatchAddProductDialog">批量添加商品</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="plus" @click="addProduct">新增</a-button>
+            <a-button type="danger" icon="delete" @click="delProduct">删除</a-button>
+            <a-button icon="plus" @click="openBatchAddProductDialog">批量添加商品</a-button>
+          </a-space>
         </template>
 
         <!-- 商品名称 列自定义内容 -->
         <template v-slot:productName_default="{ row, rowIndex }">
-          <el-autocomplete
+          <a-auto-complete
             v-if="!row.isFixed"
             v-model="row.productName"
             style="width: 100%;"
-            :fetch-suggestions="queryProduct"
             placeholder=""
             value-key="productName"
-            @select="e => handleSelectProduct(rowIndex, e)"
+            @search="e => queryProduct(e, row)"
+            @select="e => handleSelectProduct(rowIndex, e, row)"
           >
-            <template slot-scope="{ item }">
-              <span>{{ item.productCode }} {{ item.productName }}</span>
+            <template slot="dataSource">
+              <a-select-option v-for="(item, index) in row.products" :key="index" :value="item.productId">
+                {{ item.productCode }} {{ item.productName }}
+              </a-select-option>
             </template>
-          </el-autocomplete>
+          </a-auto-complete>
           <span v-else>{{ row.productName }}</span>
         </template>
 
         <!-- 初盘数量 列自定义内容 -->
         <template v-slot:firstNum_default="{ row }">
-          <el-input v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.equalsCode(formData.takeStatus)" v-model="row.firstNum" class="number-input" />
+          <a-input v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.equalsCode(formData.takeStatus)" v-model="row.firstNum" class="number-input" />
           <span v-else>{{ row.firstNum }}</span>
         </template>
 
         <!-- 复盘数量 列自定义内容 -->
         <template v-slot:secondNum_default="{ row }">
-          <el-input v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.equalsCode(formData.takeStatus)" v-model="row.secondNum" class="number-input" />
+          <a-input v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.equalsCode(formData.takeStatus)" v-model="row.secondNum" class="number-input" />
           <span v-else-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)">{{ row.secondNum }}</span>
         </template>
 
         <!-- 抽盘数量 列自定义内容 -->
         <template v-slot:randNum_default="{ row }">
-          <el-input v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)" v-model="row.randNum" class="number-input" />
+          <a-input v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)" v-model="row.randNum" class="number-input" />
         </template>
 
         <!-- 复盘初盘差异数量 列自定义内容 -->
@@ -103,9 +98,11 @@
         @confirm="batchAddProduct"
       />
 
-      <div style="text-align: center;">
-        <el-button v-permission="['stock:take:pre:add']" type="primary" :loading="loading" @click="submit">保存</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['stock:take:pre:add']" type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
   </div>
@@ -320,7 +317,8 @@ export default {
         secondNum: '',
         randNum: '',
         secondDiffNum: '',
-        randDiffNum: ''
+        randDiffNum: '',
+        products: []
       }
     },
     // 新增商品
@@ -332,17 +330,19 @@ export default {
       this.tableData.push(this.emptyProduct())
     },
     // 搜索商品
-    queryProduct(queryString, cb) {
+    queryProduct(queryString, row) {
       if (this.$utils.isEmpty(queryString)) {
-        return cb([])
+        row.products = []
+        return
       }
 
       this.$api.sc.stock.take.preTakeStockSheet.searchProduct(queryString).then(res => {
-        cb(res)
+        row.products = res
       })
     },
     // 选择商品
-    handleSelectProduct(index, value) {
+    handleSelectProduct(index, value, row) {
+      value = row ? row.products.filter(item => item.productId === value)[0] : value
       for (let i = 0; i < this.tableData.length; i++) {
         const data = this.tableData[i]
         if (data.productId === value.productId) {

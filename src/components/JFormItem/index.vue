@@ -1,6 +1,6 @@
 <template>
-  <div v-show="visible" :class="'item item--' + $globalSize" :style="{width: itemWidth}">
-    <span :class="'label label--' + $globalSize" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : label }}</span>
+  <div v-show="visible" :class="'item item--default'" :style="{width: itemWidth}">
+    <span :class="'label label--default'" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : (colon ? label + '：' : label) }}</span>
     <div v-if="contentNest" class="content" :style="{width: contentWidth}">
       <slot />
     </div>
@@ -55,6 +55,13 @@ export default {
     required: {
       type: Boolean,
       default: false
+    },
+    /**
+     * 是否显示冒号
+     */
+    colon: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -90,7 +97,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="less">
 .item-container {
 
   .item--default {
@@ -100,33 +107,6 @@ export default {
     .label--default {
 
       padding: 0 12px 0 0;
-    }
-  }
-
-  .item--medium {
-    line-height: 42px;
-    font-size: 14px;
-
-    .label--medium {
-      padding: 0 12px 0 0;
-    }
-  }
-
-  .item--small {
-    line-height: 38px;
-    font-size: 13px;
-
-    .label--small {
-      padding: 0 10px 0 0;
-    }
-  }
-
-  .item--mini {
-    line-height: 34px;
-    font-size: 12px;
-
-    .label--mini {
-      padding: 0 8px 0 0;
     }
   }
 }

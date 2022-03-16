@@ -1,4 +1,4 @@
-const GEN_CONVERT_TYE = {
+const GEN_DATA_TYPE = {
   STRING: {
     code: 0, desc: 'String'
   },
@@ -31,4 +31,4 @@ const GEN_CONVERT_TYE = {
   }
 }
 
-export default GEN_CONVERT_TYE
+export default GEN_DATA_TYPE

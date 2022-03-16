@@ -1,36 +1,40 @@
 <template>
-  <div v-permission="['system:dept:modify']">
-    <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-      <el-form-item label="编号" prop="code">
-        <el-input v-model.trim="formData.code" clearable />
-      </el-form-item>
-      <el-form-item label="名称" prop="name">
-        <el-input v-model.trim="formData.name" clearable />
-      </el-form-item>
-      <el-form-item label="简称" prop="shortName">
-        <el-input v-model.trim="formData.shortName" clearable />
-      </el-form-item>
-      <el-form-item label="上级部门" prop="parentId">
-        <el-cascader v-model="formData.parentId" :options="parentOptions" :props="parentProps" filterable clearable />
-      </el-form-item>
-      <el-form-item label="状态" prop="available">
-        <el-select v-model="formData.available" clearable>
-          <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="备注" prop="description">
-        <el-input v-model.trim="formData.description" type="textarea" resize="none" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitEvent">保存</el-button>
-        <el-button @click="resetForm">重置</el-button>
-      </el-form-item>
-    </el-form>
+  <div v-permission="['system:dept:modify']" v-loading="loading">
+    <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
+      <a-form-model-item label="编号" prop="code">
+        <a-input v-model.trim="formData.code" allow-clear />
+      </a-form-model-item>
+      <a-form-model-item label="名称" prop="name">
+        <a-input v-model.trim="formData.name" allow-clear />
+      </a-form-model-item>
+      <a-form-model-item label="简称" prop="shortName">
+        <a-input v-model.trim="formData.shortName" allow-clear />
+      </a-form-model-item>
+      <a-form-model-item label="上级部门" prop="parentId">
+        <sys-dept-selector v-model="formData.parentId" :only-final="false" />
+      </a-form-model-item>
+      <a-form-model-item label="状态" prop="available">
+        <a-select v-model="formData.available" allow-clear>
+          <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-form-model-item label="备注" prop="description">
+        <a-textarea v-model.trim="formData.description" />
+      </a-form-model-item>
+    </a-form-model>
+    <div class="form-modal-footer">
+      <a-space>
+        <a-button type="primary" @click="submitEvent">保存</a-button>
+        <a-button @click="resetForm">重置</a-button>
+      </a-space>
+    </div>
   </div>
 </template>
 <script>
+import SysDeptSelector from '@/components/Selector/SysDeptSelector'
 export default {
   components: {
+    SysDeptSelector
   },
   props: {
     id: {
@@ -58,26 +62,12 @@ export default {
         available: [
           { required: true, message: '请选择状态' }
         ]
-      },
-      // 父级控件数据
-      parentOptions: [],
-      // 父级控件配置
-      parentProps: {
-        emitPath: false,
-        // 子级展开方式
-        expandTrigger: 'hover',
-        // 允许选择任意一级
-        checkStrictly: true,
-        value: 'id',
-        label: 'name'
       }
     }
   },
   created() {
     // 初始化表单数据
     this.initFormData()
-    // 重新加载选择器数据
-    this.reloadDepts()
     // 查询数据
     this.loadData()
   },
@@ -118,20 +108,8 @@ export default {
     open() {
       // 初始化表单数据
       this.initFormData()
-      // 重新加载选择器数据
-      this.reloadDepts()
       // 查询数据
       this.loadData()
-    },
-    async reloadDepts() {
-      this.loading = true
-      await this.$api.system.dept.trees().then(data => {
-        this.parentOptions = this.$utils.toArrayTree(data, {
-          strict: true
-        })
-      }).finally(() => {
-        this.loading = false
-      })
     },
     loadData() {
       this.loading = true

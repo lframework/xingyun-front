@@ -1,38 +1,38 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="75%" title="查看" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['stock:take:sheet:query']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form label-width="120px">
           <j-form-item label="关联盘点任务">
             <div>
-              <el-button v-permission="['stock:take:plan:query']" type="text" @click="e => $refs.viewTakeStockPlanDialog.openDialog()">{{ formData.planCode }}</el-button>
+              <a v-permission="['stock:take:plan:query']" @click="e => $refs.viewTakeStockPlanDialog.openDialog()">{{ formData.planCode }}</a>
               <span v-no-permission="['stock:take:plan:query']">{{ formData.planCode }}</span>
             </div>
           </j-form-item>
           <j-form-item label="预先盘点单">
             <div v-if="!$utils.isEmpty(formData.preSheetId)">
-              <el-button v-permission="['stock:take:sheet:query']" type="text" @click="e => $refs.viewPreTakeStockSheetDialog.openDialog()">{{ formData.preSheetCode }}</el-button>
+              <a v-permission="['stock:take:sheet:query']" @click="e => $refs.viewPreTakeStockSheetDialog.openDialog()">{{ formData.preSheetCode }}</a>
               <span v-no-permission="['stock:take:sheet:query']">{{ formData.preSheetCode }}</span>
             </div>
           </j-form-item>
           <j-form-item label="仓库">
-            <el-input :value="formData.scName" readonly />
+            {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            <el-input :value="$enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType)" readonly />
+            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            <el-input :value="$enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus)" readonly />
+            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="类目/品牌">
-            <el-input :value="formData.bizName" readonly />
+            {{ formData.bizName }}
           </j-form-item>
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" type="textarea" resize="none" readonly />
+            <a-textarea v-model.trim="formData.description" read-only />
           </j-form-item>
-          <j-form-item label="审核状态" :span="24">
-            <span v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态" :span="24">
+            <span v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="操作人">
@@ -48,7 +48,7 @@
             <span>{{ formData.approveTime }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="24" :content-nest="false">
-            <el-input v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -64,7 +64,6 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
       />
 
       <take-stock-plan-detail
@@ -77,7 +76,7 @@
         ref="viewPreTakeStockSheetDialog"
       />
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 import TakeStockPlanDetail from '@/views/sc/stock/take/plan/detail'
@@ -125,6 +124,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

@@ -1,61 +1,59 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="50%" title="修改" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="50%" title="修改" :dialog-style="{ top: '20px' }">
     <div v-if="visible" v-permission="['base-data:product:info:modify']" v-loading="loading">
-      <el-descriptions :column="4" label-class-name="descriptions-label" content-class-name="descriptions-content" border>
-        <el-descriptions-item :span="2">
-          <template slot="label">
-            <span class="required">商品编号</span>
-          </template>
-          <el-input v-model.trim="formData.code" maxlength="20" show-word-limit />
-        </el-descriptions-item>
-        <el-descriptions-item :span="2">
-          <template slot="label">
-            <span class="required">商品名称</span>
-          </template>
-          <el-input v-model="formData.name" maxlength="100" show-word-limit />
-        </el-descriptions-item>
-        <el-descriptions-item :span="2">
-          <template slot="label">
-            <span class="required">商品SKU编号</span>
-          </template>
-          <el-input v-model.trim="formData.skuCode" maxlength="20" show-word-limit />
-        </el-descriptions-item>
-        <el-descriptions-item label="外部编号" :span="2"><el-input v-model.trim="formData.externalCode" maxlength="20" show-word-limit /></el-descriptions-item>
-        <el-descriptions-item label="商品类目" :span="2">{{ formData.categoryName }}</el-descriptions-item>
-        <el-descriptions-item label="商品品牌" :span="2">{{ formData.brandName }}</el-descriptions-item>
-        <el-descriptions-item label="规格" :span="2">
-          <el-input v-model.trim="formData.spec" maxlength="20" show-word-limit />
-        </el-descriptions-item>
-        <el-descriptions-item label="单位" :span="2">
-          <el-input v-model.trim="formData.unit" maxlength="20" show-word-limit />
-        </el-descriptions-item>
-        <el-descriptions-item label="采购价（元）" :span="2">
-          <el-input v-model="formData.purchasePrice" />
-        </el-descriptions-item>
-        <el-descriptions-item label="销售价（元）" :span="2">
-          <el-input v-model="formData.salePrice" />
-        </el-descriptions-item>
-        <el-descriptions-item label="零售价（元）" :span="2">
-          <el-input v-model="formData.retailPrice" />
-        </el-descriptions-item>
-        <el-descriptions-item :span="2">
-          <template slot="label">
-            <span class="required">状态</span>
-          </template>
-          <el-select v-model="formData.available">
-            <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-          </el-select>
-        </el-descriptions-item>
-        <el-descriptions-item v-for="item in formData.properties" :key="item.id" :label="item.name" :span="4">
-          {{ item.text }}
-        </el-descriptions-item>
-      </el-descriptions>
-      <div style="margin-top: 10px;text-align: center;">
-        <el-button type="primary" @click="submit">保存</el-button>
-        <el-button @click="closeDialog">取消</el-button>
-      </div>
+      <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
+        <a-form-model-item label="商品编号" prop="code">
+          <a-input v-model.trim="formData.code" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="商品名称" prop="name">
+          <a-input v-model.trim="formData.name" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="商品SKU编号" prop="skuCode">
+          <a-input v-model.trim="formData.skuCode" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="外部编号" prop="externalCode">
+          <a-input v-model.trim="formData.externalCode" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="商品类目" prop="categoryName">
+          <a-input v-model.trim="formData.categoryName" disabled />
+        </a-form-model-item>
+        <a-form-model-item label="商品品牌" prop="brandName">
+          <a-input v-model.trim="formData.brandName" disabled />
+        </a-form-model-item>
+        <a-form-model-item label="规格" prop="spec">
+          <a-input v-model.trim="formData.spec" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="单位" prop="unit">
+          <a-input v-model.trim="formData.unit" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="采购价（元）" prop="purchasePrice">
+          <a-input v-model.trim="formData.purchasePrice" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="销售价（元）" prop="salePrice">
+          <a-input v-model.trim="formData.salePrice" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="零售价（元）" prop="retailPrice">
+          <a-input v-model.trim="formData.retailPrice" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="状态" prop="available">
+          <a-select v-model="formData.available" allow-clear>
+            <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item v-for="item in formData.properties" :key="item.id" :label="item.name">
+          <a-input v-model="item.text" disabled />
+        </a-form-model-item>
+      </a-form-model>
     </div>
-  </el-dialog>
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">取消</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
 export default {
@@ -80,10 +78,13 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入编号' }
+          { required: true, message: '请输入商品编号' }
         ],
         name: [
-          { required: true, message: '请输入名称' }
+          { required: true, message: '请输入商品名称' }
+        ],
+        skuCode: [
+          { required: true, message: '请输入商品SKU编号' }
         ],
         available: [
           { required: true, message: '请选择状态' }
@@ -98,6 +99,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {
@@ -190,26 +193,29 @@ export default {
           return
         }
       }
-
-      this.loading = true
-      this.$api.baseData.product.info.modify({
-        id: this.formData.id,
-        code: this.formData.code,
-        name: this.formData.name,
-        skuCode: this.formData.skuCode,
-        externalCode: this.formData.externalCode || '',
-        spec: this.formData.spec || '',
-        unit: this.formData.unit || '',
-        purchasePrice: this.formData.purchasePrice || '',
-        salePrice: this.formData.salePrice || '',
-        retailPrice: this.formData.retailPrice || '',
-        available: this.formData.available
-      }).then(() => {
-        this.$msg.success('修改成功！')
-        this.$emit('confirm')
-        this.visible = false
-      }).finally(() => {
-        this.loading = false
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.$api.baseData.product.info.modify({
+            id: this.formData.id,
+            code: this.formData.code,
+            name: this.formData.name,
+            skuCode: this.formData.skuCode,
+            externalCode: this.formData.externalCode || '',
+            spec: this.formData.spec || '',
+            unit: this.formData.unit || '',
+            purchasePrice: this.formData.purchasePrice || '',
+            salePrice: this.formData.salePrice || '',
+            retailPrice: this.formData.retailPrice || '',
+            available: this.formData.available
+          }).then(() => {
+            this.$msg.success('修改成功！')
+            this.$emit('confirm')
+            this.visible = false
+          }).finally(() => {
+            this.loading = false
+          })
+        }
       })
     },
     // 页面显示时触发

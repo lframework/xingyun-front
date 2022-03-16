@@ -1,20 +1,20 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="75%" title="查看" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['stock:take:pre:query']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="仓库">
-            <el-input :value="formData.scName" readonly />
+            {{ formData.scName }}
           </j-form-item>
           <j-form-item label="预先盘点状态" :span="16">
-            <el-checkbox-group v-model="checkedStatus">
-              <el-checkbox :label="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc }}</el-checkbox>
-              <el-checkbox :label="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</el-checkbox>
-              <el-checkbox :label="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</el-checkbox>
-            </el-checkbox-group>
+            <a-checkbox-group v-model="checkedStatus">
+              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc }}</a-checkbox>
+              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code" :disabled="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</a-checkbox>
+              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code" :disabled="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code">{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</a-checkbox>
+            </a-checkbox-group>
           </j-form-item>
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" type="textarea" resize="none" readonly />
+            <a-textarea v-model.trim="formData.description" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.updateBy }}</span>
@@ -36,7 +36,6 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
       >
         <!-- 复盘初盘差异数量 列自定义内容 -->
         <template v-slot:secondDiffNum_default="{ row }">
@@ -49,7 +48,7 @@
         </template>
       </vxe-grid>
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 export default {
@@ -100,6 +99,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

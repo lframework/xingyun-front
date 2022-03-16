@@ -1,38 +1,44 @@
 <template>
   <div class="app-container">
     <div v-permission="['sale:config:modify']">
-      <el-card>
-        <el-form ref="form" v-loading="loading" label-width="260px" title-align="right" :model="formData" :rules="rules">
-          <el-form-item label="销售出库单是否关联销售订单" prop="outStockRequireSale">
-            <el-select v-model="formData.outStockRequireSale" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="销售出库单是否多次关联销售订单" prop="outStockMultipleRelateSale">
-            <el-select v-model="formData.outStockMultipleRelateSale" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="销售退货单是否关联销售出库单" prop="saleReturnRequireOutStock">
-            <el-select v-model="formData.saleReturnRequireOutStock" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="销售退货单是否多次关联销售出库单" prop="saleReturnMultipleRelateOutStock">
-            <el-select v-model="formData.saleReturnMultipleRelateOutStock" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submit">保存</el-button>
-            <el-button @click="close">取消</el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
+      <a-row>
+        <a-col :md="16" :sm="24">
+          <a-card v-loading="loading">
+            <a-form-model ref="form" :label-col="{span: 10}" :wrapper-col="{span: 8}" :model="formData" :rules="rules">
+              <a-form-model-item label="销售出库单是否关联销售订单" prop="outStockRequireSale">
+                <a-select v-model="formData.outStockRequireSale" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="销售出库单是否多次关联销售订单" prop="outStockMultipleRelateSale">
+                <a-select v-model="formData.outStockMultipleRelateSale" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="销售退货单是否关联销售出库单" prop="saleReturnRequireOutStock">
+                <a-select v-model="formData.saleReturnRequireOutStock" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="销售退货单是否多次关联销售出库单" prop="saleReturnMultipleRelateOutStock">
+                <a-select v-model="formData.saleReturnMultipleRelateOutStock" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+            </a-form-model>
+            <div class="form-modal-footer">
+              <a-space>
+                <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+                <a-button :loading="loading" @click="close">取消</a-button>
+              </a-space>
+            </div>
+          </a-card>
+        </a-col>
+      </a-row>
     </div>
   </div>
 </template>
@@ -108,8 +114,7 @@ export default {
       })
     },
     close() {
-      this.$store.dispatch('tagsView/delView', this.$route)
-      this.$router.go(-1)
+      this.$utils.closeCurrentPage(this.$parent)
     }
   }
 }

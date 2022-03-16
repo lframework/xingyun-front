@@ -1,31 +1,38 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="修改" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['system:role:modify']">
-      <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="编号" prop="code">
-          <el-input v-model.trim="formData.code" clearable />
-        </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model.trim="formData.name" clearable />
-        </el-form-item>
-        <el-form-item label="权限" prop="permission">
-          <el-input v-model.trim="formData.permission" clearable />
-        </el-form-item>
-        <el-form-item label="状态" prop="available">
-          <el-select v-model="formData.available" clearable>
-            <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="备注" prop="description">
-          <el-input v-model.trim="formData.description" type="textarea" resize="none" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submit">保存</el-button>
-          <el-button @click="closeDialog">取消</el-button>
-        </el-form-item>
-      </el-form>
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="修改" :dialog-style="{ top: '20px' }">
+    <div v-if="visible" v-permission="['system:role:modify']" v-loading="loading">
+      <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
+        <a-form-model-item label="编号" prop="code">
+          <a-input v-model.trim="formData.code" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="名称" prop="name">
+          <a-input v-model.trim="formData.name" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="权限" prop="permission">
+          <a-input v-model.trim="formData.permission" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item
+          label="状态"
+        >
+          <a-select v-model="formData.available" allow-clear>
+            <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item label="备注" prop="description">
+          <a-textarea v-model.trim="formData.description" />
+        </a-form-model-item>
+      </a-form-model>
     </div>
-  </el-dialog>
+
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">取消</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
 export default {
@@ -68,6 +75,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

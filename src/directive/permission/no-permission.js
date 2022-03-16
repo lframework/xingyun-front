@@ -2,7 +2,7 @@ import store from '@/store'
 
 function checkNoPermission(el, binding) {
   const { value } = binding
-  const roles = store.getters && store.getters.roles
+  const roles = store.getters && store.getters['account/roles']
 
   if (value && value instanceof Array) {
     if (value.length > 0) {

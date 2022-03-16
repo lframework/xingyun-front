@@ -1,17 +1,22 @@
 <template>
   <div class="gen-container">
-    <el-row>
-      <el-col :span="4">
-        <el-tree
+    <a-row>
+      <a-col :span="4">
+        <a-tree
           ref="tree"
-          :data="_columns"
-          show-checkbox
+          v-model="checkedKeys"
+          :tree-data="_columns"
+          :checkable="true"
           node-key="id"
-          :props="defaultProps"
-          @check-change="onCheckChange"
+          :replace-fields="{
+            children: 'children',
+            title: 'name',
+            key: 'id'
+          }"
+          @check="onCheckChange"
         />
-      </el-col>
-      <el-col :span="20">
+      </a-col>
+      <a-col :span="20">
         <!-- 数据列表 -->
         <vxe-grid
           ref="grid"
@@ -26,32 +31,32 @@
         >
           <!-- 宽度类型 列自定义内容 -->
           <template v-slot:widthType_default="{ row }">
-            <el-select v-model="row.widthType" placeholder="">
-              <el-option v-for="item in $enums.GEN_QUERY_WIDTH_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-            </el-select>
+            <a-select v-model="row.widthType" placeholder="">
+              <a-select-option v-for="item in $enums.GEN_QUERY_WIDTH_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+            </a-select>
           </template>
 
           <!-- 宽度 列自定义内容 -->
           <template v-slot:width_default="{ row }">
-            <el-input v-model="row.width" class="number-input" />
+            <a-input v-model="row.width" class="number-input" />
           </template>
 
           <!-- 是否页面排序 列自定义内容 -->
           <template v-slot:sortable_default="{ row }">
-            <el-select v-model="row.sortable" placeholder="">
-              <el-option label="是" :value="true" />
-              <el-option label="否" :value="false" />
-            </el-select>
+            <a-select v-model="row.sortable" placeholder="">
+              <a-select-option :value="true">是</a-select-option>
+              <a-select-option :value="false">否</a-select-option>
+            </a-select>
           </template>
 
           <!-- 排序 列自定义内容 -->
           <template v-slot:orderNo_default="{ row, rowIndex }">
-            <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><svg-icon icon-class="el-icon-caret-top" /></span>
-            <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><svg-icon icon-class="el-icon-caret-bottom" /></span>
+            <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><a-icon type="caret-up" /></span>
+            <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><a-icon type="caret-down" /></span>
           </template>
         </vxe-grid>
-      </el-col>
-    </el-row>
+      </a-col>
+    </a-row>
   </div>
 </template>
 <script>
@@ -81,7 +86,8 @@ export default {
         { field: 'sortable', title: '是否页面排序', width: 140, slots: { default: 'sortable_default' }},
         { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
-      tableData: []
+      tableData: [],
+      checkedKeys: []
     }
   },
   computed: {
@@ -132,17 +138,21 @@ export default {
         orderNo: ''
       }
     },
-    onCheckChange(data, checked, indeterminate) {
+    onCheckChange(checkedKeys, { checked, checkedNodes, node, event }) {
       const tableData = this.tableData
+      const tableKeys = tableData.map(item => item.id)
       if (checked) {
-        tableData.push(Object.assign(this.emptyLine(), { id: data.id, orderNo: data.columnOrder }))
-        tableData.sort((t1, t2) => {
-          return t1.orderNo - t2.orderNo
+        checkedKeys.filter(item => !tableKeys.includes(item)).forEach(item => {
+          const data = this._columns.filter(c => c.id === item)[0]
+          tableData.push(Object.assign(this.emptyLine(), { id: data.id, orderNo: data.columnOrder }))
+          tableData.sort((t1, t2) => {
+            return t1.orderNo - t2.orderNo
+          })
         })
 
         this.tableData = tableData
       } else {
-        this.tableData = tableData.filter(item => item.id !== data.id)
+        this.tableData = tableData.filter(item => checkedKeys.includes(item.id))
       }
     },
     convertToColumn(id) {
@@ -150,7 +160,7 @@ export default {
     },
     setTableData(datas) {
       this.tableData = datas || []
-      this.$refs.tree.setCheckedKeys(this.tableData.map(item => item.id))
+      this.checkedKeys = this.tableData.map(item => item.id)
     },
     getTableData() {
       return this.tableData

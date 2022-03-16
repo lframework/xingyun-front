@@ -24,45 +24,50 @@
       <template v-slot:form>
         <j-border>
           <j-form>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="零售出库单号" :span="6">
-              <el-input v-model="searchParams.code" clearable />
+            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="零售出库单号">
+              <a-input v-model="searchParams.code" allow-clear />
             </j-form-item>
-            <j-form-item label="仓库" :span="6">
+            <j-form-item label="仓库">
               <store-center-selector
                 v-if="$utils.isEmpty(requestParams.scId)"
                 v-model="searchParams.sc"
               />
             </j-form-item>
-            <j-form-item label="会员" :span="6">
+            <j-form-item label="会员">
               <member-selector
                 v-if="$utils.isEmpty(requestParams.memberId)"
                 v-model="searchParams.member"
               />
             </j-form-item>
-            <j-form-item label="操作人" :span="6">
+            <j-form-item label="操作人">
               <user-selector
                 v-if="$utils.isEmpty(requestParams.createBy)"
                 v-model="searchParams.createBy"
               />
             </j-form-item>
             <j-form-item label="操作日期" :content-nest="false" :span="12">
-              <el-date-picker
-                v-model="searchParams.createStartTime"
-                type="date"
-                value-format="yyyy-MM-dd 00:00:00"
-              />
-              <span class="date-split">至</span>
-              <el-date-picker
-                v-model="searchParams.createEndTime"
-                type="date"
-                value-format="yyyy-MM-dd 23:59:59"
-              />
-            </j-form-item>
-            <j-form-item :span="6">
-              <el-button type="primary" @click="$refs.selector.search()">查询</el-button>
+              <div class="date-range-container">
+                <a-date-picker
+                  v-model="searchParams.createStartTime"
+                  placeholder=""
+                  value-format="YYYY-MM-DD 00:00:00"
+                />
+                <span class="date-split">至</span>
+                <a-date-picker
+                  v-model="searchParams.createEndTime"
+                  placeholder=""
+                  value-format="YYYY-MM-DD 23:59:59"
+                />
+              </div>
             </j-form-item>
           </j-form>
         </j-border>
+      </template>
+      <!-- 工具栏 -->
+      <template v-slot:toolbar_buttons>
+        <a-space class="operator">
+          <a-button type="primary" icon="search" @click="$refs.selector.search()">查询</a-button>
+        </a-space>
       </template>
     </dialog-table>
   </div>
@@ -70,7 +75,7 @@
 
 <script>
 import DialogTable from '@/components/DialogTable'
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
 import MemberSelector from '@/components/Selector/MemberSelector'
 import UserSelector from '@/components/Selector/UserSelector'
@@ -79,10 +84,6 @@ import moment from 'moment'
 export default {
   name: 'RetailOutSheetSelectorWithReturn',
   components: { DialogTable, StoreCenterSelector, MemberSelector, UserSelector },
-  inject: {
-    elForm: { default: '' },
-    elFormItem: { default: '' }
-  },
   props: {
     value: { type: [Object, Array], required: true },
     disabled: {
@@ -147,5 +148,5 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="less">
 </style>

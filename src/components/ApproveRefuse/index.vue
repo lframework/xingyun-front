@@ -1,19 +1,19 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="500px" title="审核拒绝" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['purchase:order:approve']" v-loading="loading">
-      <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="拒绝理由" prop="refuseReason">
-          <el-input v-model.trim="formData.refuseReason" type="textarea" maxlength="200" show-word-limit clearable />
-        </el-form-item>
-      </el-form>
+  <a-modal v-model="visible" :mask-closable="false" width="500px" title="审核拒绝" :dialog-style="{ top: '20px' }">
+    <div v-if="visible">
+      <a-form-model ref="form" :label-col="{span: 6}" :wrapper-col="{span: 18}" :model="formData" :rules="rules">
+        <a-form-model-item label="拒绝理由" prop="refuseReason">
+          <a-textarea v-model.trim="formData.refuseReason" max-length="200" allow-clear />
+        </a-form-model-item>
+      </a-form-model>
     </div>
-    <template v-slot:footer>
+    <template slot="footer">
       <div style="text-align: center;">
-        <el-button v-permission="['purchase:order:approve']" type="primary" :loading="loading" @click="submit">确定</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+        <a-button type="primary" :loading="loading" @click="submit">确定</a-button>
+        <a-button :loading="loading" @click="closeDialog">关闭</a-button>
       </div>
     </template>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 export default {
@@ -45,6 +45,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

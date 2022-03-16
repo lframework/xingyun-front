@@ -15,126 +15,102 @@
     >
       <!-- 数据类型 列自定义内容 -->
       <template v-slot:name_default="{ row }">
-        <el-input v-model="row.name" />
+        <a-input v-model="row.name" />
       </template>
 
       <!-- 数据类型 列自定义内容 -->
       <template v-slot:dataType_default="{ row }">
-        <el-select v-model="row.dataType">
-          <el-option v-for="item in $enums.GEN_DATA_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-        </el-select>
+        <a-select v-model="row.dataType">
+          <a-select-option v-for="item in $enums.GEN_DATA_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+        </a-select>
       </template>
 
       <!-- 显示类型 列自定义内容 -->
       <template v-slot:viewType_header>
-        <span>显示类型</span>
-        <el-popover
-          class="tip-question"
-          placement="top-start"
-          width="200"
-          trigger="click"
-          content="表示前端使用的组件类型。注：当属性名是available并且显示类型是选择器时，会将该字段转换为内置的状态字段"
-        >
-          <el-button slot="reference" type="text" icon="el-icon-question" />
-        </el-popover>
+        <a-space>
+          <span>显示类型</span>
+          <a-tooltip title="表示前端使用的组件类型。注：当属性名是available并且显示类型是选择器时，会将该字段转换为内置的状态字段"><a-icon type="question-circle" /></a-tooltip>
+        </a-space>
       </template>
 
       <!-- 显示类型 列自定义内容 -->
       <template v-slot:viewType_default="{ row }">
-        <el-select v-model="row.viewType" :disabled="row.fixEnum" @change="e => changeViewType(row, e)">
-          <el-option v-for="item in $enums.GEN_VIEW_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-        </el-select>
+        <a-select v-model="row.viewType" :disabled="row.fixEnum" @change="e => changeViewType(row, e)">
+          <a-select-option v-for="item in $enums.GEN_VIEW_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+        </a-select>
       </template>
 
       <!-- 是否内置枚举 列自定义内容 -->
       <template v-slot:fixEnum_default="{ row }">
-        <el-select v-model="row.fixEnum" :disabled="row.isKey" @change="e => changeFixEnum(row, e)">
-          <el-option label="是" :value="true" />
-          <el-option label="否" :value="false" />
-        </el-select>
+        <a-select v-model="row.fixEnum" :disabled="row.isKey" @change="e => changeFixEnum(row, e)">
+          <a-select-option :value="true">是</a-select-option>
+          <a-select-option :value="false">否</a-select-option>
+        </a-select>
       </template>
 
       <!-- 后端枚举名 列自定义内容 -->
       <template v-slot:enumBack_header>
-        <span>后端枚举名</span>
-        <el-popover
-          class="tip-question"
-          placement="top-start"
-          width="200"
-          trigger="click"
-          content="填写后端枚举类的全名称，如：com.lframework.xingyun.enums.BizType"
-        >
-          <el-button slot="reference" type="text" icon="el-icon-question" />
-        </el-popover>
+        <a-space>
+          <span>后端枚举名</span>
+          <a-tooltip title="填写后端枚举类的全名称，如：com.lframework.xingyun.enums.BizType"><a-icon type="question-circle" /></a-tooltip>
+        </a-space>
       </template>
 
       <!-- 后端枚举名 列自定义内容 -->
       <template v-slot:enumBack_default="{ row }">
-        <el-input v-if="row.fixEnum" v-model="row.enumBack" />
+        <a-input v-if="row.fixEnum" v-model="row.enumBack" />
       </template>
 
       <!-- 前端枚举名 列自定义内容 -->
       <template v-slot:enumFront_header>
-        <span>前端枚举名</span>
-        <el-popover
-          class="tip-question"
-          placement="top-start"
-          width="200"
-          trigger="click"
-          content="填写前端枚举的全名称，如：BIZ_TYPE"
-        >
-          <el-button slot="reference" type="text" icon="el-icon-question" />
-        </el-popover>
+        <a-space>
+          <span>前端枚举名</span>
+          <a-tooltip title="填写前端枚举的全名称，如：BIZ_TYPE"><a-icon type="question-circle" /></a-tooltip>
+        </a-space>
       </template>
 
       <!-- 前端枚举名 列自定义内容 -->
       <template v-slot:enumFront_default="{ row }">
-        <el-input v-if="row.fixEnum" v-model="row.enumFront" />
+        <a-input v-if="row.fixEnum" v-model="row.enumFront" />
       </template>
 
       <!-- 备注 列自定义内容 -->
       <template v-slot:description_default="{ row }">
-        <el-input v-model="row.description" />
+        <a-input v-model="row.description" />
       </template>
 
       <!-- 正则表达式 列自定义内容 -->
       <template v-slot:regularExpression_header>
-        <span>正则表达式</span>
-        <el-popover
-          class="tip-question"
-          placement="top-start"
-          width="200"
-          trigger="click"
-          content="填写正则表达式，如：^[0-9]*$"
-        >
-          <el-button slot="reference" type="text" icon="el-icon-question" />
-        </el-popover>
+        <a-space>
+          <span>正则表达式</span>
+          <a-tooltip title="填写正则表达式，如：^[0-9]*$"><a-icon type="question-circle" /></a-tooltip>
+        </a-space>
       </template>
 
       <!-- 正则表达式 列自定义内容 -->
       <template v-slot:regularExpression_default="{ row }">
-        <el-input v-model="row.regularExpression" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" />
+        <a-input v-model="row.regularExpression" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" />
       </template>
 
       <!-- 是否排序字段 列自定义内容 -->
       <template v-slot:isOrder_default="{ row }">
-        <el-select v-model="row.isOrder" @change="e => changeIsOrder(row, e)">
-          <el-option label="是" :value="true" />
-          <el-option label="否" :value="false" />
-        </el-select>
+        <a-select v-model="row.isOrder" @change="e => changeIsOrder(row, e)">
+          <a-select-option :value="true">是</a-select-option>
+          <a-select-option :value="false">否</a-select-option>
+        </a-select>
       </template>
 
       <!-- 排序类型 列自定义内容 -->
       <template v-slot:orderType_default="{ row }">
-        <el-select v-if="row.isOrder" v-model="row.orderType">
-          <el-option v-for="item in $enums.GEN_ORDER_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-        </el-select>
+        <a-select v-if="row.isOrder" v-model="row.orderType">
+          <a-select-option v-for="item in $enums.GEN_ORDER_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+        </a-select>
       </template>
 
       <!-- 排序 列自定义内容 -->
       <template v-slot:orderNo_default="{ row, rowIndex }">
-        <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><svg-icon icon-class="el-icon-caret-top" /></span>
-        <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><svg-icon icon-class="el-icon-caret-bottom" /></span>
+        <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><a-icon type="caret-up" /></span>
+        <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><a-icon type="caret-down" /></span>
       </template>
     </vxe-grid>
   </div>

@@ -1,19 +1,19 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="75%" title="差异生成" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="75%" title="差异生成" :dialog-style="{ top: '20px' }">
     <div v-if="visible" v-permission="['stock:take:plan:query']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="仓库">
-            <el-input :value="formData.scName" readonly />
+            {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            <el-input :value="$enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType)" readonly />
+            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            <el-input :value="$enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus)" readonly />
+            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" type="textarea" resize="none" readonly />
+            <a-textarea v-model.trim="formData.description" read-only />
           </j-form-item>
           <j-form-item label="创建人">
             <span>{{ formData.createBy }}</span>
@@ -42,26 +42,28 @@
         :data="tableData"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
-        style="margin-top: 10px;"
       >
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item label="筛选数据">
-              <el-checkbox-group v-model="checkedFilterType" @change="changeFilterType">
-                <el-checkbox v-for="item in filterType" :key="item.code" :label="item.code">{{ item.desc }}</el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
-          </el-form>
+          <a-form-model layout="inline">
+            <a-form-model-item label="筛选数据">
+              <a-checkbox-group v-model="checkedFilterType" @change="changeFilterType">
+                <a-checkbox v-for="item in filterType" :key="item.code" :value="item.code">{{ item.desc }}</a-checkbox>
+              </a-checkbox-group>
+            </a-form-model-item>
+          </a-form-model>
         </template>
       </vxe-grid>
-
-      <div style="text-align: center;">
-        <el-button v-permission="['stock:take:plan:create-diff']" type="primary" :loading="loading" @click="submit">差异生成</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
-      </div>
     </div>
-  </el-dialog>
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button v-permission="['stock:take:plan:create-diff']" type="primary" :loading="loading" @click="submit">差异生成</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
 import * as constants from './constants'
@@ -131,6 +133,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

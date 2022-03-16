@@ -1,88 +1,84 @@
 <template>
-  <div class="gen-container">
-    <el-form ref="form" v-loading="loading" label-width="150px" title-align="right" :model="formData" :rules="rules" style="padding: 0 25%;">
-      <el-form-item label="生成模板类型" prop="templateType">
-        <el-select v-model="formData.templateType" placeholder="" clearable>
-          <el-option v-for="item in $enums.GEN_TEMPLATE_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="后端完整包名">
-        <el-input :value="fullPackageNameBack" disabled />
-      </el-form-item>
-      <el-form-item label="前端完整路径">
-        <el-input :value="fullPackageNameFront" disabled />
-      </el-form-item>
-      <el-form-item label="作者" prop="author">
-        <el-input v-model.trim="formData.author" />
-      </el-form-item>
-      <el-form-item label="主键类型" prop="keyType">
-        <el-select v-model="formData.keyType" placeholder="" clearable>
-          <el-option v-for="item in $enums.GEN_KEY_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="类名" prop="className">
-        <el-input v-model.trim="formData.className" />
-      </el-form-item>
-      <el-form-item label="类描述" prop="classDescription">
-        <el-input v-model.trim="formData.classDescription" />
-      </el-form-item>
-      <el-form-item label="包名" prop="packageName">
-        <el-input v-model.trim="formData.packageName" />
-      </el-form-item>
-      <el-form-item label="模块名" prop="moduleName">
-        <el-input v-model.trim="formData.moduleName" />
-      </el-form-item>
-      <el-form-item label="业务名" prop="bizName">
-        <el-input v-model.trim="formData.bizName" />
-      </el-form-item>
-      <el-form-item label="父级菜单" prop="parentMenuId">
+  <div>
+    <a-form-model ref="form" v-loading="loading" :label-col="{span: 8}" :wrapper-col="{span: 8}" :model="formData" :rules="rules">
+      <a-form-model-item label="生成模板类型" prop="templateType">
+        <a-select v-model="formData.templateType" placeholder="" allow-clear>
+          <a-select-option v-for="item in $enums.GEN_TEMPLATE_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-form-model-item label="后端完整包名">
+        <a-input :value="fullPackageNameBack" disabled />
+      </a-form-model-item>
+      <a-form-model-item label="前端完整路径">
+        <a-input :value="fullPackageNameFront" disabled />
+      </a-form-model-item>
+      <a-form-model-item label="作者" prop="author">
+        <a-input v-model.trim="formData.author" />
+      </a-form-model-item>
+      <a-form-model-item label="主键类型" prop="keyType">
+        <a-select v-model="formData.keyType" placeholder="" allow-clear>
+          <a-select-option v-for="item in $enums.GEN_KEY_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-form-model-item label="类名" prop="className">
+        <a-input v-model.trim="formData.className" />
+      </a-form-model-item>
+      <a-form-model-item label="类描述" prop="classDescription">
+        <a-input v-model.trim="formData.classDescription" />
+      </a-form-model-item>
+      <a-form-model-item label="包名" prop="packageName">
+        <a-input v-model.trim="formData.packageName" />
+      </a-form-model-item>
+      <a-form-model-item label="模块名" prop="moduleName">
+        <a-input v-model.trim="formData.moduleName" />
+      </a-form-model-item>
+      <a-form-model-item label="业务名" prop="bizName">
+        <a-input v-model.trim="formData.bizName" />
+      </a-form-model-item>
+      <a-form-model-item label="父级菜单" prop="parentMenuId">
         <sys-menu-selector
           v-model="formData.parentMenuId"
           :request-params="{
             display: $enums.MENU_DISPLAY.CATALOG.code
           }"
         />
-      </el-form-item>
-      <el-form-item label="本级菜单编号" prop="menuCode">
-        <el-input v-model.trim="formData.menuCode" />
-      </el-form-item>
-      <el-form-item label="本级菜单名称" prop="menuName">
-        <el-input v-model.trim="formData.menuName" />
-      </el-form-item>
-      <el-form-item label="详情页Span总数量" prop="detailSpan">
-        <el-input v-model.trim="formData.detailSpan" />
-      </el-form-item>
-      <el-form-item label="是否应用缓存" prop="isCache">
-        <el-select v-model="formData.isCache" placeholder="">
-          <el-option label="是" :value="true" />
-          <el-option label="否" :value="false" />
-        </el-select>
-        <el-popover
-          class="tip-question"
-          placement="top-start"
-          width="200"
-          trigger="click"
-          content="表示后端查询、修改等功能是否使用缓存"
-        >
-          <el-button slot="reference" type="text" icon="el-icon-question" />
-        </el-popover>
-      </el-form-item>
-      <el-form-item label="是否内置删除功能" prop="hasDelete">
-        <el-select v-model="formData.hasDelete" placeholder="">
-          <el-option label="是" :value="true" />
-          <el-option label="否" :value="false" />
-        </el-select>
-        <el-popover
-          class="tip-question"
-          placement="top-start"
-          width="200"
-          trigger="click"
-          content="表示是否内置deleteById功能"
-        >
-          <el-button slot="reference" type="text" icon="el-icon-question" />
-        </el-popover>
-      </el-form-item>
-    </el-form>
+      </a-form-model-item>
+      <a-form-model-item label="本级菜单编号" prop="menuCode">
+        <a-input v-model.trim="formData.menuCode" />
+      </a-form-model-item>
+      <a-form-model-item label="本级菜单名称" prop="menuName">
+        <a-input v-model.trim="formData.menuName" />
+      </a-form-model-item>
+      <a-form-model-item label="详情页Span总数量" prop="detailSpan">
+        <a-input v-model.trim="formData.detailSpan" />
+      </a-form-model-item>
+      <a-form-model-item label="是否应用缓存" prop="isCache">
+        <a-row>
+          <a-col :span="20">
+            <a-select v-model="formData.isCache" placeholder="">
+              <a-select-option :value="true">是</a-select-option>
+              <a-select-option :value="false">否</a-select-option>
+            </a-select>
+          </a-col>
+          <a-col :span="3" :offset="1">
+            <a-tooltip title="表示后端查询、修改等功能是否使用缓存"><a-icon type="question-circle" /></a-tooltip>
+          </a-col>
+        </a-row>
+      </a-form-model-item>
+      <a-form-model-item label="是否内置删除功能" prop="hasDelete">
+        <a-row>
+          <a-col :span="20">
+            <a-select v-model="formData.hasDelete" placeholder="">
+              <a-select-option :value="true">是</a-select-option>
+              <a-select-option :value="false">否</a-select-option>
+            </a-select>
+          </a-col>
+          <a-col :span="3" :offset="1">
+            <a-tooltip title="表示是否内置deleteById功能"><a-icon type="question-circle" /></a-tooltip>
+          </a-col>
+        </a-row>
+      </a-form-model-item>
+    </a-form-model>
   </div>
 </template>
 <script>

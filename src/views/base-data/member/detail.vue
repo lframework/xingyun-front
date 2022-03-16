@@ -1,37 +1,37 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="查看" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['base-data:member:query']">
-      <el-descriptions :column="4" border label-class-name="descriptions-label" content-class-name="descriptions-content">
-        <el-descriptions-item label="编号" :span="2">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
+    <div v-if="visible" v-permission="['base-data:member:query']" v-loading="loading">
+      <a-descriptions :column="4" bordered>
+        <a-descriptions-item label="编号" :span="2">
           {{ formData.code }}
-        </el-descriptions-item>
-        <el-descriptions-item label="名称" :span="2">
+        </a-descriptions-item>
+        <a-descriptions-item label="名称" :span="2">
           {{ formData.name }}
-        </el-descriptions-item>
-        <el-descriptions-item label="性别" :span="2">
+        </a-descriptions-item>
+        <a-descriptions-item label="性别" :span="2">
           {{ $enums.GENDER.getDesc(formData.gender) }}
-        </el-descriptions-item>
-        <el-descriptions-item label="会员手机号" :span="2">
+        </a-descriptions-item>
+        <a-descriptions-item label="会员手机号" :span="2">
           {{ formData.telephone }}
-        </el-descriptions-item>
-        <el-descriptions-item label="电子邮箱" :span="2">
+        </a-descriptions-item>
+        <a-descriptions-item label="电子邮箱" :span="2">
           {{ formData.email }}
-        </el-descriptions-item>
-        <el-descriptions-item label="出生日期" :span="2">
+        </a-descriptions-item>
+        <a-descriptions-item label="出生日期" :span="2">
           {{ formData.birthday }}
-        </el-descriptions-item>
-        <el-descriptions-item label="入会日期" :span="2">
+        </a-descriptions-item>
+        <a-descriptions-item label="入会日期" :span="2">
           {{ formData.joinDay }}
-        </el-descriptions-item>
-        <el-descriptions-item label="状态" :span="2">
+        </a-descriptions-item>
+        <a-descriptions-item label="状态" :span="2">
           <available-tag :available="formData.available" />
-        </el-descriptions-item>
-        <el-descriptions-item label="备注" :span="4">
+        </a-descriptions-item>
+        <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
-        </el-descriptions-item>
-      </el-descriptions>
+        </a-descriptions-item>
+      </a-descriptions>
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 import AvailableTag from '@/components/Tag/Available'
@@ -64,6 +64,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

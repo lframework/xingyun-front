@@ -30,48 +30,44 @@
       </template>
 
       <template v-slot:action_default="{ row }">
-        <el-button v-permission="['base-data:product:category:add']" type="text" icon="el-icon-plus" @click="e => { id = row.id;$refs.addChildrenDialog.openDialog()}">新增子类目</el-button>
-        <el-button v-permission="['base-data:product:category:modify']" type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.updateDialog.openDialog() }">修改</el-button>
+        <a-button v-permission="['base-data:product:category:add']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.addChildrenDialog.openDialog())}">新增子类目</a-button>
+        <a-button v-permission="['base-data:product:category:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
       </template>
 
       <template v-slot:form>
         <j-border>
-          <j-form @collapse="$refs.grid.refreshColumn()">
-            <j-form-item label="编号" :span="6">
-              <el-input v-model="searchFormData.code" clearable />
+          <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+            <j-form-item label="编号">
+              <a-input v-model="searchFormData.code" allow-clear />
             </j-form-item>
-            <j-form-item label="名称" :span="6">
-              <el-input v-model="searchFormData.name" clearable />
+            <j-form-item label="名称">
+              <a-input v-model="searchFormData.name" allow-clear />
             </j-form-item>
-            <j-form-item label="状态" :span="6">
-              <el-select v-model="searchFormData.available" placeholder="全部" clearable>
-                <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-              </el-select>
+            <j-form-item label="状态">
+              <a-select v-model="searchFormData.available" placeholder="全部" allow-clear>
+                <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
             </j-form-item>
           </j-form>
         </j-border>
       </template>
 
       <template v-slot:toolbar_buttons>
-        <el-form :inline="true">
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-          </el-form-item>
-          <el-form-item v-permission="['base-data:product:category:add']">
-            <el-button type="primary" icon="el-icon-plus" @click="$refs.addDialog.openDialog()">新增</el-button>
-          </el-form-item>
-          <el-form-item v-permission="['base-data:product:category:modify']">
-            <el-dropdown trigger="click" @command="handleCommand">
-              <el-button>
-                更多<i class="el-icon-more el-icon--right" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="batchEnable"><i class="el-icon-check" />批量启用</el-dropdown-item>
-                <el-dropdown-item command="batchUnable"><i class="el-icon-s-release" />批量停用</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-form-item>
-        </el-form>
+        <a-space>
+          <a-button type="primary" icon="search" @click="search">查询</a-button>
+          <a-button v-permission="['base-data:product:category:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-dropdown v-permission="['base-data:product:category:modify']">
+            <a-menu slot="overlay" @click="handleCommand">
+              <a-menu-item key="batchEnable">
+                <a-icon type="check" />批量启用
+              </a-menu-item>
+              <a-menu-item key="batchUnable">
+                <a-icon type="stop" />批量停用
+              </a-menu-item>
+            </a-menu>
+            <a-button>更多<a-icon type="down" /></a-button>
+          </a-dropdown>
+        </a-space>
       </template>
     </vxe-grid>
 
@@ -131,7 +127,7 @@ export default {
         { field: 'name', title: '名称', minWidth: 160, treeNode: true },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'description', title: '备注', minWidth: 160 },
-        { field: 'action', title: '操作', width: 200, slots: { default: 'action_default' }, fixed: 'right' }
+        { field: 'action', title: '操作', width: 160, slots: { default: 'action_default' }, fixed: 'right' }
       ]
     }
   },
@@ -176,10 +172,10 @@ export default {
     search() {
       this.$refs.grid.commitProxy('reload')
     },
-    handleCommand(command) {
-      if (command === 'batchEnable') {
+    handleCommand({ key }) {
+      if (key === 'batchEnable') {
         this.batchEnable()
-      } else if (command === 'batchUnable') {
+      } else if (key === 'batchUnable') {
         this.batchUnable()
       }
     },

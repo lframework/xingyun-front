@@ -19,8 +19,8 @@
         <template v-slot:form>
           <j-border>
             <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
-              <j-form-item label="业务单据号">
-                <el-input v-model="searchFormData.code" clearable />
+              <j-form-item label="单据号">
+                <a-input v-model="searchFormData.code" allow-clear />
               </j-form-item>
               <j-form-item label="仓库">
                 <store-center-selector
@@ -28,23 +28,25 @@
                 />
               </j-form-item>
               <j-form-item label="盘点状态">
-                <el-select v-model="searchFormData.takeStatus" placeholder="全部" clearable>
-                  <el-option v-for="item in $enums.TAKE_STOCK_PLAN_STATUS.values()" :key="item.code" :label="item.desc" :value="item.code" />
-                </el-select>
+                <a-select v-model="searchFormData.takeStatus" placeholder="全部" allow-clear>
+                  <a-select-option v-for="item in $enums.TAKE_STOCK_PLAN_STATUS.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                </a-select>
               </j-form-item>
 
               <j-form-item label="创建日期" :content-nest="false">
-                <el-date-picker
-                  v-model="searchFormData.createTimeStart"
-                  type="date"
-                  value-format="yyyy-MM-dd 00:00:00"
-                />
-                <span class="date-split">至</span>
-                <el-date-picker
-                  v-model="searchFormData.createTimeEnd"
-                  type="date"
-                  value-format="yyyy-MM-dd 23:59:59"
-                />
+                <div class="date-range-container">
+                  <a-date-picker
+                    v-model="searchFormData.createTimeStart"
+                    placeholder=""
+                    value-format="YYYY-MM-DD 00:00:00"
+                  />
+                  <span class="date-split">至</span>
+                  <a-date-picker
+                    v-model="searchFormData.createTimeEnd"
+                    placeholder=""
+                    value-format="YYYY-MM-DD 23:59:59"
+                  />
+                </div>
               </j-form-item>
 
               <j-form-item label="创建人">
@@ -54,17 +56,19 @@
               </j-form-item>
 
               <j-form-item label="操作日期" :content-nest="false">
-                <el-date-picker
-                  v-model="searchFormData.updateTimeStart"
-                  type="date"
-                  value-format="yyyy-MM-dd 00:00:00"
-                />
-                <span class="date-split">至</span>
-                <el-date-picker
-                  v-model="searchFormData.updateTimeEnd"
-                  type="date"
-                  value-format="yyyy-MM-dd 23:59:59"
-                />
+                <div class="date-range-container">
+                  <a-date-picker
+                    v-model="searchFormData.updateTimeStart"
+                    placeholder=""
+                    value-format="YYYY-MM-DD 00:00:00"
+                  />
+                  <span class="date-split">至</span>
+                  <a-date-picker
+                    v-model="searchFormData.updateTimeEnd"
+                    placeholder=""
+                    value-format="YYYY-MM-DD 23:59:59"
+                  />
+                </div>
               </j-form-item>
 
               <j-form-item label="操作人">
@@ -77,26 +81,20 @@
         </template>
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-            </el-form-item>
-            <el-form-item v-permission="['stock:take:plan:add']">
-              <el-button type="primary" icon="el-icon-plus" @click="$refs.addDialog.openDialog()">新增</el-button>
-            </el-form-item>
-            <el-form-item v-permission="['stock:take:plan:export']">
-              <el-button icon="el-icon-download" @click="exportList">导出</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="search" @click="search">查询</a-button>
+            <a-button v-permission="['stock:take:plan:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+            <a-button v-permission="['stock:take:plan:export']" icon="download" @click="exportList">导出</a-button>
+          </a-space>
         </template>
 
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
-          <el-button v-permission="['stock:take:plan:query']" type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
-          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:create-diff']" type="text" icon="el-icon-s-check" @click="e => { id = row.id;$refs.diffDialog.openDialog() }">差异生成</el-button>
-          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:handle-diff']" type="text" icon="el-icon-s-check" @click="e => { id = row.id;$refs.handleDialog.openDialog() }">差异处理</el-button>
-          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) || $enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:cancel']" type="text" icon="el-icon-circle-close" @click="e => { cancelRow(row) }">作废</el-button>
-          <el-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:delete']" type="text" icon="el-icon-delete" @click="e => { deleteRow(row) }">删除</el-button>
+          <a-button v-permission="['stock:take:plan:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
+          <a-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:create-diff']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.diffDialog.openDialog()) }">差异生成</a-button>
+          <a-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:handle-diff']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.handleDialog.openDialog()) }">差异处理</a-button>
+          <a-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) || $enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:cancel']" type="link" class="ant-btn-link-danger" @click="e => { cancelRow(row) }">作废</a-button>
+          <a-button v-if="$enums.TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus)" v-permission="['stock:take:plan:delete']" type="link" class="ant-btn-link-danger" @click="e => { deleteRow(row) }">删除</a-button>
         </template>
       </vxe-grid>
     </div>
@@ -138,7 +136,7 @@ export default {
       searchFormData: {
         code: '',
         sc: {},
-        takeStatus: '',
+        takeStatus: undefined,
         createBy: {},
         createTimeStart: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
@@ -155,7 +153,7 @@ export default {
       },
       // 列表数据配置
       tableColumn: [
-        { field: 'code', title: '业务单据号', width: 180 },
+        { field: 'code', title: '单据号', width: 180 },
         { field: 'scCode', title: '仓库编号', width: 100 },
         { field: 'scName', title: '仓库名称', width: 120 },
         { field: 'takeType', title: '盘点类别', width: 100, formatter: ({ cellValue }) => { return this.$enums.TAKE_STOCK_PLAN_TYPE.getDesc(cellValue) } },
@@ -166,7 +164,7 @@ export default {
         { field: 'updateTime', title: '操作时间', width: 170 },
         { field: 'updateBy', title: '操作人', width: 100 },
         { field: 'description', title: '备注', minWidth: 200 },
-        { title: '操作', width: 220, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 180, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
@@ -235,7 +233,7 @@ export default {
     exportList() {
       this.loading = true
       this.$api.sc.stock.take.takeStockPlan.exportList(this.buildQueryParams({})).then(() => {
-        this.$msg.success('导出成功！')
+        this.$msg.successTip('导出成功！')
       }).finally(() => {
         this.loading = false
       })

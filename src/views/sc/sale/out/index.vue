@@ -19,8 +19,8 @@
         <template v-slot:form>
           <j-border>
             <j-form @collapse="$refs.grid.refreshColumn()">
-              <j-form-item label="业务单据号">
-                <el-input v-model="searchFormData.code" clearable />
+              <j-form-item label="单据号">
+                <a-input v-model="searchFormData.code" allow-clear />
               </j-form-item>
 
               <j-form-item label="客户">
@@ -42,17 +42,19 @@
               </j-form-item>
 
               <j-form-item label="操作日期" :content-nest="false">
-                <el-date-picker
-                  v-model="searchFormData.createStartTime"
-                  type="date"
-                  value-format="yyyy-MM-dd 00:00:00"
-                />
-                <span class="date-split">至</span>
-                <el-date-picker
-                  v-model="searchFormData.createEndTime"
-                  type="date"
-                  value-format="yyyy-MM-dd 23:59:59"
-                />
+                <div class="date-range-container">
+                  <a-date-picker
+                    v-model="searchFormData.createStartTime"
+                    placeholder=""
+                    value-format="YYYY-MM-DD 00:00:00"
+                  />
+                  <span class="date-split">至</span>
+                  <a-date-picker
+                    v-model="searchFormData.createEndTime"
+                    placeholder=""
+                    value-format="YYYY-MM-DD 23:59:59"
+                  />
+                </div>
               </j-form-item>
 
               <j-form-item label="审核人">
@@ -62,23 +64,25 @@
               </j-form-item>
 
               <j-form-item label="审核日期" :content-nest="false">
-                <el-date-picker
-                  v-model="searchFormData.approveStartTime"
-                  type="date"
-                  value-format="yyyy-MM-dd 00:00:00"
-                />
-                <span class="date-split">至</span>
-                <el-date-picker
-                  v-model="searchFormData.approveEndTime"
-                  type="date"
-                  value-format="yyyy-MM-dd 23:59:59"
-                />
+                <div class="date-range-container">
+                  <a-date-picker
+                    v-model="searchFormData.approveStartTime"
+                    placeholder=""
+                    value-format="YYYY-MM-DD 00:00:00"
+                  />
+                  <span class="date-split">至</span>
+                  <a-date-picker
+                    v-model="searchFormData.approveEndTime"
+                    placeholder=""
+                    value-format="YYYY-MM-DD 23:59:59"
+                  />
+                </div>
               </j-form-item>
 
-              <j-form-item label="审核状态">
-                <el-select v-model="searchFormData.status" placeholder="全部" clearable>
-                  <el-option v-for="item in $enums.RECEIVE_SHEET_STATUS.values()" :key="item.code" :label="item.desc" :value="item.code" />
-                </el-select>
+              <j-form-item label="状态">
+                <a-select v-model="searchFormData.status" placeholder="全部" allow-clear>
+                  <a-select-option v-for="item in $enums.RECEIVE_SHEET_STATUS.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                </a-select>
               </j-form-item>
 
               <j-form-item label="销售员">
@@ -88,56 +92,44 @@
               </j-form-item>
 
               <j-form-item label="销售订单号">
-                <el-input v-model="searchFormData.saleOrderCode" clearable />
+                <a-input v-model="searchFormData.saleOrderCode" allow-clear />
               </j-form-item>
 
               <j-form-item label="结算状态">
-                <el-select v-model="searchFormData.settleStatus" placeholder="全部" clearable>
-                  <el-option v-for="item in $enums.SETTLE_STATUS.values()" :key="item.code" :label="item.desc" :value="item.code" />
-                </el-select>
+                <a-select v-model="searchFormData.settleStatus" placeholder="全部" allow-clear>
+                  <a-select-option v-for="item in $enums.SETTLE_STATUS.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                </a-select>
               </j-form-item>
             </j-form>
           </j-border>
         </template>
         <!-- 工具栏 -->
         <template v-slot:toolbar_buttons>
-          <el-form :inline="true">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-            </el-form-item>
-            <el-form-item v-permission="['sale:out:add']">
-              <el-button type="primary" icon="el-icon-plus" @click="openAddDialog">新增</el-button>
-            </el-form-item>
-            <el-form-item v-permission="['sale:out:approve']">
-              <el-button icon="el-icon-check" @click="batchApprovePass">审核通过</el-button>
-            </el-form-item>
-            <el-form-item v-permission="['sale:out:approve']">
-              <el-button icon="el-icon-close" @click="batchApproveRefuse">审核拒绝</el-button>
-            </el-form-item>
-            <el-form-item v-permission="['sale:out:delete']">
-              <el-button type="danger" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
-            </el-form-item>
-            <el-form-item v-permission="['sale:out:export']">
-              <el-button icon="el-icon-download" @click="exportList">导出</el-button>
-            </el-form-item>
-          </el-form>
+          <a-space>
+            <a-button type="primary" icon="search" @click="search">查询</a-button>
+            <a-button v-permission="['sale:out:add']" type="primary" icon="plus" @click="openAddDialog">新增</a-button>
+            <a-button v-permission="['sale:out:approve']" icon="check" @click="batchApprovePass">审核通过</a-button>
+            <a-button v-permission="['sale:out:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
+            <a-button v-permission="['sale:out:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
+            <a-button v-permission="['sale:out:export']" icon="download" @click="exportList">导出</a-button>
+          </a-space>
         </template>
 
         <!-- 销售订单号 列自定义内容 -->
         <template v-slot:saleOrderCode_default="{ row }">
           <span v-if="$utils.isEmpty(row.saleOrderCode)">-</span>
           <span v-else>
-            <el-button v-permission="['sale:order:query']" type="text" @click="viewSaleOrderDetail(row.saleOrderId)">{{ row.saleOrderCode }}</el-button>
+            <a v-permission="['sale:order:query']" @click="viewSaleOrderDetail(row.saleOrderId)">{{ row.saleOrderCode }}</a>
             <span v-no-permission="['sale:order:query']">{{ row.saleOrderCode }}</span>
           </span>
         </template>
 
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
-          <el-button v-permission="['sale:out:query']" type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
-          <el-button v-if="$enums.SALE_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SALE_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['sale:out:approve']" type="text" icon="el-icon-s-check" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.approveDialog.openDialog()) }">审核</el-button>
-          <el-button v-if="$enums.SALE_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SALE_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['sale:out:modify']" type="text" icon="el-icon-edit" @click="openModifyDialog(row)">修改</el-button>
-          <el-button v-if="$enums.SALE_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SALE_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['sale:out:delete']" type="text" icon="el-icon-delete" @click="deleteOrder(row)">删除</el-button>
+          <a-button v-permission="['sale:out:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
+          <a-button v-if="$enums.SALE_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SALE_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['sale:out:approve']" type="link" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.approveDialog.openDialog()) }">审核</a-button>
+          <a-button v-if="$enums.SALE_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SALE_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['sale:out:modify']" type="link" @click="openModifyDialog(row)">修改</a-button>
+          <a-button v-if="$enums.SALE_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SALE_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['sale:out:delete']" type="link" class="ant-btn-link-danger" @click="deleteOrder(row)">删除</a-button>
         </template>
       </vxe-grid>
 
@@ -197,10 +189,10 @@ export default {
         approveBy: {},
         approveStartTime: '',
         approveEndTime: '',
-        status: '',
+        status: undefined,
         saler: {},
         saleOrderCode: '',
-        settleStatus: ''
+        settleStatus: undefined
       },
       // 分页配置
       pagerConfig: {
@@ -219,7 +211,7 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'checkbox', width: 40 },
-        { field: 'code', title: '业务单据号', width: 180 },
+        { field: 'code', title: '单据号', width: 180 },
         { field: 'scCode', title: '仓库编号', width: 100 },
         { field: 'scName', title: '仓库名称', width: 120 },
         { field: 'customerCode', title: '客户编号', width: 100 },
@@ -230,13 +222,13 @@ export default {
         { field: 'totalGiftNum', title: '赠品数量', align: 'right', width: 120 },
         { field: 'createTime', title: '操作时间', width: 170 },
         { field: 'createBy', title: '操作人', width: 100 },
-        { field: 'status', title: '审核状态', width: 100, formatter: ({ cellValue }) => { return this.$enums.RECEIVE_SHEET_STATUS.getDesc(cellValue) } },
+        { field: 'status', title: '状态', width: 100, formatter: ({ cellValue }) => { return this.$enums.RECEIVE_SHEET_STATUS.getDesc(cellValue) } },
         { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'approveBy', title: '审核人', width: 100 },
         { field: 'settleStatus', title: '结算状态', width: 100, formatter: ({ cellValue }) => { return this.$enums.SETTLE_STATUS.getDesc(cellValue) } },
         { field: 'description', title: '备注', width: 200 },
         { field: 'saleOrderCode', title: '销售订单号', width: 180, slots: { default: 'saleOrderCode_default' }},
-        { title: '操作', width: 280, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 200, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
@@ -416,14 +408,14 @@ export default {
     exportList() {
       this.loading = true
       this.$api.sc.sale.outSheet.exportList(this.buildQueryParams({})).then(() => {
-        this.$msg.success('导出成功！')
+        this.$msg.successTip('导出成功！')
       }).finally(() => {
         this.loading = false
       })
     },
     viewSaleOrderDetail(id) {
       this.saleOrderId = id
-      this.$refs.viewSaleOrderDetailDialog.openDialog()
+      this.$nextTick(() => this.$refs.viewSaleOrderDetailDialog.openDialog())
     }
   }
 }

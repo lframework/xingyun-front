@@ -1,25 +1,25 @@
 <template>
-  <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData">
-    <el-form-item label="编号" prop="code">
-      <el-input v-model="formData.code" readonly />
-    </el-form-item>
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="formData.name" readonly />
-    </el-form-item>
-    <el-form-item label="类型" prop="type">
-      <el-select v-model="formData.type" disabled>
-        <el-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-      </el-select>
-    </el-form-item>
-    <el-form-item label="状态" prop="available">
-      <el-select v-model="formData.available" disabled>
-        <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-      </el-select>
-    </el-form-item>
-    <el-form-item label="备注" prop="description">
-      <el-input v-model="formData.description" type="textarea" resize="none" readonly />
-    </el-form-item>
-  </el-form>
+  <a-form-model ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData">
+    <a-form-model-item label="编号" prop="code">
+      <a-input v-model="formData.code" read-only />
+    </a-form-model-item>
+    <a-form-model-item label="名称" prop="name">
+      <a-input v-model="formData.name" read-only />
+    </a-form-model-item>
+    <a-form-model-item label="类型" prop="type">
+      <a-select v-model="formData.type" disabled>
+        <a-select-option v-for="item in $enums.DATAOBJECT_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+      </a-select>
+    </a-form-model-item>
+    <a-form-model-item label="状态" prop="available">
+      <a-select v-model="formData.available" disabled>
+        <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+      </a-select>
+    </a-form-model-item>
+    <a-form-model-item label="备注" prop="description">
+      <a-textarea v-model="formData.description" read-only />
+    </a-form-model-item>
+  </a-form-model>
 </template>
 <script>
 

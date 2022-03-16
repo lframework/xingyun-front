@@ -1,44 +1,44 @@
 <template>
-  <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-    <el-form-item label="数据库" prop="dbType">
-      <el-radio-group v-model="formData.dbType" @change="dbTypeChange">
-        <el-radio v-for="item in constants.DB_TYPE" :key="item.code" :label="item.code">{{ item.desc }}</el-radio>
-      </el-radio-group>
-    </el-form-item>
-    <el-form-item label="转换规则" prop="convertType">
-      <el-select v-model="formData.convertType" filterable clearable>
-        <el-option
-          v-for="item in $enums.GEN_CONVERT_TYPE.values()"
-          :key="item.code"
-          :label="item.desc"
-          :value="item.code"
-        />
-      </el-select>
-      <el-popover
-        class="tip-question"
-        placement="top-start"
-        width="200"
-        trigger="click"
-        content="将数据库字段名转换成属性名时的规则。"
-      >
-        <el-button slot="reference" type="text" icon="el-icon-question" />
-      </el-popover>
-    </el-form-item>
-    <el-form-item label="数据库表" prop="table">
-      <el-select v-model="formData.table" filterable clearable>
-        <el-option
-          v-for="(item, index) in tableOptions"
-          :key="index"
-          :label="item.tableSchema + '.' + item.tableName"
-          :value="item.tableSchema + '.' + item.tableName"
-        />
-      </el-select>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="submitEvent">保存</el-button>
-      <el-button @click="closeDialog">取消</el-button>
-    </el-form-item>
-  </el-form>
+  <div v-loading="loading">
+    <a-form-model ref="form" :label-col="{span: 6}" :wrapper-col="{span: 14}" :model="formData" :rules="rules">
+      <a-form-model-item label="数据库" prop="dbType">
+        <a-radio-group v-model="formData.dbType" @change="dbTypeChange">
+          <a-radio v-for="item in constants.DB_TYPE" :key="item.code" :value="item.code">{{ item.desc }}</a-radio>
+        </a-radio-group>
+      </a-form-model-item>
+      <a-form-model-item label="转换规则" prop="convertType">
+        <a-row>
+          <a-col :span="20">
+            <a-select v-model="formData.convertType" show-search allow-clear>
+              <a-select-option
+                v-for="item in $enums.GEN_CONVERT_TYPE.values()"
+                :key="item.code"
+                :value="item.code"
+              >{{ item.desc }}</a-select-option>
+            </a-select>
+          </a-col>
+          <a-col :span="3" :offset="1">
+            <a-tooltip title="将数据库字段名转换成属性名时的规则"><a-icon type="question-circle" /></a-tooltip>
+          </a-col>
+        </a-row>
+      </a-form-model-item>
+      <a-form-model-item label="数据库表" prop="table">
+        <a-select v-model="formData.table" show-search allow-clear>
+          <a-select-option
+            v-for="(item, index) in tableOptions"
+            :key="index"
+            :value="item.tableSchema + '.' + item.tableName"
+          >{{ item.tableSchema + '.' + item.tableName }}</a-select-option>
+        </a-select>
+      </a-form-model-item>
+    </a-form-model>
+    <div class="form-modal-footer">
+      <a-space>
+        <a-button type="primary" @click="submitEvent">保存</a-button>
+        <a-button @click="closeDialog">取消</a-button>
+      </a-space>
+    </div>
+  </div>
 </template>
 <script>
 import * as constants from './constants'

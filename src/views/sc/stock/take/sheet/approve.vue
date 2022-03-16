@@ -2,37 +2,37 @@
   <div v-if="visible" class="app-container">
     <div v-permission="['stock:take:sheet:approve']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form label-width="120px">
           <j-form-item label="关联盘点任务">
             <div>
-              <el-button v-permission="['stock:take:plan:query']" type="text" @click="e => $refs.viewTakeStockPlanDialog.openDialog()">{{ formData.planCode }}</el-button>
+              <a v-permission="['stock:take:plan:query']" @click="e => $refs.viewTakeStockPlanDialog.openDialog()">{{ formData.planCode }}</a>
               <span v-no-permission="['stock:take:plan:query']">{{ formData.planCode }}</span>
             </div>
           </j-form-item>
+          <j-form-item label="仓库">
+            {{ formData.scName }}
+          </j-form-item>
           <j-form-item label="预先盘点单">
             <div v-if="!$utils.isEmpty(formData.preSheetId)">
-              <el-button v-permission="['stock:take:sheet:query']" type="text" @click="e => $refs.viewPreTakeStockSheetDialog.openDialog()">{{ formData.preSheetCode }}</el-button>
+              <a v-permission="['stock:take:sheet:query']" @click="e => $refs.viewPreTakeStockSheetDialog.openDialog()">{{ formData.preSheetCode }}</a>
               <span v-no-permission="['stock:take:sheet:query']">{{ formData.preSheetCode }}</span>
             </div>
           </j-form-item>
-          <j-form-item label="仓库">
-            <el-input :value="formData.scName" readonly />
-          </j-form-item>
           <j-form-item label="盘点类别">
-            <el-input :value="$enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType)" readonly />
+            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            <el-input :value="$enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus)" readonly />
+            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="类目/品牌">
-            <el-input :value="formData.bizName" readonly />
+            {{ formData.bizName }}
           </j-form-item>
           <j-form-item label="备注" :span="24">
-            <el-input v-model.trim="formData.description" type="textarea" resize="none" readonly />
+            <a-textarea v-model.trim="formData.description" read-only />
           </j-form-item>
-          <j-form-item label="审核状态" :span="24">
-            <span v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态" :span="24">
+            <span v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="操作人">
@@ -48,7 +48,7 @@
             <span>{{ formData.approveTime }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="24" :content-nest="false">
-            <el-input v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -64,13 +64,14 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
       />
 
-      <div v-if="$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center;">
-        <el-button v-permission="['stock:take:sheet:approve']" type="primary" :loading="loading" @click="approvePass">审核通过</el-button>
-        <el-button v-if="$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['stock:take:sheet:approve']" type="danger" :loading="loading" @click="approveRefuse">审核拒绝</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div v-if="$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['stock:take:sheet:approve']" type="primary" :loading="loading" @click="approvePass">审核通过</a-button>
+          <a-button v-if="$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['stock:take:sheet:approve']" type="danger" :loading="loading" @click="approveRefuse">审核拒绝</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
 
       <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />

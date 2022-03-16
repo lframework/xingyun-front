@@ -1,26 +1,23 @@
 <template>
   <div>
-    <el-input
+    <a-input
       v-model="_label"
-      type="text"
-      readonly
-      :placeholder="placeholder"
+      read-only
       :disabled="disabled"
+      :placeholder="placeholder"
+      class="dialog-tree--input"
       @click.native="onOpen"
     >
-      <i slot="suffix" class="el-input__icon el-icon-search" />
-    </el-input>
+      <a-icon slot="suffix" type="search" />
+    </a-input>
 
-    <el-dialog
+    <a-modal
+      v-model="dialogVisible"
       :title="title"
-      :visible.sync="dialogVisible"
       :width="dialogWidth"
-      append-to-body
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-
-      top="5vh"
-      @open="open"
+      :mask-closable="false"
+      :keyboard="false"
+      :dialog-style="{ top: '20px' }"
     >
       <div>
         <!-- 数据列表 -->
@@ -60,16 +57,14 @@
         </vxe-grid>
       </div>
 
-      <template v-slot:footer>
-        <div class="select-dialog-footer">
-          <div>
-            <el-button @click="handleClose">取 消</el-button>
-            <el-button :loading="loading" @click="clear">清 空</el-button>
-            <el-button type="primary" :loading="loading" @click="doSelect">确 定</el-button>
-          </div>
+      <template slot="footer">
+        <div>
+          <a-button @click="handleClose">取 消</a-button>
+          <a-button :loading="loading" @click="clear">清 空</a-button>
+          <a-button type="primary" :loading="loading" @click="doSelect">确 定</a-button>
         </div>
       </template>
-    </el-dialog>
+    </a-modal>
   </div>
 </template>
 <script>
@@ -210,6 +205,9 @@ export default {
   },
   methods: {
     onOpen() {
+      if (this.disabled) {
+        return
+      }
       const result = this.beforeOpen()
       if (this.$utils.isPromise(result)) {
         result.then(() => {
@@ -230,8 +228,6 @@ export default {
 
       this.$emit('clear')
       this.handleClose()
-    },
-    open() {
     },
     doSelect() {
       let selectData
@@ -305,5 +301,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="less">
+.dialog-tree--input {
+  input {
+    cursor: pointer;
+  }
+}
 </style>

@@ -3,9 +3,9 @@
 
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+    <a-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
-    </el-row>
+    </a-row>
   </div>
 </template>
 
@@ -27,41 +27,33 @@ export default {
   created() {
   },
   methods: {
-    handleSetLineChartData(title, type, bizType) {
+    handleSetLineChartData(title, type, res) {
       this.lineChartData = {
         totalAmountDatas: [],
         totalNumDatas: [],
         xAxisDatas: []
       }
       if (type === 'today') {
-        this.$api.chart.orderChart.queryToday({
-          bizType: bizType
-        }).then(res => {
-          this.lineChartData = {
-            totalAmountDatas: res.map(item => item.totalAmount),
-            totalNumDatas: res.map(item => item.totalNum),
-            xAxisDatas: res.map(item => item.createHour.substring(item.createHour.length - 2) + '时'),
-            title: title
-          }
-        })
+        this.lineChartData = {
+          totalAmountDatas: res.map(item => item.totalAmount),
+          totalNumDatas: res.map(item => item.totalNum),
+          xAxisDatas: res.map(item => item.createHour.substring(item.createHour.length - 2) + '时'),
+          title: title
+        }
       } else {
-        this.$api.chart.orderChart.querySameMonth({
-          bizType: bizType
-        }).then(res => {
-          this.lineChartData = {
-            totalAmountDatas: res.map(item => item.totalAmount),
-            totalNumDatas: res.map(item => item.totalNum),
-            xAxisDatas: res.map(item => item.createDate),
-            title: title
-          }
-        })
+        this.lineChartData = {
+          totalAmountDatas: res.map(item => item.totalAmount),
+          totalNumDatas: res.map(item => item.totalNum),
+          xAxisDatas: res.map(item => item.createDate),
+          title: title
+        }
       }
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .dashboard-editor-container {
   padding: 32px;
   background-color: rgb(240, 242, 245);

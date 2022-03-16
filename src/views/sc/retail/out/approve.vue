@@ -3,37 +3,25 @@
     <div v-permission="['retail:out:approve']" v-loading="loading">
       <j-border>
         <j-form>
-          <j-form-item label="仓库" :span="6">
-            <el-input
-              v-model="formData.scName"
-              readonly
-            />
+          <j-form-item label="仓库">
+            {{ formData.scName }}
           </j-form-item>
-          <j-form-item label="会员" :span="6">
-            <el-input
-              v-model="formData.memberName"
-              readonly
-            />
+          <j-form-item label="会员">
+            {{ formData.memberName }}
           </j-form-item>
-          <j-form-item label="销售员" :span="6">
-            <el-input
-              v-model="formData.salerName"
-              readonly
-            />
+          <j-form-item label="销售员">
+            {{ formData.salerName }}
           </j-form-item>
-          <j-form-item label="付款日期" :span="6">
-            <el-input
-              v-model="formData.paymentDate"
-              readonly
-            />
+          <j-form-item label="付款日期" :span="24">
+            {{ formData.paymentDate }}
           </j-form-item>
-          <j-form-item label="审核状态">
-            <span v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态">
+            <span v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
-            <el-input v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.createBy }}</span>
@@ -60,12 +48,11 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
       >
         <!-- 库存数量 列自定义内容 -->
         <template v-slot:stockNum_default="{ row }">
           <span v-if="checkStockNum(row)">{{ row.stockNum }}</span>
-          <span v-else style="color: #F56C6C;">{{ row.stockNum }}</span>
+          <span v-else style="color: #F5222D;">{{ row.stockNum }}</span>
         </template>
 
         <!-- 含税金额 列自定义内容 -->
@@ -76,14 +63,14 @@
 
       <j-border title="合计">
         <j-form label-width="140px">
-          <j-form-item label="出库数量" :span="6">
-            <el-input v-model="formData.totalNum" class="number-input" readonly />
+          <j-form-item label="出库数量">
+            <a-input v-model="formData.totalNum" class="number-input" read-only />
           </j-form-item>
-          <j-form-item label="赠品数量" :span="6">
-            <el-input v-model="formData.giftNum" class="number-input" readonly />
+          <j-form-item label="赠品数量">
+            <a-input v-model="formData.giftNum" class="number-input" read-only />
           </j-form-item>
-          <j-form-item label="含税总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+          <j-form-item label="含税总金额">
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -91,15 +78,17 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
 
-      <div v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center;">
-        <el-button v-permission="['retail:out:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</el-button>
-        <el-button v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['retail:out:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['retail:out:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</a-button>
+          <a-button v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['retail:out:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
     <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
@@ -128,6 +117,7 @@ export default {
       formData: {},
       // 列表数据配置
       tableColumn: [
+        { type: 'seq', width: 40 },
         { field: 'productCode', title: '商品编号', width: 120 },
         { field: 'productName', title: '商品名称', width: 260 },
         { field: 'skuCode', title: '商品SKU编号', width: 120 },

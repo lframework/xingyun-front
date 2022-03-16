@@ -1,9 +1,9 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="设置" top="5vh" @open="open">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="设置" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible">
       <simple-db v-if="$enums.DATAOBJECT_TYPE.SIMPLE_DB.equalsCode(type)" :id="id" ref="setting" @confirm="e => {$emit('confirm', e);closeDialog()}" @close="closeDialog" />
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 
@@ -39,6 +39,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

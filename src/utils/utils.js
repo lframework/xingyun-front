@@ -2,15 +2,14 @@
  * 工具类主要调用XEUtils
  * 文档地址：https://x-extends.gitee.io/xe-utils/
  */
-import XEUtils from 'xe-utils'
-import { isExternal } from '@/utils/validate'
 import Vue from 'vue'
-import Layout from '@/layout'
-import Nested from '@/layout/nested'
+import XEUtils from 'xe-utils'
 import pinyin from 'js-pinyin'
 import Moment from 'moment'
 import CryptoJS from 'crypto-js'
 import * as math from 'mathjs'
+import BlankView from '@/layouts/BlankView'
+import { isExternal } from '@/utils/validate'
 
 const utils = {}
 
@@ -158,165 +157,6 @@ utils.toTreeArray = function(array, options) {
  */
 utils.keys = function(obj) {
   return XEUtils.keys(obj)
-}
-
-/**
- * 构建菜单
- * @param oriMenus 树形结构的菜单数据
- * @returns {*[]}
- */
-utils.buildMenus = function(oriMenus = []) {
-  const result = []
-  oriMenus.forEach(menu => {
-    const obj = {}
-
-    const $enums = Vue.prototype.$enums
-    const MENU_DISPLAY = $enums.MENU_DISPLAY
-    if (MENU_DISPLAY.CATALOG.equalsCode(menu.display)) {
-      // 如果是目录
-      obj.path = this.isEmpty(menu.path) ? '' : menu.path
-      menu.meta.icon = 'menu'
-
-      if (this.isEmpty(menu.children)) {
-        // 如果没有子节点 也展示
-        obj.alwayShow = true
-      }
-      if (utils.isEmpty(menu.parentId)) {
-        obj.component = Layout
-      } else {
-        obj.component = Nested
-      }
-
-      obj.redirect = 'noRedirect'
-    } else if (MENU_DISPLAY.FUNCTION.equalsCode(menu.display)) {
-      // 如果是功能
-      obj.path = menu.path
-      menu.meta.icon = 'component'
-
-      if (!isExternal(menu.path)) {
-        let component = menu.component
-        if (component.substring(0, 1) !== '/') {
-          component = '/' + component
-        }
-        obj.component = (resolve) => require([`@/views${component}`], resolve)
-        obj.name = this.isEmpty(menu.name) ? menu.meta.title : menu.name
-        if (menu.path.indexOf('?') > -1) {
-          const queryObj = this.getQueryObject(menu.path)
-          if (!this.isEmpty(queryObj)) {
-            obj.props = queryObj
-          }
-        } else if (menu.path.indexOf('/:') > -1) {
-          obj.props = true
-        }
-      }
-    }
-
-    // 如果是最上级节点 path必须/开头
-    // 如果不是最上级节点 path不以/开头
-    if (!isExternal(menu.path)) {
-      if (utils.isEmpty(menu.parentId)) {
-        if (!obj.path.startsWith('/')) {
-          obj.path = '/' + obj.path
-        }
-      } else {
-        if (obj.path.startsWith('/')) {
-          obj.path = obj.path.substring(1)
-        }
-      }
-      if (!this.isEmpty(obj.path) && obj.path.indexOf('?') > -1) {
-        obj.path = obj.path.substring(0, obj.path.indexOf('?'))
-      }
-    }
-
-    obj.meta = Object.assign({ title: '', icon: '', noCache: false }, menu.meta)
-    obj.hidden = menu.hidden
-    obj.children = this.buildMenus(menu.children)
-    obj.isCollect = menu.isCollect || false
-    obj.display = menu.display
-    obj.id = menu.id
-    obj.meta.id = menu.id
-    result.push(obj)
-  })
-
-  return result
-}
-
-/**
- * 构建已收藏的菜单
- * @param menus
- */
-utils.buildCollectMenus = function(menus) {
-  // 我的收藏
-  const myCollect = {
-    path: '/collect-menu',
-    component: Layout,
-    alwaysShow: true,
-    redirect: 'noRedirect',
-    meta: { title: '我的收藏', icon: 'menu' }
-  }
-
-  const collectMenus = []
-  utils.eachTree(menus, item => {
-    if (item.isCollect) {
-      collectMenus.push(Object.assign({}, item, { hiddenCollect: true }))
-    }
-  })
-
-  myCollect.children = collectMenus || []
-
-  return myCollect
-}
-
-/**
- * 拍平Routers
- * @param accessRoutes
- * @returns {*[]}
- */
-utils.buildFlagRouters = function(accessRoutes) {
-  const flatRoutes = []
-
-  for (const item of accessRoutes) {
-    let childrenFlatRoutes = []
-    if (item.children && item.children.length > 0) {
-      childrenFlatRoutes = this.castToFlatRoute(item.children, '')
-    }
-
-    // 一级路由是布局路由,需要处理的只是其子路由数据
-    flatRoutes.push({
-      name: item.name,
-      path: item.path,
-      component: item.component,
-      redirect: item.redirect,
-      children: childrenFlatRoutes
-    })
-  }
-
-  return flatRoutes
-}
-
-utils.castToFlatRoute = function(routes, parentPath, flatRoutes = []) {
-  for (const item of routes) {
-    if (item.children && item.children.length > 0) {
-      if (item.redirect && item.redirect !== 'noRedirect') {
-        flatRoutes.push({
-          name: item.name,
-          path: (parentPath + '/' + item.path).substring(1),
-          redirect: item.redirect,
-          meta: item.meta
-        })
-      }
-      this.castToFlatRoute(item.children, parentPath + '/' + item.path, flatRoutes)
-    } else {
-      flatRoutes.push({
-        name: item.name,
-        path: (parentPath + '/' + item.path).substring(1),
-        component: item.component,
-        meta: item.meta
-      })
-    }
-  }
-
-  return flatRoutes
 }
 
 /**
@@ -850,6 +690,100 @@ utils.swapArrayItem = function(arr, index, toIndex) {
     }
   }
   return newArr
+}
+
+utils.buildMenus = function(oriMenus = []) {
+  const result = []
+  oriMenus.forEach(menu => {
+    const obj = {}
+
+    const $enums = Vue.prototype.$enums
+    const MENU_DISPLAY = $enums.MENU_DISPLAY
+    if (MENU_DISPLAY.CATALOG.equalsCode(menu.display)) {
+      // 如果是目录
+      obj.path = this.isEmpty(menu.path) ? '' : menu.path
+      obj.name = menu.meta.title
+      obj.meta = {
+        icon: 'menu',
+        invisible: menu.hidden || false
+      }
+
+      /* if (this.isEmpty(menu.children)) {
+        // 如果没有子节点 也展示
+        obj.alwayShow = true
+      }*/
+      obj.component = BlankView
+    } else if (MENU_DISPLAY.FUNCTION.equalsCode(menu.display)) {
+      // 如果是功能
+      obj.path = menu.path || ''
+      obj.name = menu.meta.title
+      obj.meta = {
+        icon: '',
+        invisible: menu.hidden || false,
+        page: {
+          cacheAble: !menu.meta.noCache
+        }
+      }
+
+      if (!isExternal(menu.path)) {
+        let component = menu.component
+        if (component.substring(0, 1) !== '/') {
+          component = '/' + component
+        }
+        obj.component = (resolve) => require([`@/views${component}`], resolve)
+        if (menu.path.indexOf('?') > -1) {
+          const queryObj = this.getQueryObject(menu.path)
+          if (!this.isEmpty(queryObj)) {
+            obj.props = queryObj
+          }
+        } else if (menu.path.indexOf('/:') > -1) {
+          obj.props = true
+        }
+      }
+    }
+
+    // 如果是最上级节点 path必须/开头
+    // 如果不是最上级节点 path不以/开头
+    if (!isExternal(menu.path)) {
+      if (utils.isEmpty(menu.parentId)) {
+        if (!obj.path.startsWith('/')) {
+          obj.path = '/' + obj.path
+        }
+      } else {
+        if (obj.path.startsWith('/')) {
+          obj.path = obj.path.substring(1)
+        }
+      }
+      if (!this.isEmpty(obj.path) && obj.path.indexOf('?') > -1) {
+        obj.path = obj.path.substring(0, obj.path.indexOf('?'))
+      }
+    }
+
+    // obj.meta = Object.assign({ title: '', icon: '', noCache: false }, menu.meta)
+    obj.hidden = menu.hidden
+    obj.children = this.buildMenus(menu.children)
+    obj.isCollect = menu.isCollect || false
+    obj.display = menu.display
+    obj.id = menu.id
+    obj.meta.id = menu.id
+    result.push(obj)
+  })
+
+  return result
+}
+
+/**
+ * 关闭当前页签
+ * @param el
+ */
+utils.closeCurrentPage = function(el) {
+  let parent = el
+  while (parent) {
+    if (parent.$options.name === 'TabsView') {
+      parent.remove(parent.activePage)
+    }
+    parent = parent.$parent
+  }
 }
 
 export default utils

@@ -20,10 +20,7 @@
         <j-border>
           <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
             <j-form-item label="日志名称">
-              <el-input
-                v-model="searchFormData.name"
-                clearable
-              />
+              <a-input v-model="searchFormData.name" allow-clear />
             </j-form-item>
             <j-form-item label="创建人">
               <user-selector
@@ -31,22 +28,20 @@
               />
             </j-form-item>
             <j-form-item label="日志类型">
-              <el-select v-model="searchFormData.logType" placeholder="全部" clearable>
-                <el-option v-for="item in $enums.OP_LOG_TYPE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-              </el-select>
+              <a-select v-model="searchFormData.logType" placeholder="全部" allow-clear>
+                <a-select-option v-for="item in $enums.OP_LOG_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
             </j-form-item>
             <j-form-item label="创建日期" :content-nest="false">
-              <el-date-picker
-                v-model="searchFormData.startTime"
-                type="date"
-                value-format="yyyy-MM-dd 00:00:00"
-              />
-              <span class="date-split">至</span>
-              <el-date-picker
-                v-model="searchFormData.endTime"
-                type="date"
-                value-format="yyyy-MM-dd 23:59:59"
-              />
+              <div class="date-range-container">
+                <a-date-picker v-model="searchFormData.startTime" placeholder="" value-format="YYYY-MM-DD 00:00:00" />
+                <span class="date-split">至</span>
+                <a-date-picker
+                  v-model="searchFormData.endTime"
+                  placeholder=""
+                  value-format="YYYY-MM-DD 23:59:59"
+                />
+              </div>
             </j-form-item>
           </j-form>
         </j-border>
@@ -54,16 +49,14 @@
 
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>
-        <el-form :inline="true">
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-          </el-form-item>
-        </el-form>
+        <a-space>
+          <a-button type="primary" icon="search" @click="search">查询</a-button>
+        </a-space>
       </template>
 
       <!-- 操作 列自定义内容 -->
       <template v-slot:action_default="{ row }">
-        <el-button v-permission="['system:oplog:query']" type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.detailDialog.openDialog() }">查看</el-button>
+        <a-button v-permission="['system:oplog:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.detailDialog.openDialog()) }">查看</a-button>
       </template>
     </vxe-grid>
     <detail
@@ -92,16 +85,9 @@ export default {
       searchFormData: {
         name: '',
         createBy: {},
-        logType: '',
+        logType: undefined,
         startTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(Moment().subtract(1, 'w').add(1, 'd'))),
         endTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(this.$utils.getCurrentDate()))
-      },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
       },
       // 列表数据配置
       tableColumn: [

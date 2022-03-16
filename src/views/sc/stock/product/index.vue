@@ -23,10 +23,10 @@
               <store-center-selector v-model="searchFormData.sc" />
             </j-form-item>
             <j-form-item label="商品编号">
-              <el-input v-model="searchFormData.productCode" clearable />
+              <a-input v-model="searchFormData.productCode" allow-clear />
             </j-form-item>
             <j-form-item label="商品名称">
-              <el-input v-model="searchFormData.productName" clearable />
+              <a-input v-model="searchFormData.productName" allow-clear />
             </j-form-item>
             <j-form-item label="商品类目">
               <product-category-selector v-model="searchFormData.category" :only-final="false" />
@@ -39,14 +39,10 @@
       </template>
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>
-        <el-form :inline="true">
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-          </el-form-item>
-          <el-form-item v-permission="['stock:product:export']">
-            <el-button type="primary" icon="el-icon-download" @click="exportList">导出</el-button>
-          </el-form-item>
-        </el-form>
+        <a-space>
+          <a-button type="primary" icon="search" @click="search">查询</a-button>
+          <a-button v-permission="['stock:product:export']" type="primary" icon="download" @click="exportList">导出</a-button>
+        </a-space>
       </template>
     </vxe-grid>
   </div>
@@ -154,7 +150,7 @@ export default {
     exportList() {
       this.loading = true
       this.$api.sc.stock.productStock.exportList(this.buildQueryParams({})).then(() => {
-        this.$msg.success('导出成功！')
+        this.$msg.successTip('导出成功！')
       }).finally(() => {
         this.loading = false
       })

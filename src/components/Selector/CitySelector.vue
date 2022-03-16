@@ -1,30 +1,27 @@
 <template>
   <div>
-    <el-cascader
+    <a-cascader
       v-model="model"
       :options="options"
-      :props="props"
+      :show-search="{ filter }"
+      :field-names="{ label: 'name', key: 'id', value: 'id', children: 'children' }"
       :placeholder="placeholder"
-      filterable
-      clearable
+      :allow-clear="true"
       :disabled="disabled"
-      style="width: 100%;"
+      expand-trigger="hover"
+      :change-on-select="!onlyFinal"
       @change="onChange"
     />
   </div>
 </template>
 
 <script>
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 export default {
   name: 'CitySelector',
   components: { },
-  inject: {
-    elForm: { default: '' },
-    elFormItem: { default: '' }
-  },
   props: {
-    value: { type: [Object, String], required: true },
+    value: { type: Array, required: true },
     requestParams: {
       type: Object,
       default: e => {
@@ -54,17 +51,7 @@ export default {
   },
   data() {
     return {
-      options: [],
-      // 父级菜单控件配置
-      props: {
-        emitPath: false,
-        // 子集菜单展开方式
-        expandTrigger: 'hover',
-        // 允许选择任意一级
-        checkStrictly: !this.onlyFinal,
-        value: 'id',
-        label: 'name'
-      }
+      options: []
     }
   },
   computed: {
@@ -103,10 +90,13 @@ export default {
       } else {
         this.$emit('input', e)
       }
+    },
+    filter(inputValue, path) {
+      return path.some(option => option.name.toLowerCase().indexOf(inputValue.toLowerCase()) > -1)
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="less">
 </style>

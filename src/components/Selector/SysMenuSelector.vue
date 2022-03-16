@@ -1,20 +1,23 @@
 <template>
   <div>
-    <el-cascader
+    <a-tree-select
       v-model="model"
-      :options="options"
-      :props="props"
+      :show-search="true"
+      :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+      :replace-fields="{ title: 'title', key: 'id', value: 'id', children: 'children' }"
+      :tree-data="options"
       :placeholder="placeholder"
-      filterable
-      clearable
+      allow-clear
+      :filter-tree-node="filter"
       :disabled="disabled"
+      style="width: 100%;"
       @change="onChange"
     />
   </div>
 </template>
 
 <script>
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 export default {
   name: 'SysMenuSelector',
   components: { },
@@ -53,17 +56,7 @@ export default {
   },
   data() {
     return {
-      options: [],
-      // 父级菜单控件配置
-      props: {
-        emitPath: false,
-        // 子集菜单展开方式
-        expandTrigger: 'hover',
-        // 允许选择任意一级
-        checkStrictly: !this.onlyFinal,
-        value: 'id',
-        label: 'title'
-      }
+      options: []
     }
   },
   computed: {
@@ -90,9 +83,18 @@ export default {
     },
     loadOptions() {
       this.getList(this._requestParams).then(data => {
-        this.options = this.$utils.toArrayTree(data, {
+        const options = this.$utils.toArrayTree(data, {
           strict: true
         })
+        if (this.onlyFinal) {
+          this.$utils.eachTree(options, item => {
+            if (!this.$utils.isEmpty(item.children)) {
+              item.disabled = true
+            }
+          })
+        }
+
+        this.options = options
       })
     },
     onChange(e) {
@@ -102,10 +104,13 @@ export default {
       } else {
         this.$emit('input', e)
       }
+    },
+    filter(inputValue, node) {
+      return node.data.props.title.indexOf(inputValue) > -1
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="less">
 </style>

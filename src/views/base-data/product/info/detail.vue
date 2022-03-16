@@ -1,25 +1,25 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="50%" title="查看" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['base-data:product:info:query']">
-      <el-descriptions :column="4" label-class-name="descriptions-label" content-class-name="descriptions-content" border>
-        <el-descriptions-item label="商品编号" :span="2">{{ formData.code }}</el-descriptions-item>
-        <el-descriptions-item label="商品名称" :span="2">{{ formData.name }}</el-descriptions-item>
-        <el-descriptions-item label="商品SKU编号" :span="2">{{ formData.skuCode }}</el-descriptions-item>
-        <el-descriptions-item label="外部编号" :span="2">{{ formData.externalCode }}</el-descriptions-item>
-        <el-descriptions-item label="商品类目" :span="2">{{ formData.categoryName }}</el-descriptions-item>
-        <el-descriptions-item label="商品品牌" :span="2">{{ formData.brandName }}</el-descriptions-item>
-        <el-descriptions-item label="规格" :span="2">{{ formData.spec }}</el-descriptions-item>
-        <el-descriptions-item label="单位" :span="2">{{ formData.unit }}</el-descriptions-item>
-        <el-descriptions-item label="采购价（元）" :span="2">{{ formData.purchasePrice }}</el-descriptions-item>
-        <el-descriptions-item label="销售价（元）" :span="2">{{ formData.salePrice }}</el-descriptions-item>
-        <el-descriptions-item label="零售价（元）" :span="2">{{ formData.retailPrice }}</el-descriptions-item>
-        <el-descriptions-item label="状态" :span="2">{{ $enums.AVAILABLE.getDesc(formData.available) }}</el-descriptions-item>
-        <el-descriptions-item v-for="item in formData.properties" :key="item.id" :label="item.name" :span="4">
+  <a-modal v-model="visible" :mask-closable="false" width="50%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
+    <div v-if="visible" v-permission="['base-data:product:info:query']" v-loading="loading">
+      <a-descriptions :column="4" bordered>
+        <a-descriptions-item label="商品编号" :span="2">{{ formData.code }}</a-descriptions-item>
+        <a-descriptions-item label="商品名称" :span="2">{{ formData.name }}</a-descriptions-item>
+        <a-descriptions-item label="商品SKU编号" :span="2">{{ formData.skuCode }}</a-descriptions-item>
+        <a-descriptions-item label="外部编号" :span="2">{{ formData.externalCode }}</a-descriptions-item>
+        <a-descriptions-item label="商品类目" :span="2">{{ formData.categoryName }}</a-descriptions-item>
+        <a-descriptions-item label="商品品牌" :span="2">{{ formData.brandName }}</a-descriptions-item>
+        <a-descriptions-item label="规格" :span="2">{{ formData.spec }}</a-descriptions-item>
+        <a-descriptions-item label="单位" :span="2">{{ formData.unit }}</a-descriptions-item>
+        <a-descriptions-item label="采购价（元）" :span="2">{{ formData.purchasePrice }}</a-descriptions-item>
+        <a-descriptions-item label="销售价（元）" :span="2">{{ formData.salePrice }}</a-descriptions-item>
+        <a-descriptions-item label="零售价（元）" :span="2">{{ formData.retailPrice }}</a-descriptions-item>
+        <a-descriptions-item label="状态" :span="2">{{ $enums.AVAILABLE.getDesc(formData.available) }}</a-descriptions-item>
+        <a-descriptions-item v-for="item in formData.properties" :key="item.id" :label="item.name" :span="4">
           {{ item.text }}
-        </el-descriptions-item>
-      </el-descriptions>
+        </a-descriptions-item>
+      </a-descriptions>
     </div>
-  </el-dialog>
+  </a-modal>
 </template>
 <script>
 
@@ -51,6 +51,8 @@ export default {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {

@@ -1,33 +1,40 @@
 <template>
-  <el-dialog :visible.sync="visible" :close-on-click-modal="false" append-to-body width="40%" title="新增" top="5vh" @open="open">
-    <div v-if="visible" v-permission="['system:dept:add']">
-      <el-form ref="form" v-loading="loading" label-width="100px" title-align="right" :model="formData" :rules="rules">
-        <el-form-item label="编号" prop="code">
-          <el-input v-model.trim="formData.code" clearable />
-        </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model.trim="formData.name" clearable />
-        </el-form-item>
-        <el-form-item label="简称" prop="shortName">
-          <el-input v-model.trim="formData.shortName" clearable />
-        </el-form-item>
-        <el-form-item label="上级部门" prop="parentId">
-          <el-cascader v-model="formData.parentId" :options="parentOptions" :props="parentProps" filterable clearable />
-        </el-form-item>
-        <el-form-item label="备注" prop="description">
-          <el-input v-model.trim="formData.description" type="textarea" resize="none" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submit">保存</el-button>
-          <el-button @click="closeDialog">取消</el-button>
-        </el-form-item>
-      </el-form>
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }">
+    <div v-if="visible" v-permission="['system:dept:add']" v-loading="loading">
+      <a-form-model ref="form" v-loading="loading" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
+        <a-form-model-item label="编号" prop="code">
+          <a-input v-model.trim="formData.code" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="名称" prop="name">
+          <a-input v-model.trim="formData.name" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="简称" prop="shortName">
+          <a-input v-model.trim="formData.shortName" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="上级部门" prop="parentId">
+          <sys-dept-selector v-model="formData.parentId" :only-final="false" />
+        </a-form-model-item>
+        <a-form-model-item label="备注" prop="description">
+          <a-textarea v-model.trim="formData.description" />
+        </a-form-model-item>
+      </a-form-model>
     </div>
-  </el-dialog>
+
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button :loading="loading" @click="closeDialog">取消</a-button>
+        </a-space>
+      </div>
+    </template>
+  </a-modal>
 </template>
 <script>
+import SysDeptSelector from '@/components/Selector/SysDeptSelector'
 export default {
   components: {
+    SysDeptSelector
   },
   data() {
     return {
@@ -48,18 +55,6 @@ export default {
         shortName: [
           { required: true, message: '请输入简称' }
         ]
-      },
-      // 父级控件数据
-      parentOptions: [],
-      // 父级控件配置
-      parentProps: {
-        emitPath: false,
-        // 子级展开方式
-        expandTrigger: 'hover',
-        // 允许选择任意一级
-        checkStrictly: true,
-        value: 'id',
-        label: 'name'
       }
     }
   },
@@ -68,13 +63,13 @@ export default {
   created() {
     // 初始化表单数据
     this.initFormData()
-    // 重新加载选择器数据
-    this.reloadDepts()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       this.visible = true
+
+      this.open()
     },
     // 关闭对话框
     closeDialog() {
@@ -112,15 +107,6 @@ export default {
     open() {
       // 初始化表单数据
       this.initFormData()
-      // 重新加载选择器数据
-      this.reloadDepts()
-    },
-    reloadDepts() {
-      this.$api.system.dept.trees().then(data => {
-        this.parentOptions = this.$utils.toArrayTree(data, {
-          strict: true
-        })
-      })
     }
   }
 }

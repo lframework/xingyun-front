@@ -18,51 +18,51 @@
     >
       <template v-slot:form>
         <j-border>
-          <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
+          <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
             <j-form-item label="编号">
-              <el-input v-model="searchFormData.code" clearable />
+              <a-input v-model="searchFormData.code" allow-clear />
             </j-form-item>
             <j-form-item label="用户名">
-              <el-input v-model="searchFormData.username" clearable />
+              <a-input v-model="searchFormData.username" allow-clear />
             </j-form-item>
             <j-form-item label="姓名">
-              <el-input v-model="searchFormData.name" clearable />
+              <a-input v-model="searchFormData.name" allow-clear />
             </j-form-item>
             <j-form-item label="岗位" prop="position">
               <sys-position-selector v-model="searchFormData.position" />
             </j-form-item>
             <j-form-item label="状态">
-              <el-select v-model="searchFormData.available" placeholder="全部" clearable>
-                <el-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :label="item.desc" :value="item.code" />
-              </el-select>
+              <a-select v-model="searchFormData.available" placeholder="全部" allow-clear>
+                <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
+            </j-form-item>
+            <j-form-item label="是否锁定">
+              <a-select v-model="searchFormData.lockStatus" placeholder="全部" allow-clear>
+                <a-select-option :value="true">是</a-select-option>
+                <a-select-option :value="false">否</a-select-option>
+              </a-select>
             </j-form-item>
           </j-form>
         </j-border>
       </template>
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>
-        <el-form :inline="true">
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-          </el-form-item>
-          <el-form-item v-permission="['system:user:add']">
-            <el-button type="primary" icon="el-icon-plus" @click="$refs.addDialog.openDialog()">新增</el-button>
-          </el-form-item>
-          <el-form-item v-permission="['system:user:permission']">
-            <el-button icon="el-icon-s-promotion" @click="batchSetting">批量授权</el-button>
-          </el-form-item>
-          <el-form-item v-permission="['system:user:modify']">
-            <el-dropdown trigger="click" @command="handleCommand">
-              <el-button>
-                更多<i class="el-icon-more el-icon--right" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="batchEnable"><i class="el-icon-check" />批量启用</el-dropdown-item>
-                <el-dropdown-item command="batchUnable"><i class="el-icon-s-release" />批量停用</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-form-item>
-        </el-form>
+        <a-space>
+          <a-button type="primary" icon="search" @click="search">查询</a-button>
+          <a-button v-permission="['system:user:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-button v-permission="['system:user:permission']" icon="thunderbolt" @click="batchSetting">批量授权</a-button>
+          <a-dropdown v-permission="['system:user:modify']">
+            <a-menu slot="overlay" @click="handleCommand">
+              <a-menu-item key="batchEnable">
+                <a-icon type="check" />批量启用
+              </a-menu-item>
+              <a-menu-item key="batchUnable">
+                <a-icon type="stop" />批量停用
+              </a-menu-item>
+            </a-menu>
+            <a-button>更多<a-icon type="down" /></a-button>
+          </a-dropdown>
+        </a-space>
       </template>
 
       <!-- 状态 列自定义内容 -->
@@ -72,9 +72,10 @@
 
       <!-- 操作 列自定义内容 -->
       <template v-slot:action_default="{ row }">
-        <el-button v-permission="['system:user:query']" type="text" icon="el-icon-view" @click="e => { id = row.id;$refs.viewDialog.openDialog() }">查看</el-button>
-        <el-button v-permission="['system:user:modify']" type="text" icon="el-icon-edit" @click="e => { id = row.id;$refs.updateDialog.openDialog() }">修改</el-button>
-        <el-button v-permission="['system:user:permission']" type="text" icon="el-icon-s-promotion" @click="setting(row)">授权</el-button>
+        <a-button v-permission="['system:user:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
+        <a-button v-permission="['system:user:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
+        <a-button v-if="row.lockStatus" v-permission="['system:user:modify']" type="link" @click="e => unlock(row)">解锁</a-button>
+        <a-button v-permission="['system:user:permission']" type="link" @click="setting(row)">授权</a-button>
       </template>
     </vxe-grid>
 
@@ -115,13 +116,6 @@ export default {
       searchFormData: {
         position: {}
       },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏
@@ -143,11 +137,12 @@ export default {
         { field: 'gender', title: '性别', width: 80, formatter: ({ cellValue }) => { return this.$enums.GENDER.getDesc(cellValue) } },
         { field: 'description', title: '备注', minWidth: 200 },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
+        { field: 'lockStatus', title: '是否锁定', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
         { field: 'createBy', title: '创建人', width: 100 },
         { field: 'createTime', title: '创建时间', width: 170 },
         { field: 'updateBy', title: '修改人', width: 100 },
         { field: 'updateTime', title: '修改时间', width: 170 },
-        { title: '操作', width: 210, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 200, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
@@ -188,10 +183,10 @@ export default {
 
       return params
     },
-    handleCommand(command) {
-      if (command === 'batchEnable') {
+    handleCommand({ key }) {
+      if (key === 'batchEnable') {
         this.batchEnable()
-      } else if (command === 'batchUnable') {
+      } else if (key === 'batchUnable') {
         this.batchUnable()
       }
     },
@@ -251,6 +246,17 @@ export default {
 
       this.ids = records.map(item => item.id)
       this.$refs.permissionDialog.openDialog()
+    },
+    unlock(row) {
+      this.$msg.confirm('是否确定解锁该用户？').then(() => {
+        this.loading = true
+        this.$api.system.user.unlock(row.id).then(() => {
+          this.$msg.success('解锁成功！')
+          this.search()
+        }).finally(() => {
+          this.loading = false
+        })
+      })
     }
   }
 }

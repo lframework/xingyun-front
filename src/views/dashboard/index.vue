@@ -10,7 +10,7 @@ import AdminDashboard from './admin'
 import EditorDashboard from './editor'
 
 export default {
-  name: 'Dashboard',
+  name: 'WorkPlace',
   components: { AdminDashboard, EditorDashboard },
   data() {
     return {
@@ -23,7 +23,7 @@ export default {
     ])
   },
   created() {
-    if (!this.roles.includes('admin')) {
+    if (!this.$store.getters['account/roles'].includes('admin')) {
       this.currentRole = 'editorDashboard'
     }
   }

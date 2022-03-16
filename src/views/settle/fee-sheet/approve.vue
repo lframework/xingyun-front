@@ -4,25 +4,19 @@
       <j-border>
         <j-form>
           <j-form-item label="供应商">
-            <el-input
-              v-model="formData.supplierName"
-              readonly
-            />
+            {{ formData.supplierName }}
           </j-form-item>
           <j-form-item label="收支方式">
-            <el-input
-              v-model="formData.sheetType"
-              readonly
-            />
+            {{ formData.sheetType }}
           </j-form-item>
           <j-form-item />
-          <j-form-item label="审核状态">
-            <span v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态">
+            <span v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
-            <el-input v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.createBy }}</span>
@@ -49,13 +43,12 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
       />
 
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -63,15 +56,17 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
 
-      <div v-if="$enums.SETTLE_FEE_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center;">
-        <el-button v-permission="['settle:fee-sheet:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</el-button>
-        <el-button v-if="$enums.SETTLE_FEE_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['settle:fee-sheet:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div v-if="$enums.SETTLE_FEE_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['settle:fee-sheet:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</a-button>
+          <a-button v-if="$enums.SETTLE_FEE_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['settle:fee-sheet:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
     <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />

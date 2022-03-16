@@ -4,34 +4,33 @@
       <j-border>
         <j-form>
           <j-form-item label="供应商">
-            <el-input
-              v-model="formData.supplierName"
-              readonly
-            />
+            {{ formData.supplierName }}
           </j-form-item>
           <j-form-item label="审核日期" :content-nest="false" required>
-            <el-date-picker
-              v-model="formData.startTime"
-              type="date"
-              value-format="yyyy-MM-dd 00:00:00"
-              disabled
-            />
-            <span class="date-split">至</span>
-            <el-date-picker
-              v-model="formData.endTime"
-              type="date"
-              value-format="yyyy-MM-dd 23:59:59"
-              disabled
-            />
+            <div class="date-range-container">
+              <a-date-picker
+                v-model="formData.startTime"
+                placeholder=""
+                value-format="YYYY-MM-DD 00:00:00"
+                disabled
+              />
+              <span class="date-split">至</span>
+              <a-date-picker
+                v-model="formData.endTime"
+                placeholder=""
+                value-format="YYYY-MM-DD 23:59:59"
+                disabled
+              />
+            </div>
           </j-form-item>
           <j-form-item />
-          <j-form-item label="审核状态">
-            <span v-if="$enums.SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #67C23A;">{{ $enums.SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F56C6C;">{{ $enums.SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span>
+          <j-form-item label="状态">
+            <span v-if="$enums.SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span>
             <span v-else style="color: #303133;">{{ $enums.SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
-            <el-input v-if="$enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" readonly />
+            <a-input v-if="$enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.createBy }}</span>
@@ -58,14 +57,13 @@
         height="500"
         :data="tableData"
         :columns="tableColumn"
-        style="margin-top: 10px;"
       >
-        <!-- 业务单据号 列自定义内容 -->
+        <!-- 单据号 列自定义内容 -->
         <template v-slot:bizCode_default="{ row }">
           <span v-no-permission="['settle:check-sheet:query']">{{ row.bizCode }}</span>
-          <el-button v-permission="['settle:check-sheet:query']" type="text" @click="e => { $refs.viewSettleCheckSheetDetailDialog.id = row.bizId; $refs.viewSettleCheckSheetDetailDialog.openDialog() }">
+          <a v-permission="['settle:check-sheet:query']" type="link" @click="e => { $refs.viewSettleCheckSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleCheckSheetDetailDialog.openDialog()) }">
             {{ row.bizCode }}
-          </el-button>
+          </a>
         </template>
 
         <!-- 已付款金额 列自定义内容 -->
@@ -89,13 +87,13 @@
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="未付款总金额" :span="6">
-            <el-input v-model="formData.totalUnPayAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalUnPayAmount" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="实付总金额" :span="6">
-            <el-input v-model="formData.totalAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="优惠总金额" :span="6">
-            <el-input v-model="formData.totalDiscountAmount" class="number-input" readonly />
+            <a-input v-model="formData.totalDiscountAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
@@ -103,15 +101,17 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <el-input v-model.trim="formData.description" maxlength="200" show-word-limit type="textarea" resize="none" />
+            <a-textarea v-model.trim="formData.description" maxlength="200" />
           </j-form-item>
         </j-form>
       </j-border>
 
-      <div v-if="$enums.SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center;">
-        <el-button v-permission="['settle:sheet:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</el-button>
-        <el-button v-if="$enums.SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['settle:sheet:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</el-button>
-        <el-button :loading="loading" @click="closeDialog">关闭</el-button>
+      <div v-if="$enums.SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
+        <a-space>
+          <a-button v-permission="['settle:sheet:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</a-button>
+          <a-button v-if="$enums.SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['settle:sheet:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
       </div>
     </div>
     <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
@@ -143,7 +143,7 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'seq', width: 40 },
-        { field: 'bizCode', title: '业务单据号', width: 200, slots: { default: 'bizCode_default' }},
+        { field: 'bizCode', title: '单据号', width: 200, slots: { default: 'bizCode_default' }},
         { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return '供应商对账单' } },
         { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'totalPayAmount', title: '应付金额', align: 'right', width: 100 },

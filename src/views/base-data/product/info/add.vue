@@ -1,71 +1,75 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div v-if="visible" class="app-container simple-app-container">
     <div v-permission="['base-data:product:info:add']">
-      <el-steps :active="active" simple>
-        <el-step title="基础信息" icon="el-icon-s-home" />
-        <el-step title="商品信息" icon="el-icon-s-flag" />
-      </el-steps>
-      <div v-loading="loading" class="form-container">
-        <el-row>
-          <el-col v-if="active === 1" :span="12">
-            <el-form ref="form" label-width="120px" title-align="right" :model="formData" :rules="rules">
-              <el-form-item label="商品货号" prop="code">
-                <el-input v-model.trim="formData.code" maxlength="20" show-word-limit clearable />
-              </el-form-item>
-              <el-form-item label="商品名称" prop="name">
-                <el-input v-model="formData.name" maxlength="100" show-word-limit clearable />
-              </el-form-item>
-              <el-form-item label="商品简称" prop="shortName">
-                <el-input v-model.trim="formData.shortName" maxlength="100" show-word-limit clearable />
-              </el-form-item>
-              <el-form-item label="商品类目" prop="category.id">
+      <a-steps :current="active" simple>
+        <a-step title="基础信息">
+          <a-icon type="home" />
+        </a-step>
+        <a-step title="商品信息">
+          <a-icon type="flag" />
+        </a-step>
+      </a-steps>
+      <div v-loading="loading">
+        <a-row>
+          <a-col v-if="active === 1" :span="12">
+            <a-form-model ref="form" :label-col="{span: 6}" :wrapper-col="{span: 14}" :model="formData" :rules="rules">
+              <a-form-model-item label="商品货号" prop="code">
+                <a-input v-model.trim="formData.code" allow-clear />
+              </a-form-model-item>
+              <a-form-model-item label="商品名称" prop="name">
+                <a-input v-model="formData.name" allow-clear />
+              </a-form-model-item>
+              <a-form-model-item label="商品简称" prop="shortName">
+                <a-input v-model.trim="formData.shortName" allow-clear />
+              </a-form-model-item>
+              <a-form-model-item label="商品类目" prop="category.id">
                 <product-category-selector v-model="formData.category" :only-final="false" @input="selectCategory" />
-              </el-form-item>
-              <el-form-item label="商品品牌" prop="brand.id">
+              </a-form-model-item>
+              <a-form-model-item label="商品品牌" prop="brand.id">
                 <product-brand-selector v-model="formData.brand" :request-params="{ available: true }" />
-              </el-form-item>
-              <el-form-item label="进项税率（%）" prop="taxRate">
-                <el-input v-model="formData.taxRate" clearable />
-              </el-form-item>
-              <el-form-item label="销项税率（%）" prop="saleTaxRate">
-                <el-input v-model="formData.saleTaxRate" clearable />
-              </el-form-item>
-              <el-form-item label="是否多销售属性" prop="multiple">
-                <el-select v-model="formData.multiple" clearable @change="changeMultiple">
-                  <el-option label="否" :value="false" />
-                  <el-option label="是" :value="true" />
-                </el-select>
-              </el-form-item>
-              <el-form-item v-if="formData.multiple" label="销售属性1" prop="salePropGroup1.id">
+              </a-form-model-item>
+              <a-form-model-item label="进项税率（%）" prop="taxRate">
+                <a-input v-model="formData.taxRate" allow-clear />
+              </a-form-model-item>
+              <a-form-model-item label="销项税率（%）" prop="saleTaxRate">
+                <a-input v-model="formData.saleTaxRate" allow-clear />
+              </a-form-model-item>
+              <a-form-model-item label="是否多销售属性" prop="multiple">
+                <a-select v-model="formData.multiple" allow-clear @change="changeMultiple">
+                  <a-select-option :value="false">否</a-select-option>
+                  <a-select-option :value="true">是</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item v-if="formData.multiple" label="销售属性1" prop="salePropGroup1.id">
                 <product-sale-prop-group-selector v-model="formData.salePropGroup1" :request-params="{ available: true, filterEmpty: true }" @input="selectSalePropGroup1" />
-              </el-form-item>
-              <el-form-item v-if="!$utils.isEmpty(formData.salePropGroup1) && !$utils.isEmpty(formData.salePropItems1)" prop="selectSalePropItems1">
-                <el-checkbox-group v-model="formData.selectSalePropItems1">
-                  <el-checkbox v-for="salePropItem in formData.salePropItems1" :key="salePropItem.id" :label="salePropItem.id" name="selectSalePropItems1">{{ salePropItem.name }}</el-checkbox>
-                </el-checkbox-group>
-              </el-form-item>
-              <el-form-item v-if="formData.multiple" label="销售属性2" prop="salePropGroup2.id">
+              </a-form-model-item>
+              <a-form-model-item v-if="!$utils.isEmpty(formData.salePropGroup1) && !$utils.isEmpty(formData.salePropItems1)" label=" " :colon="false" prop="selectSalePropItems1">
+                <a-checkbox-group v-model="formData.selectSalePropItems1">
+                  <a-checkbox v-for="salePropItem in formData.salePropItems1" :key="salePropItem.id" :value="salePropItem.id" name="selectSalePropItems1">{{ salePropItem.name }}</a-checkbox>
+                </a-checkbox-group>
+              </a-form-model-item>
+              <a-form-model-item v-if="formData.multiple" label="销售属性2" prop="salePropGroup2.id">
                 <product-sale-prop-group-selector v-model="formData.salePropGroup2" :request-params="{ available: true, filterEmpty: true }" @input="selectSalePropGroup2" />
-              </el-form-item>
-              <el-form-item v-if="!$utils.isEmpty(formData.salePropGroup2) && !$utils.isEmpty(formData.salePropItems2)" prop="selectSalePropItems2">
-                <el-checkbox-group v-model="formData.selectSalePropItems2">
-                  <el-checkbox v-for="salePropItem in formData.salePropItems2" :key="salePropItem.id" :label="salePropItem.id" name="selectSalePropItems2">{{ salePropItem.name }}</el-checkbox>
-                </el-checkbox-group>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="next">下一步</el-button>
-                <el-button @click="closeDialog">关闭</el-button>
-              </el-form-item>
-            </el-form>
-          </el-col>
+              </a-form-model-item>
+              <a-form-model-item v-if="!$utils.isEmpty(formData.salePropGroup2) && !$utils.isEmpty(formData.salePropItems2)" label=" " :colon="false" prop="selectSalePropItems2">
+                <a-checkbox-group v-model="formData.selectSalePropItems2">
+                  <a-checkbox v-for="salePropItem in formData.salePropItems2" :key="salePropItem.id" :value="salePropItem.id" name="selectSalePropItems2">{{ salePropItem.name }}</a-checkbox>
+                </a-checkbox-group>
+              </a-form-model-item>
+            </a-form-model>
+            <div class="form-modal-footer">
+              <a-space>
+                <a-button type="primary" @click="next">下一步</a-button>
+                <a-button @click="closeDialog">关闭</a-button>
+              </a-space>
+            </div>
+          </a-col>
           <div v-else-if="active === 2" :span="22">
-            <el-row>
-              <el-col :span="24" class="row">
-                <j-border title="注意事项">
-                  <div style="color: #909399; padding: 10px; font-size: 12px;">
-                    <el-row><span>使用“Tab”键更方便切换输入框。</span></el-row>
-                  </div>
-                </j-border>
+            <a-row>
+              <a-col :span="24" class="row">
+                <div style="color: #909399; padding: 10px; font-size: 12px;">
+                  <a-row><span>使用“Tab”键更方便切换输入框。</span></a-row>
+                </div>
                 <vxe-table
                   ref="xTable"
                   border
@@ -88,161 +92,162 @@
                       <span class="required">商品编号</span>
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model.trim="row.code" tabindex="1" maxlength="20" show-word-limit />
+                      <a-input v-model.trim="row.code" tabindex="1" />
                     </template>
                   </vxe-table-column>
                   <vxe-table-column field="name" title="商品名称" width="300">
                     <template #header>
                       <span class="required">商品名称</span>
-                      <el-dropdown @command="batchSet">
-                        <span class="el-dropdown-link">
-                          操作<i class="el-icon-arrow-down el-icon--right" />
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item command="salePropToName">拼接销售属性</el-dropdown-item>
-                          <el-dropdown-item command="specToName">拼接规格</el-dropdown-item>
-                          <el-dropdown-item command="unitToName">拼接单位</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <a-dropdown>
+                        <a-menu slot="overlay" @click="batchSet">
+                          <a-menu-item key="salePropToName">
+                            拼接销售属性
+                          </a-menu-item>
+                          <a-menu-item key="specToName">
+                            拼接规格
+                          </a-menu-item>
+                          <a-menu-item key="unitToName">
+                            拼接单位
+                          </a-menu-item>
+                        </a-menu>
+                        <a class="ant-dropdown-link" style="margin-left: 5px;">操作<a-icon type="down" /></a>
+                      </a-dropdown>
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model="row.name" tabindex="2" maxlength="100" show-word-limit />
+                      <a-input v-model="row.name" tabindex="2" />
                     </template>
                   </vxe-table-column>
                   <vxe-table-column field="skuCode" title="商品SKU编号" width="220">
                     <template #header>
                       <span class="required">商品SKU编号</span>
-                      <el-dropdown @command="batchSet">
-                        <span class="el-dropdown-link">
-                          操作<i class="el-icon-arrow-down el-icon--right" />
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item command="codeToSkuCode">设置为商品编号</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <a-dropdown>
+                        <a-menu slot="overlay" @click="batchSet">
+                          <a-menu-item key="codeToSkuCode">
+                            设置为商品编号
+                          </a-menu-item>
+                        </a-menu>
+                        <a class="ant-dropdown-link" style="margin-left: 5px;">操作<a-icon type="down" /></a>
+                      </a-dropdown>
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model.trim="row.skuCode" tabindex="3" maxlength="20" show-word-limit />
+                      <a-input v-model.trim="row.skuCode" tabindex="3" />
                     </template>
                   </vxe-table-column>
                   <vxe-table-column field="externalCode" title="外部编号" width="220">
                     <template #header>
                       <span>外部编号</span>
-                      <el-dropdown @command="batchSet">
-                        <span class="el-dropdown-link">
-                          操作<i class="el-icon-arrow-down el-icon--right" />
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item command="skuCodeToExternalCode">设置为商品SKU编号</el-dropdown-item>
-                          <el-dropdown-item command="codeToExternalCode">设置为商品编号</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
+                      <a-dropdown>
+                        <a-menu slot="overlay" @click="batchSet">
+                          <a-menu-item key="skuCodeToExternalCode">
+                            设置为商品SKU编号
+                          </a-menu-item>
+                          <a-menu-item key="codeToExternalCode">
+                            设置为商品编号
+                          </a-menu-item>
+                        </a-menu>
+                        <a class="ant-dropdown-link" style="margin-left: 5px;">操作<a-icon type="down" /></a>
+                      </a-dropdown>
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model.trim="row.externalCode" tabindex="4" maxlength="20" show-word-limit />
+                      <a-input v-model.trim="row.externalCode" tabindex="4" />
                     </template>
                   </vxe-table-column>
                   <vxe-table-column field="spec" title="规格" width="100">
                     <template #header>
                       <span>规格</span>
-                      <el-input v-model="batchChangeData.spec" size="mini" @input="e => batchChange('spec', e)" />
+                      <a-input v-model="batchChangeData.spec" size="mini" @input="e => batchChange('spec', e.target.value)" />
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model.trim="row.spec" tabindex="5" maxlength="20" show-word-limit />
+                      <a-input v-model.trim="row.spec" tabindex="5" />
                     </template>
                   </vxe-table-column>
                   <vxe-table-column field="unit" title="单位" width="100">
                     <template #header>
                       <span>单位</span>
-                      <el-input v-model="batchChangeData.unit" size="mini" @input="e => batchChange('unit', e)" />
+                      <a-input v-model="batchChangeData.unit" size="mini" @input="e => batchChange('unit', e.target.value)" />
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model.trim="row.unit" tabindex="6" maxlength="20" show-word-limit />
+                      <a-input v-model.trim="row.unit" tabindex="6" />
                     </template>
                   </vxe-table-column>
                   <vxe-table-column field="purchasePrice" title="采购价（元）" width="120">
                     <template #header>
                       <span class="required">采购价（元）</span>
-                      <el-input v-model="batchChangeData.purchasePrice" size="mini" @input="e => batchChange('purchasePrice', e)" />
+                      <a-input v-model="batchChangeData.purchasePrice" size="mini" @input="e => batchChange('purchasePrice', e.target.value)" />
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model="row.purchasePrice" tabindex="7" />
+                      <a-input v-model="row.purchasePrice" tabindex="7" />
                     </template>
                   </vxe-table-column>
                   <vxe-table-column field="salePrice" title="销售价（元）" width="120">
                     <template #header>
                       <span class="required">销售价（元）</span>
-                      <el-input v-model="batchChangeData.salePrice" size="mini" @input="e => batchChange('salePrice', e)" />
+                      <a-input v-model="batchChangeData.salePrice" size="mini" @input="e => batchChange('salePrice', e.target.value)" />
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model="row.salePrice" tabindex="8" />
+                      <a-input v-model="row.salePrice" tabindex="8" />
                     </template>
                   </vxe-table-column>
                   <vxe-table-column field="retailPrice" title="零售价（元）" width="120">
                     <template #header>
                       <span class="required">零售价（元）</span>
-                      <el-input v-model="batchChangeData.retailPrice" size="mini" @input="e => batchChange('retailPrice', e)" />
+                      <a-input v-model="batchChangeData.retailPrice" size="mini" @input="e => batchChange('retailPrice', e.target.value)" />
                     </template>
                     <template #default="{ row }">
-                      <el-input v-model="row.retailPrice" tabindex="9" />
+                      <a-input v-model="row.retailPrice" tabindex="9" />
                     </template>
                   </vxe-table-column>
                 </vxe-table>
-              </el-col>
-              <el-col v-if="!$utils.isEmpty(modelorList)" :span="24" class="row">
-                <el-form inline>
-                  <el-form-item v-for="modelor in modelorList" :key="modelor.id" :label="modelor.name" :class="modelor.isRequired ? 'is-required' : ''">
-                    <el-select v-if="$enums.COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)" v-model="modelor.text" multiple placeholder="请选择">
-                      <el-option
-                        v-for="item in modelor.items"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      />
-                    </el-select>
-                    <el-select v-if="$enums.COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)" v-model="modelor.text" placeholder="请选择">
-                      <el-option
-                        v-for="item in modelor.items"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      />
-                    </el-select>
-                    <div v-else-if="$enums.COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
-                      <el-input-number v-if="$enums.COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)" v-model="modelor.text" />
-                      <el-input-number v-else-if="$enums.COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)" v-model="modelor.text" :precision="2" />
-                      <el-input v-else-if="$enums.COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)" v-model="modelor.text" />
-                      <el-date-picker
-                        v-else-if="$enums.COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)"
-                        v-model="modelor.text"
-                        value-format="yyyy-MM-dd"
-                        type="date"
-                      />
-                      <el-time-picker
-                        v-else-if="$enums.COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
-                        v-model="modelor.text"
-                        value-format="HH:mm:ss"
-                      />
-                      <el-date-picker
-                        v-else-if="$enums.COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)"
-                        v-model="modelor.text"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        type="datetime"
-                      />
-                    </div>
-                  </el-form-item>
-                </el-form>
-              </el-col>
-              <el-col :span="24" class="row">
-                <div style="text-align: center;">
-                  <el-button @click="pre">上一步</el-button>
-                  <el-button type="primary" @click="submit">保存</el-button>
-                  <el-button @click="closeDialog">关闭</el-button>
+              </a-col>
+              <a-col v-if="!$utils.isEmpty(modelorList)" :span="24" class="row">
+                <a-form-model :label-col="{span: 6}" :wrapper-col="{span: 14}">
+                  <a-row>
+                    <a-col v-for="modelor in modelorList" :key="modelor.id" :md="8" :sm="24">
+                      <a-form-model-item :label="modelor.name" :required="modelor.isRequired">
+                        <a-select v-if="$enums.COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)" v-model="modelor.text" multiple placeholder="请选择">
+                          <a-select-option
+                            v-for="item in modelor.items"
+                            :key="item.id"
+                            :value="item.id"
+                          >{{ item.name }}</a-select-option>
+                        </a-select>
+                        <a-select v-if="$enums.COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)" v-model="modelor.text" placeholder="请选择">
+                          <a-select-option
+                            v-for="item in modelor.items"
+                            :key="item.id"
+                            :value="item.id"
+                          >{{ item.name }}</a-select-option>
+                        </a-select>
+                        <div v-else-if="$enums.COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
+                          <a-input-number v-if="$enums.COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)" v-model="modelor.text" />
+                          <a-input-number v-else-if="$enums.COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)" v-model="modelor.text" :precision="2" />
+                          <a-input v-else-if="$enums.COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)" v-model="modelor.text" />
+                          <a-date-picker v-else-if="$enums.COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)" v-model="modelor.text" placeholder="" value-format="YYYY-MM-DD" />
+                          <a-time-picker
+                            v-else-if="$enums.COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
+                            v-model="modelor.text"
+                            placeholder=""
+                            value-format="HH:mm:ss"
+                          />
+                          <a-date-picker v-else-if="$enums.COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)" v-model="modelor.text" placeholder="" show-time value-format="YYYY-MM-DD HH:mm:ss" />
+                        </div>
+                      </a-form-model-item>
+                    </a-col>
+                  </a-row>
+                </a-form-model>
+              </a-col>
+              <a-col :span="24" class="row">
+                <div class="form-modal-footer">
+                  <a-space>
+                    <a-button @click="pre">上一步</a-button>
+                    <a-button type="primary" @click="submit">保存</a-button>
+                    <a-button @click="closeDialog">关闭</a-button>
+                  </a-space>
                 </div>
-              </el-col>
-            </el-row>
+              </a-col>
+            </a-row>
           </div>
-        </el-row>
+        </a-row>
       </div>
     </div>
   </div>
@@ -557,7 +562,6 @@ export default {
       if (!this.$utils.isEmpty(val)) {
         this.$api.baseData.product.property.getModelorByCategory(val.id).then(res => {
           this.modelorList = res
-          console.log(this.modelorList)
         })
       }
     },
@@ -699,20 +703,20 @@ export default {
       })
     },
     // 批量设置属性
-    batchSet(command) {
-      if (command === 'codeToSkuCode') {
+    batchSet({ key }) {
+      if (key === 'codeToSkuCode') {
         this.tableData.filter(item => !this.$utils.isEmpty(item.id) || !this.$utils.isEmpty(item.name)).forEach(item => {
           item.skuCode = item.code
         })
-      } else if (command === 'skuCodeToExternalCode') {
+      } else if (key === 'skuCodeToExternalCode') {
         this.tableData.filter(item => !this.$utils.isEmpty(item.id) || !this.$utils.isEmpty(item.name)).forEach(item => {
           item.externalCode = item.skuCode
         })
-      } else if (command === 'codeToExternalCode') {
+      } else if (key === 'codeToExternalCode') {
         this.tableData.filter(item => !this.$utils.isEmpty(item.id) || !this.$utils.isEmpty(item.name)).forEach(item => {
           item.externalCode = item.code
         })
-      } else if (command === 'salePropToName') {
+      } else if (key === 'salePropToName') {
         this.tableData.filter(item => !this.$utils.isEmpty(item.id) || !this.$utils.isEmpty(item.name)).forEach(item => {
           if (!this.$utils.isEmpty(item.salePropItemName1)) {
             item.name += ' ' + item.salePropItemName1
@@ -722,13 +726,13 @@ export default {
             item.name += ' ' + item.salePropItemName2
           }
         })
-      } else if (command === 'specToName') {
+      } else if (key === 'specToName') {
         this.tableData.filter(item => !this.$utils.isEmpty(item.id) || !this.$utils.isEmpty(item.name)).forEach(item => {
           if (!this.$utils.isEmpty(item.spec)) {
             item.name += ' ' + item.spec
           }
         })
-      } else if (command === 'unitToName') {
+      } else if (key === 'unitToName') {
         this.tableData.filter(item => !this.$utils.isEmpty(item.id) || !this.$utils.isEmpty(item.name)).forEach(item => {
           if (!this.$utils.isEmpty(item.unit)) {
             item.name += ' ' + item.unit

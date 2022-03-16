@@ -1,6 +1,31 @@
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 
 const user = {
+
+  /**
+   * 获取初始化参数
+   * @param params
+   * @returns {AxiosPromise}
+   */
+  getInit: () => {
+    return request({
+      url: '/auth/init',
+      method: 'get'
+    })
+  },
+
+  /**
+   * 注册
+   * @param params
+   * @returns {AxiosPromise}
+   */
+  regist: (params) => {
+    return request({
+      url: '/auth/regist',
+      method: 'post',
+      params: params
+    })
+  },
   /**
    * 登录
    * @param data
