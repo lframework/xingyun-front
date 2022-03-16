@@ -116,8 +116,6 @@ export default {
   components: { ImgCheckboxGroup, ImgCheckbox, SettingItem },
   data() {
     return {
-      copyConfig: 'Sorry, you have copied nothing O(∩_∩)O~',
-      isDev: process.env.NODE_ENV === 'development'
     }
   },
   computed: {

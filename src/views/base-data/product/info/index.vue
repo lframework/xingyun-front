@@ -178,10 +178,10 @@ export default {
 
       return params
     },
-    handleCommand(command) {
-      if (command === 'batchEnable') {
+    handleCommand({ key }) {
+      if (key === 'batchEnable') {
         this.batchEnable()
-      } else if (command === 'batchUnable') {
+      } else if (key === 'batchUnable') {
         this.batchUnable()
       }
     },

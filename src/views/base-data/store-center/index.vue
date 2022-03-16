@@ -149,10 +149,10 @@ export default {
     buildSearchFormData() {
       return Object.assign({ }, this.searchFormData)
     },
-    handleCommand(command) {
-      if (command === 'batchEnable') {
+    handleCommand({ key }) {
+      if (key === 'batchEnable') {
         this.batchEnable()
-      } else if (command === 'batchUnable') {
+      } else if (key === 'batchUnable') {
         this.batchUnable()
       }
     },
