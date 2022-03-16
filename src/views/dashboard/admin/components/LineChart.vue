@@ -58,8 +58,10 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
-      this.setOptions(this.chartData)
+      this.$nextTick(() => {
+        this.chart = echarts.init(this.$el, 'macarons')
+        this.setOptions(this.chartData)
+      })
     },
     setOptions({ title, xAxisDatas, totalAmountDatas, totalNumDatas } = {}) {
       if (this.chart) {

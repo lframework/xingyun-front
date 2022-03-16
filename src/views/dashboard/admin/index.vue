@@ -3,8 +3,10 @@
 
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
-    <a-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+    <a-row class="chart-wrapper">
+      <a-col :span="24">
+        <line-chart :chart-data="lineChartData" />
+      </a-col>
     </a-row>
   </div>
 </template>
@@ -55,20 +57,14 @@ export default {
 
 <style lang="less" scoped>
 .dashboard-editor-container {
-  padding: 32px;
+  padding: 0 32px 32px 32px;
   background-color: rgb(240, 242, 245);
   position: relative;
 
   .chart-wrapper {
     background: #fff;
     padding: 16px 16px 0;
-    margin-bottom: 32px;
-  }
-}
-
-@media (max-width:1024px) {
-  .chart-wrapper {
-    padding: 8px;
+    margin-top: 32px;
   }
 }
 </style>

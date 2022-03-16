@@ -3,7 +3,6 @@ import msg from '@/utils/msg'
 import utils from '@/utils/utils'
 import { METHOD, DATA_TYPE, RESP_TYPE, removeAuthorization, getAuthorization } from '@/utils/request'
 import settings from '@/config'
-import Router from 'vue-router'
 
 const respCommon = {
   /**
@@ -77,10 +76,8 @@ const handleErrorData = (v) => {
       cancelText: '取消'
     }).then(() => {
       removeAuthorization()
-      localStorage.removeItem(process.env.VUE_APP_ROUTES_KEY)
-      localStorage.removeItem(process.env.VUE_APP_ROLES_KEY)
 
-      Router.push('/login')
+      window.location.reload()
     })
   } else {
     msg.error(data.msg)
