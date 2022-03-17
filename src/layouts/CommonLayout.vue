@@ -25,7 +25,7 @@ export default {
   height: 100vh;
   overflow: auto;
   background-color: @layout-body-background;
-  background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+  background-image: url('/static/images/background.svg');
   background-repeat: no-repeat;
   background-position-x: center;
   background-position-y: 110px;

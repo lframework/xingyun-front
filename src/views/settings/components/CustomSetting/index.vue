@@ -5,8 +5,8 @@
         :default-values="[theme.mode]"
         @change="values => setTheme({...theme, mode: values[0]})"
       >
-        <img-checkbox title="暗色菜单风格" img="https://gw.alipayobjects.com/zos/rmsportal/LCkqqYNmvBEbokSDscrm.svg" value="dark" />
-        <img-checkbox title="亮色菜单风格" img="https://gw.alipayobjects.com/zos/rmsportal/jpRkZQMyYRryryPNtyIC.svg" value="light" />
+        <img-checkbox title="暗色菜单风格" img="/static/images/dark.svg" value="dark" />
+        <img-checkbox title="亮色菜单风格" img="/static/images/light.svg" value="light" />
       </img-checkbox-group>
     </setting-item>
     <a-divider />
@@ -15,9 +15,9 @@
         :default-values="[layout]"
         @change="values => setLayout(values[0])"
       >
-        <img-checkbox title="侧边导航" img="https://gw.alipayobjects.com/zos/rmsportal/JopDzEhOqwOjeNTXkoje.svg" value="side" />
-        <img-checkbox title="顶部导航" img="https://gw.alipayobjects.com/zos/rmsportal/KDNDBbriJhLwuqMoxcAr.svg" value="head" />
-        <img-checkbox title="混合导航" img="https://gw.alipayobjects.com/zos/antfincdn/x8Ob%26B8cy8/LCkqqYNmvBEbokSDscrm.svg" value="mix" />
+        <img-checkbox title="侧边导航" img="/static/images/side.svg" value="side" />
+        <img-checkbox title="顶部导航" img="/static/images/head.svg" value="head" />
+        <img-checkbox title="混合导航" img="/static/images/mix.svg" value="mix" />
       </img-checkbox-group>
     </setting-item>
     <setting-item>
