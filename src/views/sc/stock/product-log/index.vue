@@ -143,7 +143,7 @@ export default {
   name: 'ProductStock',
   components: {
     StoreCenterSelector, ProductCategorySelector, ProductBrandSelector, SupplierSelector, PurchaseReceiveSheetDetail,
-    PurchaseReturnDetail, SaleOutSheetDetail, SaleReturnDetail, RetailOutSheetDetail, RetailReturnDetail,TakeStockPlanDetail,
+    PurchaseReturnDetail, SaleOutSheetDetail, SaleReturnDetail, RetailOutSheetDetail, RetailReturnDetail, TakeStockPlanDetail,
     StockCostAdjustDetail
   },
   data() {

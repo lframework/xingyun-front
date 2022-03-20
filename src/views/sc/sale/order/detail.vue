@@ -159,6 +159,8 @@ export default {
         totalAmount: 0,
         description: ''
       }
+
+      this.tableData = []
     },
     // 加载数据
     loadData() {
