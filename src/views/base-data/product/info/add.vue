@@ -204,7 +204,7 @@
                   <a-row>
                     <a-col v-for="modelor in modelorList" :key="modelor.id" :md="8" :sm="24">
                       <a-form-model-item :label="modelor.name" :required="modelor.isRequired">
-                        <a-select v-if="$enums.COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)" v-model="modelor.text" multiple placeholder="请选择">
+                        <a-select v-if="$enums.COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)" v-model="modelor.text" mode="multiple" placeholder="请选择">
                           <a-select-option
                             v-for="item in modelor.items"
                             :key="item.id"
