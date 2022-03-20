@@ -90,6 +90,18 @@
           <a v-permission="['retail:return:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewRetailReturnDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['retail:return:query']">{{ row.bizCode }}</span>
         </div>
+        <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.TAKE_STOCK_IN.equalsCode(row.bizType)">
+          <a v-permission="['stock:take:plan:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewTakeStockPlanDetailDialog.openDialog())}">{{ row.bizCode }}</a>
+          <span v-no-permission="['stock:take:plan:query']">{{ row.bizCode }}</span>
+        </div>
+        <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.TAKE_STOCK_OUT.equalsCode(row.bizType)">
+          <a v-permission="['stock:take:plan:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewTakeStockPlanDetailDialog.openDialog())}">{{ row.bizCode }}</a>
+          <span v-no-permission="['stock:take:plan:query']">{{ row.bizCode }}</span>
+        </div>
+        <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.STOCK_COST_ADJUST.equalsCode(row.bizType)">
+          <a v-permission="['stock:adjust:cost:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewStockCostAdjustDetailDialog.openDialog())}">{{ row.bizCode }}</a>
+          <span v-no-permission="['stock:adjust:cost:query']">{{ row.bizCode }}</span>
+        </div>
         <span v-else>{{ row.bizCode }}</span>
       </template>
 
@@ -107,6 +119,8 @@
     <sale-return-detail :id="currentRow.bizId" ref="viewSaleReturnDetailDialog" />
     <retail-out-sheet-detail :id="currentRow.bizId" ref="viewRetailOutSheetDetailDialog" />
     <retail-return-detail :id="currentRow.bizId" ref="viewRetailReturnDetailDialog" />
+    <take-stock-plan-detail :id="currentRow.bizId" ref="viewTakeStockPlanDetailDialog" />
+    <stock-cost-adjust-detail :id="currentRow.bizId" ref="viewStockCostAdjustDetailDialog" />
   </div>
 </template>
 
@@ -122,11 +136,15 @@ import SaleOutSheetDetail from '@/views/sc/sale/out/detail'
 import SaleReturnDetail from '@/views/sc/sale/return/detail'
 import RetailOutSheetDetail from '@/views/sc/retail/out/detail'
 import RetailReturnDetail from '@/views/sc/retail/return/detail'
+import TakeStockPlanDetail from '@/views/sc/stock/take/plan/detail'
+import StockCostAdjustDetail from '@/views/sc/stock/adjust/cost/detail'
 
 export default {
   name: 'ProductStock',
   components: {
-    StoreCenterSelector, ProductCategorySelector, ProductBrandSelector, SupplierSelector, PurchaseReceiveSheetDetail, PurchaseReturnDetail, SaleOutSheetDetail, SaleReturnDetail, RetailOutSheetDetail, RetailReturnDetail
+    StoreCenterSelector, ProductCategorySelector, ProductBrandSelector, SupplierSelector, PurchaseReceiveSheetDetail,
+    PurchaseReturnDetail, SaleOutSheetDetail, SaleReturnDetail, RetailOutSheetDetail, RetailReturnDetail,TakeStockPlanDetail,
+    StockCostAdjustDetail
   },
   data() {
     return {
