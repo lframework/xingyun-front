@@ -14,6 +14,9 @@
         <a-descriptions-item label="状态" :span="2">
           <available-tag :available="formData.available" />
         </a-descriptions-item>
+        <a-descriptions-item label="logo" :span="4">
+          <img v-if="!$utils.isEmpty(formData.logo)" :src="formData.logo" class="img-uploader-container">
+        </a-descriptions-item>
         <a-descriptions-item label="简介" :span="4">
           {{ formData.introduction }}
         </a-descriptions-item>
@@ -70,6 +73,7 @@ export default {
         code: '',
         name: '',
         shortName: '',
+        logo: '',
         introduction: '',
         available: '',
         description: ''

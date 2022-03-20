@@ -16,7 +16,8 @@ const METHOD = {
 const DATA_TYPE = {
   JSON: 'json',
   // 默认为此类型
-  FORM: 'form'
+  FORM: 'form',
+  FILE: 'file'
 }
 
 const RESP_TYPE = {

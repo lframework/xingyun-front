@@ -76,5 +76,18 @@ export default {
       dataType: 'json',
       data: ids
     })
+  },
+  /**
+   * 上传logo
+   * @param params
+   * @returns {*}
+   */
+  uploadLogo: (params) => {
+    return request({
+      url: '/basedata/product/brand/upload/logo',
+      method: 'post',
+      dataType: 'file',
+      params: params
+    })
   }
 }

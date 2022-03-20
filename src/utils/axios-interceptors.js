@@ -128,6 +128,17 @@ const reqConvert = {
     // 只有显示标注使用json传参时，才会使用json
     if (config.dataType === DATA_TYPE.JSON) {
       config.headers['Content-Type'] = 'application/json'
+    } else if (config.dataType === DATA_TYPE.FILE) {
+      config.headers['Content-Type'] = 'multipart/form-data'
+
+      const uploadParams = new FormData()
+      const data = config.data
+
+      utils.keys(data).forEach(item => {
+        uploadParams.append(item, data[item])
+      })
+
+      config.data = uploadParams
     } else {
       config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
       // 转为formData数据格式
