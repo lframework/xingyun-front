@@ -40,6 +40,20 @@ export default {
     })
   },
   /**
+   * 打印
+   * @param id
+   * @returns {AxiosPromise}
+   */
+  print: (id) => {
+    return request({
+      url: '/retail/out/sheet/print',
+      method: 'get',
+      params: {
+        id: id
+      }
+    })
+  },
+  /**
    * 根据ID查询（销售退货业务）
    * @param id
    * @returns {AxiosPromise}

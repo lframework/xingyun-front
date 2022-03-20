@@ -65,7 +65,7 @@ function loadCLodop() {
 if (needCLodop()) { loadCLodop() }// 开始加载
 
 // ==获取LODOP对象主过程,判断是否安装、需否升级:==
-function getLodop(oOBJECT, oEMBED) {
+function getLodopObj(oOBJECT, oEMBED) {
   var strFontTag = '<font>打印控件'
   var strLodopInstall = strFontTag + "未安装!点击这里<a href='http://www.lodop.net/download.html' target='_blank'>执行安装</a>"
   var strLodopUpdate = strFontTag + "需要升级!点击这里<a href='http://www.lodop.net/download.html' target='_blank'>执行升级</a>"
@@ -168,6 +168,16 @@ function getLodop(oOBJECT, oEMBED) {
   } catch (err) {
     alert('getLodop出错:' + err)
   }
+}
+
+function getLodop(data, title) {
+  const LODOP = getLodopObj()
+
+  LODOP.PRINT_INIT(title || '未命名的打印')
+  LODOP.SET_PRINT_PAGESIZE(data.orient, data.pageWidth || 0, data.pageHeight, data.pageName)
+  LODOP.ADD_PRINT_HTM(data.marginTop + 'mm', data.marginLeft + 'mm', 'RightMargin:' + data.marginRight + 'mm', 'BottomMargin:' + data.marginBottom + 'mm', data.html)
+
+  return LODOP
 }
 
 export { getLodop }

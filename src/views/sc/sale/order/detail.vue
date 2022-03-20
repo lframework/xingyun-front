@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
+  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }">
     <div v-if="visible" v-permission="['sale:order:query']" v-loading="loading">
       <j-border>
         <j-form>
@@ -74,9 +74,19 @@
         </j-form>
       </j-border>
     </div>
+    <template slot="footer">
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" :loading="loading" @click="print">打印</a-button>
+          <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+        </a-space>
+      </div>
+    </template>
   </a-modal>
 </template>
 <script>
+import { getLodop } from '@/utils/lodop'
+
 export default {
   components: {
   },
@@ -205,6 +215,15 @@ export default {
       this.formData.totalNum = totalNum
       this.formData.giftNum = giftNum
       this.formData.totalAmount = totalAmount
+    },
+    print() {
+      this.loading = true
+      this.$api.sc.sale.saleOrder.print(this.id).then(res => {
+        const LODOP = getLodop(res, '打印销售订单')
+        LODOP.PREVIEW()
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }

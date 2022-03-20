@@ -183,5 +183,19 @@ export default {
       dataType: 'json',
       data: params
     })
+  },
+  /**
+   * 打印
+   * @param id
+   * @returns {AxiosPromise}
+   */
+  print: (id) => {
+    return request({
+      url: '/purchase/order/print',
+      method: 'get',
+      params: {
+        id: id
+      }
+    })
   }
 }

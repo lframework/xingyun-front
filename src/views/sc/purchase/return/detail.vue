@@ -1,94 +1,105 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['purchase:return:query']" v-loading="loading">
-      <j-border>
-        <j-form>
-          <j-form-item label="仓库">
-            {{ formData.scName }}
-          </j-form-item>
-          <j-form-item label="供应商">
-            {{ formData.supplierName }}
-          </j-form-item>
-          <j-form-item label="采购员">
-            {{ formData.purchaserName }}
-          </j-form-item>
-          <j-form-item label="付款日期">
-            {{ formData.paymentDate }}
-          </j-form-item>
-          <j-form-item label="采购收货单" :span="16">
-            <div v-if="!$utils.isEmpty(formData.receiveSheetCode)">
-              <a v-permission="['purchase:receive:query']" @click="e => $refs.viewReceiveSheetDetailDialog.openDialog()">{{ formData.receiveSheetCode }}</a>
-              <span v-no-permission="['purchase:receive:query']">{{ formData.receiveSheetCode }}</span>
-            </div>
-          </j-form-item>
-          <j-form-item label="状态">
-            <span v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span>
-            <span v-else style="color: #303133;">{{ $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span>
-          </j-form-item>
-          <j-form-item label="拒绝理由" :span="16" :content-nest="false">
-            <a-input v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
-          </j-form-item>
-          <j-form-item label="操作人">
-            <span>{{ formData.createBy }}</span>
-          </j-form-item>
-          <j-form-item label="操作时间" :span="16">
-            <span>{{ formData.createTime }}</span>
-          </j-form-item>
-          <j-form-item v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核人">
-            <span>{{ formData.approveBy }}</span>
-          </j-form-item>
-          <j-form-item v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核时间" :span="16">
-            <span>{{ formData.approveTime }}</span>
-          </j-form-item>
-        </j-form>
-      </j-border>
-      <!-- 数据列表 -->
-      <vxe-grid
-        ref="grid"
-        resizable
-        show-overflow
-        highlight-hover-row
-        keep-source
-        row-id="id"
-        height="500"
-        :data="tableData"
-        :columns="tableColumn"
-      >
-        <!-- 含税金额 列自定义内容 -->
-        <template v-slot:taxAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isIntegerGeZero(row.returnNum)">{{ $utils.mul(row.purchasePrice, row.returnNum) }}</span>
-        </template>
-      </vxe-grid>
+  <div>
+    <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }">
+      <div v-if="visible" v-permission="['purchase:return:query']" v-loading="loading">
+        <j-border>
+          <j-form>
+            <j-form-item label="仓库">
+              {{ formData.scName }}
+            </j-form-item>
+            <j-form-item label="供应商">
+              {{ formData.supplierName }}
+            </j-form-item>
+            <j-form-item label="采购员">
+              {{ formData.purchaserName }}
+            </j-form-item>
+            <j-form-item label="付款日期">
+              {{ formData.paymentDate }}
+            </j-form-item>
+            <j-form-item label="采购收货单" :span="16">
+              <div v-if="!$utils.isEmpty(formData.receiveSheetCode)">
+                <a v-permission="['purchase:receive:query']" @click="e => $refs.viewReceiveSheetDetailDialog.openDialog()">{{ formData.receiveSheetCode }}</a>
+                <span v-no-permission="['purchase:receive:query']">{{ formData.receiveSheetCode }}</span>
+              </div>
+            </j-form-item>
+            <j-form-item label="状态">
+              <span v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span>
+              <span v-else-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span>
+              <span v-else style="color: #303133;">{{ $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span>
+            </j-form-item>
+            <j-form-item label="拒绝理由" :span="16" :content-nest="false">
+              <a-input v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
+            </j-form-item>
+            <j-form-item label="操作人">
+              <span>{{ formData.createBy }}</span>
+            </j-form-item>
+            <j-form-item label="操作时间" :span="16">
+              <span>{{ formData.createTime }}</span>
+            </j-form-item>
+            <j-form-item v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核人">
+              <span>{{ formData.approveBy }}</span>
+            </j-form-item>
+            <j-form-item v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核时间" :span="16">
+              <span>{{ formData.approveTime }}</span>
+            </j-form-item>
+          </j-form>
+        </j-border>
+        <!-- 数据列表 -->
+        <vxe-grid
+          ref="grid"
+          resizable
+          show-overflow
+          highlight-hover-row
+          keep-source
+          row-id="id"
+          height="500"
+          :data="tableData"
+          :columns="tableColumn"
+        >
+          <!-- 含税金额 列自定义内容 -->
+          <template v-slot:taxAmount_default="{ row }">
+            <span v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isIntegerGeZero(row.returnNum)">{{ $utils.mul(row.purchasePrice, row.returnNum) }}</span>
+          </template>
+        </vxe-grid>
 
-      <j-border title="合计">
-        <j-form label-width="140px">
-          <j-form-item label="退货数量" :span="6">
-            <a-input v-model="formData.totalNum" class="number-input" read-only />
-          </j-form-item>
-          <j-form-item label="赠品数量" :span="6">
-            <a-input v-model="formData.giftNum" class="number-input" read-only />
-          </j-form-item>
-          <j-form-item label="含税总金额" :span="6">
-            <a-input v-model="formData.totalAmount" class="number-input" read-only />
-          </j-form-item>
-        </j-form>
-      </j-border>
+        <j-border title="合计">
+          <j-form label-width="140px">
+            <j-form-item label="退货数量" :span="6">
+              <a-input v-model="formData.totalNum" class="number-input" read-only />
+            </j-form-item>
+            <j-form-item label="赠品数量" :span="6">
+              <a-input v-model="formData.giftNum" class="number-input" read-only />
+            </j-form-item>
+            <j-form-item label="含税总金额" :span="6">
+              <a-input v-model="formData.totalAmount" class="number-input" read-only />
+            </j-form-item>
+          </j-form>
+        </j-border>
 
-      <j-border>
-        <j-form label-width="140px">
-          <j-form-item label="备注" :span="24" :content-nest="false">
-            <a-textarea v-model.trim="formData.description" maxlength="200" read-only />
-          </j-form-item>
-        </j-form>
-      </j-border>
-    </div>
+        <j-border>
+          <j-form label-width="140px">
+            <j-form-item label="备注" :span="24" :content-nest="false">
+              <a-textarea v-model.trim="formData.description" maxlength="200" read-only />
+            </j-form-item>
+          </j-form>
+        </j-border>
+      </div>
+      <template slot="footer">
+        <div class="form-modal-footer">
+          <a-space>
+            <a-button type="primary" :loading="loading" @click="print">打印</a-button>
+            <a-button :loading="loading" @click="closeDialog">关闭</a-button>
+          </a-space>
+        </div>
+      </template>
+    </a-modal>
     <!-- 采购收货单查看窗口 -->
     <receive-sheet-detail :id="formData.receiveSheetId" ref="viewReceiveSheetDetailDialog" />
-  </a-modal>
+  </div>
 </template>
 <script>
 import ReceiveSheetDetail from '@/views/sc/purchase/receive/detail'
+import { getLodop } from '@/utils/lodop'
 
 export default {
   components: {
@@ -224,6 +235,15 @@ export default {
       this.formData.totalNum = totalNum
       this.formData.giftNum = giftNum
       this.formData.totalAmount = totalAmount
+    },
+    print() {
+      this.loading = true
+      this.$api.sc.purchase.purchaseReturn.print(this.id).then(res => {
+        const LODOP = getLodop(res, '打印采购退货单')
+        LODOP.PREVIEW()
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }
