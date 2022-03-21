@@ -174,6 +174,8 @@ export default {
       if (this.allowCaptcha) {
         this.buildCaptcha()
       }
+    }).catch(() => {
+      this.$msg.errorDialog('系统初始化失败，请稍后刷新页面重试')
     })
   },
   methods: {

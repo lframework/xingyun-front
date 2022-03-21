@@ -11,6 +11,18 @@ msg.error = function(message) {
 }
 
 /**
+ * 提示失败信息（弹框）
+ * @param message
+ * @param title
+ */
+msg.errorDialog = function(message, title) {
+  Vue.prototype.$error({
+    title: title || '提示信息',
+    content: message
+  })
+}
+
+/**
  * confirm框
  * @param message
  * @param title

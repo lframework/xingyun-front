@@ -105,13 +105,9 @@ function getLodopObj(oOBJECT, oEMBED) {
       if (!LODOP) {
         if (isLinuxX86) strAlertMessage = strLodop7Install_X86; else
         if (isLinuxARM) strAlertMessage = strLodop7Install_ARM; else { strAlertMessage = strCLodopInstallA + (CLodopIsLocal ? strCLodopInstallB : '') }
-        Vue.prototype.$confirm({
-          title: '打印插件出错',
-          icon: 'exclamation-circle',
-          content: h => h('div', { domProps: {
+        msg.errorDialog(h => h('div', { domProps: {
             innerHTML: strAlertMessage + strInstallOK
-          }})
-        })
+          }}), '打印插件出错')
         return
       } else {
         if (isLinuxX86 && LODOP.CVERSION < '7.0.4.2') strAlertMessage = strLodop7Update_X86; else
@@ -119,13 +115,9 @@ function getLodopObj(oOBJECT, oEMBED) {
         if (CLODOP.CVERSION < '4.1.5.8') strAlertMessage = strCLodopUpdate
 
         if (strAlertMessage) {
-          Vue.prototype.$confirm({
-            title: '打印插件出错',
-            icon: 'exclamation-circle',
-            content: h => h('div', { domProps: {
+          msg.errorDialog(h => h('div', { domProps: {
               innerHTML: strAlertMessage + strInstallOK
-            }})
-          })
+            }}), '打印插件出错')
         }
       }
     } else { // ==如果页面有Lodop插件就直接使用,否则新建:==
@@ -142,23 +134,15 @@ function getLodopObj(oOBJECT, oEMBED) {
       } else { LODOP = CreatedOKLodopObject }
       // ==Lodop插件未安装时提示下载地址:==
       if ((!LODOP) || (!LODOP.VERSION)) {
-        Vue.prototype.$confirm({
-          title: '打印插件出错',
-          icon: 'exclamation-circle',
-          content: h => h('div', { domProps: {
+        msg.errorDialog(h => h('div', { domProps: {
             innerHTML: (isWinIE64 ? strLodop64Install : strLodopInstall) + strInstallOK
-          }})
-        })
+          }}), '打印插件出错')
         return LODOP
       }
       if (LODOP.VERSION < '6.2.2.6') {
-        Vue.prototype.$confirm({
-          title: '打印插件出错',
-          icon: 'exclamation-circle',
-          content: h => h('div', { domProps: {
+        msg.errorDialog(h => h('div', { domProps: {
             innerHTML: (isWinIE64 ? strLodop64Update : strLodopUpdate) + strInstallOK
-          }})
-        })
+          }}), '打印插件出错')
       }
     }
     // ===如下空白位置适合调用统一功能(如注册语句、语言选择等):=======================
@@ -166,7 +150,7 @@ function getLodopObj(oOBJECT, oEMBED) {
     // ===============================================================================
     return LODOP
   } catch (err) {
-    alert('getLodop出错:' + err)
+    msg.errorDialog('getLodop出错:' + err, '打印插件出错')
   }
 }
 
