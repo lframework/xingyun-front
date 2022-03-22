@@ -7,6 +7,7 @@ import BlankView from '@/layouts/BlankView'
 const routesConfig = [
   'login',
   'root',
+  'forgetPsw',
   {
     router: 'exp404',
     path: '*',

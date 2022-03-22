@@ -44,7 +44,12 @@
             </a-form-model-item>
             <a-form-item>
               <a-button :loading="loading" style="width: 100%;margin-top: 6px" size="large" html-type="submit" type="primary">登录</a-button>
-              <a-button v-if="allowRegist" :loading="loading" style="width: 100%;margin-top: 10px" size="large" @click="e => activeKey = '3'">注册</a-button>
+              <a-button v-if="allowRegist" style="width: 100%;margin-top: 10px" size="large" @click="e => activeKey = '3'">注册</a-button>
+              <div v-if="allowForgetPsw" style="text-align: center;">
+                <router-link to="/forget-psw">
+                  <a>忘记密码？</a>
+                </router-link>
+              </div>
             </a-form-item>
           </a-form-model>
         </a-tab-pane>
@@ -84,10 +89,10 @@
               <a-input-password v-model="regist.password" allow-clear />
             </a-form-model-item>
             <a-form-model-item label="邮箱" prop="email">
-              <a-input v-model.trim="regist.email" allow-clear />
+              <a-input v-model.trim="regist.email" placeholder="如果不填则无法使用邮箱找回密码" allow-clear />
             </a-form-model-item>
             <a-form-model-item label="联系电话" prop="telephone">
-              <a-input v-model.trim="regist.telephone" allow-clear />
+              <a-input v-model.trim="regist.telephone" placeholder="如果不填则无法使用短信找回密码" allow-clear />
             </a-form-model-item>
             <a-form-model-item>
               <a-button :loading="loading" style="width: 100%;margin-top: 6px" size="large" html-type="submit" type="primary">注册</a-button>
@@ -154,7 +159,8 @@ export default {
       sn: '',
       activeKey: '1',
       allowRegist: false,
-      allowCaptcha: false
+      allowCaptcha: false,
+      allowForgetPsw: false
     }
   },
   computed: {
@@ -170,6 +176,7 @@ export default {
     this.$api.user.getInit().then(res => {
       this.allowRegist = res.allowRegist
       this.allowCaptcha = res.allowCaptcha
+      this.allowForgetPsw = res.allowForgetPsw
 
       if (this.allowCaptcha) {
         this.buildCaptcha()

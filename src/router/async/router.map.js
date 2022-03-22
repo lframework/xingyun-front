@@ -11,7 +11,12 @@ const routerMap = {
     authority: '*',
     name: '登录',
     path: '/login',
-    component: () => import('@/views/login')
+    component: () => import('@/views/login/Login')
+  },
+  forgetPsw: {
+    path: '/forget-psw',
+    name: '忘记密码',
+    component: () => import('@/views/login/components/ForgetPsw')
   },
   root: {
     path: '/',

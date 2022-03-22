@@ -29,6 +29,42 @@
                   <a-select-option :value="false">否</a-select-option>
                 </a-select>
               </a-form-model-item>
+              <a-form-model-item label="是否开启忘记密码" prop="allowForgetPsw">
+                <a-select v-model="formData.allowForgetPsw" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item v-if="formData.allowForgetPsw" label="忘记密码是否使用邮箱" prop="forgetPswRequireMail">
+                <a-space>
+                  <a-select v-model="formData.forgetPswRequireMail" placeholder="" style="min-width: 80px;">
+                    <a-select-option :value="true">是</a-select-option>
+                    <a-select-option :value="false">否</a-select-option>
+                  </a-select>
+                  <a-tooltip title="开启后允许使用邮箱找回密码。注：系统邮箱参数请确保配置正确。"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </a-form-model-item>
+              <a-form-model-item v-if="formData.allowForgetPsw" label="忘记密码是否使用短信" prop="forgetPswRequireSms">
+                <a-space>
+                  <a-select v-model="formData.forgetPswRequireSms" placeholder="" style="min-width: 80px;">
+                    <a-select-option :value="true">是</a-select-option>
+                    <a-select-option :value="false">否</a-select-option>
+                  </a-select>
+                  <a-tooltip title="开启后允许使用短信找回密码。注：系统短信参数请确保配置正确，短信模板中的验证码变量的Key需要固定为“code”。"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </a-form-model-item>
+              <a-form-model-item v-if="formData.forgetPswRequireSms" label="signName" prop="signName">
+                <a-space>
+                  <a-input v-model.trim="formData.signName" />
+                  <a-tooltip title="详见“阿里云短信服务文档”。"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </a-form-model-item>
+              <a-form-model-item v-if="formData.forgetPswRequireSms" label="templateCode" prop="templateCode">
+                <a-space>
+                  <a-input v-model.trim="formData.templateCode" />
+                  <a-tooltip title="详见“阿里云短信服务文档”。"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </a-form-model-item>
             </a-form-model>
             <div class="form-modal-footer">
               <a-space>
@@ -68,6 +104,21 @@ export default {
         ],
         allowCaptcha: [
           { required: true, message: '请选择是否允许验证码' }
+        ],
+        allowForgetPsw: [
+          { required: true, message: '请选择是否开启忘记密码' }
+        ],
+        forgetPswRequireMail: [
+          { required: true, message: '请选择忘记密码是否使用邮箱' }
+        ],
+        forgetPswRequireSms: [
+          { required: true, message: '请选择忘记密码是否使用短信' }
+        ],
+        signName: [
+          { required: true, message: '请输入signName' }
+        ],
+        templateCode: [
+          { required: true, message: '请输入templateCode' }
         ]
       }
     }
@@ -85,7 +136,12 @@ export default {
         allowRegist: '',
         allowLock: '',
         failNum: '',
-        allowCaptcha: ''
+        allowCaptcha: '',
+        allowForgetPsw: '',
+        forgetPswRequireMail: '',
+        forgetPswRequireSms: '',
+        signName: '',
+        templateCode: ''
       }
     },
     // 查询数据
@@ -115,10 +171,30 @@ export default {
           return
         }
       }
+
+      if (this.formData.allowForgetPsw) {
+        if (!this.formData.forgetPswRequireMail && !this.formData.forgetPswRequireSms) {
+          this.$msg.error('开启忘记密码时，忘记密码使用邮箱、忘记密码使用短信至少开启一个')
+          return
+        }
+      }
+
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.system.config.modify(this.formData).then(() => {
+          const params = Object.assign({}, this.formData)
+          if (!params.allowForgetPsw) {
+            params.forgetPswRequireMail = false
+            params.forgetPswRequireSms = false
+            params.signName = ''
+            params.templateCode = ''
+          } else {
+            if (!params.forgetPswRequireSms) {
+              params.signName = ''
+              params.templateCode = ''
+            }
+          }
+          this.$api.system.config.modify(params).then(() => {
             this.$msg.success('修改成功！')
           }).finally(() => {
             this.loading = false

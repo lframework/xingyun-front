@@ -105,6 +105,68 @@ const user = {
         menuId: menuId
       }
     })
+  },
+  /**
+   * 忘记密码时，根据用户名获取信息
+   * @param username
+   * @returns {*}
+   */
+  forgetUsername: (username) => {
+    return request({
+      url: '/auth/forget/username',
+      method: 'get',
+      params: {
+        username: username
+      }
+    })
+  },
+  /**
+   * 获取邮箱验证码
+   * @returns {*}
+   */
+  getMailCaptcha: (username) => {
+    return request({
+      url: '/auth/forget/mail/code',
+      method: 'get',
+      params: {
+        username: username
+      }
+    })
+  },
+  /**
+   * 获取邮箱验证码
+   * @returns {*}
+   */
+  resetPswByMail: (params) => {
+    return request({
+      url: '/auth/forget/mail',
+      method: 'post',
+      params: params
+    })
+  },
+  /**
+   * 获取短信验证码
+   * @returns {*}
+   */
+  getSmsCaptcha: (username) => {
+    return request({
+      url: '/auth/forget/sms/code',
+      method: 'get',
+      params: {
+        username: username
+      }
+    })
+  },
+  /**
+   * 获取短信验证码
+   * @returns {*}
+   */
+  resetPswBySms: (params) => {
+    return request({
+      url: '/auth/forget/sms',
+      method: 'post',
+      params: params
+    })
   }
 }
 export default user
