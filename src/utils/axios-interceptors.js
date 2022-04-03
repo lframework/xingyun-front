@@ -63,6 +63,10 @@ const respCommon = {
   }
 }
 const handleErrorData = (v) => {
+  if (utils.isEmpty(v.msg) && !utils.isEmpty(v.message)) {
+    v.msg = v.message
+  }
+
   const data = Object.assign({
     code: 500,
     msg: '网络请求错误，请稍后重试！'

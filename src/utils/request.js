@@ -1,8 +1,7 @@
 import axios from 'axios'
-import Cookie from 'js-cookie'
 import config from '@/config'
+import store from '@/store'
 // 跨域认证信息 header 名
-const xsrfHeaderName = config.tokenKey
 
 // http method
 const METHOD = {
@@ -45,14 +44,14 @@ const service = axios.create({
  * @param auth {Object}
  */
 function setAuthorization(auth) {
-  Cookie.set(xsrfHeaderName, auth.token)
+  store.commit('auth/setToken', auth.token)
 }
 
 /**
  * 移除认证信息
  */
 function removeAuthorization() {
-  Cookie.remove(xsrfHeaderName)
+  store.commit('auth/removeToken')
 }
 
 /**
@@ -60,7 +59,7 @@ function removeAuthorization() {
  * @returns {boolean}
  */
 function getAuthorization() {
-  return Cookie.get(xsrfHeaderName)
+  return store.getters['auth/token']
 }
 
 /**
