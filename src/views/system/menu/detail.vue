@@ -20,19 +20,19 @@
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
         </a-descriptions-item>
-        <a-descriptions-item v-if="!$utils.isEmpty(formData.display) && !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" v-show="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由名称" :span="4">
+        <a-descriptions-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由名称" :span="4">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item v-if="!$utils.isEmpty(formData.display) && !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" v-show="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="组件" :span="4">
+        <a-descriptions-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="组件" :span="4">
           {{ formData.component }}
         </a-descriptions-item>
-        <a-descriptions-item v-if="!$utils.isEmpty(formData.display) && !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" v-show="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由路径" :span="4">
+        <a-descriptions-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由路径" :span="4">
           {{ formData.path }}
         </a-descriptions-item>
-        <a-descriptions-item v-if="!$utils.isEmpty(formData.display) && !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" v-show="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="是否不缓存" :span="4">
+        <a-descriptions-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="是否不缓存" :span="4">
           {{ formData.noCache ? '不缓存' : '缓存' }}
         </a-descriptions-item>
-        <a-descriptions-item v-if="!$utils.isEmpty(formData.display) && !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" v-show="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="是否隐藏" :span="4">
+        <a-descriptions-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="是否隐藏" :span="4">
           {{ formData.hidden ? '是' : '否' }}
         </a-descriptions-item>
       </a-descriptions>

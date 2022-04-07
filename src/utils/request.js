@@ -35,7 +35,7 @@ const RESP_TYPE = {
  */
 const service = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL, // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
+  withCredentials: true, // send cookies when cross-domain requests
   timeout: config.timeout // request timeout
 })
 

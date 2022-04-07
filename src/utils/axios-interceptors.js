@@ -43,26 +43,31 @@ const respCommon = {
    */
   onRejected(error) {
     const { data } = error.response || { data: {}}
+    const hiddenError = error.response.config.hiddenError || false
     if (error.request.responseType === RESP_TYPE.BLOB) {
       const reader = new FileReader() // 创建读取文件对象
       reader.addEventListener('loadend', function() { //
         try {
           const res = JSON.parse(reader.result) // 返回的数据
-          handleErrorData(res)
+          handleErrorData(res, hiddenError)
         } catch (e) {
-          handleErrorData({})
+          handleErrorData({}, hiddenError)
         }
       })
       reader.readAsText(data, 'utf-8')
+
       return Promise.reject({})
     }
 
-    handleErrorData(data)
+    handleErrorData(data, hiddenError)
 
     return Promise.reject(data)
   }
 }
-const handleErrorData = (v) => {
+const handleErrorData = (v, hiddenError) => {
+  if (hiddenError) {
+    return
+  }
   if (utils.isEmpty(v.msg) && !utils.isEmpty(v.message)) {
     v.msg = v.message
   }

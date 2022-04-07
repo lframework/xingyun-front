@@ -757,6 +757,9 @@ utils.buildMenus = function(oriMenus = []) {
       if (!this.isEmpty(obj.path) && obj.path.indexOf('?') > -1) {
         obj.path = obj.path.substring(0, obj.path.indexOf('?'))
       }
+    } else {
+      // 如果是外部url
+      obj.meta.link = menu.path
     }
 
     // obj.meta = Object.assign({ title: '', icon: '', noCache: false }, menu.meta)
