@@ -3,10 +3,6 @@ const TAKE_STOCK_PLAN_STATUS = {
     code: 0,
     desc: '盘点任务生成'
   },
-  TAKING: {
-    code: 3,
-    desc: '盘点中'
-  },
   DIFF_CREATED: {
     code: 6,
     desc: '盘点差异生成'

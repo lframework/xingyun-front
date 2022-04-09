@@ -56,13 +56,18 @@
 
         <!-- 修改后盘点数量 列自定义内容 -->
         <template v-slot:takeNum_default="{ row }">
-          <a-input v-if="config.autoChangeStock" v-model="row.takeNum" class="number-input" @change="e => changeTakeNum(e.target.value)" />
+          <a-input v-if="config.allowChangeNum" v-model="row.takeNum" class="number-input" @change="e => changeTakeNum(e.target.value)" />
           <span v-else>{{ row.takeNum }}</span>
         </template>
 
         <!-- 差异数量 列自定义内容 -->
         <template v-slot:diffNum_default="{ row }">
           <span v-if="$utils.isInteger(row.takeNum)">{{ $utils.sub(row.takeNum, row.stockNum) }}</span>
+        </template>
+
+        <!-- 备注 列自定义内容 -->
+        <template v-slot:description_default="{ row }">
+          <a-input v-model="row.description" />
         </template>
       </vxe-grid>
     </div>
@@ -126,7 +131,7 @@ export default {
         { field: 'totalOutNum', title: '出项数量', width: 120, align: 'right' },
         { field: 'totalInNum', title: '进项数量', width: 120, align: 'right' },
         { field: 'diffNum', title: '盘点差异数量', width: 120, align: 'right', slots: { default: 'diffNum_default' }},
-        { field: 'description', title: '备注', width: 200 }
+        { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
       tableData: [],
       oriTableData: [],
@@ -278,11 +283,12 @@ export default {
           return {
             productId: item.productId,
             takeNum: this.config.allowChangeNum ? item.takeNum : '',
-            description: this.formData.description
+            description: item.description
           }
         }),
         allowChangeNum: this.config.allowChangeNum,
-        autoChangeStock: this.config.autoChangeStock
+        autoChangeStock: this.config.autoChangeStock,
+        description: this.formData.description
       }
       this.$msg.confirm('确认对此盘点任务进行差异处理？').then(() => {
         this.loading = true
