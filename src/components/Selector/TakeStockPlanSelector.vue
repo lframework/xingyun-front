@@ -63,7 +63,7 @@
                     </a-select>
                   </a-form-model-item>
                 </a-col>
-                <a-col v-if="$utils.isEmpty(requestParams.takeStatus)" :md="8" :sm="24">
+                <a-col v-if="$utils.isEmpty(requestParams.takeStatus) && !requestParams.taking" :md="8" :sm="24">
                   <a-form-model-item
                     label="盘点状态"
                     :label-col="{span: 4, offset: 1}"

@@ -206,16 +206,16 @@ export default {
       for (let i = 0; i < this.tableData.length; i++) {
         const column = this.tableData[i]
         if (this.$utils.isEmpty(column.productId)) {
-          this.$msg.error('第' + (i + 1) + '商品不允许为空！')
+          this.$msg.error('第' + (i + 1) + '行商品不允许为空！')
           return false
         }
         if (this.$utils.isEmpty(column.takeNum)) {
-          this.$msg.error('第' + (i + 1) + '商品的盘点数量不允许为空！')
+          this.$msg.error('第' + (i + 1) + '行商品的盘点数量不允许为空！')
           return false
         }
 
         if (!this.$utils.isIntegerGeZero(column.takeNum)) {
-          this.$msg.error('第' + (i + 1) + '商品的盘点数量不允许小于0！')
+          this.$msg.error('第' + (i + 1) + '行商品的盘点数量不允许小于0！')
           return false
         }
       }
