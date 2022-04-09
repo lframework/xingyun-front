@@ -108,7 +108,7 @@ function loadRoutes(routesConfig) {
 
       const baseRoutes = basicOptions.routes
       baseRoutes.filter(item => item.path === '/' && !utils.isEmpty(item.children)).forEach(item => {
-        item.children = [...item.children, ...routes]
+        item.children = [...item.children.filter(item => item.meta.sync), ...routes]
       })
 
       const finalRoutes = mergeRoutes(baseRoutes, [])

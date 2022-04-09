@@ -27,7 +27,8 @@ const routesConfig = [
         path: 'dashboard',
         name: '首页',
         meta: {
-          icon: 'dashboard'
+          icon: 'dashboard',
+          sync: true
         },
         component: BlankView,
         children: [
@@ -47,7 +48,8 @@ const routesConfig = [
         path: 'profile',
         name: '个人中心',
         meta: {
-          invisible: true
+          invisible: true,
+          sync: true
         },
         component: () => import('@/views/profile/index')
       },
@@ -55,7 +57,8 @@ const routesConfig = [
         path: 'settings',
         name: '个人设置',
         meta: {
-          invisible: true
+          invisible: true,
+          sync: true
         },
         component: () => import('@/views/settings/index')
       }
