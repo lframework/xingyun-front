@@ -22,7 +22,7 @@ const routesConfig = [
     path: '/',
     name: '首页',
     component: TabsView,
-    redirect: '/login',
+    redirect: '/dashboard/workplace',
     children: [
       {
         path: 'dashboard',
