@@ -53,13 +53,13 @@
                   <a-tooltip title="开启后允许使用短信找回密码。注：系统短信参数请确保配置正确，短信模板中的验证码变量的Key需要固定为“code”。"><a-icon type="question-circle" /></a-tooltip>
                 </a-space>
               </a-form-model-item>
-              <a-form-model-item v-if="formData.forgetPswRequireSms" label="signName" prop="signName">
+              <a-form-model-item v-if="formData.allowForgetPsw && formData.forgetPswRequireSms" label="signName" prop="signName">
                 <a-space>
                   <a-input v-model.trim="formData.signName" />
                   <a-tooltip title="详见“阿里云短信服务文档”。"><a-icon type="question-circle" /></a-tooltip>
                 </a-space>
               </a-form-model-item>
-              <a-form-model-item v-if="formData.forgetPswRequireSms" label="templateCode" prop="templateCode">
+              <a-form-model-item v-if="formData.allowForgetPsw && formData.forgetPswRequireSms" label="templateCode" prop="templateCode">
                 <a-space>
                   <a-input v-model.trim="formData.templateCode" />
                   <a-tooltip title="详见“阿里云短信服务文档”。"><a-icon type="question-circle" /></a-tooltip>
