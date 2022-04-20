@@ -55,6 +55,7 @@
 </template>
 <script>
 import SysMenuSelector from '@/components/Selector/SysMenuSelector'
+import { validCode } from '@/utils/validate'
 export default {
   components: {
     SysMenuSelector
@@ -76,7 +77,8 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入编号' }
+          { required: true, message: '请输入编号' },
+          { validator: validCode }
         ],
         title: [
           { required: true, message: '请输入标题' }

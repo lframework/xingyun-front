@@ -46,6 +46,7 @@
 <script>
 import * as constants from './constants'
 import CitySelector from '@/components/Selector/CitySelector'
+import { validCode } from '@/utils/validate'
 export default {
   // 使用组件
   components: {
@@ -69,7 +70,8 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入编号' }
+          { required: true, message: '请输入编号' },
+          { validator: validCode }
         ],
         name: [
           { required: true, message: '请输入名称' }

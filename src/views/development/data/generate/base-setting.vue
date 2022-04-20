@@ -83,6 +83,7 @@
 </template>
 <script>
 import SysMenuSelector from '@/components/Selector/SysMenuSelector'
+import { validCode } from '@/utils/validate'
 export default {
   // 使用组件
   components: {
@@ -126,7 +127,8 @@ export default {
           { required: true, message: '请选择父级菜单' }
         ],
         menuCode: [
-          { required: true, message: '请输入本级菜单编号' }
+          { required: true, message: '请输入本级菜单编号' },
+          { validator: validCode, message: '本级菜单编号必须由字母或数字组成，长度不能超过20位' }
         ],
         menuName: [
           { required: true, message: '请输入本级菜单名称' }

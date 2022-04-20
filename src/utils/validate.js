@@ -1,6 +1,7 @@
 /**
  * Created by PanJiaChen on 16/11/18.
  */
+import utils from '@/utils/utils'
 
 /**
  * @param {string} path
@@ -57,4 +58,22 @@ export function isPassword(str) {
 export function isTelephone(str) {
   const reg = /^1[3-9]\d{9}$/
   return reg.test(str)
+}
+
+/**
+ * 判断编号
+ * @param rule
+ * @param value
+ * @param callback
+ */
+export function validCode(rule, value, callback) {
+  if (utils.isEmpty(value)) {
+    return callback()
+  }
+
+  if (!/^[A-Za-z0-9]{1,20}$/.test(value)) {
+    return callback(new Error('编号必须由字母或数字组成，长度不能超过20位'))
+  }
+
+  callback()
 }

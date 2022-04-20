@@ -56,6 +56,8 @@
   </a-modal>
 </template>
 <script>
+import { validCode } from '@/utils/validate'
+
 export default {
   // 使用组件
   components: {
@@ -78,7 +80,8 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入商品编号' }
+          { required: true, message: '请输入商品编号' },
+          { validator: validCode, message: '商品编号必须由字母或数字组成，长度不能超过20位' }
         ],
         name: [
           { required: true, message: '请输入商品名称' }

@@ -257,6 +257,7 @@ import ProductBrandSelector from '@/components/Selector/ProductBrandSelector'
 import ProductCategorySelector from '@/components/Selector/ProductCategorySelector'
 import ProductSalePropGroupSelector from '@/components/Selector/ProductSalePropGroupSelector'
 import { validTaxRate } from './constants'
+import { validCode } from '@/utils/validate'
 export default {
   name: 'AddProduct',
   components: {
@@ -277,7 +278,8 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入商品编号' }
+          { required: true, message: '请输入商品货号' },
+          { validator: validCode, message: '商品货号必须由字母或数字组成，长度不能超过20位' }
         ],
         name: [
           { required: true, message: '请输入商品名称' }

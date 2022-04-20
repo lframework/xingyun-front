@@ -55,6 +55,7 @@ import * as constants from './constants'
 import SysPositionSelector from '@/components/Selector/SysPositionSelector'
 import SysDeptSelector from '@/components/Selector/SysDeptSelector'
 import SysRoleSelector from '@/components/Selector/SysRoleSelector'
+import { validCode } from '@/utils/validate'
 export default {
   components: {
     SysPositionSelector, SysDeptSelector, SysRoleSelector
@@ -70,7 +71,8 @@ export default {
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入编号' }
+          { required: true, message: '请输入编号' },
+          { validator: validCode }
         ],
         username: [
           { required: true, message: '请输入用户名' }
