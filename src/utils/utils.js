@@ -763,6 +763,9 @@ utils.buildMenus = function(oriMenus = []) {
     }
 
     // obj.meta = Object.assign({ title: '', icon: '', noCache: false }, menu.meta)
+    if (!obj.meta) {
+      obj.meta = {}
+    }
     obj.hidden = menu.hidden
     obj.children = this.buildMenus(menu.children)
     obj.isCollect = menu.isCollect || false

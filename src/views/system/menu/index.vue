@@ -25,8 +25,8 @@
 
       <template v-slot:action_default="{ row }">
         <a-button v-permission="['system:menu:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog())}">查看</a-button>
-        <a-button v-if="!row.isSpecial" v-permission="['system:menu:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
-        <a-button v-if="!row.isSpecial" v-permission="['system:menu:delete']" type="link" class="ant-btn-link-danger" @click="e => { deleteRow(row) }">删除</a-button>
+        <a-button v-permission="['system:menu:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
+        <a-button v-permission="['system:menu:delete']" type="link" class="ant-btn-link-danger" @click="e => { deleteRow(row) }">删除</a-button>
       </template>
 
       <template v-slot:form>
@@ -120,6 +120,7 @@ export default {
         { field: 'title', title: '标题', minWidth: 160, treeNode: true },
         { field: 'display', title: '类型', width: 80, slots: { default: 'menuDisplay_default' }},
         { field: 'permission', title: '权限', width: 220 },
+        { field: 'isSpecial', title: '是否内置', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'description', minWidth: 100, title: '备注' },
         { field: 'action', title: '操作', width: 150, slots: { default: 'action_default' }, fixed: 'right' }
@@ -172,7 +173,7 @@ export default {
         return
       }
 
-      this.$msg.confirm('是否确定停用选择的菜单？').then(() => {
+      this.$msg.confirm(records.filter(item => item.isSpecial).length > 0 ? '选择的菜单包含内置菜单，是否确定停用？注：停用内置菜单可能会导致系统功能异常，请谨慎操作' : '是否确定停用选择的菜单？').then(() => {
         this.loading = true
         const ids = records.map(t => t.id)
         this.$api.system.menu.batchUnable(ids).then(data => {
@@ -204,7 +205,7 @@ export default {
     },
     // 删除
     deleteRow(row) {
-      this.$msg.confirm('是否确定删除该菜单？').then(() => {
+      this.$msg.confirm(row.isSpecial ? '当前菜单为内置菜单，是否确定删除？注：删除内置菜单可能会导致系统功能异常，请谨慎操作' : '是否确定删除该菜单？').then(() => {
         this.loading = true
         this.$api.system.menu.deleteById(row.id).then(() => {
           this.$msg.success('删除成功！')
