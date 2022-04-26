@@ -24,7 +24,7 @@ module.exports = {
   filterMenu: true, // 根据权限过滤菜单，true:过滤，false:不过滤
   animate: { // 动画设置
     disabled: false, // 禁用动画，true:禁用，false:启用
-    name: 'bounce', // 动画效果，支持的动画效果可参考 ./animate.config.js
+    name: 'fade', // 动画效果，支持的动画效果可参考 ./animate.config.js
     direction: 'left' // 动画方向，切换页面时动画的方向，参考 ./animate.config.js
   },
   footerLinks: [ // 页面底部链接，{link: '链接地址', name: '名称/显示文字', icon: '图标，支持 ant design vue 图标库'}
