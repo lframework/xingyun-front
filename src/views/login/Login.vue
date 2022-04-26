@@ -39,7 +39,7 @@
                 >
                   <a-icon slot="prefix" type="safety-certificate" />
                 </a-input>
-                <a-avatar shape="square" style="width: 128px !important; height: 40px; border-radius: 0; cursor: pointer;" :src="captchaUrl" @click="buildCaptcha" />
+                <a-avatar shape="square" class="img-captcha" :src="captchaUrl" @click="buildCaptcha" />
               </div>
             </a-form-model-item>
             <a-form-item>
@@ -53,22 +53,23 @@
             </a-form-item>
           </a-form-model>
         </a-tab-pane>
-        <a-tab-pane key="2" tab="手机号登录">
-          <a-form-model @submit="onTelSubmit">
-            <a-form-model-item>
-              <a-input size="large" placeholder="请输入手机号">
+        <a-tab-pane v-if="allowTelephoneLogin" key="2" tab="手机号登录">
+          <a-form-model ref="telephoneLoginForm" :model="telephoneLogin" :rules="telephoneLoginRules" @submit="onTelSubmit">
+            <a-form-model-item prop="telephone">
+              <a-input v-model="telephoneLogin.telephone" size="large" placeholder="请输入手机号">
                 <a-icon slot="prefix" type="mobile" />
               </a-input>
             </a-form-model-item>
-            <a-form-model-item>
-              <a-row :gutter="8" style="margin: 0 -4px">
-                <a-col :span="16">
-                  <a-input size="large" placeholder="请输入验证码">
+            <a-form-model-item prop="captcha">
+              <a-row>
+                <a-col :span="14">
+                  <a-input v-model="telephoneLogin.captcha" size="large" placeholder="请输入验证码">
                     <a-icon slot="prefix" type="mail" />
                   </a-input>
                 </a-col>
-                <a-col :span="8" style="padding-left: 4px">
-                  <a-button style="width: 100%" class="captcha-button" size="large">获取验证码</a-button>
+                <a-col :span="10">
+                  <a-button v-if="smsCaptchaSeconds < 60" style="width: 100%" class="captcha-button" size="large" disabled>{{ '重新获取(' + smsCaptchaSeconds + ')' }}</a-button>
+                  <a-button v-else style="width: 100%" :loading="loading" class="captcha-button" size="large" @click="sendSmsCaptcha">获取验证码</a-button>
                 </a-col>
               </a-row>
             </a-form-model-item>
@@ -79,20 +80,30 @@
         </a-tab-pane>
         <a-tab-pane v-if="allowRegist" key="3" tab="注册">
           <a-form-model ref="registForm" :model="regist" :rules="registRules" @submit="onRegist">
-            <a-form-model-item label="用户名" prop="username">
-              <a-input v-model.trim="regist.username" allow-clear />
+            <a-form-model-item prop="username">
+              <a-input v-model.trim="regist.username" size="large" placeholder="请输入用户名" allow-clear>
+                <a-icon slot="prefix" type="user" />
+              </a-input>
             </a-form-model-item>
-            <a-form-model-item label="姓名" prop="name">
-              <a-input v-model.trim="regist.name" allow-clear />
+            <a-form-model-item prop="name">
+              <a-input v-model.trim="regist.name" size="large" placeholder="请输入姓名" allow-clear>
+                <a-icon slot="prefix" type="idcard" />
+              </a-input>
             </a-form-model-item>
-            <a-form-model-item label="密码" prop="password">
-              <a-input-password v-model="regist.password" allow-clear />
+            <a-form-model-item prop="password">
+              <a-input-password v-model="regist.password" size="large" placeholder="请输入密码" allow-clear>
+                <a-icon slot="prefix" type="key" />
+              </a-input-password>
             </a-form-model-item>
-            <a-form-model-item label="邮箱" prop="email">
-              <a-input v-model.trim="regist.email" placeholder="如果不填则无法使用邮箱找回密码" allow-clear />
+            <a-form-model-item prop="email">
+              <a-input v-model.trim="regist.email" size="large" placeholder="请输入邮箱，如果不填则无法使用邮箱找回密码" allow-clear>
+                <a-icon slot="prefix" type="mail" />
+              </a-input>
             </a-form-model-item>
-            <a-form-model-item label="联系电话" prop="telephone">
-              <a-input v-model.trim="regist.telephone" placeholder="如果不填则无法使用短信找回密码" allow-clear />
+            <a-form-model-item prop="telephone">
+              <a-input v-model.trim="regist.telephone" size="large" placeholder="请输入联系电话，如果不填则无法使用短信找回密码" allow-clear>
+                <a-icon slot="prefix" type="phone" />
+              </a-input>
             </a-form-model-item>
             <a-form-model-item>
               <a-button :loading="loading" style="width: 100%;margin-top: 6px" size="large" html-type="submit" type="primary">注册</a-button>
@@ -101,6 +112,24 @@
           </a-form-model>
         </a-tab-pane>
       </a-tabs>
+      <a-modal v-model="telephoneBindUserVisible" :mask-closable="false" width="30%" title="绑定账户" :dialog-style="{ top: '20px' }" :footer="null">
+        <div>
+          <a-form-model ref="telephoneBindUserForm" :label-col="{span: 6}" :wrapper-col="{span: 14}" :model="telephoneBindUser" :rules="telephoneBindUserRules" @submit="onTelephoneBindUser">
+            <a-form-model-item label="用户名" prop="username">
+              <a-input v-model.trim="telephoneBindUser.username" allow-clear />
+            </a-form-model-item>
+            <a-form-model-item label="密码" prop="password">
+              <a-input-password v-model="telephoneBindUser.password" allow-clear />
+            </a-form-model-item>
+            <div class="form-modal-footer">
+              <a-space>
+                <a-button :loading="loading" type="primary" html-type="submit">确定</a-button>
+                <a-button @click="telephoneBindUserVisible = false">取消</a-button>
+              </a-space>
+            </div>
+          </a-form-model>
+        </div>
+      </a-modal>
     </div>
   </common-layout>
 </template>
@@ -124,7 +153,7 @@ export default {
         password: 'admin',
         captcha: ''
       },
-      regist: {},
+      // 账号密码登录表单校验规则
       rules: {
         username: [
           { required: true, message: '请输入用户名' }
@@ -136,7 +165,22 @@ export default {
           { required: true, message: '请输入验证码' }
         ]
       },
-      // 表单校验规则
+      telephoneLogin: {
+        telephone: '',
+        captcha: ''
+      },
+      // 手机号登录表单校验规则
+      telephoneLoginRules: {
+        telephone: [
+          { required: true, message: '请输入手机号' },
+          { validator: constants.validTelephone }
+        ],
+        captcha: [
+          { required: true, message: '请输入验证码' }
+        ]
+      },
+      regist: {},
+      // 注册表单校验规则
       registRules: {
         username: [
           { required: true, message: '请输入用户名' }
@@ -158,9 +202,30 @@ export default {
       captchaUrl: '',
       sn: '',
       activeKey: '1',
+      // 是否允许注册
       allowRegist: false,
+      // 是否允许验证码
       allowCaptcha: false,
-      allowForgetPsw: false
+      // 是否允许忘记密码
+      allowForgetPsw: false,
+      // 是否允许手机号登录
+      allowTelephoneLogin: false,
+      // 短信验证码定时器
+      smsCaptchaTimer: null,
+      // 短信验证码计时
+      smsCaptchaSeconds: 60,
+      // 绑定账户对话框
+      telephoneBindUserVisible: false,
+      telephoneBindUser: {},
+      // 绑定账户表单校验规则
+      telephoneBindUserRules: {
+        username: [
+          { required: true, message: '请输入用户名' }
+        ],
+        password: [
+          { required: true, message: '请输入密码' }
+        ]
+      }
     }
   },
   computed: {
@@ -177,6 +242,7 @@ export default {
       this.allowRegist = res.allowRegist
       this.allowCaptcha = res.allowCaptcha
       this.allowForgetPsw = res.allowForgetPsw
+      this.allowTelephoneLogin = res.allowTelephoneLogin
 
       if (this.allowCaptcha) {
         this.buildCaptcha()
@@ -184,6 +250,11 @@ export default {
     }).catch(() => {
       this.$msg.errorDialog('系统初始化失败，请稍后刷新页面重试')
     })
+  },
+  destroyed() {
+    if (this.smsCaptchaTimer) {
+      clearInterval(this.smsCaptchaTimer)
+    }
   },
   methods: {
     ...mapMutations('account', ['setUser', 'setRoles']),
@@ -211,7 +282,24 @@ export default {
       })
     },
     onTelSubmit(e) {
-      this.$msg.error('暂不支持手机号登录')
+      e.preventDefault()
+      this.$refs.telephoneLoginForm.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.$api.user.telephoneLogin({
+            telephone: this.telephoneLogin.telephone,
+            captcha: this.telephoneLogin.captcha
+          }).then(res => {
+            if (res.isBind) {
+              this.afterLogin(res.loginInfo)
+            } else {
+              this.telephoneBindUserVisible = true
+            }
+          }).finally(() => {
+            this.loading = false
+          })
+        }
+      })
     },
     afterLogin(res) {
       setAuthorization({ token: res.token })
@@ -236,7 +324,8 @@ export default {
         this.captchaUrl = data.image
       })
     },
-    onRegist() {
+    onRegist(e) {
+      e.preventDefault()
       this.$refs.registForm.validate((valid) => {
         if (valid) {
           this.loading = true
@@ -284,6 +373,51 @@ export default {
 
       msg += '欢迎回来'
       this.$msg.successTip(msg)
+    },
+    sendSmsCaptcha() {
+      if (this.smsCaptchaSeconds < 60) {
+        return
+      }
+
+      this.$refs.telephoneLoginForm.validateField('telephone', (valid) => {
+        if (this.$utils.isEmpty(valid)) {
+          this.loading = true
+
+          this.$api.user.getTelephoneLoginSmsCaptcha({
+            telephone: this.telephoneLogin.telephone
+          }).then(() => {
+            this.smsCaptchaSeconds--
+            this.smsCaptchaTimer = setInterval(this.doSmsCaptchaTimer, 1000)
+          }).finally(() => {
+            this.loading = false
+          })
+        }
+      })
+    },
+    doSmsCaptchaTimer() {
+      this.smsCaptchaSeconds--
+      if (this.smsCaptchaSeconds <= 0) {
+        this.smsCaptchaSeconds = 60
+        clearInterval(this.smsCaptchaTimer)
+        this.smsCaptchaTimer = null
+      }
+    },
+    onTelephoneBindUser(e) {
+      e.preventDefault()
+
+      this.$refs.telephoneBindUserForm.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.$api.user.telephoneBindUser({
+            telephone: this.telephoneLogin.telephone,
+            ...this.telephoneBindUser
+          }).then(res => {
+            this.afterLogin(res)
+          }).finally(() => {
+            this.loading = false
+          })
+        }
+      })
     }
   }
 }
@@ -344,5 +478,12 @@ export default {
         }
       }
     }
+  }
+
+  .img-captcha {
+    width: 128px !important;
+    height: 40px;
+    border-radius: 0;
+    cursor: pointer;
   }
 </style>

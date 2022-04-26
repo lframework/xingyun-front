@@ -11,6 +11,24 @@
                   <a-select-option :value="false">否</a-select-option>
                 </a-select>
               </a-form-model-item>
+              <a-form-model-item label="是否允许手机号登录" prop="allowTelephoneLogin">
+                <a-select v-model="formData.allowTelephoneLogin" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item v-if="formData.allowTelephoneLogin" label="signName" prop="telephoneLoginSignName">
+                <a-space>
+                  <a-input v-model.trim="formData.telephoneLoginSignName" />
+                  <a-tooltip title="详见“阿里云短信服务文档”。"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </a-form-model-item>
+              <a-form-model-item v-if="formData.allowTelephoneLogin" label="templateCode" prop="telephoneLoginTemplateCode">
+                <a-space>
+                  <a-input v-model.trim="formData.telephoneLoginTemplateCode" />
+                  <a-tooltip title="详见“阿里云短信服务文档”。"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </a-form-model-item>
               <a-form-model-item label="是否允许锁定用户" prop="allowLock">
                 <a-select v-model="formData.allowLock" placeholder="">
                   <a-select-option :value="true">是</a-select-option>
@@ -99,6 +117,9 @@ export default {
         allowRegist: [
           { required: true, message: '请选择是否允许注册' }
         ],
+        allowTelephoneLogin: [
+          { required: true, message: '请选择是否允许手机号登录' }
+        ],
         allowLock: [
           { required: true, message: '请选择是否允许锁定用户' }
         ],
@@ -118,6 +139,12 @@ export default {
           { required: true, message: '请输入signName' }
         ],
         templateCode: [
+          { required: true, message: '请输入templateCode' }
+        ],
+        telephoneLoginSignName: [
+          { required: true, message: '请输入signName' }
+        ],
+        telephoneLoginTemplateCode: [
           { required: true, message: '请输入templateCode' }
         ]
       }
@@ -193,6 +220,10 @@ export default {
               params.signName = ''
               params.templateCode = ''
             }
+          }
+          if (!params.allowTelephoneLogin) {
+            params.telephoneLoginSignName = ''
+            params.telephoneLoginTemplateCode = ''
           }
           this.$api.system.config.modify(params).then(() => {
             this.$msg.success('修改成功！')

@@ -167,6 +167,42 @@ const user = {
       method: 'post',
       params: params
     })
+  },
+  /**
+   * 手机号登录时发送短信验证码
+   * @param params
+   * @returns {AxiosPromise}
+   */
+  getTelephoneLoginSmsCaptcha: (params) => {
+    return request({
+      url: '/auth/login/telephone/captcha',
+      method: 'get',
+      params: params
+    })
+  },
+  /**
+   * 手机号登录
+   * @param params
+   * @returns {AxiosPromise}
+   */
+  telephoneLogin: (params) => {
+    return request({
+      url: '/auth/login/telephone',
+      method: 'post',
+      params: params
+    })
+  },
+  /**
+   * 手机号绑定用户
+   * @param params
+   * @returns {AxiosPromise}
+   */
+  telephoneBindUser: (params) => {
+    return request({
+      url: '/auth/bind/telephone',
+      method: 'post',
+      params: params
+    })
   }
 }
 export default user
