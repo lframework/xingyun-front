@@ -68,6 +68,7 @@
 import ProductBrandSelector from '@/components/Selector/ProductBrandSelector'
 import ProductCategorySelector from '@/components/Selector/ProductCategorySelector'
 import { validCode } from '@/utils/validate'
+import { validTaxRate } from './constants'
 export default {
   // 使用组件
   components: {
@@ -103,10 +104,12 @@ export default {
           { required: true, message: '请选择商品品牌' }
         ],
         taxRate: [
-          { required: true, message: '请输入进项税率（%）' }
+          { required: true, message: '请输入进项税率（%）' },
+          { validator: validTaxRate }
         ],
         saleTaxRate: [
-          { required: true, message: '请输入销项税率' }
+          { required: true, message: '请输入销项税率（%）' },
+          { validator: validTaxRate }
         ]
       }
     }
