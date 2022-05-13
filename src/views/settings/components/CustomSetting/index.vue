@@ -10,16 +10,6 @@
       </img-checkbox-group>
     </setting-item>
     <a-divider />
-    <setting-item title="导航设置">
-      <img-checkbox-group
-        :default-values="[layout]"
-        @change="values => setLayout(values[0])"
-      >
-        <img-checkbox title="侧边导航" img="/static/images/side.svg" value="side" />
-        <img-checkbox title="顶部导航" img="/static/images/head.svg" value="head" />
-        <img-checkbox title="混合导航" img="/static/images/mix.svg" value="mix" />
-      </img-checkbox-group>
-    </setting-item>
     <setting-item>
       <a-list :split="false">
         <a-list-item>

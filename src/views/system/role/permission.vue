@@ -125,7 +125,7 @@ export default {
     // 提交数据
     submit() {
       this.loading = true
-      const records = this.$utils.union(this.$refs.grid.getCheckboxRecords(), this.$refs.grid.getCheckboxIndeterminateRecords())
+      const records = this.$utils.union(this.$refs.grid.getCheckboxRecords(true), this.$refs.grid.getCheckboxIndeterminateRecords(true))
       const menuIds = this.$utils.isEmpty(records) ? [] : records.map(item => item.id)
       this.$api.system.role.setting({
         roleIds: this.ids,

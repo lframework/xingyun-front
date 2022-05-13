@@ -199,7 +199,7 @@ export default {
       })
     },
     batchEnable() {
-      const records = this.$utils.union(this.$refs.grid.getCheckboxRecords(), this.$refs.grid.getCheckboxIndeterminateRecords())
+      const records = this.$utils.union(this.$refs.grid.getCheckboxRecords(), this.$refs.grid.getCheckboxIndeterminateRecords(true))
 
       if (this.$utils.isEmpty(records)) {
         this.$msg.error('请选择要启用的类目！')

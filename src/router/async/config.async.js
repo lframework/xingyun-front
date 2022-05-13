@@ -6,7 +6,6 @@ import BlankView from '@/layouts/BlankView'
 // 异步路由配置
 const routesConfig = [
   'login',
-  'root',
   'forgetPsw',
   {
     router: 'exp404',
@@ -20,21 +19,21 @@ const routesConfig = [
   },
   {
     path: '/',
-    name: '首页',
     component: TabsView,
     redirect: '/dashboard/workplace',
     children: [
       {
-        path: 'dashboard',
+        path: '/',
         name: '首页',
         meta: {
+          id: 'dashboard',
           icon: 'dashboard',
           sync: true
         },
         component: BlankView,
         children: [
           {
-            path: 'workplace',
+            path: 'dashboard/workplace',
             name: '工作台',
             meta: {
               page: {
@@ -42,26 +41,24 @@ const routesConfig = [
               }
             },
             component: () => import('@/views/dashboard/index')
+          },
+          {
+            path: 'profile',
+            name: '个人中心',
+            meta: {
+              sync: true
+            },
+            component: () => import('@/views/profile/index')
+          },
+          {
+            path: 'settings',
+            name: '个人设置',
+            meta: {
+              sync: true
+            },
+            component: () => import('@/views/settings/index')
           }
         ]
-      },
-      {
-        path: 'profile',
-        name: '个人中心',
-        meta: {
-          invisible: true,
-          sync: true
-        },
-        component: () => import('@/views/profile/index')
-      },
-      {
-        path: 'settings',
-        name: '个人设置',
-        meta: {
-          invisible: true,
-          sync: true
-        },
-        component: () => import('@/views/settings/index')
       }
     ]
   }
