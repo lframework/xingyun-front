@@ -59,6 +59,10 @@ module.exports = {
         minRatio: 0.8
       }))
     }
+
+    config.externals = {
+      TMap: 'TMap'
+    }
   },
   chainWebpack: config => {
     // set svg-sprite-loader
