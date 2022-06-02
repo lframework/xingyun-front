@@ -20,6 +20,12 @@
         <a-descriptions-item label="出生日期" :span="2">
           {{ formData.birthday }}
         </a-descriptions-item>
+        <a-descriptions-item label="所属门店" :span="2">
+          {{ formData.shopName }}
+        </a-descriptions-item>
+        <a-descriptions-item label="所属导购" :span="2">
+          {{ formData.guiderName }}
+        </a-descriptions-item>
         <a-descriptions-item label="入会日期" :span="2">
           {{ formData.joinDay }}
         </a-descriptions-item>
@@ -82,6 +88,8 @@ export default {
         telephone: '',
         email: '',
         birthday: '',
+        shopName: '',
+        guiderName: '',
         joinDay: '',
         available: '',
         description: ''

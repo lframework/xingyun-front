@@ -153,7 +153,10 @@ export default {
         ajax: {
           // 查询接口
           query: ({ page, sorts, filters }) => {
-            return this.request(this.requestParams)
+            return this.request(Object.assign({
+              pageIndex: page.currentPage,
+              pageSize: page.pageSize
+            }, this.requestParams))
           }
         }
       }

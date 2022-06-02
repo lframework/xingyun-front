@@ -29,6 +29,12 @@
             }"
           />
         </a-form-model-item>
+        <a-form-model-item label="注册门店" prop="shop">
+          <shop-selector v-model="formData.shop" />
+        </a-form-model-item>
+        <a-form-model-item label="所属导购" prop="guider">
+          <user-selector v-model="formData.guider" />
+        </a-form-model-item>
         <a-form-model-item label="入会日期" prop="joinDay">
           <a-date-picker
             v-model="formData.joinDay"
@@ -58,9 +64,12 @@
 import * as constants from './constants'
 import moment from 'moment'
 import { validCode } from '@/utils/validate'
+import ShopSelector from '@/components/Selector/ShopSelector'
+import UserSelector from '@/components/Selector/UserSelector'
 
 export default {
   components: {
+    ShopSelector, UserSelector
   },
   data() {
     return {
@@ -120,6 +129,8 @@ export default {
         gender: this.$enums.GENDER.MAN.code,
         telephone: '',
         email: '',
+        shop: {},
+        guider: {},
         birthday: '',
         joinDay: this.$utils.formatDate(this.$utils.getCurrentDate()),
         description: ''
@@ -130,7 +141,14 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.baseData.member.create(this.formData).then(() => {
+          const params = Object.assign({}, this.formData)
+          params.shopId = params.shop.id
+          params.guiderId = params.guider.id
+
+          delete params.shop
+          delete params.guider
+
+          this.$api.baseData.member.create(params).then(() => {
             this.$msg.success('新增成功！')
             // 初始化表单数据
             this.initFormData()
