@@ -279,7 +279,7 @@ export default {
       rules: {
         code: [
           { required: true, message: '请输入商品货号' },
-          { validator: validCode, message: '商品货号必须由字母或数字组成，长度不能超过20位' }
+          { validator: validCode, message: '商品货号必须由字母、数字、“-_.”组成，长度不能超过20位' }
         ],
         name: [
           { required: true, message: '请输入商品名称' }

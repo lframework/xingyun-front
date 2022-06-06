@@ -128,7 +128,7 @@ export default {
         ],
         menuCode: [
           { required: true, message: '请输入本级菜单编号' },
-          { validator: validCode, message: '本级菜单编号必须由字母或数字组成，长度不能超过20位' }
+          { validator: validCode, message: '本级菜单编号必须由字母、数字、“-_.”组成，长度不能超过20位' }
         ],
         menuName: [
           { required: true, message: '请输入本级菜单名称' }

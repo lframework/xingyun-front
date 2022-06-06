@@ -71,8 +71,8 @@ export function validCode(rule, value, callback) {
     return callback()
   }
 
-  if (!/^[A-Za-z0-9]{1,20}$/.test(value)) {
-    return callback(new Error('编号必须由字母或数字组成，长度不能超过20位'))
+  if (!/^[-_.A-Za-z0-9]{1,20}$/.test(value)) {
+    return callback(new Error('编号必须由字母、数字、“-_.”组成，长度不能超过20位'))
   }
 
   callback()
