@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="40%" title="修改" :dialog-style="{ top: '20px' }">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="修改" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['base-data:product:poly:modify']" v-loading="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
         <a-form-model-item label="商品货号" prop="code">
@@ -52,16 +52,14 @@
             <a-date-picker v-else-if="$enums.COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)" v-model="modelor.text" placeholder="" show-time value-format="YYYY-MM-DD HH:mm:ss" />
           </div>
         </a-form-model-item>
+        <div class="form-modal-footer">
+          <a-space>
+            <a-button type="primary" :loading="loading" html-type="submit" @click="submit">保存</a-button>
+            <a-button :loading="loading" @click="closeDialog">取消</a-button>
+          </a-space>
+        </div>
       </a-form-model>
     </div>
-    <template slot="footer">
-      <div class="form-modal-footer">
-        <a-space>
-          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
-          <a-button :loading="loading" @click="closeDialog">取消</a-button>
-        </a-space>
-      </div>
-    </template>
   </a-modal>
 </template>
 <script>

@@ -32,16 +32,14 @@
         <a-form-model-item label="备注" prop="description">
           <a-textarea v-model.trim="formData.description" />
         </a-form-model-item>
+        <div class="form-modal-footer">
+          <a-space>
+            <a-button type="primary" :loading="loading" html-type="submit" @click="submit">保存</a-button>
+            <a-button :loading="loading" @click="closeDialog">取消</a-button>
+          </a-space>
+        </div>
       </a-form-model>
     </div>
-    <template slot="footer">
-      <div class="form-modal-footer">
-        <a-space>
-          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
-          <a-button :loading="loading" @click="closeDialog">取消</a-button>
-        </a-space>
-      </div>
-    </template>
   </a-modal>
 </template>
 <script>

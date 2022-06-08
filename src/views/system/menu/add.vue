@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['system:menu:add']" v-loading="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
         <a-form-model-item label="编号" prop="code">
@@ -45,17 +45,14 @@
           </a-form-model-item>
           <a-divider />
         </div>
+        <div class="form-modal-footer">
+          <a-space>
+            <a-button type="primary" :loading="loading" html-type="submit" @click="submit">保存</a-button>
+            <a-button :loading="loading" @click="closeDialog">取消</a-button>
+          </a-space>
+        </div>
       </a-form-model>
     </div>
-
-    <template slot="footer">
-      <div class="form-modal-footer">
-        <a-space>
-          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
-          <a-button :loading="loading" @click="closeDialog">取消</a-button>
-        </a-space>
-      </div>
-    </template>
   </a-modal>
 </template>
 <script>
