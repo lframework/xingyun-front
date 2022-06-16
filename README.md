@@ -17,4 +17,6 @@
 ### 注意事项
 老版项目基于ElementUI，已转移到v1分支。
 
+Node的版本需要14.x，否则会编译报错。
+
 [xingyunGitee]: https://gitee.com/lframework/xingyun

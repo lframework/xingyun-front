@@ -18,7 +18,7 @@
         </a-form-model-item>
         <div class="form-modal-footer">
           <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit">保存</a-button>
+            <a-button type="primary" :loading="loading" html-type="submit" @click="submitEvent">保存</a-button>
             <a-button :loading="loading" @click="closeDialog">取消</a-button>
           </a-space>
         </div>
