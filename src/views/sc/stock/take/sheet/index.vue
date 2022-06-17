@@ -343,16 +343,14 @@ export default {
         }
       }
 
-      this.$msg.confirm('对选中的库存盘点单执行批量删除操作？').then(valid => {
-        if (valid) {
-          this.loading = true
-          this.$api.sc.stock.take.takeStockSheet.batchDelete(records.map(item => item.id)).then(() => {
-            this.$msg.success('删除成功！')
-            this.search()
-          }).finally(() => {
-            this.loading = false
-          })
-        }
+      this.$msg.confirm('对选中的库存盘点单执行批量删除操作？').then(() => {
+        this.loading = true
+        this.$api.sc.stock.take.takeStockSheet.batchDelete(records.map(item => item.id)).then(() => {
+          this.$msg.success('删除成功！')
+          this.search()
+        }).finally(() => {
+          this.loading = false
+        })
       })
     },
     exportList() {

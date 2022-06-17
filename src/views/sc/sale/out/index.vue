@@ -328,16 +328,14 @@ export default {
         }
       }
 
-      this.$msg.confirm('对选中的销售出库单执行批量删除操作？').then(valid => {
-        if (valid) {
-          this.loading = true
-          this.$api.sc.sale.outSheet.batchDeleteOrder(records.map(item => item.id)).then(() => {
-            this.$msg.success('删除成功！')
-            this.search()
-          }).finally(() => {
-            this.loading = false
-          })
-        }
+      this.$msg.confirm('对选中的销售出库单执行批量删除操作？').then(() => {
+        this.loading = true
+        this.$api.sc.sale.outSheet.batchDeleteOrder(records.map(item => item.id)).then(() => {
+          this.$msg.success('删除成功！')
+          this.search()
+        }).finally(() => {
+          this.loading = false
+        })
       })
     },
     // 批量审核通过
@@ -355,18 +353,16 @@ export default {
         }
       }
 
-      this.$msg.confirm('对选中的销售出库单执行审核通过操作？').then(valid => {
-        if (valid) {
-          this.loading = true
-          this.$api.sc.sale.outSheet.batchApprovePassOrder({
-            ids: records.map(item => item.id)
-          }).then(() => {
-            this.$msg.success('审核通过！')
-            this.search()
-          }).finally(() => {
-            this.loading = false
-          })
-        }
+      this.$msg.confirm('对选中的销售出库单执行审核通过操作？').then(() => {
+        this.loading = true
+        this.$api.sc.sale.outSheet.batchApprovePassOrder({
+          ids: records.map(item => item.id)
+        }).then(() => {
+          this.$msg.success('审核通过！')
+          this.search()
+        }).finally(() => {
+          this.loading = false
+        })
       })
     },
     // 批量审核拒绝
