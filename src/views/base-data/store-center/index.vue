@@ -38,6 +38,7 @@
         <a-space>
           <a-button type="primary" icon="search" @click="search">查询</a-button>
           <a-button v-permission="['base-data:store-center:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-button v-permission="['base-data:store-center:add']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
           <a-dropdown v-permission="['base-data:store-center:modify']">
             <a-menu slot="overlay" @click="handleCommand">
               <a-menu-item key="batchEnable">
@@ -72,6 +73,8 @@
 
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
+
+    <sc-uploader ref="importer" @confirm="search" />
   </div>
 </template>
 
@@ -80,11 +83,12 @@ import AvailableTag from '@/components/Tag/Available'
 import Add from './add'
 import Modify from './modify'
 import Detail from './detail'
+import ScUploader from '@/components/Importer/ScImporter'
 
 export default {
   name: 'StoreCenterInfo',
   components: {
-    Add, Modify, Detail, AvailableTag
+    Add, Modify, Detail, AvailableTag, ScUploader
   },
   data() {
     return {
@@ -93,7 +97,9 @@ export default {
       id: '',
       ids: [],
       // 查询列表的查询条件
-      searchFormData: {},
+      searchFormData: {
+        available: true
+      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏

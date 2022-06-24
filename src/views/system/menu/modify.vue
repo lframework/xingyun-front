@@ -14,6 +14,11 @@
         <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) || $enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="权限" prop="permission">
           <a-input v-model.trim="formData.permission" allow-clear />
         </a-form-model-item>
+        <a-form-model-item label="状态" prop="available">
+          <a-select v-model="formData.available" allow-clear>
+            <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
         <a-form-model-item label="备注" prop="description">
           <a-textarea v-model.trim="formData.description" />
         </a-form-model-item>
@@ -94,6 +99,9 @@ export default {
         ],
         hidden: [
           { required: true, message: '请选择是否隐藏' }
+        ],
+        available: [
+          { required: true, message: '请选择状态' }
         ]
       }
     }
@@ -128,7 +136,8 @@ export default {
         path: '',
         noCache: true,
         hidden: false,
-        isSpecial: false
+        isSpecial: false,
+        available: true
       }
     },
     // 提交表单事件

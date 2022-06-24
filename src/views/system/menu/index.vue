@@ -92,7 +92,7 @@ export default {
       id: '',
       searchFormData: {
         searchMenuName: '',
-        available: undefined
+        available: true
       },
       originData: [],
       tableProxy: {

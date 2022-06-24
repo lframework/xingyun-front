@@ -93,7 +93,8 @@ export default {
       id: '',
       // 查询列表的查询条件
       searchFormData: {
-        deptId: ''
+        deptId: '',
+        available: true
       },
       // 工具栏配置
       toolbarConfig: {

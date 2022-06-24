@@ -84,7 +84,7 @@ export default {
       searchFormData: {
         code: '',
         name: '',
-        available: ''
+        available: true
       },
       // 工具栏配置
       toolbarConfig: {

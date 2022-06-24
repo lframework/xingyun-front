@@ -114,7 +114,8 @@ export default {
       ids: [],
       // 查询列表的查询条件
       searchFormData: {
-        position: {}
+        position: {},
+        available: true
       },
       // 工具栏配置
       toolbarConfig: {
