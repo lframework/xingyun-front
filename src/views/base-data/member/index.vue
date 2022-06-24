@@ -38,6 +38,7 @@
         <a-space>
           <a-button type="primary" icon="search" @click="search">查询</a-button>
           <a-button v-permission="['base-data:member:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-button v-permission="['base-data:member:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
           <a-dropdown v-permission="['base-data:member:modify']">
             <a-menu slot="overlay" @click="handleCommand">
               <a-menu-item key="batchEnable">
@@ -72,6 +73,8 @@
 
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
+
+    <member-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
@@ -80,11 +83,12 @@ import AvailableTag from '@/components/Tag/Available'
 import Add from './add'
 import Modify from './modify'
 import Detail from './detail'
+import MemberImporter from '@/components/Importer/MemberImporter'
 
 export default {
   name: 'Member',
   components: {
-    Add, Modify, Detail, AvailableTag
+    Add, Modify, Detail, AvailableTag, MemberImporter
   },
   data() {
     return {

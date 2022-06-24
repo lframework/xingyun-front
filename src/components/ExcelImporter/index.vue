@@ -27,7 +27,6 @@
               <a-button type="link" block @click="doDownloadTemplate">
                 下载模板文件
               </a-button>
-              <a-tooltip v-if="!$utils.isEmpty(tipMsg)" :title="tipMsg"><a-icon type="question-circle" /></a-tooltip>
             </a-space>
           </div>
         </div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <excel-importer ref="importer" tip-msg="如果编号不存在，那么就新增仓库；如果编号已经存在，那么就修改仓库。" :download-template-url="downloadTemplate" :upload-url="upload" @confirm="e => $emit('confirm', e)" />
+    <excel-importer ref="importer" tip-msg="如果编号不存在，那么就新增会员；如果编号已经存在，那么就修改会员。" :download-template-url="downloadTemplate" :upload-url="upload" @confirm="e => $emit('confirm', e)" />
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import ExcelImporter from '@/components/ExcelImporter'
 import { request } from '@/utils/request'
 export default {
-  name: 'ScImporter',
+  name: 'MemberImporter',
   components: { ExcelImporter },
   data() {
     return {
@@ -22,14 +22,14 @@ export default {
     },
     downloadTemplate() {
       return request({
-        url: '/basedata/storecenter/import/template',
+        url: '/basedata/member/import/template',
         method: 'get',
         responseType: 'blob'
       })
     },
     upload(params) {
       return request({
-        url: '/basedata/storecenter/import',
+        url: '/basedata/member/import',
         method: 'post',
         dataType: 'file',
         params: params
