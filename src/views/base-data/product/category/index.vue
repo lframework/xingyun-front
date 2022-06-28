@@ -56,6 +56,7 @@
         <a-space>
           <a-button type="primary" icon="search" @click="search">查询</a-button>
           <a-button v-permission="['base-data:product:category:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-button v-permission="['base-data:product:category:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
           <a-dropdown v-permission="['base-data:product:category:modify']">
             <a-menu slot="overlay" @click="handleCommand">
               <a-menu-item key="batchEnable">
@@ -79,6 +80,8 @@
 
     <!-- 新建子类目窗口 -->
     <add-children :id="id" ref="addChildrenDialog" @confirm="search" />
+
+    <product-category-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
@@ -88,11 +91,12 @@ import Modify from './modify'
 import AddChildren from './add-children'
 import MenuDisplayTag from '@/components/Tag/MenuDisplay'
 import AvailableTag from '@/components/Tag/Available'
+import ProductCategoryImporter from '@/components/Importer/ProductCategoryImporter'
 
 export default {
   name: 'ProductCategory',
   components: {
-    Add, Modify, AddChildren, MenuDisplayTag, AvailableTag
+    Add, Modify, AddChildren, MenuDisplayTag, AvailableTag, ProductCategoryImporter
   },
   data() {
     return {

@@ -101,6 +101,9 @@ export default {
         name: [
           { required: true, message: '请输入名称' }
         ],
+        mnemonicCode: [
+          { required: true, message: '请输入助记码' }
+        ],
         email: [
           { validator: constants.validEmail }
         ],

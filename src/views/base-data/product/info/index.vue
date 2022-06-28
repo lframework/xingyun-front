@@ -58,6 +58,7 @@
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
             <a-button v-permission="['base-data:product:info:add']" type="primary" icon="plus" @click="e => {visible=false;$refs.addDialog.openDialog()}">新增</a-button>
+            <a-button v-permission="['base-data:product:info:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
           </a-space>
         </template>
 
@@ -81,6 +82,8 @@
     </div>
     <!-- 新增窗口 -->
     <add :id="id" ref="addDialog" @confirm="search" @close="e => visible = true" />
+
+    <product-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
@@ -91,11 +94,12 @@ import ProductCategorySelector from '@/components/Selector/ProductCategorySelect
 import AvailableTag from '@/components/Tag/Available'
 import Modify from './modify'
 import Detail from './detail'
+import ProductImporter from '@/components/Importer/ProductImporter'
 
 export default {
   name: 'ProductInfo',
   components: {
-    Add, ProductBrandSelector, ProductCategorySelector, Modify, Detail, AvailableTag
+    Add, ProductBrandSelector, ProductCategorySelector, Modify, Detail, AvailableTag, ProductImporter
   },
   data() {
     return {

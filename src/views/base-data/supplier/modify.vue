@@ -114,6 +114,9 @@ export default {
         name: [
           { required: true, message: '请输入名称' }
         ],
+        mnemonicCode: [
+          { required: true, message: '请输入助记码' }
+        ],
         settleType: [
           { required: true, message: '请选择结账方式' }
         ],
@@ -207,7 +210,9 @@ export default {
     },
     // 名称改变
     changeName(e) {
-      this.formData.mnemonicCode = this.$utils.getCamelCharsUpperCase(e)
+      if (this.$utils.isEmpty(this.formData.mnemonicCode)) {
+        this.formData.mnemonicCode = this.$utils.getCamelCharsUpperCase(e)
+      }
     }
   }
 }

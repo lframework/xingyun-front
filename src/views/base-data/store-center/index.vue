@@ -38,7 +38,7 @@
         <a-space>
           <a-button type="primary" icon="search" @click="search">查询</a-button>
           <a-button v-permission="['base-data:store-center:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
-          <a-button v-permission="['base-data:store-center:add']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
+          <a-button v-permission="['base-data:store-center:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
           <a-dropdown v-permission="['base-data:store-center:modify']">
             <a-menu slot="overlay" @click="handleCommand">
               <a-menu-item key="batchEnable">

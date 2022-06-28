@@ -56,6 +56,7 @@
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
             <a-button v-permission="['base-data:shop:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+            <a-button v-permission="['base-data:shop:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
           </a-space>
         </template>
 
@@ -80,6 +81,7 @@
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
 
+    <shop-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
@@ -89,11 +91,12 @@ import Modify from './modify'
 import Detail from './detail'
 import AvailableTag from '@/components/Tag/Available'
 import SysDeptSelector from '@/components/Selector/SysDeptSelector'
+import ShopImporter from '@/components/Importer/ShopImporter'
 
 export default {
   name: 'Shop',
   components: {
-    AvailableTag, Add, Modify, Detail, SysDeptSelector
+    AvailableTag, Add, Modify, Detail, SysDeptSelector, ShopImporter
   },
   data() {
     return {

@@ -98,6 +98,9 @@ export default {
         name: [
           { required: true, message: '请输入名称' }
         ],
+        mnemonicCode: [
+          { required: true, message: '请输入助记码' }
+        ],
         settleType: [
           { required: true, message: '请选择结账方式' }
         ]

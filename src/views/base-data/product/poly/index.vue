@@ -38,6 +38,7 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
+            <a-button v-permission="['base-data:product:poly:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
           </a-space>
         </template>
 
@@ -54,6 +55,7 @@
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
 
+    <product-poly-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
@@ -62,11 +64,12 @@ import Modify from './modify'
 import Detail from './detail'
 import ProductBrandSelector from '@/components/Selector/ProductBrandSelector'
 import ProductCategorySelector from '@/components/Selector/ProductCategorySelector'
+import ProductPolyImporter from '@/components/Importer/ProductPolyImporter'
 
 export default {
   name: 'ProductPoly',
   components: {
-    Modify, Detail, ProductBrandSelector, ProductCategorySelector
+    Modify, Detail, ProductBrandSelector, ProductCategorySelector, ProductPolyImporter
   },
   data() {
     return {
