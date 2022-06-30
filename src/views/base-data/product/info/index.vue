@@ -134,6 +134,8 @@ export default {
         { field: 'skuCode', title: '商品SKU编号', width: 120 },
         { field: 'categoryName', title: '商品类目', width: 120 },
         { field: 'brandName', title: '商品品牌', width: 120 },
+        { field: 'salePropItem1Name', title: '销售属性1', width: 120 },
+        { field: 'salePropItem2Name', title: '销售属性2', width: 120 },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'createTime', title: '创建时间', width: 170 },
         { field: 'updateTime', title: '修改时间', width: 170 },

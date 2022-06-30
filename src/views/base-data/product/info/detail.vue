@@ -10,6 +10,8 @@
         <a-descriptions-item label="商品品牌" :span="2">{{ formData.brandName }}</a-descriptions-item>
         <a-descriptions-item label="规格" :span="2">{{ formData.spec }}</a-descriptions-item>
         <a-descriptions-item label="单位" :span="2">{{ formData.unit }}</a-descriptions-item>
+        <a-descriptions-item v-if="formData.multiSaleProp" :label="formData.salePropGroup1Name" :span="2">{{ formData.salePropItem1Name }}</a-descriptions-item>
+        <a-descriptions-item v-if="formData.multiSaleProp && !$utils.isEmpty(formData.salePropGroup2Name)" :label="formData.salePropGroup2Name" :span="2">{{ formData.salePropItem2Name }}</a-descriptions-item>
         <a-descriptions-item label="采购价（元）" :span="2">{{ formData.purchasePrice }}</a-descriptions-item>
         <a-descriptions-item label="销售价（元）" :span="2">{{ formData.salePrice }}</a-descriptions-item>
         <a-descriptions-item label="零售价（元）" :span="2">{{ formData.retailPrice }}</a-descriptions-item>
@@ -75,7 +77,12 @@ export default {
         salePrice: '',
         retailPrice: '',
         available: '',
-        properties: []
+        properties: [],
+        multiSaleProp: false,
+        salePropGroup1Name: '',
+        salePropItem1Name: '',
+        salePropGroup2Name: '',
+        salePropItem2Name: ''
       }
     },
     // 页面显示时触发

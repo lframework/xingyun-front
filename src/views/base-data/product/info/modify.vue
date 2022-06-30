@@ -26,6 +26,12 @@
         <a-form-model-item label="单位" prop="unit">
           <a-input v-model.trim="formData.unit" allow-clear />
         </a-form-model-item>
+        <a-form-model-item v-if="formData.multiSaleProp" :label="formData.salePropGroup1Name" prop="saleProp1.id">
+          <product-sale-prop-item-selector v-model="formData.saleProp1" :request-params="{salePropGroupId: formData.salePropGroup1Id}" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item v-if="formData.multiSaleProp && !$utils.isEmpty(formData.salePropGroup2Name)" :label="formData.salePropGroup2Name" prop="saleProp2.id">
+          <product-sale-prop-item-selector v-model="formData.saleProp2" :request-params="{salePropGroupId: formData.salePropGroup2Id}" allow-clear />
+        </a-form-model-item>
         <a-form-model-item label="采购价（元）" prop="purchasePrice">
           <a-input v-model.trim="formData.purchasePrice" allow-clear />
         </a-form-model-item>
@@ -55,10 +61,12 @@
 </template>
 <script>
 import { validCode } from '@/utils/validate'
+import ProductSalePropItemSelector from '@/components/Selector/ProductSalePropItemSelector'
 
 export default {
   // 使用组件
   components: {
+    ProductSalePropItemSelector
   },
 
   props: {
@@ -124,7 +132,13 @@ export default {
         salePrice: '',
         retailPrice: '',
         available: '',
-        properties: []
+        properties: [],
+        salePropGroup1Id: '',
+        salePropGroup2Id: '',
+        salePropGroup1Name: '',
+        salePropGroup2Name: '',
+        saleProp1: {},
+        saleProp2: {}
       }
     },
     // 提交表单事件
@@ -208,7 +222,9 @@ export default {
             purchasePrice: this.formData.purchasePrice || '',
             salePrice: this.formData.salePrice || '',
             retailPrice: this.formData.retailPrice || '',
-            available: this.formData.available
+            available: this.formData.available,
+            salePropItem1Id: this.formData.saleProp1.id,
+            salePropItem2Id: this.formData.saleProp2.id
           }).then(() => {
             this.$msg.success('修改成功！')
             this.$emit('confirm')
@@ -231,7 +247,18 @@ export default {
     async loadFormData() {
       this.loading = true
       await this.$api.baseData.product.info.get(this.id).then(data => {
-        this.formData = data
+        if (data.multiSaleProp) {
+          data.saleProp1 = {
+            id: data.salePropItem1Id,
+            name: data.salePropItem1Name
+          }
+
+          data.saleProp2 = {
+            id: data.salePropItem2Id,
+            name: data.salePropItem2Name
+          }
+        }
+        this.formData = Object.assign({}, this.formData, data)
       }).finally(() => {
         this.loading = false
       })
