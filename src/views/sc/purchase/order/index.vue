@@ -85,6 +85,7 @@
             <a-button v-permission="['purchase:order:approve']" icon="check" @click="batchApprovePass">审核通过</a-button>
             <a-button v-permission="['purchase:order:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
             <a-button v-permission="['purchase:order:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
+            <a-button v-permission="['purchase:order:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
             <a-button v-permission="['purchase:order:export']" icon="download" @click="exportList">导出</a-button>
           </a-space>
         </template>
@@ -109,6 +110,8 @@
     <modify :id="id" ref="modifyDialog" @confirm="search" @close="visible = true" />
     <!-- 审核窗口 -->
     <approve :id="id" ref="approveDialog" @confirm="search" @close="visible = true" />
+
+    <purchase-order-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
@@ -122,10 +125,12 @@ import SupplierSelector from '@/components/Selector/SupplierSelector'
 import UserSelector from '@/components/Selector/UserSelector'
 import ApproveRefuse from '@/components/ApproveRefuse'
 import moment from 'moment'
+import PurchaseOrderImporter from '@/components/Importer/PurchaseOrderImporter'
+
 export default {
   name: 'PurchaseOrder',
   components: {
-    Add, Modify, Detail, Approve, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse
+    Add, Modify, Detail, Approve, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderImporter
   },
   data() {
     return {
