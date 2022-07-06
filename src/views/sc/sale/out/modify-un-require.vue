@@ -308,7 +308,7 @@ export default {
         })
         this.tableData = tableData.map(item => Object.assign(this.emptyProduct(), item))
 
-        this.customerChange(this.formData.customer)
+        this.customerChange(this.formData.customer, true)
 
         this.calcSum()
       }).finally(() => {
@@ -608,6 +608,7 @@ export default {
         customerId: this.formData.customer.id,
         salerId: this.formData.saler.id || '',
         paymentDate: this.formData.paymentDate || '',
+        allowModifyPaymentDate: true,
         description: this.formData.description,
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.outNum)).map(t => {
           const product = {
@@ -634,17 +635,19 @@ export default {
       })
     },
     // 客户改变时触发
-    customerChange(customer) {
+    customerChange(customer, unModify) {
       if (!this.$utils.isEmpty(customer.id)) {
         this.$api.sc.sale.outSheet.getPaymentDate(customer.id).then(res => {
-          if (res.allowModify) {
-            // 如果允许修改付款日期
-            if (this.$utils.isEmpty(this.formData.paymentDate)) {
+          if (!unModify) {
+            if (res.allowModify) {
+              // 如果允许修改付款日期
+              if (this.$utils.isEmpty(this.formData.paymentDate)) {
+                this.formData.paymentDate = res.paymentDate || ''
+              }
+            } else {
+              // 不允许修改则按默认日期
               this.formData.paymentDate = res.paymentDate || ''
             }
-          } else {
-            // 不允许修改则按默认日期
-            this.formData.paymentDate = res.paymentDate || ''
           }
           this.formData.allowModifyPaymentDate = res.allowModify
         })

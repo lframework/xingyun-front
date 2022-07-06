@@ -6,7 +6,7 @@
           <j-form-item label="仓库" required>
             {{ formData.sc.name }}
           </j-form-item>
-          <j-form-item label="会员" required>
+          <j-form-item label="会员" :required="retailConfig.retailReturnRequireMember">
             {{ formData.member.name }}
           </j-form-item>
           <j-form-item label="销售员">
@@ -220,7 +220,8 @@ export default {
         { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
-      tableData: []
+      tableData: [],
+      retailConfig: {}
     }
   },
   computed: {
@@ -246,7 +247,7 @@ export default {
       this.$emit('close')
     },
     // 初始化表单数据
-    initFormData() {
+    async initFormData() {
       this.formData = {
         sc: {},
         member: {},
@@ -262,6 +263,9 @@ export default {
       }
 
       this.tableData = []
+      await this.$api.sc.retail.retailConfig.get().then(data => {
+        this.retailConfig = data
+      })
     },
     // 加载数据
     loadData() {
@@ -318,7 +322,7 @@ export default {
         })
         this.tableData = tableData.map(item => Object.assign(this.emptyProduct(), item))
 
-        this.memberChange(this.formData.member.id)
+        this.memberChange(this.formData.member.id, true)
 
         this.calcSum()
       }).finally(() => {
@@ -478,7 +482,7 @@ export default {
         return false
       }
 
-      if (this.$utils.isEmpty(this.formData.member.id)) {
+      if (this.retailConfig.retailReturnRequireMember && this.$utils.isEmpty(this.formData.member.id)) {
         this.$msg.error('会员不允许为空！')
         return false
       }
@@ -581,6 +585,7 @@ export default {
         memberId: this.formData.member.id,
         salerId: this.formData.saler.id || '',
         paymentDate: this.formData.paymentDate || '',
+        allowModifyPaymentDate: true,
         outSheetId: this.formData.outSheet.id,
         description: this.formData.description,
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.returnNum)).map(t => {
@@ -611,16 +616,18 @@ export default {
       })
     },
     // 会员改变时触发
-    memberChange(memberId) {
+    memberChange(memberId, unModify) {
       this.$api.sc.retail.outSheet.getPaymentDate(memberId).then(res => {
-        if (res.allowModify) {
-          // 如果允许修改付款日期
-          if (this.$utils.isEmpty(this.formData.paymentDate)) {
+        if (!unModify) {
+          if (res.allowModify) {
+            // 如果允许修改付款日期
+            if (this.$utils.isEmpty(this.formData.paymentDate)) {
+              this.formData.paymentDate = res.paymentDate || ''
+            }
+          } else {
+            // 不允许修改则按默认日期
             this.formData.paymentDate = res.paymentDate || ''
           }
-        } else {
-          // 不允许修改则按默认日期
-          this.formData.paymentDate = res.paymentDate || ''
         }
 
         this.formData.allowModifyPaymentDate = res.allowModify

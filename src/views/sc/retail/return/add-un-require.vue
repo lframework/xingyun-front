@@ -8,7 +8,7 @@
               v-model="formData.sc"
             />
           </j-form-item>
-          <j-form-item label="会员" required>
+          <j-form-item label="会员" :required="retailConfig.retailReturnRequireMember">
             <member-selector
               v-model="formData.member"
               @input="memberChange"
@@ -213,7 +213,8 @@ export default {
         { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
-      tableData: []
+      tableData: [],
+      retailConfig: {}
     }
   },
   computed: {
@@ -254,6 +255,9 @@ export default {
       }
 
       this.tableData = []
+      await this.$api.sc.retail.retailConfig.get().then(data => {
+        this.retailConfig = data
+      })
     },
     emptyProduct() {
       return {
@@ -462,7 +466,7 @@ export default {
         return false
       }
 
-      if (this.$utils.isEmpty(this.formData.member.id)) {
+      if (this.retailConfig.retailReturnRequireMember && this.$utils.isEmpty(this.formData.member.id)) {
         this.$msg.error('会员不允许为空！')
         return false
       }

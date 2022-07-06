@@ -5,6 +5,18 @@
         <a-col :md="16" :sm="24">
           <a-card v-loading="loading">
             <a-form-model ref="form" :label-col="{span: 10}" :wrapper-col="{span: 8}" :model="formData" :rules="rules">
+              <a-form-model-item label="零售出库单上的会员是否必填" prop="retailOutSheetRequireMember">
+                <a-select v-model="formData.retailOutSheetRequireMember" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <a-form-model-item label="零售退货单上的会员是否必填" prop="retailReturnRequireMember">
+                <a-select v-model="formData.retailReturnRequireMember" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
               <a-form-model-item label="零售退货单是否关联零售出库单" prop="retailReturnRequireOutStock">
                 <a-select v-model="formData.retailReturnRequireOutStock" placeholder="">
                   <a-select-option :value="true">是</a-select-option>
@@ -48,6 +60,12 @@ export default {
       formData: {},
       // 表单校验规则
       rules: {
+        retailOutSheetRequireMember: [
+          { required: true, message: '请选择零售出库单上的会员是否必填' }
+        ],
+        retailReturnRequireMember: [
+          { required: true, message: '请选择零售退货单上的会员是否必填' }
+        ],
         retailReturnRequireOutStock: [
           { required: true, message: '请选择零售退货单是否关联零售出库单' }
         ],
@@ -67,6 +85,8 @@ export default {
     // 初始化表单数据
     initFormData() {
       this.formData = {
+        retailOutSheetRequireMember: '',
+        retailReturnRequireMember: '',
         retailReturnRequireOutStock: '',
         retailReturnMultipleRelateOutStock: ''
       }

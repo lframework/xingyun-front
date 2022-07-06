@@ -9,10 +9,11 @@
               :before-open="beforeSelectSc"
             />
           </j-form-item>
-          <j-form-item label="会员" required>
+          <j-form-item label="会员" :required="retailConfig.retailReturnRequireMember">
             <member-selector
               v-model="formData.member"
               :before-open="beforeSelectMember"
+              @input="memberChange"
             />
           </j-form-item>
           <j-form-item label="销售员">
@@ -213,7 +214,9 @@ export default {
         { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
-      tableData: []
+      tableData: [],
+      retailConfig: {},
+      canChangeMember: false
     }
   },
   computed: {
@@ -254,6 +257,10 @@ export default {
       }
 
       this.tableData = []
+      this.canChangeMember = false
+      await this.$api.sc.retail.retailConfig.get().then(data => {
+        this.retailConfig = data
+      })
     },
     emptyProduct() {
       return {
@@ -408,7 +415,7 @@ export default {
         return false
       }
 
-      if (this.$utils.isEmpty(this.formData.member.id)) {
+      if (this.retailConfig.retailReturnRequireMember && this.$utils.isEmpty(this.formData.member.id)) {
         this.$msg.error('会员不允许为空！')
         return false
       }
@@ -610,6 +617,8 @@ export default {
             name: res.memberName
           }
 
+          this.canChangeMember = this.$utils.isEmpty(this.formData.member.id)
+
           if (!this.$utils.isEmpty(res.salerId)) {
             this.formData.saler = {
               id: res.salerId,
@@ -634,6 +643,10 @@ export default {
     beforeSelectMember() {
       if (!this.beforeSelectComponents()) {
         return false
+      }
+
+      if (this.canChangeMember) {
+        return true
       }
 
       this.$msg.error('由于“零售退货单关联零售出库单”，不允许修改会员！')
