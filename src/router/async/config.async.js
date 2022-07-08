@@ -61,6 +61,11 @@ const routesConfig = [
         ]
       }
     ]
+  },
+  {
+    router: 'onlineExcel',
+    path: '/online-excel',
+    name: 'online-excel'
   }
 ]
 

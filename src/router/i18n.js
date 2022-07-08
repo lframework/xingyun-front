@@ -1,7 +1,8 @@
 module.exports = {
   messages: {
     CN: {
-      home: { name: '首页' }
+      home: { name: '首页' },
+      'online-excel': { name: '在线Excel' }
     },
     US: {
       home: { name: 'home' }

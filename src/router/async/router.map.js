@@ -62,6 +62,11 @@ const routerMap = {
     name: 'exp500',
     path: '500',
     component: () => import('@/views/exception/500')
+  },
+  onlineExcel: {
+    name: '在线Excel',
+    path: 'online-excel',
+    component: () => import('@/components/LuckySheet')
   }
 }
 export default routerMap
