@@ -110,7 +110,7 @@ export default {
         if (valid) {
           this.$msg.confirm('此会员等级修改为默认等级后其他等级都会更改为非默认等级，是否确认继续修改？').then(() => {
             this.loading = true
-            this.$api.baseData.memberLevel.modify(this.formData).then(() => {
+            this.$api.crm.member.memberLevel.modify(this.formData).then(() => {
               this.$msg.success('修改成功！')
               this.$emit('confirm')
               this.visible = false
@@ -132,7 +132,7 @@ export default {
     // 查询数据
     async loadFormData() {
       this.loading = true
-      await this.$api.baseData.memberLevel.get(this.id).then(data => {
+      await this.$api.crm.member.memberLevel.get(this.id).then(data => {
         this.formData = data
       }).finally(() => {
         this.loading = false

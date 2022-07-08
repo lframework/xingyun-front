@@ -85,7 +85,7 @@ export default {
     // 查询数据
     async loadFormData() {
       this.loading = true
-      await this.$api.baseData.memberLevel.get(this.id).then(data => {
+      await this.$api.crm.member.memberLevel.get(this.id).then(data => {
         this.formData = data
       }).finally(() => {
         this.loading = false

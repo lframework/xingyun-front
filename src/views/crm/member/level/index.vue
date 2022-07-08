@@ -115,7 +115,7 @@ export default {
         ajax: {
           // 查询接口
           query: ({ page, sorts, filters }) => {
-            return this.$api.baseData.memberLevel.query(this.buildQueryParams(page))
+            return this.$api.crm.member.memberLevel.query(this.buildQueryParams(page))
           }
         }
       }

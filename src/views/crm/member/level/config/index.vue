@@ -87,7 +87,7 @@ export default {
     // 查询数据
     async loadFormData() {
       this.loading = true
-      await this.$api.baseData.memberLevelConfig.get().then(data => {
+      await this.$api.crm.member.memberLevelConfig.get().then(data => {
         this.formData = data
       }).finally(() => {
         this.loading = false
@@ -98,7 +98,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.baseData.memberLevelConfig.modify(this.formData).then(() => {
+          this.$api.crm.member.memberLevelConfig.modify(this.formData).then(() => {
             this.$msg.success('修改成功！')
           }).finally(() => {
             this.loading = false

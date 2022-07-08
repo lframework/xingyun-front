@@ -97,7 +97,7 @@ export default {
           if (this.formData.isDefault) {
             this.$msg.confirm('此会员等级为默认等级，默认等级只能存在一个，新增后其他等级都会更改为非默认等级，是否确认继续新增？').then(() => {
               this.loading = true
-              this.$api.baseData.memberLevel.create(this.formData).then(() => {
+              this.$api.crm.member.memberLevel.create(this.formData).then(() => {
                 this.$msg.success('新增成功！')
                 this.$emit('confirm')
                 this.visible = false
