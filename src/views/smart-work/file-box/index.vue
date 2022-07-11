@@ -89,6 +89,7 @@ import Modify from './modify'
 import Detail from './detail'
 import AvailableTag from '@/components/Tag/Available'
 import Send from './send'
+import { request } from '@/utils/request'
 
 export default {
   name: 'FileBox',
@@ -190,7 +191,13 @@ export default {
       })
     },
     download(row) {
-      window.open(row.url, '_blank')
+      request({
+        url: row.url,
+        method: 'get',
+        responseType: 'blob'
+      }).then(() => {
+        this.$msg.successTip('下载成功！')
+      })
     }
   }
 }

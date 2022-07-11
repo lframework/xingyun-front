@@ -15,7 +15,8 @@ const respCommon = {
     if (response.config.responseType === RESP_TYPE.BLOB) {
       const content = response.data
       const blob = new Blob([content])
-      const fileName = decodeURIComponent(response.headers.filename)
+      const url = response.config.url
+      const fileName = response.headers.filename ? decodeURIComponent(response.headers.filename) : url.substring(url.lastIndexOf('/') + 1, url.length)
       if ('download' in document.createElement('a')) { // 支持a标签download的浏览器
         const link = document.createElement('a') // 创建a标签
         link.download = fileName // a标签添加属性

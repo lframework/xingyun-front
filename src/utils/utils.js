@@ -792,8 +792,4 @@ utils.closeCurrentPage = function(el) {
   }
 }
 
-utils.download = function(file) {
-
-}
-
 export default utils
