@@ -1,14 +1,11 @@
 <template>
   <div v-if="visible" class="app-container">
-    <div v-permission="['settle:sheet:add']" v-loading="loading">
+    <div v-permission="['settle:sheet:modify']" v-loading="loading">
       <j-border>
         <j-form>
-          <j-form-item label="供应商" required>
-            <supplier-selector
-              v-model="formData.supplier"
-              :request-params="{
-                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code
-              }"
+          <j-form-item label="客户" required>
+            <customer-selector
+              v-model="formData.customer"
             />
           </j-form-item>
           <j-form-item label="审核日期" :content-nest="false" required>
@@ -17,14 +14,37 @@
                 v-model="formData.startTime"
                 placeholder=""
                 value-format="YYYY-MM-DD 00:00:00"
+                disabled
               />
               <span class="date-split">至</span>
               <a-date-picker
                 v-model="formData.endTime"
                 placeholder=""
                 value-format="YYYY-MM-DD 23:59:59"
+                disabled
               />
             </div>
+          </j-form-item>
+          <j-form-item />
+          <j-form-item label="状态">
+            <span v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span v-else style="color: #303133;">{{ $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span>
+          </j-form-item>
+          <j-form-item label="拒绝理由" :content-nest="false" :span="16">
+            <a-input v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
+          </j-form-item>
+          <j-form-item label="操作人">
+            <span>{{ formData.createBy }}</span>
+          </j-form-item>
+          <j-form-item label="操作时间">
+            <span>{{ formData.createTime }}</span>
+          </j-form-item>
+          <j-form-item v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核人">
+            <span>{{ formData.approveBy }}</span>
+          </j-form-item>
+          <j-form-item v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核时间" :span="16">
+            <span>{{ formData.approveTime }}</span>
           </j-form-item>
         </j-form>
       </j-border>
@@ -49,7 +69,7 @@
           </a-space>
         </template>
 
-        <!-- 已付款金额 列自定义内容 -->
+        <!-- 已收款金额 列自定义内容 -->
         <template v-slot:totalPayedAmount_default="{ row }">
           <span v-if="$utils.isFloat(row.payAmount)">{{ $utils.add(row.totalPayedAmount, row.payAmount) }}</span>
           <span v-else>{{ row.totalPayedAmount }}</span>
@@ -61,12 +81,12 @@
           <span v-else>{{ row.totalDiscountAmount }}</span>
         </template>
 
-        <!-- 未付款金额 列自定义内容 -->
+        <!-- 未收款金额 列自定义内容 -->
         <template v-slot:totalUnPayAmount_default="{ row }">
           <span>{{ $utils.sub($utils.sub(row.totalUnPayAmount, $utils.isFloat(row.payAmount) ? row.payAmount : 0), $utils.isFloat(row.discountAmount) ? row.discountAmount : 0) }}</span>
         </template>
 
-        <!-- 实付金额 列自定义内容 -->
+        <!-- 实收金额 列自定义内容 -->
         <template v-slot:payAmount_default="{ row }">
           <a-input v-model="row.payAmount" class="number-input" tabindex="1" @change="e => payAmountInput(row, e.target.value)" />
         </template>
@@ -84,10 +104,10 @@
 
       <j-border title="合计">
         <j-form label-width="140px">
-          <j-form-item label="未付款总金额" :span="6">
+          <j-form-item label="未收款总金额" :span="6">
             <a-input v-model="formData.totalUnPayAmount" class="number-input" read-only />
           </j-form-item>
-          <j-form-item label="实付总金额" :span="6">
+          <j-form-item label="实收总金额" :span="6">
             <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="优惠总金额" :span="6">
@@ -105,8 +125,7 @@
       </j-border>
       <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
         <a-space>
-          <a-button v-permission="['settle:sheet:add']" type="primary" :loading="loading" @click="createOrder">保存</a-button>
-          <a-button v-permission="['settle:sheet:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</a-button>
+          <a-button v-permission="['settle:sheet:modify']" type="primary" :loading="loading" @click="updateOrder">保存</a-button>
           <a-button :loading="loading" @click="closeDialog">关闭</a-button>
         </a-space>
       </div>
@@ -114,13 +133,17 @@
   </div>
 </template>
 <script>
-import SupplierSelector from '@/components/Selector/SupplierSelector'
-import moment from 'moment'
-
+import CustomerSelector from '@/components/Selector/CustomerSelector'
 export default {
-  name: 'AddSettleSheet',
+  name: 'ModifySettleSheet',
   components: {
-    SupplierSelector
+    CustomerSelector
+  },
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -141,14 +164,14 @@ export default {
       tableColumn: [
         { type: 'checkbox', width: 40 },
         { type: 'seq', width: 40 },
-        { field: 'code', title: '单据号', width: 200 },
-        { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return '供应商对账单' } },
+        { field: 'bizCode', title: '单据号', width: 200 },
+        { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return '客户对账单' } },
         { field: 'approveTime', title: '审核时间', width: 170 },
-        { field: 'totalPayAmount', title: '应付金额', align: 'right', width: 100 },
-        { field: 'totalPayedAmount', title: '已付款金额', align: 'right', width: 100, slots: { default: 'totalPayedAmount_default' }},
+        { field: 'totalPayAmount', title: '应收金额', align: 'right', width: 100 },
+        { field: 'totalPayedAmount', title: '已收款金额', align: 'right', width: 100, slots: { default: 'totalPayedAmount_default' }},
         { field: 'totalDiscountAmount', title: '已优惠金额', align: 'right', width: 100, slots: { default: 'totalDiscountAmount_default' }},
-        { field: 'totalUnPayAmount', title: '未付款金额', align: 'right', width: 100, slots: { default: 'totalUnPayAmount_default' }},
-        { field: 'payAmount', title: '实付金额', align: 'right', width: 100, slots: { default: 'payAmount_default' }},
+        { field: 'totalUnPayAmount', title: '未收款金额', align: 'right', width: 100, slots: { default: 'totalUnPayAmount_default' }},
+        { field: 'payAmount', title: '实收金额', align: 'right', width: 100, slots: { default: 'payAmount_default' }},
         { field: 'discountAmount', title: '优惠金额', align: 'right', width: 100, slots: { default: 'discountAmount_default' }},
         { field: 'description', title: '备注', width: 260, slots: { default: 'description_default' }}
       ],
@@ -167,6 +190,7 @@ export default {
       // 初始化表单数据
       this.initFormData()
       this.visible = true
+      this.loadData()
     },
     // 关闭对话框
     closeDialog() {
@@ -176,9 +200,9 @@ export default {
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        supplier: {},
-        startTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
-        endTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+        customer: {},
+        startTime: '',
+        endTime: '',
         description: '',
         totalAmount: 0,
         totalUnPayAmount: 0,
@@ -187,11 +211,65 @@ export default {
 
       this.tableData = []
     },
+    // 加载数据
+    loadData() {
+      this.loading = true
+      this.$api.customerSettle.sheet.get(this.id).then(res => {
+        if (!this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(res.status) && !this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)) {
+          this.$msg.error('单据已审核通过，无法修改！')
+          this.closeDialog()
+          return
+        }
+        this.initFormData()
+        this.formData = Object.assign(this.formData, {
+          customer: {
+            id: res.customerId,
+            name: res.customerName
+          },
+          description: res.description,
+          startTime: res.startTime,
+          endTime: res.endTime,
+          status: res.status,
+          createBy: res.createBy,
+          createTime: res.createTime,
+          approveBy: res.approveBy,
+          approveTime: res.approveTime,
+          refuseReason: res.refuseReason,
+          totalAmount: 0,
+          totalUnPayAmount: 0,
+          totalDiscountAmount: 0
+        })
+        const details = res.details.map(item => {
+          return Object.assign(this.emptyLine(), {
+            id: item.id,
+            bizId: item.bizId,
+            bizCode: item.bizCode,
+            totalPayAmount: item.totalPayAmount,
+            totalPayedAmount: item.totalPayedAmount,
+            totalDiscountAmount: item.totalDiscountAmount,
+            totalUnPayAmount: item.totalUnPayAmount,
+            payAmount: item.payAmount,
+            discountAmount: item.discountAmount,
+            approveTime: item.approveTime,
+            description: item.description
+          })
+        })
+
+        this.tableData = details
+
+        this.$nextTick(() => {
+          this.$refs.grid.setAllCheckboxRow(true)
+          this.calcSum()
+        })
+      }).finally(() => {
+        this.loading = false
+      })
+    },
     emptyLine() {
       return {
         id: this.$utils.uuid(),
-        code: '',
-        bizType: '供应商对账单',
+        bizCode: '',
+        bizType: '客户对账单',
         totalPayAmount: '',
         totalPayedAmount: '',
         totalDiscountAmount: '',
@@ -242,8 +320,8 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.supplier.id)) {
-        this.$msg.error('供应商不允许为空！')
+      if (this.$utils.isEmpty(this.formData.customer.id)) {
+        this.$msg.error('客户不允许为空！')
         return false
       }
 
@@ -267,17 +345,17 @@ export default {
         const item = records[i]
 
         if (this.$utils.isEmpty(item.payAmount)) {
-          this.$msg.error('第' + (i + 1) + '行实付金额不能为空！')
+          this.$msg.error('第' + (i + 1) + '行实收金额不能为空！')
           return false
         }
 
         if (!this.$utils.isFloat(item.payAmount)) {
-          this.$msg.error('第' + (i + 1) + '行实付金额必须为数字！')
+          this.$msg.error('第' + (i + 1) + '行实收金额必须为数字！')
           return false
         }
 
         if (!this.$utils.isNumberPrecision(item.payAmount, 2)) {
-          this.$msg.error('第' + (i + 1) + '行实付金额最多允许2位小数！')
+          this.$msg.error('第' + (i + 1) + '行实收金额最多允许2位小数！')
           return false
         }
 
@@ -298,7 +376,7 @@ export default {
 
         if (item.totalPayAmount > 0) {
           if (item.payAmount < 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额不允许小于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额不允许小于0！')
             return false
           }
 
@@ -308,16 +386,16 @@ export default {
           }
 
           if (this.$utils.add(item.payAmount, item.discountAmount) === 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额、优惠金额不允许同时等于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额、优惠金额不允许同时等于0！')
             return false
           }
           if (item.totalUnPayAmount < this.$utils.add(item.payAmount, item.discountAmount)) {
-            this.$msg.error('第' + (i + 1) + '行实付金额与优惠金额相加不允许大于未付款金额！')
+            this.$msg.error('第' + (i + 1) + '行实收金额与优惠金额相加不允许大于未收款金额！')
             return false
           }
         } else if (item.totalPayAmount < 0) {
           if (item.payAmount > 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额不允许大于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额不允许大于0！')
             return false
           }
 
@@ -327,16 +405,16 @@ export default {
           }
 
           if (this.$utils.add(item.payAmount, item.discountAmount) === 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额、优惠金额不允许同时等于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额、优惠金额不允许同时等于0！')
             return false
           }
           if (item.totalUnPayAmount > this.$utils.add(item.payAmount, item.discountAmount)) {
-            this.$msg.error('第' + (i + 1) + '行实付金额与优惠金额相加不允许小于未付款金额！')
+            this.$msg.error('第' + (i + 1) + '行实收金额与优惠金额相加不允许小于未收款金额！')
             return false
           }
         } else {
           if (this.$utils.add(item.payAmount, item.discountAmount) !== 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额、优惠金额必须同时等于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额、优惠金额必须同时等于0！')
             return false
           }
         }
@@ -345,7 +423,7 @@ export default {
       return true
     },
     // 创建订单
-    createOrder() {
+    updateOrder() {
       if (!this.validData()) {
         return
       }
@@ -353,13 +431,14 @@ export default {
       const records = this.$refs.grid.getCheckboxRecords()
 
       const params = {
-        supplierId: this.formData.supplier.id,
+        id: this.id,
+        customerId: this.formData.customer.id,
         description: this.formData.description,
         startDate: this.$utils.dateTimeToDate(this.formData.startTime),
         endDate: this.$utils.dateTimeToDate(this.formData.endTime),
         items: records.map(t => {
           return {
-            id: t.id,
+            id: t.bizId,
             payAmount: t.payAmount,
             discountAmount: t.discountAmount,
             description: t.description
@@ -368,7 +447,7 @@ export default {
       }
 
       this.loading = true
-      this.$api.settle.sheet.createOrder(params).then(res => {
+      this.$api.customerSettle.sheet.updateOrder(params).then(res => {
         this.$msg.success('保存成功！')
 
         this.$emit('confirm')
@@ -377,44 +456,9 @@ export default {
         this.loading = false
       })
     },
-    // 直接审核通过订单
-    directApprovePassOrder() {
-      if (!this.validData()) {
-        return
-      }
-
-      const records = this.$refs.grid.getCheckboxRecords()
-
-      const params = {
-        supplierId: this.formData.supplier.id,
-        description: this.formData.description,
-        startDate: this.$utils.dateTimeToDate(this.formData.startTime),
-        endDate: this.$utils.dateTimeToDate(this.formData.endTime),
-        items: records.map(t => {
-          return {
-            id: t.id,
-            payAmount: t.payAmount,
-            discountAmount: t.discountAmount,
-            description: t.description
-          }
-        })
-      }
-
-      this.$msg.confirm('确定执行审核通过操作？').then(() => {
-        this.loading = true
-        this.$api.settle.sheet.directApprovePassOrder(params).then(res => {
-          this.$msg.success('审核通过！')
-
-          this.$emit('confirm')
-          this.closeDialog()
-        }).finally(() => {
-          this.loading = false
-        })
-      })
-    },
     searchUnSettleItems() {
-      if (this.$utils.isEmpty(this.formData.supplier)) {
-        this.$msg.error('请先选择供应商！')
+      if (this.$utils.isEmpty(this.formData.customer)) {
+        this.$msg.error('请先选择客户！')
         return
       }
 
@@ -429,21 +473,33 @@ export default {
       }
 
       this.loading = true
-      this.$api.settle.sheet.getUnSettleItems({
-        supplierId: this.formData.supplier.id,
+      this.$api.customerSettle.sheet.getUnSettleItems({
+        customerId: this.formData.customer.id,
         startTime: this.formData.startTime,
         endTime: this.formData.endTime
       }).then(res => {
-        const tableData = []
+        const tmpData = []
         if (!this.$utils.isEmpty(res)) {
           res.forEach(item => {
             const obj = Object.assign(this.emptyLine(), item)
             obj.payAmount = obj.totalUnPayAmount
             obj.discountAmount = 0
-            tableData.push(obj)
+            tmpData.push(obj)
           })
+
+          const tableData = [...this.tableData]
+          const bizIds = this.tableData.map(item => {
+            return item.bizId
+          })
+          tmpData.forEach(item => {
+            if (!bizIds.includes(item.bizId)) {
+              tableData.push(item)
+            }
+          })
+
+          this.tableData = tableData
         }
-        this.tableData = tableData
+
         this.$nextTick(() => {
           this.$refs.grid.setAllCheckboxRow(true)
           this.calcSum()

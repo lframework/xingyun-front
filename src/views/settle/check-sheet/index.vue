@@ -139,7 +139,6 @@ export default {
       searchFormData: {
         code: '',
         supplier: {},
-        customer: {},
         createBy: {},
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),

@@ -287,6 +287,12 @@ export default {
       this.calcSum()
     },
     discountAmountInput(row, value) {
+      const diff = this.$utils.sub(this.$utils.sub(row.totalUnPayAmount, this.$utils.isFloat(row.payAmount) ? row.payAmount : 0), this.$utils.isFloat(value) ? value : 0)
+      if (diff < 0) {
+        if (this.$utils.isFloat(row.payAmount)) {
+          row.payAmount += diff
+        }
+      }
       this.calcSum()
     },
     // 计算汇总数据

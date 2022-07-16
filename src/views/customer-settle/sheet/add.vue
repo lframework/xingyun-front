@@ -3,12 +3,9 @@
     <div v-permission="['settle:sheet:add']" v-loading="loading">
       <j-border>
         <j-form>
-          <j-form-item label="供应商" required>
-            <supplier-selector
-              v-model="formData.supplier"
-              :request-params="{
-                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code
-              }"
+          <j-form-item label="客户" required>
+            <customer-selector
+              v-model="formData.customer"
             />
           </j-form-item>
           <j-form-item label="审核日期" :content-nest="false" required>
@@ -49,7 +46,7 @@
           </a-space>
         </template>
 
-        <!-- 已付款金额 列自定义内容 -->
+        <!-- 已收款金额 列自定义内容 -->
         <template v-slot:totalPayedAmount_default="{ row }">
           <span v-if="$utils.isFloat(row.payAmount)">{{ $utils.add(row.totalPayedAmount, row.payAmount) }}</span>
           <span v-else>{{ row.totalPayedAmount }}</span>
@@ -61,12 +58,12 @@
           <span v-else>{{ row.totalDiscountAmount }}</span>
         </template>
 
-        <!-- 未付款金额 列自定义内容 -->
+        <!-- 未收款金额 列自定义内容 -->
         <template v-slot:totalUnPayAmount_default="{ row }">
           <span>{{ $utils.sub($utils.sub(row.totalUnPayAmount, $utils.isFloat(row.payAmount) ? row.payAmount : 0), $utils.isFloat(row.discountAmount) ? row.discountAmount : 0) }}</span>
         </template>
 
-        <!-- 实付金额 列自定义内容 -->
+        <!-- 实收金额 列自定义内容 -->
         <template v-slot:payAmount_default="{ row }">
           <a-input v-model="row.payAmount" class="number-input" tabindex="1" @change="e => payAmountInput(row, e.target.value)" />
         </template>
@@ -84,10 +81,10 @@
 
       <j-border title="合计">
         <j-form label-width="140px">
-          <j-form-item label="未付款总金额" :span="6">
+          <j-form-item label="未收款总金额" :span="6">
             <a-input v-model="formData.totalUnPayAmount" class="number-input" read-only />
           </j-form-item>
-          <j-form-item label="实付总金额" :span="6">
+          <j-form-item label="实收总金额" :span="6">
             <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
           <j-form-item label="优惠总金额" :span="6">
@@ -114,13 +111,13 @@
   </div>
 </template>
 <script>
-import SupplierSelector from '@/components/Selector/SupplierSelector'
+import CustomerSelector from '@/components/Selector/CustomerSelector'
 import moment from 'moment'
 
 export default {
   name: 'AddSettleSheet',
   components: {
-    SupplierSelector
+    CustomerSelector
   },
   data() {
     return {
@@ -142,13 +139,13 @@ export default {
         { type: 'checkbox', width: 40 },
         { type: 'seq', width: 40 },
         { field: 'code', title: '单据号', width: 200 },
-        { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return '供应商对账单' } },
+        { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return '客户对账单' } },
         { field: 'approveTime', title: '审核时间', width: 170 },
-        { field: 'totalPayAmount', title: '应付金额', align: 'right', width: 100 },
-        { field: 'totalPayedAmount', title: '已付款金额', align: 'right', width: 100, slots: { default: 'totalPayedAmount_default' }},
+        { field: 'totalPayAmount', title: '应收金额', align: 'right', width: 100 },
+        { field: 'totalPayedAmount', title: '已收款金额', align: 'right', width: 100, slots: { default: 'totalPayedAmount_default' }},
         { field: 'totalDiscountAmount', title: '已优惠金额', align: 'right', width: 100, slots: { default: 'totalDiscountAmount_default' }},
-        { field: 'totalUnPayAmount', title: '未付款金额', align: 'right', width: 100, slots: { default: 'totalUnPayAmount_default' }},
-        { field: 'payAmount', title: '实付金额', align: 'right', width: 100, slots: { default: 'payAmount_default' }},
+        { field: 'totalUnPayAmount', title: '未收款金额', align: 'right', width: 100, slots: { default: 'totalUnPayAmount_default' }},
+        { field: 'payAmount', title: '实收金额', align: 'right', width: 100, slots: { default: 'payAmount_default' }},
         { field: 'discountAmount', title: '优惠金额', align: 'right', width: 100, slots: { default: 'discountAmount_default' }},
         { field: 'description', title: '备注', width: 260, slots: { default: 'description_default' }}
       ],
@@ -176,7 +173,7 @@ export default {
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        supplier: {},
+        customer: {},
         startTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         endTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
         description: '',
@@ -191,7 +188,7 @@ export default {
       return {
         id: this.$utils.uuid(),
         code: '',
-        bizType: '供应商对账单',
+        bizType: '客户对账单',
         totalPayAmount: '',
         totalPayedAmount: '',
         totalDiscountAmount: '',
@@ -242,8 +239,8 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.supplier.id)) {
-        this.$msg.error('供应商不允许为空！')
+      if (this.$utils.isEmpty(this.formData.customer.id)) {
+        this.$msg.error('客户不允许为空！')
         return false
       }
 
@@ -267,17 +264,17 @@ export default {
         const item = records[i]
 
         if (this.$utils.isEmpty(item.payAmount)) {
-          this.$msg.error('第' + (i + 1) + '行实付金额不能为空！')
+          this.$msg.error('第' + (i + 1) + '行实收金额不能为空！')
           return false
         }
 
         if (!this.$utils.isFloat(item.payAmount)) {
-          this.$msg.error('第' + (i + 1) + '行实付金额必须为数字！')
+          this.$msg.error('第' + (i + 1) + '行实收金额必须为数字！')
           return false
         }
 
         if (!this.$utils.isNumberPrecision(item.payAmount, 2)) {
-          this.$msg.error('第' + (i + 1) + '行实付金额最多允许2位小数！')
+          this.$msg.error('第' + (i + 1) + '行实收金额最多允许2位小数！')
           return false
         }
 
@@ -298,7 +295,7 @@ export default {
 
         if (item.totalPayAmount > 0) {
           if (item.payAmount < 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额不允许小于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额不允许小于0！')
             return false
           }
 
@@ -308,16 +305,16 @@ export default {
           }
 
           if (this.$utils.add(item.payAmount, item.discountAmount) === 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额、优惠金额不允许同时等于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额、优惠金额不允许同时等于0！')
             return false
           }
           if (item.totalUnPayAmount < this.$utils.add(item.payAmount, item.discountAmount)) {
-            this.$msg.error('第' + (i + 1) + '行实付金额与优惠金额相加不允许大于未付款金额！')
+            this.$msg.error('第' + (i + 1) + '行实收金额与优惠金额相加不允许大于未收款金额！')
             return false
           }
         } else if (item.totalPayAmount < 0) {
           if (item.payAmount > 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额不允许大于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额不允许大于0！')
             return false
           }
 
@@ -327,16 +324,16 @@ export default {
           }
 
           if (this.$utils.add(item.payAmount, item.discountAmount) === 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额、优惠金额不允许同时等于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额、优惠金额不允许同时等于0！')
             return false
           }
           if (item.totalUnPayAmount > this.$utils.add(item.payAmount, item.discountAmount)) {
-            this.$msg.error('第' + (i + 1) + '行实付金额与优惠金额相加不允许小于未付款金额！')
+            this.$msg.error('第' + (i + 1) + '行实收金额与优惠金额相加不允许小于未收款金额！')
             return false
           }
         } else {
           if (this.$utils.add(item.payAmount, item.discountAmount) !== 0) {
-            this.$msg.error('第' + (i + 1) + '行实付金额、优惠金额必须同时等于0！')
+            this.$msg.error('第' + (i + 1) + '行实收金额、优惠金额必须同时等于0！')
             return false
           }
         }
@@ -353,7 +350,7 @@ export default {
       const records = this.$refs.grid.getCheckboxRecords()
 
       const params = {
-        supplierId: this.formData.supplier.id,
+        customerId: this.formData.customer.id,
         description: this.formData.description,
         startDate: this.$utils.dateTimeToDate(this.formData.startTime),
         endDate: this.$utils.dateTimeToDate(this.formData.endTime),
@@ -368,7 +365,7 @@ export default {
       }
 
       this.loading = true
-      this.$api.settle.sheet.createOrder(params).then(res => {
+      this.$api.customerSettle.sheet.createOrder(params).then(res => {
         this.$msg.success('保存成功！')
 
         this.$emit('confirm')
@@ -386,7 +383,7 @@ export default {
       const records = this.$refs.grid.getCheckboxRecords()
 
       const params = {
-        supplierId: this.formData.supplier.id,
+        customerId: this.formData.customer.id,
         description: this.formData.description,
         startDate: this.$utils.dateTimeToDate(this.formData.startTime),
         endDate: this.$utils.dateTimeToDate(this.formData.endTime),
@@ -402,7 +399,7 @@ export default {
 
       this.$msg.confirm('确定执行审核通过操作？').then(() => {
         this.loading = true
-        this.$api.settle.sheet.directApprovePassOrder(params).then(res => {
+        this.$api.customerSettle.sheet.directApprovePassOrder(params).then(res => {
           this.$msg.success('审核通过！')
 
           this.$emit('confirm')
@@ -413,8 +410,8 @@ export default {
       })
     },
     searchUnSettleItems() {
-      if (this.$utils.isEmpty(this.formData.supplier)) {
-        this.$msg.error('请先选择供应商！')
+      if (this.$utils.isEmpty(this.formData.customer)) {
+        this.$msg.error('请先选择客户！')
         return
       }
 
@@ -429,8 +426,8 @@ export default {
       }
 
       this.loading = true
-      this.$api.settle.sheet.getUnSettleItems({
-        supplierId: this.formData.supplier.id,
+      this.$api.customerSettle.sheet.getUnSettleItems({
+        customerId: this.formData.customer.id,
         startTime: this.formData.startTime,
         endTime: this.formData.endTime
       }).then(res => {
