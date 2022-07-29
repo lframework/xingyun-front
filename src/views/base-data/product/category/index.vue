@@ -45,7 +45,7 @@
             </j-form-item>
             <j-form-item label="状态">
               <a-select v-model="searchFormData.available" placeholder="全部" allow-clear>
-                <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                <a-select-option :value="$enums.AVAILABLE.ENABLE.code">{{ '仅显示' + $enums.AVAILABLE.ENABLE.desc }}</a-select-option>
               </a-select>
             </j-form-item>
           </j-form>
@@ -146,8 +146,8 @@ export default {
       const isFilterName = !this.$utils.isEmpty(filterName)
       const isFilterAvailable = !this.$utils.isEmpty(filterAvailable)
       if (isFilterName || isFilterAvailable || isFilterCode) {
-        const options = { key: 'id', parentKey: 'parentId', children: 'children' }
-        const tableData = this.$utils.searchTree(this.originData, item => {
+        const options = { key: 'id', parentKey: 'parentId', children: 'children', strict: true }
+        let tableData = this.$utils.searchTree(this.originData, item => {
           let filterResult = true
           if (isFilterCode) {
             filterResult &= this.$utils.isEqualWithStr(this.$utils.toString(item['code']), filterCode)
@@ -157,12 +157,14 @@ export default {
             filterResult &= this.$utils.toString(item['name']).indexOf(filterName) > -1
           }
 
-          if (isFilterAvailable) {
-            filterResult &= this.$utils.isEqualWithStr(item['available'], filterAvailable) && this.$utils.isEmpty(item['children'])
-          }
-
           return filterResult
         }, options)
+
+        if (isFilterAvailable) {
+          tableData = this.$utils.toTreeArray(tableData, options)
+          tableData = tableData.filter(item => this.$utils.isEqualWithStr(item['available'], filterAvailable))
+          tableData = this.$utils.toArrayTree(tableData, options)
+        }
 
         // 搜索之后默认展开所有子节点
         this.$nextTick(() => {

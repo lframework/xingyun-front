@@ -35,7 +35,7 @@
                     :wrapper-col="{span: 18, offset: 1}"
                   >
                     <a-select v-model="searchParams.available" placeholder="全部" allow-clear>
-                      <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                      <a-select-option :value="$enums.AVAILABLE.ENABLE.code">{{ '仅显示' + $enums.AVAILABLE.ENABLE.desc }}</a-select-option>
                     </a-select>
                   </a-form-model-item>
                 </a-col>
@@ -114,20 +114,22 @@ export default {
       const filterAvailable = this.$utils.toString(this.searchParams.available).trim()
       const isFilterAvailable = !this.$utils.isEmpty(this.searchParams.available)
       if (isFilterName || isFilterAvailable) {
-        const options = { key: 'id', parentKey: 'parentId', children: 'children' }
-        const tableData = this.$utils.searchTree(datas, item => {
+        const options = { key: 'id', parentKey: 'parentId', children: 'children', strict: true }
+        let tableData = this.$utils.searchTree(datas, item => {
           let filterResult = true
 
           if (isFilterName) {
             filterResult &= this.$utils.toString(item['name']).indexOf(filterName) > -1
           }
 
-          if (isFilterAvailable) {
-            filterResult &= this.$utils.toString(item['available']).indexOf(filterAvailable) > -1 && this.$utils.isEmpty(item['children'])
-          }
-
           return filterResult
         }, options)
+
+        if (isFilterAvailable) {
+          tableData = this.$utils.toTreeArray(tableData, options)
+          tableData = tableData.filter(item => this.$utils.isEqualWithStr(item['available'], filterAvailable))
+          tableData = this.$utils.toArrayTree(tableData, options)
+        }
 
         return tableData
       } else {
