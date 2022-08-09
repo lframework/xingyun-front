@@ -15,6 +15,10 @@
       :loading="loading"
       :height="$defaultTableHeight"
     >
+      <template v-slot:icon_default="{ row }">
+        <svg-icon v-if="!$utils.isEmpty(row.icon) && ($enums.MENU_DISPLAY.CATALOG.equalsCode(row.display) || $enums.MENU_DISPLAY.FUNCTION.equalsCode(row.display))" :icon-class="row.icon" />
+      </template>
+
       <template v-slot:menuDisplay_default="{ row }">
         <menu-display-tag :menu-display="row.display" />
       </template>
@@ -118,6 +122,7 @@ export default {
         { type: 'checkbox', width: 40 },
         { field: 'code', title: '编号', width: 80 },
         { field: 'title', title: '标题', minWidth: 160, treeNode: true },
+        { field: 'icon', title: '图标', width: 50, slots: { default: 'icon_default' }},
         { field: 'display', title: '类型', width: 80, slots: { default: 'menuDisplay_default' }},
         { field: 'permission', title: '权限', width: 220 },
         { field: 'isSpecial', title: '是否内置', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },

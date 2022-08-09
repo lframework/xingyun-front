@@ -13,6 +13,9 @@
             <a-radio v-for="item in $enums.MENU_DISPLAY.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-radio>
           </a-radio-group>
         </a-form-model-item>
+        <a-form-model-item v-if="$enums.MENU_DISPLAY.CATALOG.equalsCode(formData.display) || $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="图标" prop="icon">
+          <icon-picker v-model="formData.icon" />
+        </a-form-model-item>
         <a-form-model-item label="父级菜单" prop="parentId">
           <sys-menu-selector v-model="formData.parentId" :only-final="false" />
         </a-form-model-item>
@@ -58,8 +61,10 @@
 <script>
 import SysMenuSelector from '@/components/Selector/SysMenuSelector'
 import { validCode } from '@/utils/validate'
+import IconPicker from '@/components/IconPicker'
 export default {
   components: {
+    IconPicker,
     SysMenuSelector
   },
   data() {
@@ -124,6 +129,7 @@ export default {
         code: '',
         title: '',
         display: '',
+        icon: '',
         parentId: '',
         permission: '',
         description: '',

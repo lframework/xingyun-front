@@ -704,7 +704,7 @@ utils.buildMenus = function(oriMenus = []) {
       obj.path = this.isEmpty(menu.path) ? '' : menu.path
       obj.name = menu.meta.title
       obj.meta = {
-        icon: 'menu',
+        icon: this.isEmpty(menu.meta.icon) ? 'a-menu' : menu.meta.icon,
         invisible: menu.hidden || false
       }
 
@@ -718,7 +718,7 @@ utils.buildMenus = function(oriMenus = []) {
       obj.path = menu.path || ''
       obj.name = menu.meta.title
       obj.meta = {
-        icon: '',
+        icon: this.isEmpty(menu.meta.icon) ? 'a-menu' : menu.meta.icon,
         invisible: menu.hidden || false,
         page: {
           cacheAble: !menu.meta.noCache

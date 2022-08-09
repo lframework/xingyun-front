@@ -27,7 +27,7 @@ const routesConfig = [
         name: '首页',
         meta: {
           id: 'dashboard',
-          icon: 'dashboard',
+          icon: 'a-dashboard',
           sync: true
         },
         component: BlankView,

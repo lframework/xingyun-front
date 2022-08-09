@@ -1,5 +1,6 @@
 <template>
   <div v-if="isExternal" :style="styleExternalIcon" class="svg-external-icon svg-icon" v-on="$listeners" />
+  <a-icon v-else-if="!$utils.isEmpty(iconClass) && antdIcon()" :type="iconClass.substring(2, iconClass.length)" />
   <i v-else-if="!$utils.isEmpty(iconClass)" class="anticon">
     <svg :class="svgClass" aria-hidden="true" focusable="false" v-on="$listeners">
       <use :xlink:href="iconName" />
@@ -42,6 +43,12 @@ export default {
         mask: `url(${this.iconClass}) no-repeat 50% 50%`,
         '-webkit-mask': `url(${this.iconClass}) no-repeat 50% 50%`
       }
+    }
+  },
+  methods: {
+    antdIcon() {
+      // 约定：内置图标使用svg-icon时，需要加a-前缀
+      return this.iconClass.startsWith('a-')
     }
   }
 }

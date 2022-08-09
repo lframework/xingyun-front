@@ -32,7 +32,7 @@
  * }
  **/
 import Menu from 'ant-design-vue/es/menu'
-import Icon from 'ant-design-vue/es/icon'
+import SvgIcon from '@/components/SvgIcon'
 import fastEqual from 'fast-deep-equal'
 import { getI18nKey } from '@/utils/routerUtil'
 
@@ -151,7 +151,7 @@ export default {
         })
         return vnodes
       }
-      return !icon || icon === 'none' ? null : h(Icon, { props: { type: icon }})
+      return !icon || icon === 'none' ? null : h(SvgIcon, { props: { iconClass: icon }})
     },
     renderMenuItem: function(h, menu) {
       let tag = 'router-link'

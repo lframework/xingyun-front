@@ -8,6 +8,9 @@
         <a-form-model-item label="标题" prop="title">
           <a-input v-model.trim="formData.title" allow-clear />
         </a-form-model-item>
+        <a-form-model-item v-if="$enums.MENU_DISPLAY.CATALOG.equalsCode(formData.display) || $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="图标" prop="icon">
+          <icon-picker v-model="formData.icon" />
+        </a-form-model-item>
         <a-form-model-item label="父级菜单" prop="parentId">
           <sys-menu-selector v-model="formData.parentId" :only-final="false" />
         </a-form-model-item>
@@ -58,9 +61,11 @@
 <script>
 import SysMenuSelector from '@/components/Selector/SysMenuSelector'
 import { validCode } from '@/utils/validate'
+import IconPicker from '@/components/IconPicker'
 export default {
   components: {
-    SysMenuSelector
+    SysMenuSelector,
+    IconPicker
   },
   props: {
     id: {
@@ -128,6 +133,7 @@ export default {
         code: '',
         title: '',
         display: '',
+        icon: '',
         parentId: '',
         permission: '',
         description: '',
