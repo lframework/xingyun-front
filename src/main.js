@@ -28,6 +28,7 @@ import permission from '@/directive/permission/index.js' // 权限判断指令
 import JForm from '@/components/JForm'
 import JFormItem from '@/components/JFormItem'
 import JBorder from '@/components/JBorder'
+import OrderTimeLine from '@/components/OrderTimeLine'
 
 const router = initRouter(store.state.setting.asyncRoutes)
 const i18n = initI18n('CN', 'US')
@@ -84,6 +85,7 @@ Vue.prototype.$defaultTableHeight = Vue.prototype.$vh * 100 - 140
 Vue.component('JForm', JForm)
 Vue.component('JFormItem', JFormItem)
 Vue.component('JBorder', JBorder)
+Vue.component('OrderTimeLine', OrderTimeLine)
 
 bootstrap({ router, store, i18n, message: Vue.prototype.$message })
 

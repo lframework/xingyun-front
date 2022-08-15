@@ -1,11 +1,15 @@
 <template>
-  <div v-show="visible" :class="'item item--default'" :style="{width: itemWidth}">
-    <span :class="'label label--default'" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : (colon ? label + '：' : label) }}</span>
-    <div v-if="contentNest" class="content" :style="{width: contentWidth}">
-      <slot />
+  <transition
+    enter-active-class="animated fadeIn"
+  >
+    <div v-show="visible" :class="'item item--default'" :style="{width: itemWidth}">
+      <span :class="'label label--default'" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : (colon ? label + '：' : label) }}</span>
+      <div v-if="contentNest" class="content" :style="{width: contentWidth}">
+        <slot />
+      </div>
+      <slot v-else />
     </div>
-    <slot v-else />
-  </div>
+  </transition>
 </template>
 <script>
 export default {

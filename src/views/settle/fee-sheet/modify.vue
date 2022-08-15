@@ -72,6 +72,8 @@
         </template>
       </vxe-grid>
 
+      <order-time-line :id="id" />
+
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="总金额" :span="6">

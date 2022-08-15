@@ -106,6 +106,8 @@
         </template>
       </vxe-grid>
 
+      <order-time-line :id="id" />
+
       <batch-add-product
         ref="batchAddProductDialog"
         :plan-id="formData.planId"

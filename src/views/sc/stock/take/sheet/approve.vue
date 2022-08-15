@@ -66,6 +66,8 @@
         :columns="tableColumn"
       />
 
+      <order-time-line :id="id" />
+
       <div v-if="$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
         <a-space>
           <a-button v-permission="['stock:take:sheet:approve']" type="primary" :loading="loading" @click="approvePass">审核通过</a-button>

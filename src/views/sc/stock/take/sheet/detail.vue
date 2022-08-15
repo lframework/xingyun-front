@@ -66,6 +66,8 @@
         :columns="tableColumn"
       />
 
+      <order-time-line :id="id" />
+
       <take-stock-plan-detail
         :id="formData.planId"
         ref="viewTakeStockPlanDialog"
