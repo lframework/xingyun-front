@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="80%" :title="formData.title" :dialog-style="{ top: '20px' }" :footer="null">
+  <a-modal v-model="visible" :mask-closable="false" width="80%" :title="formData.title" :dialog-style="{ top: '20px' }" :body-style="{ minHeight: '500px' }" :footer="null">
     <div v-if="visible" v-loading="loading" v-html="formData.content" />
   </a-modal>
 </template>

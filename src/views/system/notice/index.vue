@@ -18,7 +18,7 @@
       >
         <template v-slot:form>
           <j-border>
-            <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+            <j-form label-width="100px" @collapse="$refs.grid.refreshColumn()">
               <j-form-item label="标题">
                 <a-input v-model="searchFormData.title" allow-clear />
               </j-form-item>
