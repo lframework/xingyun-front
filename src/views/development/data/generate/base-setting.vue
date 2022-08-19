@@ -38,6 +38,7 @@
       <a-form-model-item label="父级菜单" prop="parentMenuId">
         <sys-menu-selector
           v-model="formData.parentMenuId"
+          :only-final="false"
           :request-params="{
             display: $enums.MENU_DISPLAY.CATALOG.code
           }"

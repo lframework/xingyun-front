@@ -3,7 +3,9 @@
     <a-list-item v-for="item in taskList" :key="item.title">
       <a :href="item.jumpUrl" target="_blank">
         <a-list-item-meta :title="item.title" :description="item.createTime">
-          <a-avatar slot="avatar" style="background-color: white" src="https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png" />
+          <a-avatar slot="avatar" shape="square" style="background-color: #FFFFFF; font-size: 32px;" :size="36">
+            <svg-icon slot="icon" style="color: #1AA5DD;" icon-class="todo-task" />
+          </a-avatar>
         </a-list-item-meta>
       </a>
     </a-list-item>
@@ -13,42 +15,29 @@
 <script>
 export default {
   name: 'TodoTaskList',
+  props: {
+    taskList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
   data() {
     return {
-      taskList: [],
-      timer: null,
-      interval: 5000,
-      errorCount: 0
     }
   },
   computed: {
   },
   created() {
-    this.timer = setInterval(this.onTimer, this.interval)
+
   },
   mounted() {
-    this.$emit('inited')
   },
   beforeDestroy() {
-    clearInterval(this.timer)
   },
   methods: {
-    onTimer() {
-      this.$api.message.todoTask.query().then(res => {
-        this.taskList = res.datas
-        if (this.errorCount > 0) {
-          this.errorCount = 0
-          clearInterval(this.timer)
-          this.timer = setInterval(this.onTimer, this.interval)
-        }
 
-        this.$emit('receive', res.totalCount > 0)
-      }).catch(() => {
-        this.errorCount++
-        clearInterval(this.timer)
-        this.timer = setInterval(this.onTimer, this.interval * this.errorCount)
-      })
-    }
   }
 }
 </script>

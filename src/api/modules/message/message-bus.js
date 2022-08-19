@@ -9,7 +9,7 @@ export default {
    */
   query: () => {
     return request({
-      url: '/message/todo/query',
+      url: '/message/bus/query',
       hiddenError: true,
       method: 'get'
     })

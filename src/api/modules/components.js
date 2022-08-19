@@ -15,6 +15,21 @@ const components = {
         address: address
       }
     })
+  },
+  /**
+   * 富文本编辑器上传图片
+   * @param file
+   * @returns {*}
+   */
+  editorUploadImage: (file) => {
+    return request({
+      url: '/component/editor/upload/image',
+      method: 'post',
+      dataType: 'file',
+      params: {
+        file: file
+      }
+    })
   }
 }
 export default components

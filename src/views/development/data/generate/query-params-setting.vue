@@ -68,7 +68,7 @@ export default {
       tableColumn: [
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).name } },
         { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
-        { field: 'queryType', title: '查询类型', width: 120, slots: { default: 'queryType_default' }},
+        { field: 'queryType', title: '查询类型', width: 140, slots: { default: 'queryType_default' }},
         { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
       ],
       tableData: [],
