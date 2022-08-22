@@ -13,7 +13,7 @@
         <rich-text-editor ref="editor" style="margin-bottom: 5px;" />
         <div class="form-modal-footer">
           <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="e => submit(false)">保存</a-button>
+            <a-button v-if="!formData.published" type="primary" :loading="loading" html-type="submit" @click="e => submit(false)">保存</a-button>
             <a-button type="primary" :loading="loading" html-type="submit" @click="e => submit(true)">保存并发布</a-button>
             <a-button :loading="loading" @click="closeDialog">取消</a-button>
           </a-space>
@@ -76,7 +76,7 @@ export default {
         title: '',
         content: '',
         available: '',
-        published: ''
+        published: false
       }
     },
     // 提交表单事件
@@ -106,7 +106,7 @@ export default {
     },
     onPublish(published) {
       this.loading = true
-      this.$api.system.notice.modify(Object.assign({ published: published }, this.formData)).then(() => {
+      this.$api.system.notice.modify(Object.assign(this.formData, { published: published })).then(() => {
         this.$msg.success(published ? '发布成功，发布状态更新稍有延迟，请耐心等待！' : '修改成功！')
         this.$emit('confirm')
         this.visible = false

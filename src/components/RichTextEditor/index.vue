@@ -104,7 +104,9 @@ export default {
     }
   },
   mounted() {
-    tinymce.init({})
+    this.$nextTick(() => {
+      tinymce.init({})
+    })
   },
   methods: {
     getHtml() {
