@@ -171,6 +171,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/takestock/plan',
+        region: 'sc-api',
         method: 'get',
         params: params
       })

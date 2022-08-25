@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/system/oplog/query',
+      region: 'common-api',
       method: 'get',
       params: params
     })
@@ -21,6 +22,7 @@ export default {
   get: (id) => {
     return request({
       url: '/system/oplog',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id

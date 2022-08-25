@@ -10,6 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/sw/filebox/query',
+      region: 'common-api',
       method: 'get',
       params: params
     })
@@ -23,6 +24,7 @@ export default {
   get: (id) => {
     return request({
       url: '/sw/filebox',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id
@@ -38,6 +40,7 @@ export default {
   create: (params) => {
     return request({
       url: '/sw/filebox',
+      region: 'common-api',
       method: 'post',
       params: params
     })
@@ -51,6 +54,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/sw/filebox',
+      region: 'common-api',
       method: 'put',
       params: params
     })
@@ -64,6 +68,7 @@ export default {
   send: (params) => {
     return request({
       url: '/sw/filebox/send',
+      region: 'common-api',
       method: 'post',
       params: params
     })
@@ -77,6 +82,7 @@ export default {
   batchSend: (params) => {
     return request({
       url: '/sw/filebox/send/batch',
+      region: 'common-api',
       method: 'post',
       dataType: 'json',
       params: params
@@ -91,6 +97,7 @@ export default {
   upload: (params) => {
     return request({
       url: '/sw/filebox/upload',
+      region: 'common-api',
       method: 'post',
       dataType: 'file',
       params: params

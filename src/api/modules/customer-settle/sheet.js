@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/customer/settle/sheet/query',
+      region: 'settle-api',
       method: 'get',
       params: params
     })
@@ -20,6 +21,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/customer/settle/sheet/export',
+      region: 'settle-api',
       method: 'post',
       responseType: 'blob',
       data: params
@@ -33,6 +35,7 @@ export default {
   get: (id) => {
     return request({
       url: '/customer/settle/sheet',
+      region: 'settle-api',
       method: 'get',
       params: {
         id: id
@@ -47,6 +50,7 @@ export default {
   createOrder: (params) => {
     return request({
       url: '/customer/settle/sheet',
+      region: 'settle-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -60,6 +64,7 @@ export default {
   directApprovePassOrder: (params) => {
     return request({
       url: '/customer/settle/sheet/approve/pass/direct',
+      region: 'settle-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -73,6 +78,7 @@ export default {
   approvePassOrder: (params) => {
     return request({
       url: '/customer/settle/sheet/approve/pass',
+      region: 'settle-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -86,6 +92,7 @@ export default {
   approveRefuseOrder: (params) => {
     return request({
       url: '/customer/settle/sheet/approve/refuse',
+      region: 'settle-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -99,6 +106,7 @@ export default {
   updateOrder: (params) => {
     return request({
       url: '/customer/settle/sheet',
+      region: 'settle-api',
       method: 'put',
       dataType: 'json',
       data: params
@@ -112,6 +120,7 @@ export default {
   deleteOrder: (params) => {
     return request({
       url: '/customer/settle/sheet',
+      region: 'settle-api',
       method: 'delete',
       params: params
     })
@@ -120,6 +129,7 @@ export default {
   batchDeleteOrder: (params) => {
     return request({
       url: '/customer/settle/sheet/batch',
+      region: 'settle-api',
       method: 'delete',
       dataType: 'json',
       data: params
@@ -129,6 +139,7 @@ export default {
   batchApprovePassOrder: (params) => {
     return request({
       url: '/customer/settle/sheet/approve/pass/batch',
+      region: 'settle-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -138,6 +149,7 @@ export default {
   batchApproveRefuseOrder: (params) => {
     return request({
       url: '/customer/settle/sheet/approve/refuse/batch',
+      region: 'settle-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -147,6 +159,7 @@ export default {
   getUnSettleItems: (params) => {
     return request({
       url: '/customer/settle/sheet/unsettle-items',
+      region: 'settle-api',
       method: 'get',
       params: params
     })

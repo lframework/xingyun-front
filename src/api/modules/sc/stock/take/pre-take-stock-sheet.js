@@ -10,6 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/stock/take/pre/query',
+      region: 'sc-api',
       method: 'get',
       params: params
     })
@@ -23,6 +24,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/stock/take/pre/export',
+      region: 'sc-api',
       method: 'post',
       responseType: 'blob',
       params: params
@@ -37,6 +39,7 @@ export default {
   get: (id) => {
     return request({
       url: '/stock/take/pre',
+      region: 'sc-api',
       method: 'get',
       params: {
         id: id
@@ -52,6 +55,7 @@ export default {
   create: (params) => {
     return request({
       url: '/stock/take/pre',
+      region: 'sc-api',
       method: 'post',
       dataType: 'json',
       params: params
@@ -66,6 +70,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/stock/take/pre',
+      region: 'sc-api',
       method: 'put',
       dataType: 'json',
       params: params
@@ -78,7 +83,8 @@ export default {
    */
   searchProduct: (condition) => {
     return request({
-      url: '/stock/take/pre/product/search',
+      url: '/basedata/product/stock/take/pre/product/search',
+      region: 'basedata-api',
       method: 'get',
       params: {
         condition: condition
@@ -92,7 +98,8 @@ export default {
    */
   queryProduct: (params) => {
     return request({
-      url: '/stock/take/pre/product/list',
+      url: '/basedata/product/stock/take/pre/product/list',
+      region: 'basedata-api',
       method: 'get',
       params: params
     })
@@ -105,6 +112,7 @@ export default {
   deleteById: (id) => {
     return request({
       url: '/stock/take/pre/',
+      region: 'sc-api',
       method: 'delete',
       params: {
         id: id
@@ -119,6 +127,7 @@ export default {
   batchDelete: (params) => {
     return request({
       url: '/stock/take/pre/batch',
+      region: 'sc-api',
       method: 'delete',
       dataType: 'json',
       params: params
@@ -133,6 +142,7 @@ export default {
   getProducts: (params) => {
     return request({
       url: '/stock/take/pre/products',
+      region: 'sc-api',
       method: 'get',
       params: params
     })

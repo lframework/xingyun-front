@@ -8,6 +8,7 @@ export default {
   trees: () => {
     return request({
       url: '/system/dept/trees',
+      region: 'common-api',
       method: 'get'
     })
   },
@@ -19,6 +20,7 @@ export default {
   get: (id) => {
     return request({
       url: '/system/dept',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id
@@ -33,6 +35,7 @@ export default {
   create: (params) => {
     return request({
       url: '/system/dept',
+      region: 'common-api',
       method: 'post',
       params: params
     })
@@ -45,6 +48,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/system/dept',
+      region: 'common-api',
       method: 'put',
       params: params
     })
@@ -57,6 +61,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/system/dept/enable/batch',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -70,6 +75,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/system/dept/unable/batch',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: ids

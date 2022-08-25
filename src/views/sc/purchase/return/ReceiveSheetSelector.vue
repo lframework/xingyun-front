@@ -141,6 +141,7 @@ export default {
       }
       return request({
         url: '/purchase/receive/sheet/query/return',
+        region: 'sc-api',
         method: 'get',
         params: reqParams
       })

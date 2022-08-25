@@ -156,6 +156,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/takestock/pre',
+        region: 'sc-api',
         method: 'get',
         params: params
       })

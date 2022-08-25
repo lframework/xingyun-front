@@ -4,6 +4,7 @@ const simpledb = {
   getTables: (data) => {
     return request({
       url: '/gen/simpledb/tables',
+      region: 'common-api',
       method: 'get',
       params: data
     })
@@ -11,6 +12,7 @@ const simpledb = {
   create: (data) => {
     return request({
       url: '/gen/simpledb/create',
+      region: 'common-api',
       method: 'post',
       data: data
     })

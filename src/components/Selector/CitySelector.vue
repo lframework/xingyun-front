@@ -72,6 +72,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/city',
+        region: 'common-api',
         method: 'get',
         params: params
       })

@@ -182,6 +182,7 @@ export default {
       }
       return request({
         url: '/selector/purchaseorder',
+        region: 'sc-api',
         method: 'get',
         params: reqParams
       })

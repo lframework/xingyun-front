@@ -104,6 +104,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/category',
+        region: 'basedata-api',
         method: 'get',
         params: params
       })

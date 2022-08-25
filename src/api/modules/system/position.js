@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/system/position/query',
+      region: 'common-api',
       method: 'get',
       params: params
     })
@@ -21,6 +22,7 @@ export default {
   get: (id) => {
     return request({
       url: '/system/position',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id
@@ -35,6 +37,7 @@ export default {
   create: (params) => {
     return request({
       url: '/system/position',
+      region: 'common-api',
       method: 'post',
       params: params
     })
@@ -47,6 +50,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/system/position',
+      region: 'common-api',
       method: 'put',
       params: params
     })
@@ -59,6 +63,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/system/position/enable/batch',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -72,6 +77,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/system/position/unable/batch',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: ids
