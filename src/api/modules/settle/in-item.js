@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/settle/item/in/query',
+      region: 'settle',
       method: 'get',
       params: params
     })
@@ -20,6 +21,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/settle/item/in/export',
+      region: 'settle',
       method: 'post',
       responseType: 'blob',
       data: params
@@ -33,6 +35,7 @@ export default {
   get: (id) => {
     return request({
       url: '/settle/item/in',
+      region: 'settle',
       method: 'get',
       params: {
         id: id
@@ -47,6 +50,7 @@ export default {
   create: (params) => {
     return request({
       url: '/settle/item/in',
+      region: 'settle',
       method: 'post',
       params: params
     })
@@ -59,6 +63,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/settle/item/in',
+      region: 'settle',
       method: 'put',
       params: params
     })
@@ -71,6 +76,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/settle/item/in/enable/batch',
+      region: 'settle',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -84,6 +90,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/settle/item/in/unable/batch',
+      region: 'settle',
       method: 'patch',
       dataType: 'json',
       data: ids

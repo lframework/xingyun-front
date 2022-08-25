@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/basedata/product/query',
+      region: 'basedata',
       method: 'get',
       params: params
     })
@@ -21,6 +22,7 @@ export default {
   get: (id) => {
     return request({
       url: '/basedata/product',
+      region: 'basedata',
       method: 'get',
       params: {
         id: id
@@ -35,6 +37,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/basedata/product',
+      region: 'basedata',
       method: 'put',
       params: params
     })

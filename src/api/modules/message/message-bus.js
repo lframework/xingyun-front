@@ -10,6 +10,7 @@ export default {
   query: () => {
     return request({
       url: '/message/bus/query',
+      region: 'common',
       hiddenError: true,
       method: 'get'
     })

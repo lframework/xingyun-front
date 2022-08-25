@@ -8,6 +8,7 @@ export default {
   get: () => {
     return request({
       url: '/system/config',
+      region: 'system',
       method: 'get'
     })
   },
@@ -19,6 +20,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/system/config',
+      region: 'system',
       method: 'put',
       params: params
     })

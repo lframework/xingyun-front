@@ -119,6 +119,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/role',
+        region: 'common',
         method: 'get',
         params: params
       })

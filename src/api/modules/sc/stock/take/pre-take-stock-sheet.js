@@ -10,6 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/stock/take/pre/query',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -23,6 +24,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/stock/take/pre/export',
+      region: 'sc',
       method: 'post',
       responseType: 'blob',
       params: params
@@ -37,6 +39,7 @@ export default {
   get: (id) => {
     return request({
       url: '/stock/take/pre',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -52,6 +55,7 @@ export default {
   create: (params) => {
     return request({
       url: '/stock/take/pre',
+      region: 'sc',
       method: 'post',
       dataType: 'json',
       params: params
@@ -66,6 +70,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/stock/take/pre',
+      region: 'sc',
       method: 'put',
       dataType: 'json',
       params: params
@@ -79,6 +84,7 @@ export default {
   searchProduct: (condition) => {
     return request({
       url: '/stock/take/pre/product/search',
+      region: 'sc',
       method: 'get',
       params: {
         condition: condition
@@ -93,6 +99,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/stock/take/pre/product/list',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -105,6 +112,7 @@ export default {
   deleteById: (id) => {
     return request({
       url: '/stock/take/pre/',
+      region: 'sc',
       method: 'delete',
       params: {
         id: id
@@ -119,6 +127,7 @@ export default {
   batchDelete: (params) => {
     return request({
       url: '/stock/take/pre/batch',
+      region: 'sc',
       method: 'delete',
       dataType: 'json',
       params: params
@@ -133,6 +142,7 @@ export default {
   getProducts: (params) => {
     return request({
       url: '/stock/take/pre/products',
+      region: 'sc',
       method: 'get',
       params: params
     })

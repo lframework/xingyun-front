@@ -10,6 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/stock/take/plan/query',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -23,6 +24,7 @@ export default {
   get: (id) => {
     return request({
       url: '/stock/take/plan',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -38,6 +40,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/stock/take/plan/export',
+      region: 'sc',
       method: 'post',
       responseType: 'blob',
       params: params
@@ -52,6 +55,7 @@ export default {
   getDetail: (id) => {
     return request({
       url: '/stock/take/plan/detail',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -67,6 +71,7 @@ export default {
   create: (params) => {
     return request({
       url: '/stock/take/plan',
+      region: 'sc',
       method: 'post',
       dataType: 'json',
       params: params
@@ -81,6 +86,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/stock/take/plan',
+      region: 'sc',
       method: 'put',
       params: params
     })
@@ -94,6 +100,7 @@ export default {
   getProducts: (id) => {
     return request({
       url: '/stock/take/plan/products',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -109,6 +116,7 @@ export default {
   createDiff: (id) => {
     return request({
       url: '/stock/take/plan/diff',
+      region: 'sc',
       method: 'patch',
       params: {
         id: id
@@ -124,6 +132,7 @@ export default {
   handleDiff: (params) => {
     return request({
       url: '/stock/take/plan/handle',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       params: params
@@ -138,6 +147,7 @@ export default {
   cancel: (id) => {
     return request({
       url: '/stock/take/plan/cancel',
+      region: 'sc',
       method: 'patch',
       params: {
         id: id
@@ -153,6 +163,7 @@ export default {
   deleteById: (id) => {
     return request({
       url: '/stock/take/plan',
+      region: 'sc',
       method: 'delete',
       params: {
         id: id

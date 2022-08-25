@@ -9,6 +9,7 @@ export default {
   searchProduct: (scId, condition) => {
     return request({
       url: '/retail/order/product/search',
+      region: 'sc',
       method: 'get',
       params: {
         scId: scId,
@@ -24,6 +25,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/retail/order/product/list',
+      region: 'sc',
       method: 'get',
       params: params
     })

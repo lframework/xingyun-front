@@ -9,6 +9,7 @@ const data = {
   query: (data) => {
     return request({
       url: '/qrtz/query',
+      region: 'common',
       method: 'get',
       params: data
     })
@@ -21,6 +22,7 @@ const data = {
   create: (data) => {
     return request({
       url: '/qrtz',
+      region: 'common',
       method: 'post',
       dataType: 'json',
       data
@@ -34,6 +36,7 @@ const data = {
   get: (params) => {
     return request({
       url: '/qrtz',
+      region: 'common',
       method: 'get',
       params: params
     })
@@ -46,6 +49,7 @@ const data = {
   modify: (data) => {
     return request({
       url: '/qrtz',
+      region: 'common',
       method: 'put',
       dataType: 'json',
       data
@@ -59,6 +63,7 @@ const data = {
   remove: (params) => {
     return request({
       url: '/qrtz',
+      region: 'common',
       method: 'delete',
       params: params
     })
@@ -71,6 +76,7 @@ const data = {
   resume: (params) => {
     return request({
       url: '/qrtz/resume',
+      region: 'common',
       method: 'put',
       params: params
     })
@@ -83,6 +89,7 @@ const data = {
   pause: (params) => {
     return request({
       url: '/qrtz/pause',
+      region: 'common',
       method: 'put',
       params: params
     })
@@ -95,6 +102,7 @@ const data = {
   trigger: (params) => {
     return request({
       url: '/qrtz/trigger',
+      region: 'common',
       method: 'put',
       params: params
     })

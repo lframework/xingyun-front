@@ -112,6 +112,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/user',
+        region: 'common',
         method: 'get',
         params: params
       })

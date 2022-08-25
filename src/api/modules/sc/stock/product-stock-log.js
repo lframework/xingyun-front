@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/stock/product/log/query',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -21,6 +22,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/stock/product/log/export',
+      region: 'sc',
       method: 'get',
       responseType: 'blob',
       params: params

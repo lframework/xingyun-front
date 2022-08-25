@@ -10,6 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/stock/adjust/cost/query',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -23,6 +24,7 @@ export default {
   get: (id) => {
     return request({
       url: '/stock/adjust/cost/detail',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -38,6 +40,7 @@ export default {
   create: (params) => {
     return request({
       url: '/stock/adjust/cost',
+      region: 'sc',
       method: 'post',
       dataType: 'json',
       params: params
@@ -52,6 +55,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/stock/adjust/cost',
+      region: 'sc',
       method: 'put',
       dataType: 'json',
       params: params
@@ -66,6 +70,7 @@ export default {
   deleteById: (id) => {
     return request({
       url: '/stock/adjust/cost',
+      region: 'sc',
       method: 'delete',
       params: {
         id: id
@@ -81,6 +86,7 @@ export default {
   searchProduct: (params) => {
     return request({
       url: '/stock/adjust/cost/product/search',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -93,6 +99,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/stock/adjust/cost/product/list',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -104,6 +111,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/stock/adjust/cost/export',
+      region: 'sc',
       method: 'post',
       responseType: 'blob',
       data: params
@@ -117,6 +125,7 @@ export default {
   directApprovePass: (params) => {
     return request({
       url: '/stock/adjust/cost/approve/pass/direct',
+      region: 'sc',
       method: 'post',
       dataType: 'json',
       data: params
@@ -130,6 +139,7 @@ export default {
   approvePass: (params) => {
     return request({
       url: '/stock/adjust/cost/approve/pass',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -143,6 +153,7 @@ export default {
   approveRefuse: (params) => {
     return request({
       url: '/stock/adjust/cost/approve/refuse',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -152,6 +163,7 @@ export default {
   batchDelete: (params) => {
     return request({
       url: '/stock/adjust/cost/batch',
+      region: 'sc',
       method: 'delete',
       dataType: 'json',
       data: params
@@ -165,6 +177,7 @@ export default {
   batchApprovePass: (params) => {
     return request({
       url: '/stock/adjust/cost/approve/pass/batch',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -178,6 +191,7 @@ export default {
   batchApproveRefuse: (params) => {
     return request({
       url: '/stock/adjust/cost/approve/refuse/batch',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       data: params

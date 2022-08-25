@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/retail/out/sheet/query',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -20,6 +21,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/retail/out/sheet/export',
+      region: 'sc',
       method: 'post',
       responseType: 'blob',
       data: params
@@ -33,6 +35,7 @@ export default {
   get: (id) => {
     return request({
       url: '/retail/out/sheet',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -47,6 +50,7 @@ export default {
   print: (id) => {
     return request({
       url: '/retail/out/sheet/print',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -61,6 +65,7 @@ export default {
   getWithReturn: (id) => {
     return request({
       url: '/retail/out/sheet/return',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -74,6 +79,7 @@ export default {
   getPaymentDate: (memberId) => {
     return request({
       url: '/retail/out/sheet/paymentdate',
+      region: 'sc',
       method: 'get',
       params: {
         memberId: memberId
@@ -88,6 +94,7 @@ export default {
   createOrder: (params) => {
     return request({
       url: '/retail/out/sheet',
+      region: 'sc',
       method: 'post',
       dataType: 'json',
       data: params
@@ -101,6 +108,7 @@ export default {
   directApprovePassOrder: (params) => {
     return request({
       url: '/retail/out/sheet/approve/pass/direct',
+      region: 'sc',
       method: 'post',
       dataType: 'json',
       data: params
@@ -114,6 +122,7 @@ export default {
   approvePassOrder: (params) => {
     return request({
       url: '/retail/out/sheet/approve/pass',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -127,6 +136,7 @@ export default {
   approveRefuseOrder: (params) => {
     return request({
       url: '/retail/out/sheet/approve/refuse',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -140,6 +150,7 @@ export default {
   updateOrder: (params) => {
     return request({
       url: '/retail/out/sheet',
+      region: 'sc',
       method: 'put',
       dataType: 'json',
       data: params
@@ -153,6 +164,7 @@ export default {
   deleteOrder: (params) => {
     return request({
       url: '/retail/out/sheet',
+      region: 'sc',
       method: 'delete',
       params: params
     })
@@ -161,6 +173,7 @@ export default {
   batchDeleteOrder: (params) => {
     return request({
       url: '/retail/out/sheet/batch',
+      region: 'sc',
       method: 'delete',
       dataType: 'json',
       data: params
@@ -170,6 +183,7 @@ export default {
   batchApprovePassOrder: (params) => {
     return request({
       url: '/retail/out/sheet/approve/pass/batch',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -179,6 +193,7 @@ export default {
   batchApproveRefuseOrder: (params) => {
     return request({
       url: '/retail/out/sheet/approve/refuse/batch',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       data: params

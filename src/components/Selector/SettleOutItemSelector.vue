@@ -108,6 +108,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/settle/item/out',
+        region: 'settle',
         method: 'get',
         params: params
       })

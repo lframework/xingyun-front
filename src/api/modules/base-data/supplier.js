@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/basedata/supplier/query',
+      region: 'basedata',
       method: 'get',
       params: params
     })
@@ -21,6 +22,7 @@ export default {
   get: (id) => {
     return request({
       url: '/basedata/supplier',
+      region: 'basedata',
       method: 'get',
       params: {
         id: id
@@ -35,6 +37,7 @@ export default {
   create: (params) => {
     return request({
       url: '/basedata/supplier',
+      region: 'basedata',
       method: 'post',
       params: params
     })
@@ -47,6 +50,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/basedata/supplier',
+      region: 'basedata',
       method: 'put',
       params: params
     })
@@ -59,6 +63,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/basedata/supplier/enable/batch',
+      region: 'basedata',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -72,6 +77,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/basedata/supplier/unable/batch',
+      region: 'basedata',
       method: 'patch',
       dataType: 'json',
       data: ids

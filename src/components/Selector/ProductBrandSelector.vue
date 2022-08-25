@@ -110,6 +110,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/brand',
+        region: 'basedata',
         method: 'get',
         params: params
       })

@@ -9,6 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/system/role/query',
+      region: 'system',
       method: 'get',
       params: params
     })
@@ -21,6 +22,7 @@ export default {
   get: (id) => {
     return request({
       url: '/system/role',
+      region: 'system',
       method: 'get',
       params: {
         id: id
@@ -35,6 +37,7 @@ export default {
   create: (params) => {
     return request({
       url: '/system/role',
+      region: 'system',
       method: 'post',
       params: params
     })
@@ -47,6 +50,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/system/role',
+      region: 'system',
       method: 'put',
       params: params
     })
@@ -59,6 +63,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/system/role/enable/batch',
+      region: 'system',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -72,6 +77,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/system/role/unable/batch',
+      region: 'system',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -85,6 +91,7 @@ export default {
   menus: (params) => {
     return request({
       url: '/system/role/menu/menus',
+      region: 'system',
       method: 'get',
       params: params
     })
@@ -97,6 +104,7 @@ export default {
   setting: (params) => {
     return request({
       url: '/system/role/menu/setting',
+      region: 'system',
       method: 'post',
       dataType: 'json',
       data: params

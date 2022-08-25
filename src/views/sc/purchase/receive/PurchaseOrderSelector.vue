@@ -137,6 +137,7 @@ export default {
       }
       return request({
         url: '/purchase/order/query/receive',
+        region: 'sc',
         method: 'get',
         params: reqParams
       })

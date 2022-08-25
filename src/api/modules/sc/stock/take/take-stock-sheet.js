@@ -10,6 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/stock/take/sheet/query',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -23,6 +24,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/stock/take/sheet/export',
+      region: 'sc',
       method: 'post',
       responseType: 'blob',
       params: params
@@ -37,6 +39,7 @@ export default {
   getDetail: (id) => {
     return request({
       url: '/stock/take/sheet/detail',
+      region: 'sc',
       method: 'get',
       params: {
         id: id
@@ -51,6 +54,7 @@ export default {
   searchProduct: (planId, condition) => {
     return request({
       url: '/stock/take/sheet/product/search',
+      region: 'sc',
       method: 'get',
       params: {
         planId: planId,
@@ -66,6 +70,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/stock/take/sheet/product/list',
+      region: 'sc',
       method: 'get',
       params: params
     })
@@ -79,6 +84,7 @@ export default {
   create: (params) => {
     return request({
       url: '/stock/take/sheet',
+      region: 'sc',
       method: 'post',
       dataType: 'json',
       params: params
@@ -93,6 +99,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/stock/take/sheet',
+      region: 'sc',
       method: 'put',
       dataType: 'json',
       params: params
@@ -106,6 +113,7 @@ export default {
   approvePass: (params) => {
     return request({
       url: '/stock/take/sheet/approve/pass',
+      region: 'sc',
       method: 'patch',
       params: params
     })
@@ -118,6 +126,7 @@ export default {
   directApprovePass: (params) => {
     return request({
       url: '/stock/take/sheet/approve/direct',
+      region: 'sc',
       method: 'post',
       dataType: 'json',
       params: params
@@ -131,6 +140,7 @@ export default {
   approveRefuse: (params) => {
     return request({
       url: '/stock/take/sheet/approve/refuse',
+      region: 'sc',
       method: 'patch',
       params: params
     })
@@ -143,6 +153,7 @@ export default {
   cancelApprove: (params) => {
     return request({
       url: '/stock/take/sheet/approve/cancel',
+      region: 'sc',
       method: 'patch',
       params: params
     })
@@ -156,6 +167,7 @@ export default {
   batchApprovePass: (params) => {
     return request({
       url: '/stock/take/sheet/approve/pass/batch',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       params: params
@@ -170,6 +182,7 @@ export default {
   batchApproveRefuse: (params) => {
     return request({
       url: '/stock/take/sheet/approve/refuse/batch',
+      region: 'sc',
       method: 'patch',
       dataType: 'json',
       params: params
@@ -184,6 +197,7 @@ export default {
   deleteById: (id) => {
     return request({
       url: '/stock/take/sheet',
+      region: 'sc',
       method: 'delete',
       params: {
         id: id
@@ -199,6 +213,7 @@ export default {
   batchDelete: (params) => {
     return request({
       url: '/stock/take/sheet/batch',
+      region: 'sc',
       method: 'delete',
       dataType: 'json',
       params: params

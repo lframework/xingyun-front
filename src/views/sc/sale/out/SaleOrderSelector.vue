@@ -140,6 +140,7 @@ export default {
       }
       return request({
         url: '/sale/order/query/out',
+        region: 'sc',
         method: 'get',
         params: reqParams
       })
