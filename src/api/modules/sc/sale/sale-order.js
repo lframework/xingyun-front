@@ -79,8 +79,8 @@ export default {
    */
   searchProduct: (scId, condition) => {
     return request({
-      url: '/sale/order/product/search',
-      region: 'sc',
+      url: '/basedata/product/sale/product/search',
+      region: 'basedata',
       method: 'get',
       params: {
         scId: scId,
@@ -95,7 +95,7 @@ export default {
    */
   queryProduct: (params) => {
     return request({
-      url: '/sale/order/product/list',
+      url: '/basedata/product/sale/product/list',
       region: 'sc',
       method: 'get',
       params: params

@@ -54,7 +54,7 @@ export default {
   searchProduct: (planId, condition) => {
     return request({
       url: '/stock/take/sheet/product/search',
-      region: 'sc',
+      region: 'basedata',
       method: 'get',
       params: {
         planId: planId,

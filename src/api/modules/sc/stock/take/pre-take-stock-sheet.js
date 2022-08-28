@@ -84,7 +84,7 @@ export default {
   searchProduct: (condition) => {
     return request({
       url: '/stock/take/pre/product/search',
-      region: 'sc',
+      region: 'basedata',
       method: 'get',
       params: {
         condition: condition
