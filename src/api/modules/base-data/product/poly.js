@@ -10,7 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/basedata/product/poly/query',
-      region: 'basedata',
+      region: 'basedata-api',
       method: 'get',
       params: params
     })
@@ -24,7 +24,7 @@ export default {
   get: (id) => {
     return request({
       url: '/basedata/product/poly',
-      region: 'basedata',
+      region: 'basedata-api',
       method: 'get',
       params: {
         id: id
@@ -40,7 +40,7 @@ export default {
   create: (params) => {
     return request({
       url: '/basedata/product/poly',
-      region: 'basedata',
+      region: 'basedata-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -55,7 +55,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/basedata/product/poly',
-      region: 'basedata',
+      region: 'basedata-api',
       method: 'put',
       dataType: 'json',
       params: params

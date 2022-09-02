@@ -10,7 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/stock/take/sheet/query',
-      region: 'sc',
+      region: 'sc-api',
       method: 'get',
       params: params
     })
@@ -24,7 +24,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/stock/take/sheet/export',
-      region: 'sc',
+      region: 'sc-api',
       method: 'post',
       responseType: 'blob',
       params: params
@@ -39,7 +39,7 @@ export default {
   getDetail: (id) => {
     return request({
       url: '/stock/take/sheet/detail',
-      region: 'sc',
+      region: 'sc-api',
       method: 'get',
       params: {
         id: id
@@ -54,7 +54,7 @@ export default {
   searchProduct: (planId, condition) => {
     return request({
       url: '/basedata/product/stock/take/sheet/product/search',
-      region: 'basedata',
+      region: 'basedata-api',
       method: 'get',
       params: {
         planId: planId,
@@ -70,7 +70,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/basedata/product/stock/take/sheet/product/list',
-      region: 'basedata',
+      region: 'basedata-api',
       method: 'get',
       params: params
     })
@@ -84,7 +84,7 @@ export default {
   create: (params) => {
     return request({
       url: '/stock/take/sheet',
-      region: 'sc',
+      region: 'sc-api',
       method: 'post',
       dataType: 'json',
       params: params
@@ -99,7 +99,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/stock/take/sheet',
-      region: 'sc',
+      region: 'sc-api',
       method: 'put',
       dataType: 'json',
       params: params
@@ -113,7 +113,7 @@ export default {
   approvePass: (params) => {
     return request({
       url: '/stock/take/sheet/approve/pass',
-      region: 'sc',
+      region: 'sc-api',
       method: 'patch',
       params: params
     })
@@ -126,7 +126,7 @@ export default {
   directApprovePass: (params) => {
     return request({
       url: '/stock/take/sheet/approve/direct',
-      region: 'sc',
+      region: 'sc-api',
       method: 'post',
       dataType: 'json',
       params: params
@@ -140,7 +140,7 @@ export default {
   approveRefuse: (params) => {
     return request({
       url: '/stock/take/sheet/approve/refuse',
-      region: 'sc',
+      region: 'sc-api',
       method: 'patch',
       params: params
     })
@@ -153,7 +153,7 @@ export default {
   cancelApprove: (params) => {
     return request({
       url: '/stock/take/sheet/approve/cancel',
-      region: 'sc',
+      region: 'sc-api',
       method: 'patch',
       params: params
     })
@@ -167,7 +167,7 @@ export default {
   batchApprovePass: (params) => {
     return request({
       url: '/stock/take/sheet/approve/pass/batch',
-      region: 'sc',
+      region: 'sc-api',
       method: 'patch',
       dataType: 'json',
       params: params
@@ -182,7 +182,7 @@ export default {
   batchApproveRefuse: (params) => {
     return request({
       url: '/stock/take/sheet/approve/refuse/batch',
-      region: 'sc',
+      region: 'sc-api',
       method: 'patch',
       dataType: 'json',
       params: params
@@ -197,7 +197,7 @@ export default {
   deleteById: (id) => {
     return request({
       url: '/stock/take/sheet',
-      region: 'sc',
+      region: 'sc-api',
       method: 'delete',
       params: {
         id: id
@@ -213,7 +213,7 @@ export default {
   batchDelete: (params) => {
     return request({
       url: '/stock/take/sheet/batch',
-      region: 'sc',
+      region: 'sc-api',
       method: 'delete',
       dataType: 'json',
       params: params

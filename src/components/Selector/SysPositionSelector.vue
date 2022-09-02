@@ -119,7 +119,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/position',
-        region: 'common',
+        region: 'common-api',
         method: 'get',
         params: params
       })

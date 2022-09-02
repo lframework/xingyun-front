@@ -10,7 +10,7 @@ const components = {
   getMapLocation: (address) => {
     return request({
       url: '/component/map/location',
-      region: 'common',
+      region: 'common-api',
       method: 'get',
       params: {
         address: address
@@ -25,7 +25,7 @@ const components = {
   editorUploadImage: (file) => {
     return request({
       url: '/component/editor/upload/image',
-      region: 'common',
+      region: 'common-api',
       method: 'post',
       dataType: 'file',
       params: {

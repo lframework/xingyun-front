@@ -140,7 +140,7 @@ export default {
       }
       return request({
         url: '/sale/order/query/out',
-        region: 'sc',
+        region: 'sc-api',
         method: 'get',
         params: reqParams
       })

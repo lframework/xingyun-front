@@ -9,7 +9,7 @@ export default {
   searchProduct: (scId, condition) => {
     return request({
       url: '/basedata/product/retail/product/search',
-      region: 'basedata',
+      region: 'basedata-api',
       method: 'get',
       params: {
         scId: scId,
@@ -25,7 +25,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/basedata/product/retail/product/list',
-      region: 'sc',
+      region: 'sc-api',
       method: 'get',
       params: params
     })

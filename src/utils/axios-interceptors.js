@@ -129,9 +129,8 @@ const reqConvert = {
    */
   onFulfilled(config) {
     if (utils.isEqualWithStr(process.env.VUE_APP_CLOUD_ENABLE, true)) {
-      config.headers['X-Request-Region'] = config.region
+      config.url = '/' + config.region + config.url
     }
-    console.log(config)
     if (config.method !== METHOD.GET) {
       if (utils.isEmpty(config.data) && !utils.isEmpty(config.params)) {
         config.data = config.params

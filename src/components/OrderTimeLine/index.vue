@@ -62,7 +62,7 @@ export default {
       return request({
         url: '/component/timeline/order',
         method: 'get',
-        region: 'common',
+        region: 'common-api',
         params: {
           orderId: this.id
         }

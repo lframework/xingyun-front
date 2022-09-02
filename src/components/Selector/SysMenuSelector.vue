@@ -77,7 +77,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/menu',
-        region: 'common',
+        region: 'common-api',
         method: 'get',
         params: params
       })

@@ -20,7 +20,7 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: process.env.VUE_APP_CLOUD_ENABLE === 'true' ? 'http://localhost:15000' : 'http://localhost:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/'

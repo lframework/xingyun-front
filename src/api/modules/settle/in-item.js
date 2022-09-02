@@ -9,7 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/settle/item/in/query',
-      region: 'settle',
+      region: 'settle-api',
       method: 'get',
       params: params
     })
@@ -21,7 +21,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/settle/item/in/export',
-      region: 'settle',
+      region: 'settle-api',
       method: 'post',
       responseType: 'blob',
       data: params
@@ -35,7 +35,7 @@ export default {
   get: (id) => {
     return request({
       url: '/settle/item/in',
-      region: 'settle',
+      region: 'settle-api',
       method: 'get',
       params: {
         id: id
@@ -50,7 +50,7 @@ export default {
   create: (params) => {
     return request({
       url: '/settle/item/in',
-      region: 'settle',
+      region: 'settle-api',
       method: 'post',
       params: params
     })
@@ -63,7 +63,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/settle/item/in',
-      region: 'settle',
+      region: 'settle-api',
       method: 'put',
       params: params
     })
@@ -76,7 +76,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/settle/item/in/enable/batch',
-      region: 'settle',
+      region: 'settle-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -90,7 +90,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/settle/item/in/unable/batch',
-      region: 'settle',
+      region: 'settle-api',
       method: 'patch',
       dataType: 'json',
       data: ids

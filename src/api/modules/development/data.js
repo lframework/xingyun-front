@@ -4,7 +4,7 @@ const data = {
   query: (data) => {
     return request({
       url: '/gen/dataobj/query',
-      region: 'common',
+      region: 'common-api',
       method: 'get',
       params: data
     })
@@ -12,7 +12,7 @@ const data = {
   add: (data) => {
     return request({
       url: '/gen/dataobj',
-      region: 'common',
+      region: 'common-api',
       method: 'post',
       data
     })
@@ -20,7 +20,7 @@ const data = {
   get: (id) => {
     return request({
       url: '/gen/dataobj',
-      region: 'common',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id
@@ -30,7 +30,7 @@ const data = {
   modify: (data) => {
     return request({
       url: '/gen/dataobj',
-      region: 'common',
+      region: 'common-api',
       method: 'put',
       data
     })
@@ -38,7 +38,7 @@ const data = {
   deleteById: (id) => {
     return request({
       url: '/gen/dataobj',
-      region: 'common',
+      region: 'common-api',
       method: 'delete',
       params: {
         id: id
@@ -48,7 +48,7 @@ const data = {
   batchDelete: (ids) => {
     return request({
       url: '/gen/dataobj/batch',
-      region: 'common',
+      region: 'common-api',
       method: 'delete',
       dataType: 'json',
       data: ids
@@ -57,7 +57,7 @@ const data = {
   batchEnable: (ids) => {
     return request({
       url: '/gen/dataobj/enable/batch',
-      region: 'common',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -66,7 +66,7 @@ const data = {
   batchUnable: (ids) => {
     return request({
       url: '/gen/dataobj/unable/batch',
-      region: 'common',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -75,7 +75,7 @@ const data = {
   getGenerate: (id) => {
     return request({
       url: '/gen/dataobj/generate',
-      region: 'common',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id
@@ -85,7 +85,7 @@ const data = {
   updateGenerate: (params) => {
     return request({
       url: '/gen/dataobj/generate',
-      region: 'common',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -94,7 +94,7 @@ const data = {
   preView: (id) => {
     return request({
       url: '/gen/dataobj/preview',
-      region: 'common',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id
@@ -104,7 +104,7 @@ const data = {
   download: (id) => {
     return request({
       url: '/gen/dataobj/download',
-      region: 'common',
+      region: 'common-api',
       method: 'get',
       responseType: 'blob',
       params: {
