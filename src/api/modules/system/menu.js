@@ -8,7 +8,7 @@ export default {
   query: () => {
     return request({
       url: '/system/menu/query',
-      region: 'system',
+      region: 'common-api',
       method: 'get'
     })
   },
@@ -20,7 +20,7 @@ export default {
   create: (data) => {
     return request({
       url: '/system/menu',
-      region: 'system',
+      region: 'common-api',
       method: 'post',
       data
     })
@@ -33,7 +33,7 @@ export default {
   modify: (data) => {
     return request({
       url: '/system/menu',
-      region: 'system',
+      region: 'common-api',
       method: 'put',
       data
     })
@@ -45,7 +45,7 @@ export default {
   get: (id) => {
     return request({
       url: '/system/menu',
-      region: 'system',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id
@@ -60,7 +60,7 @@ export default {
   deleteById: (id) => {
     return request({
       url: '/system/menu',
-      region: 'system',
+      region: 'common-api',
       method: 'delete',
       params: {
         id: id
@@ -75,7 +75,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/system/menu/enable/batch',
-      region: 'system',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -89,7 +89,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/system/menu/unable/batch',
-      region: 'system',
+      region: 'common-api',
       method: 'patch',
       dataType: 'json',
       data: ids
