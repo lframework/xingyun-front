@@ -14,7 +14,7 @@
           <a-tooltip slot="action" title="今日销售退单、零售退单、采购退单数据">
             <a-icon type="info-circle-o" />
           </a-tooltip>
-          <div>数量<span> {{ formData.today.order.totalNum }}</span></div>
+          <div>数量<span> {{ formData.today.returned.totalNum }}</span></div>
         </chart-card>
       </a-col>
       <a-col :sm="24" :md="12" :xl="6" @click="handleSetLineChartData('本月订单', 'sameMonth', formData.sameMonth.order.charts)">
@@ -30,7 +30,7 @@
           <a-tooltip slot="action" title="本月销售退单、零售退单、采购退单数据">
             <a-icon type="info-circle-o" />
           </a-tooltip>
-          <div>数量<span> {{ formData.sameMonth.order.totalNum }}</span></div>
+          <div>数量<span> {{ formData.sameMonth.returned.totalNum }}</span></div>
         </chart-card>
       </a-col>
     </a-row>
