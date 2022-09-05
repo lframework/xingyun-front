@@ -25,7 +25,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/basedata/product/retail/product/list',
-      region: 'sc-api',
+      region: 'basedata-api',
       method: 'get',
       params: params
     })

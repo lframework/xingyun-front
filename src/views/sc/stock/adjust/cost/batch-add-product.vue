@@ -13,6 +13,7 @@
         height="500"
         :proxy-config="proxyConfig"
         :columns="tableColumn"
+        :toolbar-config="toolbarConfig"
         :pager-config="{}"
         :loading="loading"
       >
@@ -83,6 +84,10 @@ export default {
       },
       // 工具栏配置
       toolbarConfig: {
+        // 自定义左侧工具栏
+        slots: {
+          buttons: 'toolbar_buttons'
+        }
       },
       // 列表数据配置
       tableColumn: [
