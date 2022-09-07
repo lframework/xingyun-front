@@ -671,7 +671,7 @@ export default {
         return total + outNum
       }, 0)
 
-      return totalOutNum <= row.stockNum
+      return totalOutNum > row.stockNum
     }
   }
 }

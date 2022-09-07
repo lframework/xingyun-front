@@ -632,7 +632,7 @@ export default {
         return total + returnNum
       }, 0)
 
-      return totalReturnNum <= row.stockNum
+      return totalReturnNum > row.stockNum
     }
   }
 }

@@ -299,8 +299,8 @@ export default {
     handleSelectProduct(index, value, row) {
       value = row ? row.products.filter(item => item.productId === value)[0] : value
       this.tableData[index] = Object.assign(this.tableData[index], value, {
-        isGift: true,
-        taxPrice: 0
+        isGift: false,
+        taxPrice: value.salePrice
       })
 
       this.taxPriceInput(this.tableData[index], this.tableData[index].taxPrice)
@@ -683,7 +683,7 @@ export default {
         return total + outNum
       }, 0)
 
-      return totalOutNum <= row.stockNum
+      return totalOutNum > row.stockNum
     }
   }
 }
