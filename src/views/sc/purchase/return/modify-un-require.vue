@@ -629,7 +629,7 @@ export default {
       }
       const totalReturnNum = checkArr.reduce((total, item) => {
         const returnNum = this.$utils.isIntegerGtZero(item) ? item : 0
-        return total + returnNum
+        return this.$utils.add(total, returnNum)
       }, 0)
 
       return totalReturnNum <= row.stockNum
