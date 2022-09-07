@@ -323,13 +323,6 @@ export default {
         return
       }
 
-      for (let i = 0; i < records.length; i++) {
-        if (records[i].isFixed) {
-          this.$msg.error('第' + (i + 1) + '行商品是零售出库单中的商品，不允许删除！')
-          return
-        }
-      }
-
       this.$msg.confirm('是否确定删除选中的商品？').then(() => {
         const tableData = this.tableData.filter(t => {
           const tmp = records.filter(item => item.id === t.id)
@@ -529,22 +522,13 @@ export default {
             return false
           }
 
-          if (product.isFixed) {
-            if (!this.$utils.isIntegerGeZero(product.returnNum)) {
-              this.$msg.error('第' + (i + 1) + '行商品退货数量不允许小于0！')
-              return false
-            }
-          } else {
-            if (!this.$utils.isIntegerGtZero(product.returnNum)) {
-              this.$msg.error('第' + (i + 1) + '行商品退货数量必须大于0！')
-              return false
-            }
-          }
-        } else {
-          if (!product.isFixed) {
-            this.$msg.error('第' + (i + 1) + '行商品退货数量不允许为空！')
+          if (!this.$utils.isIntegerGtZero(product.returnNum)) {
+            this.$msg.error('第' + (i + 1) + '行商品退货数量必须大于0！')
             return false
           }
+        } else {
+          this.$msg.error('第' + (i + 1) + '行商品退货数量不允许为空！')
+          return false
         }
       }
 
@@ -633,10 +617,9 @@ export default {
       if (!this.$utils.isEmpty(e)) {
         this.loading = true
         this.$api.sc.retail.outSheet.getWithReturn(e.id).then(res => {
-          const tableData = this.tableData.filter(item => !item.isFixed)
           let outSheetDetails = res.details || []
           outSheetDetails = outSheetDetails.map(item => {
-            item.isFixed = true
+            item.isFixed = false
             item.supplier = {
               id: item.supplierId,
               name: item.supplierName
@@ -644,7 +627,7 @@ export default {
             return Object.assign(this.emptyProduct(), item)
           })
 
-          this.tableData = [...outSheetDetails, ...tableData]
+          this.tableData = outSheetDetails
 
           this.formData.sc = {
             id: res.scId,

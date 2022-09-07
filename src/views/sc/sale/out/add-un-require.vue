@@ -313,13 +313,6 @@ export default {
         return
       }
 
-      for (let i = 0; i < records.length; i++) {
-        if (records[i].isFixed) {
-          this.$msg.error('第' + (i + 1) + '行商品是销售订单中的商品，不允许删除！')
-          return
-        }
-      }
-
       this.$msg.confirm('是否确定删除选中的商品？').then(() => {
         const tableData = this.tableData.filter(t => {
           const tmp = records.filter(item => item.id === t.id)
@@ -514,22 +507,13 @@ export default {
             return false
           }
 
-          if (product.isFixed) {
-            if (!this.$utils.isIntegerGeZero(product.outNum)) {
-              this.$msg.error('第' + (i + 1) + '行商品出库数量不允许小于0！')
-              return false
-            }
-          } else {
-            if (!this.$utils.isIntegerGtZero(product.outNum)) {
-              this.$msg.error('第' + (i + 1) + '行商品出库数量必须大于0！')
-              return false
-            }
-          }
-        } else {
-          if (!product.isFixed) {
-            this.$msg.error('第' + (i + 1) + '行商品出库数量不允许为空！')
+          if (!this.$utils.isIntegerGtZero(product.outNum)) {
+            this.$msg.error('第' + (i + 1) + '行商品出库数量必须大于0！')
             return false
           }
+        } else {
+          this.$msg.error('第' + (i + 1) + '行商品出库数量不允许为空！')
+          return false
         }
       }
 
@@ -639,15 +623,14 @@ export default {
       if (!this.$utils.isEmpty(e)) {
         this.loading = true
         this.$api.sc.sale.saleOrder.getWithOut(e.id).then(res => {
-          const tableData = this.tableData.filter(item => !item.isFixed)
           let saleDetails = res.details || []
           saleDetails = saleDetails.map(item => {
-            item.isFixed = true
+            item.isFixed = false
 
             return Object.assign(this.emptyProduct(), item)
           })
 
-          this.tableData = [...saleDetails, ...tableData]
+          this.tableData = saleDetails
 
           this.formData.sc = {
             id: res.scId,
