@@ -662,16 +662,16 @@ export default {
     },
     // 检查库存数量
     checkStockNum(row) {
-      const checkArr = this.tableData.filter(item => item.productId === row.productId)
+      const checkArr = this.tableData.filter(item => item.productId === row.productId).map(item => item.outNum)
       if (this.$utils.isEmpty(checkArr)) {
-        checkArr.push({ outNum: 0 })
+        checkArr.push(0)
       }
       const totalOutNum = checkArr.reduce((total, item) => {
-        const outNum = this.$utils.isIntegerGtZero(item.outNum) ? item.outNum : 0
+        const outNum = this.$utils.isIntegerGtZero(item) ? item : 0
         return total + outNum
       }, 0)
 
-      return totalOutNum > row.stockNum
+      return totalOutNum <= row.stockNum
     }
   }
 }
