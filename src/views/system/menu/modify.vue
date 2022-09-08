@@ -152,20 +152,25 @@ export default {
         this.$msg.confirm('当前菜单为内置菜单，是否确定修改？注：修改内置菜单可能会导致系统功能异常，请谨慎操作').then(() => {
           this.$refs.form.validate((valid) => {
             if (valid) {
-              this.loading = true
-              this.$api.system.menu.modify(this.formData).then(() => {
-                this.$msg.success('修改成功！')
-                // 初始化表单数据
-                this.initFormData()
-                this.$emit('confirm')
-                this.visible = false
-              }).finally(() => {
-                this.loading = false
-              })
+              this.doSubmit()
             }
           })
         })
+      } else {
+        this.doSubmit()
       }
+    },
+    doSubmit() {
+      this.loading = true
+      this.$api.system.menu.modify(this.formData).then(() => {
+        this.$msg.success('修改成功！')
+        // 初始化表单数据
+        this.initFormData()
+        this.$emit('confirm')
+        this.visible = false
+      }).finally(() => {
+        this.loading = false
+      })
     },
     // 页面显示时由父页面触发
     open() {
