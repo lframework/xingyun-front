@@ -25,22 +25,19 @@
           highlight-hover-row
           keep-source
           row-id="id"
+          :row-config="{useKey: true}"
           :columns="tableColumn"
           :data="tableData"
           :loading="loading"
         >
-          <!-- 是否必填 列自定义内容 -->
-          <template v-slot:required_default="{ row }">
-            <a-select v-model="row.required">
-              <a-select-option :value="true">是</a-select-option>
-              <a-select-option :value="false">否</a-select-option>
-            </a-select>
+          <!-- 列宽 列自定义内容 -->
+          <template v-slot:span_default="{ row }">
+            <a-input v-model="row.span" class="number-input" />
           </template>
 
           <!-- 是否必填 列自定义内容 -->
-          <template v-slot:orderNo_default="{ row, rowIndex }">
-            <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><a-icon type="caret-up" /></span>
-            <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><a-icon type="caret-down" /></span>
+          <template v-slot:orderNo_default>
+            <span class="sort-btn"><a-icon type="drag" /></span>
           </template>
         </vxe-grid>
       </a-col>
@@ -48,6 +45,8 @@
   </div>
 </template>
 <script>
+import Sortable from 'sortablejs'
+
 export default {
   // 使用组件
   components: {
@@ -64,10 +63,10 @@ export default {
       // 是否显示加载框
       loading: false,
       tableColumn: [
+        { field: 'orderNo', title: '排序', width: 50, slots: { default: 'orderNo_default' }},
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).name } },
         { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
-        { field: 'required', title: '是否必填', width: 120, slots: { default: 'required_default' }},
-        { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
+        { field: 'span', title: '列宽', width: 80, slots: { default: 'span_default' }, align: 'right' }
       ],
       tableData: [],
       checkedKeys: []
@@ -79,41 +78,40 @@ export default {
     }
   },
   created() {
-
+    this.rowDrop()
+  },
+  beforeDestroy() {
+    if (this.sortable) {
+      this.sortable.destroy()
+    }
   },
   methods: {
     validDate() {
-      /* if (this.$utils.isEmpty(this.formData.templateType)) {
-        this.$msg.error('请选择生成模板类型！')
-        return false
+      if (!this.$utils.isEmpty(this.tableData)) {
+        for (let i = 0; i < this.tableData.length; i++) {
+          const obj = this.tableData[i]
+          if (!this.$utils.isInteger(obj.span)) {
+            this.$msg.error('字段【' + obj.name + '】列宽必须为数字！')
+            return false
+          }
+
+          if (!this.$utils.isIntegerGtZero(obj.span)) {
+            this.$msg.error('字段【' + obj.name + '】列宽必须大于0！')
+            return false
+          }
+
+          if (obj.span > 24) {
+            this.$msg.error('字段【' + obj.name + '】列宽不能超过24！')
+            return false
+          }
+        }
       }
-
-      if (this.$utils.isEmpty(this.formData.packageName)) {
-        this.$msg.error('请输入包名！')
-        return false
-      }
-
-      if (this.$utils.isEmpty(this.formData.moduleName)) {
-        this.$msg.error('请输入模块名！')
-        return false
-      }
-
-      if (this.$utils.isEmpty(this.formData.bizName)) {
-        this.$msg.error('请输入业务名！')
-        return false
-      }
-
-      if (this.$utils.isEmpty(this.formData.className)) {
-        this.$msg.error('请输入类名！')
-        return false
-      }*/
-
       return true
     },
     emptyLine() {
       return {
         id: '',
-        required: true,
+        span: 2,
         orderNo: ''
       }
     },
@@ -144,12 +142,17 @@ export default {
     getTableData() {
       return this.tableData
     },
-    moveRowTop(rowIndex) {
-      const tableData = this.tableData
-      this.tableData = this.$utils.swapArrayItem(tableData, rowIndex, rowIndex - 1)
-    },
-    moveRowBottom(rowIndex) {
-      this.tableData = this.$utils.swapArrayItem(this.tableData, rowIndex, rowIndex + 1)
+    rowDrop() {
+      this.$nextTick(() => {
+        const grid = this.$refs.grid
+        this.sortable = Sortable.create(grid.$el.querySelector('.body--wrapper>.vxe-table--body tbody'), {
+          handle: '.sort-btn',
+          onEnd: ({ newIndex, oldIndex }) => {
+            const currRow = this.tableData.splice(oldIndex, 1)[0]
+            this.tableData.splice(newIndex, 0, currRow)
+          }
+        })
+      })
     }
   }
 }

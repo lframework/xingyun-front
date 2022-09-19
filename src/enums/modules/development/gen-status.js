@@ -1,4 +1,4 @@
-const DATAOBJECT_GEN_STATUS = {
+const GEN_STATUS = {
   CREATED: {
     code: 0,
     desc: '已生成'
@@ -13,4 +13,4 @@ const DATAOBJECT_GEN_STATUS = {
   }
 }
 
-export default DATAOBJECT_GEN_STATUS
+export default GEN_STATUS

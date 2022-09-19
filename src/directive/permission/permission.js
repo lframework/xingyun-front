@@ -1,4 +1,5 @@
 import store from '@/store'
+import utils from '@/utils/utils'
 
 function checkPermission(el, binding) {
   const { value } = binding
@@ -13,8 +14,10 @@ function checkPermission(el, binding) {
         return true
       }
 
-      const hasPermission = roles.some(role => {
-        return permissionRoles.includes(role)
+      const hasPermission = permissionRoles.some(pattern => {
+        return roles.some(item => {
+          utils.strMatch(item, pattern)
+        })
       })
 
       if (!hasPermission) {

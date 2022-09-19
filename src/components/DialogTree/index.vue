@@ -181,26 +181,38 @@ export default {
       }
     },
     _radioConfig() {
+      let config = {}
       if (this.onlyFinal) {
-        return {
+        config = {
           checkMethod: ({ row }) => {
             return this.$utils.isEmpty(row.children)
           }
         }
       }
 
-      return {}
+      if (!this.multiple) {
+        config = Object.assign({ trigger: 'row', highlight: true }, config)
+      }
+
+      return config
     },
     _checkBoxConfig() {
+      let config = {}
       if (this.onlyFinal) {
-        return {
+        config = {
+          trigger: 'row',
+          highlight: true,
           checkMethod: ({ row }) => {
             return this.$utils.isEmpty(row.children)
           }
         }
       }
 
-      return {}
+      if (this.multiple) {
+        config = Object.assign({ trigger: 'row', highlight: true }, config)
+      }
+
+      return config
     }
   },
   methods: {

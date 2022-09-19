@@ -8,14 +8,6 @@ const simpledb = {
       method: 'get',
       params: data
     })
-  },
-  create: (data) => {
-    return request({
-      url: '/gen/simpledb/create',
-      region: 'common-api',
-      method: 'post',
-      data: data
-    })
   }
 }
 

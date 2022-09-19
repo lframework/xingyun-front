@@ -5,9 +5,6 @@
         <a-tab-pane key="baseSetting" tab="基本设置" :force-render="true">
           <base-setting ref="baseSettingDialog" :form-data="formData.generateInfo" />
         </a-tab-pane>
-        <a-tab-pane key="generate" tab="字段配置" :force-render="true">
-          <generate-columns ref="generateColumnsDialog" :columns="formData.columns" @sortColumns="e => formData.columns = e" />
-        </a-tab-pane>
         <a-tab-pane key="addSetting" tab="新增功能配置" :force-render="true">
           <add-setting ref="addSettingDialog" :columns="formData.columns" />
         </a-tab-pane>
@@ -35,7 +32,6 @@
 </template>
 <script>
 
-import GenerateColumns from './generate/generate-column'
 import BaseSetting from './generate/base-setting'
 import AddSetting from './generate/add-setting'
 import UpdateSetting from './generate/update-setting'
@@ -45,7 +41,7 @@ import DetailSetting from './generate/detail-setting'
 export default {
   // 使用组件
   components: {
-    GenerateColumns, BaseSetting, AddSetting, UpdateSetting, QuerySetting, QueryParamsSetting, DetailSetting
+    BaseSetting, AddSetting, UpdateSetting, QuerySetting, QueryParamsSetting, DetailSetting
   },
 
   props: {
@@ -108,11 +104,6 @@ export default {
       this.activeName = 'baseSetting'
     },
     async validData() {
-      if (!this.$refs.generateColumnsDialog.validDate()) {
-        this.activeName = 'generate'
-        return false
-      }
-
       if (!await this.$refs.baseSettingDialog.validDate()) {
         this.activeName = 'baseSetting'
         return false
@@ -151,7 +142,6 @@ export default {
         this.loading = true
         const params = {
           id: this.id,
-          columns: this.formData.columns,
           generateInfo: this.formData.generateInfo,
           createConfigs: this.$refs.addSettingDialog.getTableData(),
           updateConfigs: this.$refs.updateSettingDialog.getTableData(),
@@ -160,7 +150,7 @@ export default {
           detailConfigs: this.$refs.detailSettingDialog.getTableData()
         }
 
-        this.$api.development.data.updateGenerate(params).then(() => {
+        this.$api.development.dataEntity.updateGenerate(params).then(() => {
           this.$msg.success('修改成功！')
           this.$emit('confirm')
           this.closeDialog()
@@ -172,7 +162,7 @@ export default {
     // 查询数据
     loadData() {
       this.loading = true
-      this.$api.development.data.getGenerate(this.id).then(data => {
+      this.$api.development.dataEntity.getGenerate(this.id).then(data => {
         this.formData = Object.assign(this.formData, data)
         this.$refs.addSettingDialog.setTableData(this.formData.createConfigs)
         this.$refs.updateSettingDialog.setTableData(this.formData.updateConfigs)

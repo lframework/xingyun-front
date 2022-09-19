@@ -9,6 +9,7 @@
       highlight-hover-row
       keep-source
       row-id="id"
+      :row-config="{useKey: true}"
       :columns="tableColumn"
       :data="columns"
       :loading="loading"
@@ -108,14 +109,14 @@
       </template>
 
       <!-- 排序 列自定义内容 -->
-      <template v-slot:orderNo_default="{ row, rowIndex }">
-        <span class="sort-btn" @click="() => moveRowTop(rowIndex)"><a-icon type="caret-up" /></span>
-        <span class="sort-btn" @click="() => moveRowBottom(rowIndex)"><a-icon type="caret-down" /></span>
+      <template v-slot:orderNo_default>
+        <span class="sort-btn"><a-icon type="drag" /></span>
       </template>
     </vxe-grid>
   </div>
 </template>
 <script>
+import Sortable from 'sortablejs'
 export default {
   // 使用组件
   components: {
@@ -132,6 +133,7 @@ export default {
       // 是否显示加载框
       loading: false,
       tableColumn: [
+        { field: 'orderNo', title: '排序', width: 50, slots: { default: 'orderNo_default' }},
         { field: 'name', title: '显示名称', width: 160, slots: { default: 'name_default' }},
         { field: 'columnName', title: '属性名', width: 120 },
         { field: 'isKey', title: '是否主键', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
@@ -143,8 +145,7 @@ export default {
         { field: 'regularExpression', title: '正则表达式', width: 200, slots: { default: 'regularExpression_default', header: 'regularExpression_header' }},
         { field: 'isOrder', title: '是否排序字段', width: 120, slots: { default: 'isOrder_default' }},
         { field: 'orderType', title: '排序类型', width: 120, slots: { default: 'orderType_default' }},
-        { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }},
-        { field: 'orderNo', title: '排序', width: 80, slots: { default: 'orderNo_default' }}
+        { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
       tableData: []
     }
@@ -152,6 +153,12 @@ export default {
   computed: {
   },
   created() {
+    this.rowDrop()
+  },
+  beforeDestroy() {
+    if (this.sortable) {
+      this.sortable.destroy()
+    }
   },
   methods: {
     validDate() {
@@ -214,15 +221,6 @@ export default {
 
       return true
     },
-    moveRowTop(rowIndex) {
-      const tableData = this.columns
-      this.columns = this.$utils.swapArrayItem(tableData, rowIndex, rowIndex - 1)
-      this.$emit('sortColumns', this.columns)
-    },
-    moveRowBottom(rowIndex) {
-      this.columns = this.$utils.swapArrayItem(this.columns, rowIndex, rowIndex + 1)
-      this.$emit('sortColumns', this.columns)
-    },
     changeFixEnum(row, val) {
       if (val) {
         // 是内置枚举
@@ -244,6 +242,18 @@ export default {
       if (!val) {
         row.orderType = ''
       }
+    },
+    rowDrop() {
+      this.$nextTick(() => {
+        const grid = this.$refs.grid
+        this.sortable = Sortable.create(grid.$el.querySelector('.body--wrapper>.vxe-table--body tbody'), {
+          handle: '.sort-btn',
+          onEnd: ({ newIndex, oldIndex }) => {
+            const currRow = this.columns.splice(oldIndex, 1)[0]
+            this.columns.splice(newIndex, 0, currRow)
+          }
+        })
+      })
     }
   }
 }

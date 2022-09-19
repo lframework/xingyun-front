@@ -37,6 +37,8 @@
               buttons: 'toolbar_buttons'
             }
           }"
+          :radio-config="_radioConfig"
+          :checkbox-config="_checkboxConfig"
           :pager-config="{}"
           :loading="loading"
         >
@@ -160,8 +162,25 @@ export default {
           }
         }
       }
+    },
+    _radioConfig() {
+      if (!this.multiple) {
+        return {
+          trigger: 'row',
+          highlight: true
+        }
+      }
+      return {}
+    },
+    _checkboxConfig() {
+      if (this.multiple) {
+        return {
+          trigger: 'row',
+          highlight: true
+        }
+      }
+      return {}
     }
-
   },
   methods: {
     onOpen() {

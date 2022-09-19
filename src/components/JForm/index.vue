@@ -3,9 +3,11 @@
     <div class="item-container">
       <slot />
     </div>
-    <div v-if="showCollapse" class="item-footer">
-      <a v-if="collapseStatus" :class="'item-footer--default'" type="info" @click="collapse">收起<a-icon type="up" /></a>
-      <a v-else type="info" :class="'item-footer--default'" @click="expand">展开<a-icon type="down" /></a>
+    <div v-if="enableCollapse">
+      <div v-if="showCollapse" class="item-footer">
+        <a v-if="collapseStatus" :class="'item-footer--default'" type="info" @click="collapse">收起<a-icon type="up" /></a>
+        <a v-else type="info" :class="'item-footer--default'" @click="expand">展开<a-icon type="down" /></a>
+      </div>
     </div>
   </div>
 </template>
@@ -22,6 +24,10 @@ export default {
     labelWidth: {
       type: String,
       default: '100px'
+    },
+    enableCollapse: {
+      type: Boolean,
+      default: true
     }
   },
   data() {

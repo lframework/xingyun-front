@@ -792,4 +792,31 @@ utils.closeCurrentPage = function(el) {
   }
 }
 
+utils.strMatch = function(str, pattern) {
+  str = this.toString(str)
+  pattern = this.toString(pattern)
+
+  if (this.isEmpty(str) && this.isEmpty(pattern)) {
+    return true
+  }
+  if (str === '*') {
+    return true
+  }
+  if (this.isEmpty(str) || this.isEmpty(pattern)) {
+    return false
+  }
+
+  if (str[0] === '?') {
+    return this.strMatch(str.substring(1), pattern.substring(1))
+  } else
+  if (str[0] === '*') {
+    return this.strMatch(str.substring(1), pattern) || this.strMatch(str.substring(1), pattern.substring(1)) || this.strMatch(str, pattern.substring(1))
+  } else
+  if (str[0] === pattern[0]) {
+    return this.strMatch(str.substring(1), pattern.substring(1))
+  } else {
+    return false
+  }
+}
+
 export default utils

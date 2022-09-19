@@ -2,14 +2,11 @@
   <a-modal v-model="visible" :mask-closable="false" width="40%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible">
       <a-descriptions :column="4" bordered>
-        <a-descriptions-item label="编号" :span="2">
-          {{ formData.code }}
-        </a-descriptions-item>
-        <a-descriptions-item label="名称" :span="2">
+        <a-descriptions-item label="名称" :span="4">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item label="类型" :span="2">
-          {{ $enums.DATAOBJECT_TYPE.getDesc(formData.type) }}
+        <a-descriptions-item label="分类" :span="2">
+          {{ formData.categoryName }}
         </a-descriptions-item>
         <a-descriptions-item label="状态" :span="2">
           <available-tag :available="formData.available" />
@@ -67,6 +64,7 @@ export default {
         id: '',
         code: '',
         name: '',
+        categoryName: '',
         available: '',
         description: ''
       }
@@ -82,7 +80,7 @@ export default {
     // 查询数据
     async loadFormData() {
       this.loading = true
-      await this.$api.development.data.get(this.id).then(data => {
+      await this.$api.development.dataEntity.get(this.id).then(data => {
         this.formData = data
       }).finally(() => {
         this.loading = false

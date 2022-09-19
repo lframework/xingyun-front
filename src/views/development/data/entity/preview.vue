@@ -68,7 +68,7 @@ export default {
     // 查询数据
     loadData() {
       this.loading = true
-      this.$api.development.data.preView(this.id).then(data => {
+      this.$api.development.dataEntity.preView(this.id).then(data => {
         this.formData = data
         this.activeName = this.$utils.keys(this.formData)[0]
       }).finally(() => {
@@ -77,7 +77,7 @@ export default {
     },
     download() {
       this.loading = true
-      this.$api.development.data.download(this.id).then(() => {
+      this.$api.development.dataEntity.download(this.id).then(() => {
         this.$msg.success('下载成功！')
       }).finally(() => {
         this.loading = false
