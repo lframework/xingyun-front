@@ -4,7 +4,7 @@
 ### 主要技术框架
 * Vue 2.6.11
 * ant-design-vue 1.7.8
-* vxe-table 3.3.1
+* vxe-table 3.6.6
 * vue-antd-admin
 
 ### License
@@ -16,7 +16,5 @@
 
 ### 注意事项
 老版项目基于ElementUI，已转移到v1分支。
-
-Node的版本需要14.x，否则会编译报错。
 
 [xingyunGitee]: https://gitee.com/lframework/xingyun

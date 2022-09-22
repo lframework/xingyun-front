@@ -203,5 +203,20 @@ export default {
         id: id
       }
     })
+  },
+  /**
+   * 根据
+   * @param code
+   * @returns {*}
+   */
+  getItemByDicCode: (code) => {
+    return request({
+      url: '/system/dic/item/bydic',
+      region: 'common-api',
+      method: 'get',
+      params: {
+        code: code
+      }
+    })
   }
 }

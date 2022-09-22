@@ -19,6 +19,9 @@ const GEN_VIEW_TYPE = {
   },
   DATE_RANGE: {
     code: 6, desc: '日期范围选择器'
+  },
+  DATA_DIC: {
+    code: 7, desc: '数据字典'
   }
 }
 

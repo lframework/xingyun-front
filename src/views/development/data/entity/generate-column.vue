@@ -21,7 +21,7 @@
 
       <!-- 数据类型 列自定义内容 -->
       <template v-slot:dataType_default="{ row }">
-        <a-select v-model="row.dataType">
+        <a-select v-model="row.dataType" :disabled="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code">
           <a-select-option v-for="item in $enums.GEN_DATA_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
         </a-select>
       </template>
@@ -36,9 +36,14 @@
 
       <!-- 显示类型 列自定义内容 -->
       <template v-slot:viewType_default="{ row }">
-        <a-select v-model="row.viewType" :disabled="row.fixEnum" @change="e => changeViewType(row, e)">
+        <a-select v-model="row.viewType" :disabled="row.isKey || row.fixEnum" @change="e => changeViewType(row, e)">
           <a-select-option v-for="item in $enums.GEN_VIEW_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
         </a-select>
+      </template>
+
+      <!-- 数据字典 列自定义内容 -->
+      <template v-slot:dataDic_default="{ row }">
+        <sys-data-dic-selector v-if="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code" v-model="row.dataDic" />
       </template>
 
       <!-- 是否内置枚举 列自定义内容 -->
@@ -90,7 +95,32 @@
 
       <!-- 正则表达式 列自定义内容 -->
       <template v-slot:regularExpression_default="{ row }">
-        <a-input v-model="row.regularExpression" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" />
+        <a-input-group v-if="!row.isKey" compact>
+          <a-input v-model="row.regularExpression" style="width: 50%;" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" />
+          <a-select placeholder="常用表达式" allow-clear style="width: 50%;" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" @change="e => row.regularExpression = e">
+            <a-select-option value="[u4e00-u9fa5]">中文字符</a-select-option>
+            <a-select-option value="[^x00-xff]">双字节字符(包括汉字在内)</a-select-option>
+            <a-select-option value="ns*r">空白行</a-select-option>
+            <a-select-option value="[w!#$%&amp;'*+/=?^_`{|}~-]+(?:.[w!#$%&amp;'*+/=?^_`{|}~-]+)*@(?:[w](?:[w-]*[w])?.)+[w](?:[w-]*[w])?">
+              Email地址
+            </a-select-option>
+            <a-select-option value="[a-zA-z]+://[^s]*">网址URL</a-select-option>
+            <a-select-option value="d{3}-d{8}|d{4}-{7,8}">国内电话号码</a-select-option>
+            <a-select-option value="[1-9][0-9]{4,}">腾讯QQ号</a-select-option>
+            <a-select-option value="[1-9]d{5}(?!d)">中国邮政编码</a-select-option>
+            <a-select-option value="^(d{6})(d{4})(d{2})(d{2})(d{3})([0-9]|X)$">18位身份证号</a-select-option>
+            <a-select-option value="([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))">
+              (年-月-日)格式日期
+            </a-select-option>
+            <a-select-option value="^[1-9]d*$">正整数</a-select-option>
+            <a-select-option value="^-[1-9]d*$">负整数</a-select-option>
+            <a-select-option value="^-?[1-9]d*$">整数</a-select-option>
+            <a-select-option value="^[1-9]d*|0$">非负整数</a-select-option>
+            <a-select-option value="^-[1-9]d*|0$">非正整数</a-select-option>
+            <a-select-option value="^(0|[1-9]+[0-9]*)(.[0-9]{1,4})?$">正浮点数</a-select-option>
+            <a-select-option value="^-(0|[1-9]+[0-9]*)(.[0-9]{1,4})?$">负浮点数</a-select-option>
+          </a-select>
+        </a-input-group>
       </template>
 
       <!-- 是否排序字段 列自定义内容 -->
@@ -112,14 +142,25 @@
       <template v-slot:orderNo_default>
         <span class="sort-btn"><a-icon type="drag" /></span>
       </template>
+
+      <!-- 字段长度 列自定义内容 -->
+      <template v-slot:fieldLength_default="{row}">
+        <div v-if="!row.isKey && ($enums.GEN_VIEW_TYPE.INPUT.equalsCode(row.viewType) || $enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(row.viewType))">
+          <a-input v-if="$enums.GEN_DATA_TYPE.STRING.equalsCode(row.dataType) || $enums.GEN_DATA_TYPE.isNumberType(row.dataType)" v-model="row.len" class="number-input" style="width: 70px;" />
+          <span v-if="$enums.GEN_DATA_TYPE.isDecimalType(row.dataType)" style="margin: 0 5px;">.</span>
+          <a-input v-if="$enums.GEN_DATA_TYPE.isDecimalType(row.dataType)" v-model="row.decimals" class="number-input" style="width: 70px;" />
+        </div>
+      </template>
     </vxe-grid>
   </div>
 </template>
 <script>
 import Sortable from 'sortablejs'
+import SysDataDicSelector from '@/components/Selector/SysDataDicSelector'
 export default {
   // 使用组件
   components: {
+    SysDataDicSelector
   },
 
   props: {
@@ -138,11 +179,13 @@ export default {
         { field: 'columnName', title: '属性名', width: 120 },
         { field: 'isKey', title: '是否主键', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
         { field: 'dataType', title: '数据类型', width: 180, slots: { default: 'dataType_default' }},
+        { field: 'fieldLength', title: '字段长度', width: 180, slots: { default: 'fieldLength_default' }},
         { field: 'viewType', title: '显示类型', width: 180, slots: { default: 'viewType_default', header: 'viewType_header' }},
+        { field: 'dataDic_', title: '数据字典', width: 180, slots: { default: 'dataDic_default' }},
         { field: 'fixEnum', title: '是否内置枚举', width: 120, slots: { default: 'fixEnum_default' }},
         { field: 'enumBack', title: '后端枚举名', width: 180, slots: { default: 'enumBack_default', header: 'enumBack_header' }},
         { field: 'enumFront', title: '前端枚举名', width: 180, slots: { default: 'enumFront_default', header: 'enumFront_header' }},
-        { field: 'regularExpression', title: '正则表达式', width: 200, slots: { default: 'regularExpression_default', header: 'regularExpression_header' }},
+        { field: 'regularExpression', title: '正则表达式', width: 300, slots: { default: 'regularExpression_default', header: 'regularExpression_header' }},
         { field: 'isOrder', title: '是否排序字段', width: 120, slots: { default: 'isOrder_default' }},
         { field: 'orderType', title: '排序类型', width: 120, slots: { default: 'orderType_default' }},
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
@@ -217,6 +260,27 @@ export default {
             return false
           }
         }
+
+        if (!this.$utils.isEmpty(column.len)) {
+          if (!this.$utils.isIntegerGtZero(column.len)) {
+            this.$msg.error('字段【' + column.name + '】长度的整数部分必须是大于0的整数！')
+            return false
+          }
+        }
+
+        if (!this.$utils.isEmpty(column.decimals)) {
+          if (!this.$utils.isIntegerGtZero(column.decimals)) {
+            this.$msg.error('字段【' + column.name + '】长度的小数部分必须是大于0的整数！')
+            return false
+          }
+        }
+
+        if (this.$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
+          if (this.$utils.isEmpty(column.dataDic.id)) {
+            this.$msg.error('字段【' + column.name + '】数据字典不能为空！')
+            return false
+          }
+        }
       }
 
       return true
@@ -237,6 +301,11 @@ export default {
         // 如果viewType不是INPUT、TEAXTAREA，正则必须是空
         row.regularExpression = ''
       }
+
+      if (val === this.$enums.GEN_VIEW_TYPE.DATA_DIC.code) {
+        // 数据字典 类型必须是String
+        row.dataType = this.$enums.GEN_DATA_TYPE.STRING.code
+      }
     },
     changeIsOrder(row, val) {
       if (!val) {
@@ -254,6 +323,50 @@ export default {
           }
         })
       })
+    },
+    getColumns() {
+      const that = this
+      const columns = this.columns.map(item => {
+        const column = Object.assign({}, item)
+        if (column.isKey) {
+          // 如果是主键
+          delete column.len
+          delete column.decimals
+          column.viewType = this.$enums.GEN_VIEW_TYPE.INPUT.code
+          column.dataDic = {}
+          column.fixEnum = false
+          delete column.enumBack
+          delete column.enumFront
+          delete column.regularExpression
+        } else {
+          if (!that.$enums.GEN_DATA_TYPE.isDecimalType(column.dataType)) {
+            delete column.decimals
+          }
+          if (!that.$enums.GEN_DATA_TYPE.STRING.equalsCode(column.dataType) && !that.$enums.GEN_DATA_TYPE.isNumberType(column.dataType)) {
+            delete column.len
+            delete column.decimals
+          }
+
+          if (!that.$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
+            column.dataDic = {}
+          }
+
+          if (!that.$enums.GEN_VIEW_TYPE.INPUT.equalsCode(column.viewType) && !that.$enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(column.viewType)) {
+            delete column.regularExpression
+            delete column.len
+            delete column.decimals
+          }
+
+          if (!column.fixEnum) {
+            delete column.enumBack
+            delete column.enumFront
+          }
+        }
+
+        return column
+      })
+
+      return columns
     }
   }
 }

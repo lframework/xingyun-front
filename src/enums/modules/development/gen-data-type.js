@@ -31,4 +31,22 @@ const GEN_DATA_TYPE = {
   }
 }
 
+/**
+ * 是否为数字类型
+ * @param code
+ * @returns {*}
+ */
+GEN_DATA_TYPE.isNumberType = function(code) {
+  return GEN_DATA_TYPE.INTEGER.equalsCode(code) || GEN_DATA_TYPE.SHORT.equalsCode(code) || GEN_DATA_TYPE.LONG.equalsCode(code) || GEN_DATA_TYPE.DOUBLE.equalsCode(code) || GEN_DATA_TYPE.BIG_DECIMAL.equalsCode(code)
+}
+
+/**
+ * 是否为小数类型
+ * @param code
+ * @returns {*}
+ */
+GEN_DATA_TYPE.isDecimalType = function(code) {
+  return GEN_DATA_TYPE.DOUBLE.equalsCode(code) || GEN_DATA_TYPE.BIG_DECIMAL.equalsCode(code)
+}
+
 export default GEN_DATA_TYPE

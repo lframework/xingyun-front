@@ -132,9 +132,9 @@ export default {
   computed: {
     _tableColumn() {
       if (this.multiple) {
-        return [{ type: 'checkbox', width: 40 }, ...this.tableColumn]
+        return [{ type: 'checkbox', width: 50 }, ...this.tableColumn]
       } else {
-        return [{ type: 'radio', width: 40 }, ...this.tableColumn]
+        return [{ type: 'radio', width: 50 }, ...this.tableColumn]
       }
     },
     _label() {

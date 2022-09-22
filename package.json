@@ -35,8 +35,8 @@
     "vue-router": "^3.3.4",
     "vuedraggable": "^2.23.2",
     "vuex": "^3.4.0",
-    "vxe-table": "file:vxe-table",
-    "vxe-table-plugin-antd": "^3.0.5",
+    "vxe-table": "^3.6.6",
+    "vxe-table-plugin-antd": "^1.11.3",
     "xe-utils": "^3.2.1"
   },
   "devDependencies": {

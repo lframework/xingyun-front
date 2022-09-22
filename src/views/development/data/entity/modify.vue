@@ -117,7 +117,14 @@ export default {
     async loadFormData() {
       this.loading = true
       await this.$api.development.dataEntity.get(this.id).then(data => {
-        this.columns = data.columns
+        let columns = data.columns
+        columns = columns.map(item => {
+          return Object.assign({ dataDic: {
+            id: item.dataDicId,
+            name: item.dataDicName
+          }}, item)
+        })
+        this.columns = columns
         delete data.columns
         data.category = {
           id: data.categoryId,
@@ -126,19 +133,6 @@ export default {
         this.formData = data
       }).finally(() => {
         this.loading = false
-      })
-    },
-    changeTable(e) {
-      this.columns = []
-      if (this.$utils.isEmpty(e)) {
-        return
-      }
-      this.$api.development.dataEntity.queryColumns({
-        tableName: e.id
-      }).then(res => {
-        this.columns = res
-      }).catch(() => {
-        this.formData.table = {}
       })
     },
     submit() {
@@ -155,7 +149,10 @@ export default {
       }
       const params = Object.assign({
         categoryId: this.formData.category.id,
-        columns: this.columns
+        columns: this.$refs.generateColumn.getColumns().map(item => {
+          item.dataDicId = item.dataDic.id
+          return item
+        })
       }, this.formData)
 
       this.loading = true

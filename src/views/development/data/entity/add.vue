@@ -104,6 +104,12 @@ export default {
       this.$api.development.dataEntity.queryColumns({
         tableName: e.id
       }).then(res => {
+        res = res.map(item => {
+          return Object.assign({ dataDic: {
+            id: item.dataDicId,
+            name: item.dataDicName
+          }}, item)
+        })
         this.columns = res
       }).catch(() => {
         this.formData.table = {}
@@ -120,7 +126,10 @@ export default {
       const params = Object.assign({
         tableName: this.formData.table.id,
         categoryId: this.formData.category.id,
-        columns: this.columns
+        columns: this.$refs.generateColumn.getColumns().map(item => {
+          item.dataDicId = item.dataDic.id
+          return item
+        })
       }, this.formData)
 
       this.loading = true
