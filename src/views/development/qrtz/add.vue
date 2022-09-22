@@ -39,7 +39,7 @@
         <a-form-model-item v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)" label="参数类型" prop="targetParamTypes">
           <a-row>
             <a-col :span="20">
-              <a-select v-model="formData.targetParams" mode="tags" style="width: 100%">
+              <a-select v-model="formData.targetParamTypes" mode="tags" style="width: 100%">
                 <a-select-option key="java.lang.String">
                   String
                 </a-select-option>
