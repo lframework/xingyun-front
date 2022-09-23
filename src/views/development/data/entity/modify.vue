@@ -122,7 +122,7 @@ export default {
           return Object.assign({ dataDic: {
             id: item.dataDicId,
             name: item.dataDicName
-          }}, item)
+          }, regularExpression: '' }, item)
         })
         this.columns = columns
         delete data.columns

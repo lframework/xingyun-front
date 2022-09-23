@@ -9,7 +9,7 @@
       highlight-hover-row
       keep-source
       row-id="id"
-      :row-config="{useKey: true}"
+      :row-config="{useKey: true, isCurrent: true, isHover: true}"
       :columns="tableColumn"
       :data="columns"
       :loading="loading"
@@ -98,27 +98,27 @@
         <a-input-group v-if="!row.isKey" compact>
           <a-input v-model="row.regularExpression" style="width: 50%;" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" />
           <a-select placeholder="常用表达式" allow-clear style="width: 50%;" :disabled="row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code && row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code" @change="e => row.regularExpression = e">
-            <a-select-option value="[u4e00-u9fa5]">中文字符</a-select-option>
-            <a-select-option value="[^x00-xff]">双字节字符(包括汉字在内)</a-select-option>
-            <a-select-option value="ns*r">空白行</a-select-option>
-            <a-select-option value="[w!#$%&amp;'*+/=?^_`{|}~-]+(?:.[w!#$%&amp;'*+/=?^_`{|}~-]+)*@(?:[w](?:[w-]*[w])?.)+[w](?:[w-]*[w])?">
+            <a-select-option value="[\u4e00-\u9fa5]">中文字符</a-select-option>
+            <a-select-option value="[^\x00-\xff]">双字节字符(包括汉字在内)</a-select-option>
+            <a-select-option value="\n\s*\r">空白行</a-select-option>
+            <a-select-option value="[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?">
               Email地址
             </a-select-option>
-            <a-select-option value="[a-zA-z]+://[^s]*">网址URL</a-select-option>
-            <a-select-option value="d{3}-d{8}|d{4}-{7,8}">国内电话号码</a-select-option>
+            <a-select-option value="[a-zA-z]+://[^\s]*">网址URL</a-select-option>
+            <a-select-option value="\d{3}-\d{8}|\d{4}-\{7,8}">国内电话号码</a-select-option>
             <a-select-option value="[1-9][0-9]{4,}">腾讯QQ号</a-select-option>
-            <a-select-option value="[1-9]d{5}(?!d)">中国邮政编码</a-select-option>
-            <a-select-option value="^(d{6})(d{4})(d{2})(d{2})(d{3})([0-9]|X)$">18位身份证号</a-select-option>
+            <a-select-option value="[1-9]\d{5}(?!\d)">中国邮政编码</a-select-option>
+            <a-select-option value="^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X)$">18位身份证号</a-select-option>
             <a-select-option value="([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))">
               (年-月-日)格式日期
             </a-select-option>
-            <a-select-option value="^[1-9]d*$">正整数</a-select-option>
-            <a-select-option value="^-[1-9]d*$">负整数</a-select-option>
-            <a-select-option value="^-?[1-9]d*$">整数</a-select-option>
-            <a-select-option value="^[1-9]d*|0$">非负整数</a-select-option>
-            <a-select-option value="^-[1-9]d*|0$">非正整数</a-select-option>
-            <a-select-option value="^(0|[1-9]+[0-9]*)(.[0-9]{1,4})?$">正浮点数</a-select-option>
-            <a-select-option value="^-(0|[1-9]+[0-9]*)(.[0-9]{1,4})?$">负浮点数</a-select-option>
+            <a-select-option value="^[1-9]\d*$">正整数</a-select-option>
+            <a-select-option value="^-[1-9]\d*$">负整数</a-select-option>
+            <a-select-option value="^-?[1-9]\d*$">整数</a-select-option>
+            <a-select-option value="^[1-9]\d*|0$">非负整数</a-select-option>
+            <a-select-option value="^-[1-9]\d*|0$">非正整数</a-select-option>
+            <a-select-option value="^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$">正浮点数</a-select-option>
+            <a-select-option value="^-[1-9]\d*\.\d*|-0\.\d*[1-9]\d*$">负浮点数</a-select-option>
           </a-select>
         </a-input-group>
       </template>
@@ -269,8 +269,8 @@ export default {
         }
 
         if (!this.$utils.isEmpty(column.decimals)) {
-          if (!this.$utils.isIntegerGtZero(column.decimals)) {
-            this.$msg.error('字段【' + column.name + '】长度的小数部分必须是大于0的整数！')
+          if (!this.$utils.isIntegerGeZero(column.decimals)) {
+            this.$msg.error('字段【' + column.name + '】长度的小数部分必须是不小于0整数！')
             return false
           }
         }
