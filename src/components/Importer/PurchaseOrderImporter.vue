@@ -23,6 +23,7 @@ export default {
     downloadTemplate() {
       return request({
         url: '/purchase/order/import/template',
+        region: 'sc-api',
         method: 'get',
         responseType: 'blob'
       })
@@ -30,6 +31,7 @@ export default {
     upload(params) {
       return request({
         url: '/purchase/order/import',
+        region: 'sc-api',
         method: 'post',
         dataType: 'file',
         params: params
