@@ -86,7 +86,7 @@ export default {
       this.visible = true
 
       this.$nextTick(() => {
-        this.open()
+        this.$nextTick(() => this.open())
       })
     },
     // 关闭对话框
@@ -169,7 +169,7 @@ export default {
         this.loading = true
         this.$api.development.dataEntity.syncTable(this.id).then(() => {
           this.$msg.successTip('同步成功，正在重载数据...')
-          this.open()
+          this.$nextTick(() => this.open())
         })
       })
     }

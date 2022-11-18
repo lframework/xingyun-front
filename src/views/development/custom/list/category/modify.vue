@@ -60,7 +60,7 @@ export default {
       this.visible = true
 
       this.$nextTick(() => {
-        this.open()
+        this.$nextTick(() => this.open())
       })
     },
     // 关闭对话框

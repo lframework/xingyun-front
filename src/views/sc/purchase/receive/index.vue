@@ -112,7 +112,7 @@
         <template v-slot:purchaseOrderCode_default="{ row }">
           <span v-if="$utils.isEmpty(row.purchaseOrderCode)">-</span>
           <span v-else>
-            <a-button v-permission="['purchase:order:query']" type="text" @click="viewPurchaseOrderDetail(row.purchaseOrderId)">{{ row.purchaseOrderCode }}</a-button>
+            <a v-permission="['purchase:order:query']" @click="viewPurchaseOrderDetail(row.purchaseOrderId)">{{ row.purchaseOrderCode }}</a>
             <span v-no-permission="['purchase:order:query']">{{ row.purchaseOrderCode }}</span>
           </span>
         </template>

@@ -118,7 +118,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.open()
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {
