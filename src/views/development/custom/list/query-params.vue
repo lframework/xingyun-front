@@ -46,7 +46,27 @@
           <template v-slot:defaultValue_default="{ row }">
             <a-input v-if="!$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(row.viewType)" v-model="row.defaultValue" allow-clear />
             <div v-else>
-              <span style="margin: 0 5px;">近</span><a-input-number v-model="row.defaultValue" :min="0" /><span style="margin: 0 5px;">天</span>
+              <a-space>
+                <a-select v-model="row.defaultValue.dateType" style="width: 100px;">
+                  <a-select-option :value="1">相对时间</a-select-option>
+                  <a-select-option :value="2">绝对时间</a-select-option>
+                </a-select>
+                <div v-if="row.defaultValue.dateType === 1">
+                  <a-space>
+                    <span>近</span>
+                    <a-input-number v-model="row.defaultValue.dateNum" :min="0" />
+                    <a-select v-model="row.defaultValue.dateUnit" style="width: 50px;">
+                      <a-select-option value="d">天</a-select-option>
+                      <a-select-option value="w">周</a-select-option>
+                      <a-select-option value="M">月</a-select-option>
+                      <a-select-option value="y">年</a-select-option>
+                    </a-select>
+                  </a-space>
+                </div>
+                <div v-else-if="row.defaultValue.dateType === 2">
+                  <a-range-picker v-model="row.defaultValue.dateRange" value-format="YYYY-MM-DD" />
+                </div>
+              </a-space>
             </div>
           </template>
 
@@ -85,7 +105,7 @@ export default {
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id)?.name } },
         { field: 'queryType', title: '查询类型', width: 140, slots: { default: 'queryType_default' }},
         { field: 'formWidth', title: '表单宽度', align: 'right', width: 100, slots: { default: 'formWidth_default' }},
-        { field: 'defaultValue', title: '默认值', width: 240, slots: { default: 'defaultValue_default' }}
+        { field: 'defaultValue', title: '默认值', width: 350, slots: { default: 'defaultValue_default' }}
       ],
       tableData: [],
       checkedKeys: []
@@ -116,9 +136,38 @@ export default {
       }
       for (let i = 0; i < this.tableData.length; i++) {
         const column = this.tableData[i]
+        column.name = this.convertToColumn(column.id)?.name
         if (this.$utils.isEmpty(column.queryType)) {
           this.$msg.error('字段【' + column.name + '】查询类型不能为空')
           return false
+        }
+
+        if (this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(column.viewType)) {
+          if (!this.$utils.isEmpty(column.defaultValue)) {
+            if (this.$utils.isEmpty(column.defaultValue.dateType)) {
+              this.$msg.error('字段【' + column.name + '】默认值请选择日期类型')
+              return false
+            }
+            if (column.defaultValue.dateType === 1) {
+              if (this.$utils.isEmpty(column.defaultValue.dateNum)) {
+                this.$msg.error('字段【' + column.name + '】默认值天数不能为空')
+                return false
+              }
+              if (!this.$utils.isIntegerGeZero(column.defaultValue.dateNum)) {
+                this.$msg.error('字段【' + column.name + '】默认值天数必须为大于或等于0的整数')
+                return false
+              }
+              if (this.$utils.isEmpty(column.defaultValue.dateUnit)) {
+                this.$msg.error('字段【' + column.name + '】默认值日期单位不能为空')
+                return false
+              }
+            } else if (column.defaultValue.dateType === 2) {
+              if (this.$utils.isEmpty(column.defaultValue.dateRange)) {
+                this.$msg.error('字段【' + column.name + '】默认值日期范围不能为空')
+                return false
+              }
+            }
+          }
         }
       }
       return true
@@ -137,7 +186,7 @@ export default {
       if (checked) {
         checkedKeys.filter(item => !tableKeys.includes(item)).forEach(item => {
           const data = this._columns.filter(c => c.id === item)[0]
-          tableData.push(Object.assign(this.emptyLine(), { id: data.id, type: data.type, relaId: data.relaId, viewType: data.viewType }))
+          tableData.push(Object.assign(this.emptyLine(), { id: data.id, type: data.type, relaId: data.relaId, viewType: data.viewType, defaultValue: this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(data.viewType) ? {} : '' }))
         })
 
         this.tableData = tableData
@@ -150,10 +199,26 @@ export default {
     },
     setTableData(datas) {
       this.tableData = datas || []
+      this.tableData.filter(item => {
+        return this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(item.viewType)
+      }).forEach(item => {
+        if (this.$utils.isEmpty(item.defaultValue)) {
+          item.defaultValue = {}
+        } else {
+          item.defaultValue = JSON.parse(item.defaultValue)
+        }
+      })
       this.checkedKeys = this.tableData.map(item => item.id)
     },
     getTableData() {
-      return this.tableData
+      const tableData = this.tableData.map(item => {
+        if (this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(item.viewType)) {
+          return Object.assign({}, item, { defaultValue: this.$utils.isEmpty(item.defaultValue) ? '' : JSON.stringify(item.defaultValue) })
+        } else {
+          return Object.assign({}, item)
+        }
+      })
+      return tableData
     },
     rowDrop() {
       this.$nextTick(() => {

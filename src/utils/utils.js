@@ -555,6 +555,24 @@ utils.getDateTimeWithMaxTime = function(moment) {
 }
 
 /**
+ * 解析日期
+ * @param str
+ * @returns {*|moment.Moment}
+ */
+utils.parseDate = function(str) {
+  return Moment(str, 'YYYY-MM-DD')
+}
+
+/**
+ * 解析日期时间
+ * @param str
+ * @returns {moment.Moment}
+ */
+utils.parseDateTime = function(str) {
+  return Moment(str, 'YYYY-MM-DD HH:mm:ss')
+}
+
+/**
  * 日期时间转日期
  * @param dateTime
  * @returns {string}

@@ -117,8 +117,14 @@ export default {
       }
     } else {
       if (!this.$utils.isEmpty(this.queryParam.defaultValue)) {
-        this.formDataStart = this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(this.$utils.getCurrentDate().add(-this.queryParam.defaultValue, 'd')))
-        this.formDataEnd = this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(this.$utils.getCurrentDate()))
+        const defaultValue = JSON.parse(this.queryParam.defaultValue)
+        if (defaultValue.dateType === 1) {
+          this.formDataStart = this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(this.$utils.getCurrentDate().add(-defaultValue.dateNum, defaultValue.dateUnit)))
+          this.formDataEnd = this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(this.$utils.getCurrentDate()))
+        } else if (defaultValue.dateType === 2) {
+          this.formDataStart = this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(this.$utils.parseDate(defaultValue.dateRange[0])))
+          this.formDataEnd = this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(this.$utils.parseDate(defaultValue.dateRange[1])))
+        }
       }
     }
   },
