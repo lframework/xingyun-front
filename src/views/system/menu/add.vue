@@ -30,8 +30,16 @@
           <a-form-model-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由名称" prop="name">
             <a-input v-model.trim="formData.name" placeholder="对应路由当中的name属性" allow-clear />
           </a-form-model-item>
-          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="组件" prop="component">
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)" label="组件类型" prop="componentType">
+            <a-select v-model="formData.componentType" allow-clear>
+              <a-select-option v-for="item in $enums.MENU_COMPONENT_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+            </a-select>
+          </a-form-model-item>
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.NORMAL.equalsCode(formData.componentType)" label="组件" prop="component">
             <a-input v-model.trim="formData.component" placeholder="对应路由当中的component属性" allow-clear />
+          </a-form-model-item>
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)" label="自定义列表" prop="customList.id">
+            <gen-custom-list-selector v-model="formData.customList" />
           </a-form-model-item>
           <a-form-model-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由路径" prop="path">
             <a-input v-model.trim="formData.path" placeholder="对应路由当中的path属性" allow-clear />
@@ -60,12 +68,14 @@
 </template>
 <script>
 import SysMenuSelector from '@/components/Selector/SysMenuSelector'
+import GenCustomListSelector from '@/components/Selector/GenCustomListSelector'
 import { validCode } from '@/utils/validate'
 import IconPicker from '@/components/IconPicker'
 export default {
   components: {
     IconPicker,
-    SysMenuSelector
+    SysMenuSelector,
+    GenCustomListSelector
   },
   data() {
     return {
@@ -90,8 +100,14 @@ export default {
         name: [
           { required: true, message: '请输入路由名称' }
         ],
+        componentType: [
+          { required: true, message: '请选择组件类型' }
+        ],
         component: [
           { required: true, message: '请输入组件' }
+        ],
+        'customList.id': [
+          { required: true, message: '请选择自定义列表' }
         ],
         path: [
           { required: true, message: '请输入路由路径' }
@@ -134,7 +150,9 @@ export default {
         permission: '',
         description: '',
         name: '',
+        componentType: '',
         component: '',
+        customList: {},
         path: '',
         noCache: true,
         hidden: false
@@ -145,7 +163,11 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.system.menu.create(this.formData).then(() => {
+          const params = Object.assign({}, this.formData)
+          if (this.$enums.MENU_DISPLAY.FUNCTION.equalsCode(params.display)) {
+            params.component = params.customList.id
+          }
+          this.$api.system.menu.create(params).then(() => {
             this.$msg.success('新增成功！')
             // 初始化表单数据
             this.initFormData()
@@ -166,6 +188,7 @@ export default {
     displayChange(val) {
       if (this.$enums.MENU_DISPLAY.CATALOG.equalsCode(val)) {
         this.formData = Object.assign(this.formData, {
+          componentType: undefined,
           component: '',
           noCache: true
         })
@@ -174,6 +197,7 @@ export default {
           name: '',
           path: '',
           hidden: false,
+          componentType: undefined,
           component: '',
           noCache: true
         })

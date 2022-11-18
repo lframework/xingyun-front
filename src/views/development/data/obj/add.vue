@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-data-entity-category-selector v-model="formData.category" />
+            <gen-data-obj-category-selector v-model="formData.category" />
           </j-form-item>
           <j-form-item :span="24" label="备注" :content-nest="false">
             <a-textarea v-model="formData.description" />
@@ -19,16 +19,23 @@
 
       <j-border>
         <j-form :enable-collapse="false" label-width="80px">
-          <j-form-item :span="12" label="数据表" :required="true">
-            <simple-db-table-selector v-model="formData.table" @input="changeTable" />
+          <j-form-item :span="12" label="主表" :required="true">
+            <gen-data-entity-selector v-model="formData.mainTable" :request-params="{ available: true }" @input="changeTable" />
+          </j-form-item>
+          <j-form-item :span="12" label="主表别名" :required="true">
+            <a-input v-model="formData.mainTableAlias" />
           </j-form-item>
         </j-form>
       </j-border>
 
       <div style="height: 10px;" />
 
-      <j-border>
-        <generate-column ref="generateColumn" :columns="columns" />
+      <j-border title="关联子表">
+        <rela-table ref="relaTable" :main-table-id="formData.mainTable.id" :columns="columns" />
+      </j-border>
+
+      <j-border title="自定义查询">
+        <custom-query ref="customQuery" :main-table-id="formData.mainTable.id" :columns="queryColumns" />
       </j-border>
 
       <div class="form-modal-footer">
@@ -41,15 +48,17 @@
   </a-modal>
 </template>
 <script>
-import GenDataEntityCategorySelector from '@/components/Selector/GenDataEntityCategorySelector'
-import GenerateColumn from './generate-column'
-import SimpleDbTableSelector from '@/components/Selector/SimpleDbTableSelector'
+import GenDataObjCategorySelector from '@/components/Selector/GenDataObjCategorySelector'
+import RelaTable from './rela-table'
+import GenDataEntitySelector from '@/components/Selector/GenDataEntitySelector'
+import CustomQuery from './custom-query'
 
 export default {
   components: {
-    GenerateColumn,
-    GenDataEntityCategorySelector,
-    SimpleDbTableSelector
+    RelaTable,
+    GenDataObjCategorySelector,
+    GenDataEntitySelector,
+    CustomQuery
   },
   data() {
     return {
@@ -59,7 +68,8 @@ export default {
       loading: false,
       // 表单数据
       formData: {},
-      columns: []
+      columns: [],
+      queryColumns: []
     }
   },
   computed: {
@@ -86,54 +96,50 @@ export default {
         name: '',
         category: {},
         description: '',
-        table: {}
+        mainTable: {},
+        mainTableAlias: ''
       }
 
       this.columns = []
+      this.queryColumns = []
     },
     // 页面显示时由父页面触发
     open() {
       // 初始化表单数据
       this.initFormData()
     },
-    changeTable(e) {
+    changeTable() {
       this.columns = []
-      if (this.$utils.isEmpty(e)) {
-        return
-      }
-      this.$api.development.dataEntity.queryColumns({
-        tableName: e.id
-      }).then(res => {
-        res = res.map(item => {
-          return Object.assign({ dataDic: {
-            id: item.dataDicId,
-            name: item.dataDicName
-          }, regularExpression: '' }, item)
-        })
-        this.columns = res
-      }).catch(() => {
-        this.formData.table = {}
-      })
+      this.queryColumns = []
     },
     submit() {
       if (this.$utils.isEmpty(this.formData.name)) {
         this.$msg.error('请输入名称')
         return
       }
-      if (!this.$refs.generateColumn.validDate()) {
+      if (this.$utils.isEmpty(this.formData.mainTable.id)) {
+        this.$msg.error('请选择主表')
+        return
+      }
+      if (this.$utils.isEmpty(this.formData.mainTableAlias)) {
+        this.$msg.error('请输入主表别名')
+        return
+      }
+      if (!this.$refs.relaTable.validDate()) {
+        return
+      }
+      if (!this.$refs.customQuery.validDate()) {
         return
       }
       const params = Object.assign({
-        tableName: this.formData.table.id,
+        mainTableId: this.formData.mainTable.id,
         categoryId: this.formData.category.id,
-        columns: this.$refs.generateColumn.getColumns().map(item => {
-          item.dataDicId = item.dataDic.id
-          return item
-        })
+        columns: this.$refs.relaTable.getColumns(),
+        queryColumns: this.$refs.customQuery.getColumns()
       }, this.formData)
 
       this.loading = true
-      this.$api.development.dataEntity.add(params).then(() => {
+      this.$api.development.dataObj.add(params).then(() => {
         this.$msg.success('新增成功！')
         this.$emit('confirm')
         this.closeDialog()

@@ -726,18 +726,25 @@ utils.buildMenus = function(oriMenus = []) {
       }
 
       if (!isExternal(menu.path)) {
-        let component = menu.component
-        if (component.substring(0, 1) !== '/') {
-          component = '/' + component
-        }
-        obj.component = (resolve) => require([`@/views${component}`], resolve)
-        if (menu.path.indexOf('?') > -1) {
-          const queryObj = this.getQueryObject(menu.path)
-          if (!this.isEmpty(queryObj)) {
-            obj.props = queryObj
+        if ($enums.MENU_COMPONENT_TYPE.NORMAL.equalsCode(menu.componentType)) {
+          let component = menu.component
+          if (component.substring(0, 1) !== '/') {
+            component = '/' + component
           }
-        } else if (menu.path.indexOf('/:') > -1) {
-          obj.props = true
+          obj.component = (resolve) => require([`@/views${component}`], resolve)
+          if (menu.path.indexOf('?') > -1) {
+            const queryObj = this.getQueryObject(menu.path)
+            if (!this.isEmpty(queryObj)) {
+              obj.props = queryObj
+            }
+          } else if (menu.path.indexOf('/:') > -1) {
+            obj.props = true
+          }
+        } else if ($enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(menu.componentType)) {
+          obj.component = (resolve) => require([`@/components/CustomList`], resolve)
+          obj.props = {
+            customListId: menu.component
+          }
         }
       }
     }

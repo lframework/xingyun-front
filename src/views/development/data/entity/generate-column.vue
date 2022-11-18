@@ -13,6 +13,7 @@
       :columns="tableColumn"
       :data="columns"
       :loading="loading"
+      :height="$defaultTableHeight"
     >
       <!-- 数据类型 列自定义内容 -->
       <template v-slot:name_default="{ row }">
@@ -189,8 +190,7 @@ export default {
         { field: 'isOrder', title: '是否排序字段', width: 120, slots: { default: 'isOrder_default' }},
         { field: 'orderType', title: '排序类型', width: 120, slots: { default: 'orderType_default' }},
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
-      ],
-      tableData: []
+      ]
     }
   },
   computed: {
