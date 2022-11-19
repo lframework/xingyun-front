@@ -16,7 +16,7 @@ function checkPermission(el, binding) {
 
       const hasPermission = permissionRoles.some(pattern => {
         return roles.some(item => {
-          utils.strMatch(item, pattern)
+          return utils.strMatch(item, pattern)
         })
       })
 
