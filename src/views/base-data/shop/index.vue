@@ -110,7 +110,7 @@ export default {
         deptId: '',
         createTimeStart: '',
         createTimeEnd: '',
-        available: true
+        available: this.$enums.AVAILABLE.ENABLE.code
       },
       // 工具栏配置
       toolbarConfig: {

@@ -34,8 +34,23 @@
 
       <j-border title="基础配置">
         <j-form :enable-collapse="false" label-width="160px">
+          <j-form-item :span="8" label="列表类型" :required="true">
+            <a-select v-model="formData.listType" allow-clear>
+              <a-select-option v-for="item in $enums.GEN_CUSTOM_LIST_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+            </a-select>
+          </j-form-item>
           <j-form-item :span="8" label="表单Label宽度（px）" :required="true">
             <a-input-number v-model="formData.labelWidth" class="number-input" :min="1" />
+          </j-form-item>
+          <j-form-item :span="8" label="ID字段" :required="true">
+            <a-tree-select
+              v-model="formData.idColumn"
+              :replace-fields="{ title: 'name', key: 'id', value: 'id', children: 'columns' }"
+              style="width: 100%"
+              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+              :tree-data="treeColumns"
+              tree-default-expand-all
+            />
           </j-form-item>
           <j-form-item v-if="!formData.treeData" :span="8" label="是否分页" :required="true">
             <a-select v-model="formData.hasPage" allow-clear>
@@ -48,16 +63,6 @@
               <a-select-option :value="true">是</a-select-option>
               <a-select-option :value="false">否</a-select-option>
             </a-select>
-          </j-form-item>
-          <j-form-item v-if="formData.treeData" :span="8" label="ID字段" :required="true">
-            <a-tree-select
-              v-model="formData.treeIdColumn"
-              :replace-fields="{ title: 'name', key: 'id', value: 'id', children: 'columns' }"
-              style="width: 100%"
-              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-              :tree-data="treeColumns"
-              tree-default-expand-all
-            />
           </j-form-item>
           <j-form-item v-if="formData.treeData" :span="8" label="父级ID字段" :required="true">
             <a-tree-select
@@ -246,6 +251,14 @@ export default {
         this.$msg.error('请输入名称')
         return
       }
+      if (this.$utils.isEmpty(this.formData.available)) {
+        this.$msg.error('请选择状态')
+        return
+      }
+      if (this.$utils.isEmpty(this.formData.listType)) {
+        this.$msg.error('请选择列表类型')
+        return
+      }
       if (this.$utils.isEmpty(this.formData.labelWidth)) {
         this.$msg.error('请输入表单Label宽度')
         return
@@ -254,12 +267,22 @@ export default {
         this.$msg.error('请选择是否树形列表')
         return
       }
+
+      if (this.$utils.isEmpty(this.formData.idColumn)) {
+        this.$msg.error('请选择ID字段')
+        return
+      }
+
+      const treeColumns = []
+      const tmpArr = this.treeColumns.map(item => {
+        return item.columns || []
+      })
+      tmpArr.forEach(item => treeColumns.push(...item))
+
+      this.formData.idColumnRelaId = treeColumns.filter(item => item.id === this.formData.idColumn)[0].relaId
+
       if (this.formData.treeData) {
         this.formData.hasPage = false
-        if (this.$utils.isEmpty(this.formData.treeIdColumn)) {
-          this.$msg.error('请选择ID字段')
-          return
-        }
         if (this.$utils.isEmpty(this.formData.treePidColumn)) {
           this.$msg.error('请选择父级ID字段')
           return
@@ -273,13 +296,6 @@ export default {
           return
         }
 
-        const treeColumns = []
-        const tmpArr = this.treeColumns.map(item => {
-          return item.columns || []
-        })
-        tmpArr.forEach(item => treeColumns.push(...item))
-
-        this.formData.treeIdColumnRelaId = treeColumns.filter(item => item.id === this.formData.treeIdColumn)[0].relaId
         this.formData.treePidColumnRelaId = treeColumns.filter(item => item.id === this.formData.treePidColumn)[0].relaId
         this.formData.treeNodeColumnRelaId = treeColumns.filter(item => item.id === this.formData.treeNodeColumn)[0].relaId
       } else {
@@ -309,9 +325,6 @@ export default {
       }).finally(() => {
         this.loading = false
       })
-    },
-    aaa(value, label, extra) {
-      console.log(value, label, extra)
     }
   }
 }

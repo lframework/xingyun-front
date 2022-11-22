@@ -46,6 +46,16 @@ const data = {
       },
       data: data
     })
+  },
+  getCustomSelectorConfig: (id) => {
+    return request({
+      url: '/gen/api/custom/selector/config',
+      region: 'common-api',
+      method: 'get',
+      params: {
+        id: id
+      }
+    })
   }
 }
 

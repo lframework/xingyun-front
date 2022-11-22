@@ -3,23 +3,29 @@
     <div v-if="loadedConfig" v-show="visible" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        :id="listConfig.id"
         ref="grid"
         resizable
         show-overflow
         highlight-hover-row
         keep-source
+        :custom-config="{ storage: true }"
         :tree-config="listConfig.treeData ? { expandAll: true } : undefined"
         :proxy-config="proxyConfig"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
         :pager-config="listConfig.hasPage ? {} : undefined"
         :loading="loading"
+        :row-config="_rowConfig"
+        :radio-config="_radioConfig"
+        :checkbox-config="_checkboxConfig"
         :height="$defaultTableHeight"
+        @cell-dblclick="onCellDblClick"
       >
         <template v-if="!$utils.isEmpty(queryParams)" v-slot:form>
           <j-border>
             <j-form :label-width="listConfig.labelWidth + 'px'" @collapse="$refs.grid.refreshColumn()">
-              <j-form-item v-for="queryParam in queryParams" :key="queryParam.tableAlias + '_' + queryParam.columnName" :label="queryParam.name" :span="queryParam.formWidth" :content-nest="$enums.GEN_VIEW_TYPE.INPUT.equalsCode(queryParam.viewType) || $enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(queryParam.viewType) || $enums.GEN_VIEW_TYPE.SELECT.equalsCode(queryParam.viewType) || $enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(queryParam.viewType)">
+              <j-form-item v-for="queryParam in queryParams" :key="queryParam.tableAlias + '_' + queryParam.columnName" :item-show="queryParam.frontShow" :label="queryParam.name" :span="queryParam.formWidth" :content-nest="$enums.GEN_VIEW_TYPE.INPUT.equalsCode(queryParam.viewType) || $enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(queryParam.viewType) || $enums.GEN_VIEW_TYPE.SELECT.equalsCode(queryParam.viewType) || $enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(queryParam.viewType)">
                 <input-component :query-param="queryParam" :search-condition="searchFormData" />
               </j-form-item>
             </j-form>
@@ -108,7 +114,7 @@ export default {
             ajax: {
               query: () => this.$api.development.gen.queryCustomListTree(this.customListId, this.buildQueryParams()).then(res => {
                 // 将带层级的列表转成树结构
-                res = this.$utils.toArrayTree(res, { key: this.listConfig.treeIdColumn, parentKey: this.listConfig.treePidColumn, children: this.listConfig.treeChildrenKey, strict: true })
+                res = this.$utils.toArrayTree(res, { key: this.listConfig.idColumn, parentKey: this.listConfig.treePidColumn, children: this.listConfig.treeChildrenKey, strict: true })
 
                 return this.$utils.searchTree(res, item => {
                   return item['id@show']
@@ -127,6 +133,31 @@ export default {
           }
         }
       }
+    },
+    _rowConfig() {
+      if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
+        return { isCurrent: true, isHover: true }
+      }
+
+      return {}
+    },
+    _radioConfig() {
+      if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+        return {
+          trigger: 'row',
+          highlight: true
+        }
+      }
+      return {}
+    },
+    _checkboxConfig() {
+      if (this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
+        return {
+          trigger: 'row',
+          highlight: true
+        }
+      }
+      return {}
     }
   },
   watch: {
@@ -192,12 +223,22 @@ export default {
           return column
         })
 
-        this.tableColumn = [{ type: 'seq', width: 40 }, ...tableColumn]
+        const firstColumn = {
+          type: 'seq',
+          width: 50
+        }
+        if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+          firstColumn.type = 'radio'
+        } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
+          firstColumn.type = 'checkbox'
+        }
+        this.tableColumn = [firstColumn, ...tableColumn]
 
         // 初始化查询条件
         this.queryParams = res.queryParams || []
 
         this.loadedConfig = true
+        this.$emit('loadedConfig', true)
       })
     },
     // 列表发生查询时的事件
@@ -218,6 +259,56 @@ export default {
       return {
         conditions: searchFormData
       }
+    },
+    onCellDblClick({ row }) {
+      this.$emit('cellDblClick', row)
+    },
+    getSelectedRecords() {
+      if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
+        return this.$refs.grid.getCurrentRecord()
+      } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+        return this.$refs.grid.getRadioRecord()
+      } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
+        return this.$refs.grid.getCheckboxRecords()
+      }
+    },
+    getEmptyRecords() {
+      if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
+        return
+      } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+        return
+      } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
+        return []
+      }
+    },
+    async getRecordsByIds(ids) {
+      let result = this.getEmptyRecords()
+      if (this.$utils.isEmpty(ids)) {
+        return result
+      }
+
+      const tableAlias = this.listConfig.idColumn.substring(0, this.listConfig.idColumn.indexOf('_'))
+      const columnName = this.listConfig.idColumn.substring(this.listConfig.idColumn.indexOf('_') + 1)
+      await this.$api.development.gen.queryCustomListDatas(this.customListId, {
+        conditions: [{
+          tableAlias: tableAlias,
+          columnName: columnName,
+          queryType: this.$enums.GEN_QUERY_TYPE.IN.code,
+          values: this.$utils.isArray(ids) ? ids : [ids]
+        }]
+      }).then(res => {
+        if (!this.$utils.isEmpty(res)) {
+          if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
+            result = res[0]
+          } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+            result = res[0]
+          } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
+            result = res
+          }
+        }
+      })
+
+      return result
     }
   }
 }

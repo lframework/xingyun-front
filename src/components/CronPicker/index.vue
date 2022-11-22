@@ -41,12 +41,9 @@ export default {
     // cron change
     handleCronChange(val) {
       // val inputEvent对象
-      console.log(val)
-      console.log(this.cron)
       this.$emit('change', this.cron)
     },
     handleOK(val) {
-      // console.log('cron val:',val)
       this.cron = val
       this.$emit('input', this.cron)
       // this.$emit("change", Object.assign({},  this.cron));

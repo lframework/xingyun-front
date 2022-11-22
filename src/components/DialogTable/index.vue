@@ -236,13 +236,13 @@ export default {
             data[this.option.label] = item[this.columnOption.label]
             data[this.option.value] = item[this.columnOption.value]
 
-            return data
+            return Object.assign({}, item, data)
           })
         } else {
           const data = {}
           data[this.option.label] = selectData[this.columnOption.label]
           data[this.option.value] = selectData[this.columnOption.value]
-          selectData = data
+          selectData = Object.assign({}, selectData, data)
         }
       }
 

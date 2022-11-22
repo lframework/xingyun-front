@@ -39,7 +39,7 @@
             <a-input v-model.trim="formData.component" placeholder="对应路由当中的component属性" allow-clear />
           </a-form-model-item>
           <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)" label="自定义列表" prop="customList.id">
-            <gen-custom-list-selector v-model="formData.customList" />
+            <gen-custom-list-selector v-model="formData.customList" :request-params="{ available: true }" />
           </a-form-model-item>
           <a-form-model-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由路径" prop="path">
             <a-input v-model.trim="formData.path" placeholder="对应路由当中的path属性" allow-clear />

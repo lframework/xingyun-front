@@ -71,6 +71,7 @@
     </div>
   </div>
   <data-dic-picker v-else-if="$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(queryParam.viewType)" v-model="formData" :code="queryParam.dataDicCode" />
+  <custom-selector v-else-if="$enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(queryParam.viewType)" v-model="formData" :custom-selector-id="queryParam.customSelectorId" />
 </template>
 <script>
 

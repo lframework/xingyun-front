@@ -2,7 +2,7 @@
   <transition
     enter-active-class="animated fadeIn"
   >
-    <div v-show="visible" :class="'item item--default'" :style="{width: itemWidth}">
+    <div v-show="visible && itemShow" :class="'item item--default'" :style="{width: itemWidth}">
       <span :class="'label label--default'" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : (colon ? label + '：' : label) }}</span>
       <div v-if="contentNest" class="content" :style="{width: contentWidth}">
         <slot />
@@ -64,6 +64,13 @@ export default {
      * 是否显示冒号
      */
     colon: {
+      type: Boolean,
+      default: true
+    },
+    /**
+     * 是否显示
+     */
+    itemShow: {
       type: Boolean,
       default: true
     }

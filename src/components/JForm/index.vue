@@ -41,6 +41,9 @@ export default {
       let totalSpan = 0
       for (let i = 0; i < this.items.length; i++) {
         const item = this.items[i]
+        if (!item.itemShow) {
+          continue
+        }
         totalSpan += item.span
         if (totalSpan > 24) {
           return true
@@ -58,6 +61,9 @@ export default {
       let totalSpan = 0
       for (let i = 0; i < this.items.length; i++) {
         const item = this.items[i]
+        if (!item.itemShow) {
+          continue
+        }
         totalSpan += item.span
         if (totalSpan > 24) {
           item.setVisible(false)
@@ -70,6 +76,9 @@ export default {
       let totalSpan = 0
       for (let i = 0; i < this.items.length; i++) {
         const item = this.items[i]
+        if (!item.itemShow) {
+          continue
+        }
         totalSpan += item.span
         if (totalSpan > 24) {
           item.setVisible(true)

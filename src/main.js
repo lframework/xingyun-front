@@ -30,6 +30,8 @@ import JFormItem from '@/components/JFormItem'
 import JBorder from '@/components/JBorder'
 import OrderTimeLine from '@/components/OrderTimeLine'
 import DataDicPicker from '@/components/DataDicPicker'
+import CustomList from '@/components/CustomList'
+import CustomSelector from '@/components/CustomSelector'
 
 const router = initRouter(store.state.setting.asyncRoutes)
 const i18n = initI18n('CN', 'US')
@@ -88,6 +90,8 @@ Vue.component('JFormItem', JFormItem)
 Vue.component('JBorder', JBorder)
 Vue.component('OrderTimeLine', OrderTimeLine)
 Vue.component('DataDicPicker', DataDicPicker)
+Vue.component('CustomList', CustomList)
+Vue.component('CustomSelector', CustomSelector)
 
 bootstrap({ router, store, i18n, message: Vue.prototype.$message })
 

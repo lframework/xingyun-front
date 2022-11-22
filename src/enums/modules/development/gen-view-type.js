@@ -22,6 +22,9 @@ const GEN_VIEW_TYPE = {
   },
   DATA_DIC: {
     code: 7, desc: '数据字典'
+  },
+  CUSTOM_SELECTOR: {
+    code: 8, desc: '自定义选择器'
   }
 }
 

@@ -97,7 +97,9 @@ export default {
       id: '',
       ids: [],
       // 查询列表的查询条件
-      searchFormData: {},
+      searchFormData: {
+        available: this.$enums.AVAILABLE.ENABLE.code
+      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏

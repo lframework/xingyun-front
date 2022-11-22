@@ -266,7 +266,7 @@ export default {
             data[this.option.label] = item[this.columnOption.label]
             data[this.option.value] = item[this.columnOption.value]
 
-            return data
+            return Object.assign({}, item, data)
           })
           if (!this.$utils.isEmpty(this.value) && this.$utils.isArray(this.value)) {
             if (selectData.length === this.value.length) {
@@ -288,7 +288,7 @@ export default {
           const data = {}
           data[this.option.label] = selectData[this.columnOption.label]
           data[this.option.value] = selectData[this.columnOption.value]
-          selectData = data
+          selectData = Object.assign({}, selectData, data)
 
           if (!this.$utils.isEmpty(this.value)) {
             if (selectData[this.option.value] === this.value[this.option.value]) {

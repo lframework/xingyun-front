@@ -42,9 +42,10 @@
         </a-select>
       </template>
 
-      <!-- 数据字典 列自定义内容 -->
-      <template v-slot:dataDic_default="{ row }">
-        <sys-data-dic-selector v-if="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code" v-model="row.dataDic" />
+      <!-- 显示类型配置 列自定义内容 -->
+      <template v-slot:viewTypeConfig_default="{ row }">
+        <sys-data-dic-selector v-if="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code" v-model="row.dataDic" :request-params="{ available: true}" />
+        <gen-custom-selector-selector v-else-if="row.viewType === $enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.code" v-model="row.customSelector" :request-params="{ available: true}" />
       </template>
 
       <!-- 是否内置枚举 列自定义内容 -->
@@ -158,10 +159,12 @@
 <script>
 import Sortable from 'sortablejs'
 import SysDataDicSelector from '@/components/Selector/SysDataDicSelector'
+import GenCustomSelectorSelector from '@/components/Selector/GenCustomSelectorSelector'
 export default {
   // 使用组件
   components: {
-    SysDataDicSelector
+    SysDataDicSelector,
+    GenCustomSelectorSelector
   },
 
   props: {
@@ -182,7 +185,7 @@ export default {
         { field: 'dataType', title: '数据类型', width: 180, slots: { default: 'dataType_default' }},
         { field: 'fieldLength', title: '字段长度', width: 180, slots: { default: 'fieldLength_default' }},
         { field: 'viewType', title: '显示类型', width: 180, slots: { default: 'viewType_default', header: 'viewType_header' }},
-        { field: 'dataDic_', title: '数据字典', width: 180, slots: { default: 'dataDic_default' }},
+        { field: 'viewTypeConfig', title: '显示类型配置', width: 180, slots: { default: 'viewTypeConfig_default' }},
         { field: 'fixEnum', title: '是否内置枚举', width: 120, slots: { default: 'fixEnum_default' }},
         { field: 'enumBack', title: '后端枚举名', width: 180, slots: { default: 'enumBack_default', header: 'enumBack_header' }},
         { field: 'enumFront', title: '前端枚举名', width: 180, slots: { default: 'enumFront_default', header: 'enumFront_header' }},
@@ -281,6 +284,13 @@ export default {
             return false
           }
         }
+
+        if (this.$enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
+          if (this.$utils.isEmpty(column.customSelector.id)) {
+            this.$msg.error('字段【' + column.name + '】自定义选择器不能为空！')
+            return false
+          }
+        }
       }
 
       return true
@@ -334,6 +344,7 @@ export default {
           delete column.decimals
           column.viewType = this.$enums.GEN_VIEW_TYPE.INPUT.code
           column.dataDic = {}
+          column.customSelector = {}
           column.fixEnum = false
           delete column.enumBack
           delete column.enumFront
@@ -349,6 +360,10 @@ export default {
 
           if (!that.$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
             column.dataDic = {}
+          }
+
+          if (!that.$enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
+            column.customSelector = {}
           }
 
           if (!that.$enums.GEN_VIEW_TYPE.INPUT.equalsCode(column.viewType) && !that.$enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(column.viewType)) {

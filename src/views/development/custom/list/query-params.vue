@@ -30,6 +30,15 @@
           :data="tableData"
           :loading="loading"
         >
+
+          <!-- 前端显示 列自定义内容 -->
+          <template v-slot:frontShow_default="{ row }">
+            <a-select v-model="row.frontShow">
+              <a-select-option :value="true">是</a-select-option>
+              <a-select-option :value="false">否</a-select-option>
+            </a-select>
+          </template>
+
           <!-- 查询类型 列自定义内容 -->
           <template v-slot:queryType_default="{ row }">
             <a-select v-model="row.queryType">
@@ -103,6 +112,7 @@ export default {
       tableColumn: [
         { field: 'orderNo', title: '排序', width: 50, slots: { default: 'orderNo_default' }},
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id)?.name } },
+        { field: 'frontShow', title: '前端显示', width: 140, slots: { default: 'frontShow_default' }},
         { field: 'queryType', title: '查询类型', width: 140, slots: { default: 'queryType_default' }},
         { field: 'formWidth', title: '表单宽度', align: 'right', width: 100, slots: { default: 'formWidth_default' }},
         { field: 'defaultValue', title: '默认值', width: 350, slots: { default: 'defaultValue_default' }}
@@ -141,6 +151,10 @@ export default {
           this.$msg.error('字段【' + column.name + '】查询类型不能为空')
           return false
         }
+        if (this.$utils.isEmpty(column.frontShow)) {
+          this.$msg.error('字段【' + column.name + '】前端显示不能为空')
+          return false
+        }
 
         if (this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(column.viewType)) {
           if (!this.$utils.isEmpty(column.defaultValue)) {
@@ -176,6 +190,7 @@ export default {
       return {
         id: '',
         queryType: this.$enums.GEN_QUERY_TYPE.EQ.code,
+        frontShow: true,
         formWidth: 6,
         orderNo: ''
       }

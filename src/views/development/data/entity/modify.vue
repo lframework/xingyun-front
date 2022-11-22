@@ -122,6 +122,10 @@ export default {
           return Object.assign({ dataDic: {
             id: item.dataDicId,
             name: item.dataDicName
+          },
+          customSelector: {
+            id: item.customSelectorId,
+            name: item.customSelectorName
           }, regularExpression: '' }, item)
         })
         this.columns = columns
@@ -151,6 +155,7 @@ export default {
         categoryId: this.formData.category.id,
         columns: this.$refs.generateColumn.getColumns().map(item => {
           item.dataDicId = item.dataDic.id
+          item.customSelectorId = item.customSelector.id
           return item
         })
       }, this.formData)
