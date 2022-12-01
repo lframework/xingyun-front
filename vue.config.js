@@ -81,6 +81,15 @@ module.exports = {
         symbolId: 'icon-[name]'
       })
       .end()
+      .use('svgo-loader').loader('svgo-loader')
+      .tap(options => ({ ...options, plugins: [
+        {
+          name: 'removeAttrs',
+          params: {
+            attrs: 'fill'
+          }
+        }
+      ] })).end()
     config
       .when(process.env.NODE_ENV !== 'development',
         config => {

@@ -47,14 +47,7 @@ export default {
       type: String,
       required: true
     },
-    multiple: { type: Boolean, default: false },
     value: { type: [Object, Array], required: true },
-    title: { type: String, default: '选择' },
-    option: {
-      type: Object, default: () => {
-        return { label: 'name', value: 'id' }
-      }
-    },
     disabled: {
       type: Boolean,
       default: false

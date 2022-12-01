@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-select :default-value="value" :show-search="true" @change="handleChange">
+    <a-select :default-value="value" :disabled="disabled" :show-search="true" @change="handleChange">
       <a-select-option v-for="item in icons" :key="item" :value="item">
         <svg-icon :icon-class="item" /> {{ item }}
       </a-select-option>
@@ -15,7 +15,11 @@ export default {
   components: {
   },
   props: {
-    value: { type: String, default: '' }
+    value: { type: String, default: '' },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

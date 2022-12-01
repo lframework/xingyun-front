@@ -6,7 +6,9 @@
           <a-input v-model="formData.title" allow-clear />
         </a-form-model-item>
 
-        <rich-text-editor ref="editor" style="margin-bottom: 5px;" />
+        <a-form-model-item prop="content" :label-col="{span: 0}" :wrapper-col="{span: 24}">
+          <j-editor v-model="formData.content" style="margin-bottom: 5px;" />
+        </a-form-model-item>
 
         <div class="form-modal-footer">
           <a-space>
@@ -20,10 +22,8 @@
   </a-modal>
 </template>
 <script>
-import RichTextEditor from '@/components/RichTextEditor'
 export default {
   components: {
-    RichTextEditor
   },
   data() {
     return {
@@ -37,6 +37,9 @@ export default {
       rules: {
         title: [
           { required: true, message: '请输入标题' }
+        ],
+        content: [
+          { required: true, message: '请输入内容' }
         ]
       }
     }
@@ -70,11 +73,6 @@ export default {
     submit(published) {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.$refs.editor.isEmpty()) {
-            this.$msg.error('请输入内容')
-            return
-          }
-          this.formData.content = this.$refs.editor.getHtml()
           if (published) {
             this.$msg.confirm('是否确认执行发布操作？').then(() => {
               this.onPublish(published)

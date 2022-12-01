@@ -1,13 +1,14 @@
-
 <template>
   <div class="tinymce-editor">
     <Editor
       :id="tinymceId"
       v-model="html"
       :init="init"
+      :disabled="disabled"
     />
   </div>
 </template>
+
 <script>
 import tinymce from 'tinymce/tinymce' // tinymce默认hidden，不引入不显示
 import Editor from '@tinymce/tinymce-vue'// 编辑器引入
@@ -55,6 +56,10 @@ export default {
     Editor
   },
   props: {
+    value: {
+      type: String,
+      required: true
+    },
     // 插件
     plugins: {
       type: [String, Array],
@@ -64,12 +69,15 @@ export default {
     toolbar: {
       type: [String, Array],
       default: 'undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists image media table'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      // 初始化配置
-      tinymceId: 'tinymce',
+      tinymceId: this.$utils.uuid(),
       html: ''
     }
   },
@@ -103,7 +111,13 @@ export default {
       return config
     }
   },
+  watch: {
+    html(val) {
+      this.$emit('input', val)
+    }
+  },
   mounted() {
+    this.html = this.value
     this.$nextTick(() => {
       tinymce.init({})
     })

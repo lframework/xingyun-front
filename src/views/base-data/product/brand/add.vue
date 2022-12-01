@@ -12,19 +12,7 @@
           <a-input v-model.trim="formData.shortName" allow-clear />
         </a-form-model-item>
         <a-form-model-item label="Logo" prop="logo">
-          <a-upload
-            list-type="picture-card"
-            :show-upload-list="false"
-            :custom-request="uploadLogo"
-          >
-            <img v-if="!$utils.isEmpty(formData.logo)" :src="formData.logo" class="img-uploader-container">
-            <div v-else>
-              <a-icon :type="loading ? 'loading' : 'plus'" />
-              <div class="ant-upload-text">
-                上传
-              </div>
-            </div>
-          </a-upload>
+          <j-img-upload v-model="formData.logo" :url="$api.baseData.product.brand.uploadLogo" />
         </a-form-model-item>
         <a-form-model-item label="简介" prop="introduction">
           <a-textarea v-model.trim="formData.introduction" />
@@ -118,16 +106,6 @@ export default {
     open() {
       // 初始化表单数据
       this.initFormData()
-    },
-    uploadLogo(e) {
-      this.loading = true
-      this.$api.baseData.product.brand.uploadLogo({
-        file: e.file
-      }).then(res => {
-        this.formData.logo = res
-      }).finally(() => {
-        this.loading = false
-      })
     }
   }
 }

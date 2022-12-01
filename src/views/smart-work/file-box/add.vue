@@ -7,19 +7,7 @@
         </a-form-model-item>
         <a-form-model-item label="文件" prop="url">
           <a-space>
-            <a-upload
-              name="file"
-              :max-count="1"
-              :file-list="fileList"
-              :show-upload-list="{
-                showRemoveIcon: false
-              }"
-              :custom-request="uploadFile"
-            >
-              <a-button>
-                选择文件
-              </a-button>
-            </a-upload>
+            <j-upload v-model="formData.url" :url="$api.sw.filebox.upload" @confirm="uploadFile" />
           </a-space>
         </a-form-model-item>
         <a-form-model-item label="备注" prop="description">
@@ -106,23 +94,11 @@ export default {
       // 初始化表单数据
       this.initFormData()
     },
-    uploadFile(e) {
-      const file = e.file
-      this.fileList = []
-      this.formData.url = ''
-      this.loading = true
-      this.$api.sw.filebox.upload({
-        file: file
-      }).then(res => {
-        this.formData.url = res
-        this.fileList.push(Object.assign(file, { status: 'done' }))
-        if (this.$utils.isEmpty(this.formData.name)) {
-          this.formData.name = file.name
-        }
-        this.$refs.form.clearValidate()
-      }).finally(() => {
-        this.loading = false
-      })
+    uploadFile(res, file) {
+      if (this.$utils.isEmpty(this.formData.name)) {
+        this.formData.name = file.name
+      }
+      this.$refs.form.clearValidate()
     }
   }
 }

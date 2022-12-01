@@ -3,6 +3,8 @@ import App from './App.vue'
 import { initRouter } from './router'
 import './theme/index.less'
 import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+
 import Viser from 'viser-vue'
 import store from './store'
 import 'animate.css/source/animate.css'
@@ -25,18 +27,16 @@ import 'vxe-table-plugin-antd/dist/style.css'
 import { Empty } from 'ant-design-vue'
 import loading from '@/directive/loading'
 import permission from '@/directive/permission/index.js' // 权限判断指令
-import JForm from '@/components/JForm'
-import JFormItem from '@/components/JFormItem'
-import JBorder from '@/components/JBorder'
-import OrderTimeLine from '@/components/OrderTimeLine'
-import DataDicPicker from '@/components/DataDicPicker'
-import CustomList from '@/components/CustomList'
-import CustomSelector from '@/components/CustomSelector'
+import Components from '@/components'
 
 const router = initRouter(store.state.setting.asyncRoutes)
 const i18n = initI18n('CN', 'US')
 
+import formCreate from '@form-create/ant-design-vue'
+
 Vue.use(Antd)
+Vue.use(Components)
+Vue.use(formCreate)
 Vue.config.productionTip = false
 Vue.use(Viser)
 Vue.use(Plugins)
@@ -84,14 +84,6 @@ Vue.use(VXETable)
 
 Vue.prototype.$vh = (document.documentElement.clientHeight || document.body.clientHeight) / 100
 Vue.prototype.$defaultTableHeight = Vue.prototype.$vh * 100 - 140
-
-Vue.component('JForm', JForm)
-Vue.component('JFormItem', JFormItem)
-Vue.component('JBorder', JBorder)
-Vue.component('OrderTimeLine', OrderTimeLine)
-Vue.component('DataDicPicker', DataDicPicker)
-Vue.component('CustomList', CustomList)
-Vue.component('CustomSelector', CustomSelector)
 
 bootstrap({ router, store, i18n, message: Vue.prototype.$message })
 

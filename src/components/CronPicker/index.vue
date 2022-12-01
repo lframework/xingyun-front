@@ -18,6 +18,10 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -36,6 +40,9 @@ export default {
   },
   methods: {
     openModal() {
+      if (this.disabled) {
+        return
+      }
       this.$refs.innerVueCron.show()
     },
     // cron change
@@ -49,6 +56,9 @@ export default {
       // this.$emit("change", Object.assign({},  this.cron));
     },
     handleEmpty() {
+      if (this.disabled) {
+        return
+      }
       this.cron = ''
     }
   }

@@ -10,7 +10,9 @@
             <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
           </a-select>
         </a-form-model-item>
-        <rich-text-editor ref="editor" style="margin-bottom: 5px;" />
+        <a-form-model-item prop="content" :label-col="{span: 0}" :wrapper-col="{span: 24}">
+          <j-editor v-model="formData.content" style="margin-bottom: 5px;" />
+        </a-form-model-item>
         <div class="form-modal-footer">
           <a-space>
             <a-button v-if="!formData.published" type="primary" :loading="loading" html-type="submit" @click="e => submit(false)">保存</a-button>
@@ -23,11 +25,9 @@
   </a-modal>
 </template>
 <script>
-import RichTextEditor from '@/components/RichTextEditor'
 export default {
   // 使用组件
   components: {
-    RichTextEditor
   },
   props: {
     id: {
@@ -47,6 +47,9 @@ export default {
       rules: {
         title: [
           { required: true, message: '请输入标题' }
+        ],
+        content: [
+          { required: true, message: '请输入内容' }
         ],
         available: [
           { required: true, message: '请选择状态' }
@@ -83,11 +86,6 @@ export default {
     submit(published) {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.$refs.editor.isEmpty()) {
-            this.$msg.error('请输入内容')
-            return
-          }
-          this.formData.content = this.$refs.editor.getHtml()
           if (this.formData.published && published) {
             this.$msg.confirm('重新发布后，会重置所有人的已读状态，是否确认继续执行？').then(() => {
               this.onPublish(published)
@@ -127,7 +125,6 @@ export default {
       this.loading = true
       await this.$api.system.notice.get(this.id).then(data => {
         this.formData = data
-        this.$refs.editor.setHtml(data.content)
       }).finally(() => {
         this.loading = false
       })
