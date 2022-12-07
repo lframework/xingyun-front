@@ -172,7 +172,7 @@ import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
 import MemberSelector from '@/components/Selector/MemberSelector'
 import UserSelector from '@/components/Selector/UserSelector'
 import BatchAddProduct from '@/views/sc/retail/batch-add-product'
-import moment from 'moment'
+import Moment from 'moment'
 
 export default {
   name: 'ModifyRetailOut',
@@ -234,6 +234,9 @@ export default {
     }
   },
   computed: {
+    moment() {
+      return Moment
+    }
   },
   created() {
     // 初始化表单数据
