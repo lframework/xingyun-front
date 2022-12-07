@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="40%" :dialog-style="{ top: '20px' }" title="新增">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" :dialog-style="{ top: '20px' }" title="新增" :footer="null">
     <div v-if="visible" v-permission="['base-data:product:brand:add']" v-loading="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
         <a-form-model-item label="编号" prop="code">
