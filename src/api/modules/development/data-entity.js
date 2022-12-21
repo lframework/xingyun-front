@@ -22,7 +22,7 @@ const data = {
       url: '/gen/data/entity/category',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -35,7 +35,7 @@ const data = {
       url: '/gen/data/entity/category',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**
@@ -63,7 +63,7 @@ const data = {
       url: '/gen/data/entity/category',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })
@@ -117,7 +117,7 @@ const data = {
       url: '/gen/data/entity',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })
@@ -194,7 +194,7 @@ const data = {
       url: '/gen/data/entity/sync/table',
       region: 'common-api',
       method: 'put',
-      params: {
+      data: {
         id: id
       }
     })

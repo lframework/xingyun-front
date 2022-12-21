@@ -37,7 +37,7 @@
               </a-form-model-item>
               <a-form-model-item v-if="formData.allowLock" label="允许登录失败次数" prop="failNum">
                 <a-space>
-                  <a-input-number v-model="formData.failNum" class="number-input" placeholder="" />
+                  <a-input-number v-model="formData.failNum" class="number-input" placeholder="" :precision="0" />
                   <a-tooltip title="24小时内允许连续登录失败次数，例如：设置为7次，表示24小时内连续登录失败7次时锁定。7次以内登录成功，清零失败次数。连续失败不超过7次并且距离最后一次失败24小时后，清零失败次数。"><a-icon type="question-circle" /></a-tooltip>
                 </a-space>
               </a-form-model-item>

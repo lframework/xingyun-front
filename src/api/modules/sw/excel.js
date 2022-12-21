@@ -42,7 +42,7 @@ export default {
       url: '/sw/excel',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
 
@@ -56,7 +56,7 @@ export default {
       url: '/sw/excel',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
 
@@ -86,7 +86,7 @@ export default {
       url: '/sw/excel/content',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
 
@@ -100,7 +100,7 @@ export default {
       url: '/sw/excel/send',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
 
@@ -115,7 +115,7 @@ export default {
       region: 'common-api',
       method: 'post',
       dataType: 'json',
-      params: params
+      data: params
     })
   }
 }

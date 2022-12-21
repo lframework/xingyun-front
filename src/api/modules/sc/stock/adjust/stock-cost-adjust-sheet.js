@@ -43,7 +43,7 @@ export default {
       region: 'sc-api',
       method: 'post',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -58,7 +58,7 @@ export default {
       region: 'sc-api',
       method: 'put',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -72,7 +72,7 @@ export default {
       url: '/stock/adjust/cost',
       region: 'sc-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })

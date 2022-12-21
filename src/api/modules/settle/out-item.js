@@ -52,7 +52,7 @@ export default {
       url: '/settle/item/out',
       region: 'settle-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -65,7 +65,7 @@ export default {
       url: '/settle/item/out',
       region: 'settle-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**

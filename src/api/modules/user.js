@@ -25,7 +25,7 @@ const user = {
       url: '/auth/regist',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -153,7 +153,7 @@ const user = {
       url: '/auth/forget/mail',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -179,7 +179,7 @@ const user = {
       url: '/auth/forget/sms',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -205,7 +205,7 @@ const user = {
       url: '/auth/login/telephone',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -218,7 +218,7 @@ const user = {
       url: '/auth/bind/telephone',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   }
 }

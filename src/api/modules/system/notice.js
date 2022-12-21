@@ -72,7 +72,7 @@ export default {
       url: '/system/notice',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
 
@@ -86,7 +86,7 @@ export default {
       url: '/system/notice',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   }
 }

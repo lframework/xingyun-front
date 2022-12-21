@@ -29,13 +29,19 @@
 
       <j-border title="基础配置">
         <j-form :enable-collapse="false" label-width="160px">
+          <j-form-item :span="8" label="是否允许导出" :required="true">
+            <a-select v-model="formData.allowExport" allow-clear>
+              <a-select-option :value="true">是</a-select-option>
+              <a-select-option :value="false">否</a-select-option>
+            </a-select>
+          </j-form-item>
           <j-form-item :span="8" label="列表类型" :required="true">
             <a-select v-model="formData.listType" allow-clear>
               <a-select-option v-for="item in $enums.GEN_CUSTOM_LIST_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
             </a-select>
           </j-form-item>
           <j-form-item :span="8" label="表单Label宽度（px）" :required="true">
-            <a-input-number v-model="formData.labelWidth" class="number-input" :min="1" />
+            <a-input-number v-model="formData.labelWidth" class="number-input" :min="1" :precision="0" />
           </j-form-item>
           <j-form-item :span="8" label="ID字段" :required="true">
             <a-tree-select
@@ -87,6 +93,12 @@
 
       <div style="height: 10px;" />
 
+      <j-border title="工具栏配置">
+        <toolbar ref="toolbar" />
+      </j-border>
+
+      <div style="height: 10px;" />
+
       <j-border title="查询条件">
         <query-params ref="queryParams" :columns="queryColumns" />
       </j-border>
@@ -95,6 +107,12 @@
 
       <j-border title="列表配置">
         <query-detail ref="queryDetail" :columns="columns" />
+      </j-border>
+
+      <div style="height: 10px;" />
+
+      <j-border title="操作栏配置">
+        <handle-column ref="handleColumn" />
       </j-border>
 
       <div style="height: 10px;" />
@@ -129,13 +147,17 @@ import GenCustomListCategorySelector from '@/components/Selector/GenCustomListCa
 import GenDataObjSelector from '@/components/Selector/GenDataObjSelector'
 import QueryDetail from './query-detail'
 import QueryParams from './query-params'
+import Toolbar from './toolbar'
+import HandleColumn from './handle-column'
 
 export default {
   components: {
     GenCustomListCategorySelector,
     GenDataObjSelector,
     QueryDetail,
-    QueryParams
+    QueryParams,
+    Toolbar,
+    HandleColumn
   },
   data() {
     return {
@@ -244,6 +266,11 @@ export default {
 
       this.formData.idColumnRelaId = treeColumns.filter(item => item.id === this.formData.idColumn)[0].relaId
 
+      if (this.$utils.isEmpty(this.formData.allowExport)) {
+        this.$msg.error('请选择是否允许导出')
+        return
+      }
+
       if (this.$utils.isEmpty(this.formData.treeData)) {
         this.$msg.error('请选择是否树形列表')
         return
@@ -271,18 +298,26 @@ export default {
           return
         }
       }
+      if (!this.$refs.toolbar.validDate()) {
+        return
+      }
+      if (!this.$refs.handleColumn.validDate()) {
+        return
+      }
       if (!this.$refs.queryParams.validDate()) {
         return
       }
       if (!this.$refs.queryDetail.validDate()) {
         return
       }
-      const params = Object.assign({
+      const params = Object.assign(this.formData, {
         dataObjId: this.formData.dataObj.id,
         categoryId: this.formData.category.id,
         queryParams: this.$refs.queryParams.getTableData(),
-        details: this.$refs.queryDetail.getTableData()
-      }, this.formData)
+        details: this.$refs.queryDetail.getTableData(),
+        toolbars: this.$refs.toolbar.getTableData(),
+        handleColumns: this.$refs.handleColumn.getTableData()
+      })
 
       this.loading = true
       this.$api.development.customList.add(params).then(() => {

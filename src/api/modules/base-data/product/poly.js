@@ -58,7 +58,7 @@ export default {
       region: 'basedata-api',
       method: 'put',
       dataType: 'json',
-      params: params
+      data: params
     })
   }
 }

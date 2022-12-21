@@ -34,7 +34,7 @@ export default {
         region: 'basedata-api',
         method: 'post',
         dataType: 'file',
-        params: params
+        data: params
       })
     }
   }

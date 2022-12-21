@@ -10,6 +10,10 @@ const MENU_COMPONENT_TYPE = {
   CUSTOM_LIST: {
     code: 1,
     desc: '自定义列表'
+  },
+  CUSTOM_FORM: {
+    code: 2,
+    desc: '自定义表单'
   }
 }
 

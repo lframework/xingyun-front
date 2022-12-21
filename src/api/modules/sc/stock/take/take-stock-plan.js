@@ -43,7 +43,7 @@ export default {
       region: 'sc-api',
       method: 'post',
       responseType: 'blob',
-      params: params
+      data: params
     })
   },
 
@@ -74,7 +74,7 @@ export default {
       region: 'sc-api',
       method: 'post',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -88,7 +88,7 @@ export default {
       url: '/stock/take/plan',
       region: 'sc-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
 
@@ -118,7 +118,7 @@ export default {
       url: '/stock/take/plan/diff',
       region: 'sc-api',
       method: 'patch',
-      params: {
+      data: {
         id: id
       }
     })
@@ -135,7 +135,7 @@ export default {
       region: 'sc-api',
       method: 'patch',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -149,7 +149,7 @@ export default {
       url: '/stock/take/plan/cancel',
       region: 'sc-api',
       method: 'patch',
-      params: {
+      data: {
         id: id
       }
     })
@@ -165,7 +165,7 @@ export default {
       url: '/stock/take/plan',
       region: 'sc-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })

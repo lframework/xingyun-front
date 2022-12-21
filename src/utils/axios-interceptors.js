@@ -1,7 +1,7 @@
 import qs from 'qs'
 import msg from '@/utils/msg'
 import utils from '@/utils/utils'
-import { METHOD, DATA_TYPE, RESP_TYPE, removeAuthorization, getAuthorization } from '@/utils/request'
+import { DATA_TYPE, RESP_TYPE, removeAuthorization, getAuthorization } from '@/utils/request'
 import settings from '@/config'
 
 const respCommon = {
@@ -131,12 +131,6 @@ const reqConvert = {
     if (utils.isEqualWithStr(process.env.VUE_APP_CLOUD_ENABLE, true)) {
       config.url = '/' + config.region + config.url
     }
-    if (config.method !== METHOD.GET) {
-      if (utils.isEmpty(config.data) && !utils.isEmpty(config.params)) {
-        config.data = config.params
-        config.params = undefined
-      }
-    }
 
     // 只有显示标注使用json传参时，才会使用json
     if (config.dataType === DATA_TYPE.JSON) {
@@ -157,16 +151,6 @@ const reqConvert = {
       // 转为formData数据格式
       config.data = qs.stringify(config.data)
     }
-
-    // 获取请求参数
-    let requestData = config.data || {}
-    if (utils.isEmpty(requestData)) {
-      requestData = config.params || {}
-    }
-
-    // 请求参数摘要
-    const hash = utils.md5(requestData)
-    config.headers['Request-Id'] = hash
 
     return config
   },

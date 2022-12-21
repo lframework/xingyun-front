@@ -27,7 +27,7 @@ export default {
       region: 'sc-api',
       method: 'post',
       responseType: 'blob',
-      params: params
+      data: params
     })
   },
 
@@ -87,7 +87,7 @@ export default {
       region: 'sc-api',
       method: 'post',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -102,7 +102,7 @@ export default {
       region: 'sc-api',
       method: 'put',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -115,7 +115,7 @@ export default {
       url: '/stock/take/sheet/approve/pass',
       region: 'sc-api',
       method: 'patch',
-      params: params
+      data: params
     })
   },
 
@@ -129,7 +129,7 @@ export default {
       region: 'sc-api',
       method: 'post',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -142,7 +142,7 @@ export default {
       url: '/stock/take/sheet/approve/refuse',
       region: 'sc-api',
       method: 'patch',
-      params: params
+      data: params
     })
   },
 
@@ -155,7 +155,7 @@ export default {
       url: '/stock/take/sheet/approve/cancel',
       region: 'sc-api',
       method: 'patch',
-      params: params
+      data: params
     })
   },
 
@@ -170,7 +170,7 @@ export default {
       region: 'sc-api',
       method: 'patch',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -185,7 +185,7 @@ export default {
       region: 'sc-api',
       method: 'patch',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -199,7 +199,7 @@ export default {
       url: '/stock/take/sheet',
       region: 'sc-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })
@@ -216,7 +216,7 @@ export default {
       region: 'sc-api',
       method: 'delete',
       dataType: 'json',
-      params: params
+      data: params
     })
   }
 }

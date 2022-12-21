@@ -20,6 +20,7 @@
         :radio-config="_radioConfig"
         :checkbox-config="_checkboxConfig"
         :height="$defaultTableHeight"
+        :export-config="{}"
         @cell-dblclick="onCellDblClick"
       >
         <template v-if="!$utils.isEmpty(queryParams)" v-slot:form>
@@ -35,6 +36,37 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
+            <a-button v-if="listConfig.allowExport" type="primary" icon="download" @click="onExport">导出</a-button>
+            <template v-if="!$utils.isEmpty(toolbars)">
+              <div v-for="toolbar in toolbars" :key="toolbar.id">
+                <router-link v-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(toolbar.btnType)" :to="toolbar.btnConfig">
+                  <a-button :type="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType) ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code : toolbar.viewType" :class="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType) ? 'ant-btn-link-danger' : ''"><svg-icon v-if="!$utils.isEmpty(toolbar.icon)" :icon-class="toolbar.icon" />{{ toolbar.name }}</a-button>
+                </router-link>
+                <a-button v-else-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(toolbar.btnType)" :type="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType) ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code : toolbar.viewType" :class="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType) ? 'ant-btn-link-danger' : ''" @click="onLoadExternal(toolbar)"><svg-icon v-if="!$utils.isEmpty(toolbar.icon)" :icon-class="toolbar.icon" />{{ toolbar.name }}</a-button>
+                <template v-else-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.CUSTOM_FORM.equalsCode(toolbar.btnType)">
+                  <a-button :type="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType) ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code : toolbar.viewType" :class="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType) ? 'ant-btn-link-danger' : ''" @click="onLoadCustomForm(toolbar)"><svg-icon v-if="!$utils.isEmpty(toolbar.icon)" :icon-class="toolbar.icon" />{{ toolbar.name }}</a-button>
+                  <custom-form :ref="'toolbarCustomForm' + toolbar.id" :custom-form-id="toolbar.btnConfig" :request-param="buildRequestParam(toolbar)" />
+                </template>
+                <a-button v-else-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(toolbar.btnType)" :type="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType) ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code : toolbar.viewType" :class="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType) ? 'ant-btn-link-danger' : ''" @click="onExcuteScript(toolbar)"><svg-icon v-if="!$utils.isEmpty(toolbar.icon)" :icon-class="toolbar.icon" />{{ toolbar.name }}</a-button>
+              </div>
+            </template>
+          </a-space>
+        </template>
+
+        <!-- 操作 列自定义内容 -->
+        <template v-slot:action_default="{ row }">
+          <a-space>
+            <div v-for="handleColumn in handleColumns" :key="handleColumn.id">
+              <router-link v-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(handleColumn.btnType)" :to="handleColumn.btnConfig">
+                <a-button :type="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType) ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code : handleColumn.viewType" :class="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType) ? 'ant-btn-link-danger' : ''"><svg-icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon-class="handleColumn.icon" />{{ handleColumn.name }}</a-button>
+              </router-link>
+              <a-button v-else-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(handleColumn.btnType)" :type="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType) ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code : handleColumn.viewType" :class="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType) ? 'ant-btn-link-danger' : ''" @click="onLoadExternal(handleColumn)"><svg-icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon-class="handleColumn.icon" />{{ handleColumn.name }}</a-button>
+              <template v-else-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.CUSTOM_FORM.equalsCode(handleColumn.btnType)">
+                <a-button :type="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType) ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code : handleColumn.viewType" :class="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType) ? 'ant-btn-link-danger' : ''" @click="onLoadCustomFormInHandleColumn(handleColumn)"><svg-icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon-class="handleColumn.icon" />{{ handleColumn.name }}</a-button>
+                <custom-form :ref="'handleColumnCustomForm' + handleColumn.id" :custom-form-id="handleColumn.btnConfig" :request-param="() => { return buildRequestParamInHandleColumn(row, handleColumn) }" />
+              </template>
+              <a-button v-else-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(handleColumn.btnType)" :type="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType) ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code : handleColumn.viewType" :class="$enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType) ? 'ant-btn-link-danger' : ''" @click="onExcuteScriptInHandleColumn(handleColumn)"><svg-icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon-class="handleColumn.icon" />{{ handleColumn.name }}</a-button>
+            </div>
           </a-space>
         </template>
       </vxe-grid>
@@ -87,7 +119,11 @@ export default {
       // 列表数据配置
       tableColumn: [],
       // 自定义列表配置
-      listConfig: {}
+      listConfig: {},
+      // 工具栏
+      toolbars: [],
+      // 操作列
+      handleColumns: []
     }
   },
   computed: {
@@ -214,6 +250,13 @@ export default {
 
           if (item.fixEnum) {
             column.formatter = function({ cellValue }) { return that.$enums[item.frontType].getDesc(cellValue) }
+          } else {
+            if (!this.$utils.isEmpty(item.formatter)) {
+              column.formatter = function({ cellValue, row }) {
+                const fn = new Function('cellValue', 'row', item.formatter)
+                return fn(cellValue, row)
+              }
+            }
           }
 
           if (that.listConfig.treeData && item.columnName === that.listConfig.treeNodeColumn) {
@@ -237,6 +280,19 @@ export default {
         // 初始化查询条件
         this.queryParams = res.queryParams || []
 
+        this.toolbars = res.toolbars
+
+        this.handleColumns = res.handleColumns || []
+
+        if (!this.$utils.isEmpty(this.handleColumns)) {
+          const totalWidth = this.handleColumns.map(item => item.width).reduce((prev, cur) => { return prev + cur })
+          this.tableColumn.push({
+            title: '操作', width: totalWidth, fixed: 'right', slots: {
+              default: 'action_default'
+            }
+          })
+        }
+
         this.loadedConfig = true
         this.$emit('loadedConfig', true)
       })
@@ -244,6 +300,14 @@ export default {
     // 列表发生查询时的事件
     search() {
       this.$refs.grid.commitProxy('reload')
+    },
+    // 导出
+    onExport() {
+      this.$refs.grid.exportData({
+        columnFilterMethod: ({ column, $columnIndex }) => {
+          return !['radio', 'checkbox', 'seq'].includes(column.type) && !this.$utils.isEmpty(column.field)
+        }
+      })
     },
     // 查询前构建查询参数结构
     buildQueryParams(page) {
@@ -309,6 +373,51 @@ export default {
       })
 
       return result
+    },
+    onLoadExternal(toolbar) {
+      window.open(toolbar.btnConfig, '_blank')
+    },
+    onLoadCustomForm(toolbar) {
+      let form = this.$refs['toolbarCustomForm' + toolbar.id]
+      if (this.$utils.isArray(form)) {
+        form = form[0]
+      }
+
+      form.openForm()
+    },
+    onLoadCustomFormInHandleColumn(handleColumn) {
+      let form = this.$refs['handleColumnCustomForm' + handleColumn.id]
+      if (this.$utils.isArray(form)) {
+        form = form[0]
+      }
+
+      form.openForm()
+    },
+    buildRequestParam(toolbar) {
+      if (this.$utils.isEmpty(toolbar.requestParam)) {
+        return {}
+      }
+
+      const fn = new Function('_this', toolbar.requestParam)
+
+      return fn(this) || {}
+    },
+    buildRequestParamInHandleColumn(row, handleColumn) {
+      if (this.$utils.isEmpty(handleColumn.requestParam)) {
+        return {}
+      }
+
+      const fn = new Function('row', handleColumn.requestParam)
+
+      return fn(row) || {}
+    },
+    onExcuteScript(toolbar) {
+      const fn = new Function('_this', toolbar.btnConfig)
+      fn(this)
+    },
+    onExcuteScriptInHandleColumn(handleColumn) {
+      const fn = new Function('_this', handleColumn.btnConfig)
+      fn(this)
     }
   }
 }

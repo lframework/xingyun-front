@@ -122,7 +122,7 @@ export default {
       url: '/settle/feesheet',
       region: 'settle-api',
       method: 'delete',
-      params: params
+      data: params
     })
   },
   // 批量删除订单

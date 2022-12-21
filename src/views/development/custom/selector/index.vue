@@ -90,7 +90,7 @@ import Detail from './detail'
 import CategoryTree from './category-tree'
 
 export default {
-  name: 'DataObj',
+  name: 'CustomSelector',
   // 使用组件
   components: {
     AvailableTag, Add, Modify, Detail, CategoryTree

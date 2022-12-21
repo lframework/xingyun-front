@@ -42,7 +42,7 @@ export default {
       url: '/sw/filebox',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
 
@@ -56,7 +56,7 @@ export default {
       url: '/sw/filebox',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
 
@@ -70,7 +70,7 @@ export default {
       url: '/sw/filebox/send',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
 
@@ -85,7 +85,7 @@ export default {
       region: 'common-api',
       method: 'post',
       dataType: 'json',
-      params: params
+      data: params
     })
   },
 
@@ -100,7 +100,7 @@ export default {
       region: 'common-api',
       method: 'post',
       dataType: 'file',
-      params: params
+      data: params
     })
   }
 }

@@ -28,7 +28,7 @@ const components = {
       region: 'common-api',
       method: 'post',
       dataType: 'file',
-      params: {
+      data: {
         file: file
       }
     })

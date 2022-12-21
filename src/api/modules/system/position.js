@@ -39,7 +39,7 @@ export default {
       url: '/system/position',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -52,7 +52,7 @@ export default {
       url: '/system/position',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**

@@ -37,7 +37,7 @@ export default {
       url: '/system/dept',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -50,7 +50,7 @@ export default {
       url: '/system/dept',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**

@@ -65,7 +65,7 @@ const data = {
       url: '/qrtz',
       region: 'common-api',
       method: 'delete',
-      params: params
+      data: params
     })
   },
   /**
@@ -78,7 +78,7 @@ const data = {
       url: '/qrtz/resume',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**
@@ -91,7 +91,7 @@ const data = {
       url: '/qrtz/pause',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**
@@ -104,7 +104,7 @@ const data = {
       url: '/qrtz/trigger',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   }
 }

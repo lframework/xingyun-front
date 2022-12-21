@@ -22,7 +22,7 @@ export default {
       url: '/system/config',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   }
 }

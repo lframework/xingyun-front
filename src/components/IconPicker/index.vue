@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <a-select :default-value="value" :disabled="disabled" :show-search="true" @change="handleChange">
-      <a-select-option v-for="item in icons" :key="item" :value="item">
-        <svg-icon :icon-class="item" /> {{ item }}
-      </a-select-option>
-    </a-select>
-  </div>
+  <a-select :default-value="value" :disabled="disabled" :show-search="true" allow-clear @change="handleChange">
+    <a-select-option v-for="item in icons" :key="item" :value="item">
+      <svg-icon :icon-class="item" /> {{ item }}
+    </a-select-option>
+  </a-select>
 </template>
 <script>
 

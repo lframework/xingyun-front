@@ -39,7 +39,7 @@ export default {
       url: '/basedata/product/brand',
       region: 'basedata-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -52,7 +52,7 @@ export default {
       url: '/basedata/product/brand',
       region: 'basedata-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**
@@ -94,7 +94,7 @@ export default {
       region: 'basedata-api',
       method: 'post',
       dataType: 'file',
-      params: params
+      data: params
     })
   }
 }

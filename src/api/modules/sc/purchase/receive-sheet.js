@@ -166,7 +166,7 @@ export default {
       url: '/purchase/receive/sheet',
       region: 'sc-api',
       method: 'delete',
-      params: params
+      data: params
     })
   },
   // 批量删除订单

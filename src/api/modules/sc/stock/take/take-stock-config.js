@@ -27,7 +27,7 @@ export default {
       url: '/stock/take/config',
       region: 'sc-api',
       method: 'put',
-      params: params
+      data: params
     })
   }
 }

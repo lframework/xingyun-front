@@ -54,6 +54,12 @@
           <template v-slot:orderNo_default>
             <span class="sort-btn"><a-icon type="drag" /></span>
           </template>
+
+          <!-- 自定义格式化 列自定义内容 -->
+          <template v-slot:formatter_default="{ row }">
+            <a @click="e => onFormatterClick(row)">编辑脚本</a>
+            <code-editor :ref="'formatterEditor' + row.id" v-model="row.formatter" mode="javascript" :description="`用于格式化显示的数据，脚本会填充在function formatter(cellValue, row){}中。注：返回值即为显示的数据。`" />
+          </template>
         </vxe-grid>
       </a-col>
     </a-row>
@@ -61,10 +67,12 @@
 </template>
 <script>
 import Sortable from 'sortablejs'
+import CodeEditor from './code-editor'
 
 export default {
   // 使用组件
   components: {
+    CodeEditor
   },
 
   props: {
@@ -85,7 +93,8 @@ export default {
         { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id)?.name } },
         { field: 'widthType', title: '宽度类型', width: 140, slots: { default: 'widthType_default' }},
         { field: 'width', title: '宽度', width: 100, slots: { default: 'width_default' }, align: 'right' },
-        { field: 'sortable', title: '是否页面排序', width: 140, slots: { default: 'sortable_default' }}
+        { field: 'sortable', title: '是否页面排序', width: 140, slots: { default: 'sortable_default' }},
+        { field: 'formatter', title: '自定义格式化', width: 140, slots: { default: 'formatter_default' }}
       ],
       tableData: [],
       checkedKeys: []
@@ -184,6 +193,9 @@ export default {
           }
         })
       })
+    },
+    onFormatterClick(row) {
+      this.$refs['formatterEditor' + row.id].openDialog()
     }
   }
 }

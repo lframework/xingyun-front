@@ -35,6 +35,19 @@ const data = {
       data: data
     })
   },
+  exportCustomListDatas: (id, data) => {
+    return request({
+      url: '/gen/api/custom/list/query/list/export',
+      region: 'common-api',
+      method: 'post',
+      dataType: 'json',
+      responseType: 'blob',
+      params: {
+        id: id
+      },
+      data: data
+    })
+  },
   queryCustomListTree: (id, data) => {
     return request({
       url: '/gen/api/custom/list/query/tree',
@@ -55,6 +68,40 @@ const data = {
       params: {
         id: id
       }
+    })
+  },
+  getCustomFormConfig: (id) => {
+    return request({
+      url: '/gen/api/custom/form/config',
+      region: 'common-api',
+      method: 'get',
+      params: {
+        id: id
+      }
+    })
+  },
+  customFormGetData: (id, data) => {
+    return request({
+      url: '/gen/api/custom/form/get',
+      region: 'common-api',
+      method: 'post',
+      dataType: 'json',
+      params: {
+        id: id
+      },
+      data: data
+    })
+  },
+  customFormHandleData: (id, data) => {
+    return request({
+      url: '/gen/api/custom/form/handle',
+      region: 'common-api',
+      method: 'post',
+      dataType: 'json',
+      params: {
+        id: id
+      },
+      data: data
     })
   }
 }

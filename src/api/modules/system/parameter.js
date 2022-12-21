@@ -42,7 +42,7 @@ export default {
       url: '/system/parameter',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
 
@@ -56,7 +56,7 @@ export default {
       url: '/system/parameter',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
 
@@ -70,7 +70,7 @@ export default {
       url: '/system/parameter',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })

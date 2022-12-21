@@ -5,6 +5,7 @@ import OrderTimeLine from '@/components/OrderTimeLine'
 import DataDicPicker from '@/components/DataDicPicker'
 import CustomList from '@/components/CustomList'
 import CustomSelector from '@/components/CustomSelector'
+import CustomForm from '@/components/CustomForm'
 import JEditor from '@/components/JEditor'
 import JUpload from '@/components/JUpload'
 import JImgUpload from '@/components/JImgUpload'
@@ -21,6 +22,7 @@ instance.install = function(Vue) {
   Vue.component('DataDicPicker', DataDicPicker)
   Vue.component('CustomList', CustomList)
   Vue.component('CustomSelector', CustomSelector)
+  Vue.component('CustomForm', CustomForm)
   Vue.component('JEditor', JEditor)
   Vue.component('JUpload', JUpload)
   Vue.component('JImgUpload', JImgUpload)

@@ -48,7 +48,7 @@
 
           <!-- 表单宽度 列自定义内容 -->
           <template v-slot:formWidth_default="{ row }">
-            <a-input-number v-model="row.formWidth" class="number-input" :min="1" :max="24" />
+            <a-input-number v-model="row.formWidth" class="number-input" :min="1" :max="24" :precision="0" />
           </template>
 
           <!-- 默认值 列自定义内容 -->
@@ -63,7 +63,7 @@
                 <div v-if="row.defaultValue.dateType === 1">
                   <a-space>
                     <span>近</span>
-                    <a-input-number v-model="row.defaultValue.dateNum" :min="0" />
+                    <a-input-number v-model="row.defaultValue.dateNum" :min="0" :precision="0" />
                     <a-select v-model="row.defaultValue.dateUnit" style="width: 50px;">
                       <a-select-option value="d">天</a-select-option>
                       <a-select-option value="w">周</a-select-option>

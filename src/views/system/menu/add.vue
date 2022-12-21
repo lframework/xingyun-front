@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }" :footer="null">
+  <a-modal v-model="visible" :mask-closable="false" width="50%" title="新增" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['system:menu:add']" v-loading="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
         <a-form-model-item label="编号" prop="code">
@@ -41,6 +41,12 @@
           <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)" label="自定义列表" prop="customList.id">
             <gen-custom-list-selector v-model="formData.customList" :request-params="{ available: true }" />
           </a-form-model-item>
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(formData.componentType)" label="自定义表单" prop="customForm.id">
+            <gen-custom-form-selector v-model="formData.customForm" :request-params="{ available: true, isDialog: false }" />
+          </a-form-model-item>
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(formData.componentType)" label="自定义请求参数" prop="requestParam">
+            <a @click="$refs.requestParamEditor.openDialog()">编辑参数</a>
+          </a-form-model-item>
           <a-form-model-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由路径" prop="path">
             <a-input v-model.trim="formData.path" placeholder="对应路由当中的path属性" allow-clear />
           </a-form-model-item>
@@ -64,18 +70,23 @@
         </div>
       </a-form-model>
     </div>
+    <json-editor ref="requestParamEditor" v-model="formData.requestParam" :description="`参数应为对象的json字符串，如：{&quot;name&quot;: &quot;名称&quot;}。`" />
   </a-modal>
 </template>
 <script>
 import SysMenuSelector from '@/components/Selector/SysMenuSelector'
 import GenCustomListSelector from '@/components/Selector/GenCustomListSelector'
+import GenCustomFormSelector from '@/components/Selector/GenCustomFormSelector'
 import { validCode } from '@/utils/validate'
 import IconPicker from '@/components/IconPicker'
+import JsonEditor from './json-editor'
 export default {
   components: {
     IconPicker,
     SysMenuSelector,
-    GenCustomListSelector
+    GenCustomListSelector,
+    GenCustomFormSelector,
+    JsonEditor
   },
   data() {
     return {
@@ -108,6 +119,9 @@ export default {
         ],
         'customList.id': [
           { required: true, message: '请选择自定义列表' }
+        ],
+        'customForm.id': [
+          { required: true, message: '请选择自定义表单' }
         ],
         path: [
           { required: true, message: '请输入路由路径' }
@@ -153,6 +167,8 @@ export default {
         componentType: '',
         component: '',
         customList: {},
+        customForm: {},
+        requestParam: '',
         path: '',
         noCache: true,
         hidden: false
@@ -165,7 +181,11 @@ export default {
           this.loading = true
           const params = Object.assign({}, this.formData)
           if (this.$enums.MENU_DISPLAY.FUNCTION.equalsCode(params.display)) {
-            params.component = params.customList.id
+            if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)) {
+              params.component = params.customList.id
+            } else {
+              params.component = params.customForm.id
+            }
           }
           this.$api.system.menu.create(params).then(() => {
             this.$msg.success('新增成功！')

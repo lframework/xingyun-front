@@ -763,6 +763,12 @@ utils.buildMenus = function(oriMenus = []) {
           obj.props = {
             customListId: menu.component
           }
+        } else if ($enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(menu.componentType)) {
+          obj.component = (resolve) => require([`@/components/CustomForm`], resolve)
+          obj.props = {
+            customFormId: menu.component,
+            requestParam: this.isEmpty(menu.requestParam) ? {} : JSON.parse(menu.requestParam)
+          }
         }
       }
     }

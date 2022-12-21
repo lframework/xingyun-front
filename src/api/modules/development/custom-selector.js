@@ -22,7 +22,7 @@ const data = {
       url: '/gen/custom/selector/category',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -35,7 +35,7 @@ const data = {
       url: '/gen/custom/selector/category',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**
@@ -63,7 +63,7 @@ const data = {
       url: '/gen/custom/selector/category',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })
@@ -109,7 +109,7 @@ const data = {
       url: '/gen/custom/selector',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })

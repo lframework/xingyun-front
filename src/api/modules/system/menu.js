@@ -62,7 +62,7 @@ export default {
       url: '/system/menu',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })

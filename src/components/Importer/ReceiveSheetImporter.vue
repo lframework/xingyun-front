@@ -34,7 +34,7 @@ export default {
         region: 'sc-api',
         method: 'post',
         dataType: 'file',
-        params: params
+        data: params
       })
     }
   }

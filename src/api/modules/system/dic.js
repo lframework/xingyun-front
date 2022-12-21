@@ -22,7 +22,7 @@ export default {
       url: '/system/dic/category',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -35,7 +35,7 @@ export default {
       url: '/system/dic/category',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**
@@ -63,7 +63,7 @@ export default {
       url: '/system/dic/category',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })
@@ -90,7 +90,7 @@ export default {
       url: '/system/dic',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -118,7 +118,7 @@ export default {
       url: '/system/dic',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**
@@ -131,7 +131,7 @@ export default {
       url: '/system/dic',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })
@@ -158,7 +158,7 @@ export default {
       url: '/system/dic/item',
       region: 'common-api',
       method: 'post',
-      params: params
+      data: params
     })
   },
   /**
@@ -186,7 +186,7 @@ export default {
       url: '/system/dic/item',
       region: 'common-api',
       method: 'put',
-      params: params
+      data: params
     })
   },
   /**
@@ -199,7 +199,7 @@ export default {
       url: '/system/dic/item',
       region: 'common-api',
       method: 'delete',
-      params: {
+      data: {
         id: id
       }
     })

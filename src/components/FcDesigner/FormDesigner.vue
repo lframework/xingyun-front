@@ -270,9 +270,6 @@ body {
   z-index: 999 !important;
 }
 
-._fc-t-dialog .el-dialog__body {
-  padding: 0px 20px;
-}
 ._fc-b-item{
   display: flex;
 }
