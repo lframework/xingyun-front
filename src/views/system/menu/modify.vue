@@ -202,7 +202,7 @@ export default {
       const params = Object.assign({}, this.formData)
       if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)) {
         params.component = params.customList.id
-      } else {
+      } else if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(this.formData.componentType)) {
         params.component = params.customForm.id
       }
       this.$api.system.menu.modify(params).then(() => {

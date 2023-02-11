@@ -183,7 +183,7 @@ export default {
           if (this.$enums.MENU_DISPLAY.FUNCTION.equalsCode(params.display)) {
             if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)) {
               params.component = params.customList.id
-            } else {
+            } else if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(this.formData.componentType)) {
               params.component = params.customForm.id
             }
           }
