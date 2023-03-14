@@ -3,6 +3,7 @@
     <div v-permission="['system:notice:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="SysNotice"
         ref="grid"
         resizable
         show-overflow

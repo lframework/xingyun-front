@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['stock:take:pre:modify']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="仓库" required>
             <store-center-selector
-              v-model="formData.sc"
+              v-model="formData.scId"
             />
           </j-form-item>
           <j-form-item label="预先盘点状态" required :span="16">
@@ -113,16 +113,9 @@ export default {
   components: {
     StoreCenterSelector, BatchAddProduct
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -165,27 +158,23 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
-
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        sc: {},
+        scId: '',
         description: '',
         takeStatus: this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code
       }
@@ -196,7 +185,7 @@ export default {
     },
     // 提交表单事件
     submit() {
-      if (this.$utils.isEmpty(this.formData.sc)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('请选择仓库！')
         return
       }
@@ -245,7 +234,7 @@ export default {
             return
           }
 
-          if (!this.$utils.isIntegerGe(data.randNum)) {
+          if (!this.$utils.isIntegerGeZero(data.randNum)) {
             this.$msg.error('第' + (i + 1) + '行商品的抽盘数量必须是整数！')
             return
           }
@@ -254,7 +243,7 @@ export default {
 
       const params = {
         id: this.id,
-        scId: this.formData.sc.id,
+        scId: this.formData.scId,
         takeStatus: this.formData.takeStatus,
         description: this.formData.description,
         products: this.tableData.map(item => {
@@ -330,7 +319,7 @@ export default {
     },
     // 新增商品
     addProduct() {
-      if (this.$utils.isEmpty(this.formData.sc)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('请先选择仓库！')
         return
       }
@@ -378,7 +367,7 @@ export default {
       })
     },
     openBatchAddProductDialog() {
-      if (this.$utils.isEmpty(this.formData.sc)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('请先选择仓库！')
         return
       }
@@ -402,10 +391,7 @@ export default {
       this.loading = true
       await this.$api.sc.stock.take.preTakeStockSheet.get(this.id).then(res => {
         this.formData = Object.assign(this.formData, {
-          sc: {
-            id: res.scId,
-            name: res.scName
-          },
+          scId: res.scId,
           description: res.description,
           takeStatus: res.takeStatus
         })

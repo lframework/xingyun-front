@@ -8,6 +8,9 @@
         <a-form-model-item label="组" prop="group">
           <a-input v-model.trim="formData.group" allow-clear />
         </a-form-model-item>
+        <a-form-model-item label="指定租户" prop="tenantId">
+          <sys-tenant-selector v-model="formData.tenantId" />
+        </a-form-model-item>
         <a-form-model-item label="Cron表达式" prop="cron">
           <cron-picker v-model="formData.cron" />
         </a-form-model-item>
@@ -105,9 +108,10 @@
 </template>
 <script>
 import CronPicker from '@/components/CronPicker'
+import SysTenantSelector from '@/components/Selector/SysTenantSelector'
 export default {
   components: {
-    CronPicker
+    CronPicker, SysTenantSelector
   },
   props: {
     oriName: {

@@ -2,9 +2,9 @@
   <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['stock:take:plan:add']" v-loadind="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
-        <a-form-model-item label="仓库" prop="sc.id">
+        <a-form-model-item label="仓库" prop="scId">
           <store-center-selector
-            v-model="formData.sc"
+            v-model="formData.scId"
           />
         </a-form-model-item>
         <a-form-model-item label="盘点类别" prop="takeType">
@@ -50,11 +50,9 @@ export default {
       formData: {},
       // 表单校验规则
       rules: {
-        sc: {
-          id: [
-            { required: true, message: '请选择仓库' }
-          ]
-        },
+        scId: [
+          { required: true, message: '请选择仓库' }
+        ],
         takeType: [
           { required: true, message: '请选择盘点类别' }
         ],
@@ -112,7 +110,7 @@ export default {
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        sc: {},
+        scId: '',
         takeType: this.$enums.TAKE_STOCK_PLAN_TYPE.ALL.code,
         description: '',
         category: [],
@@ -124,15 +122,15 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           const params = {
-            scId: this.formData.sc.id,
+            scId: this.formData.scId,
             takeType: this.formData.takeType,
             description: this.formData.description
           }
 
           if (this.$enums.TAKE_STOCK_PLAN_TYPE.CATEGORY.equalsCode(this.formData.takeType)) {
-            params.bizIds = this.formData.category.map(item => item.id)
+            params.bizIds = this.formData.category
           } else if (this.$enums.TAKE_STOCK_PLAN_TYPE.BRAND.equalsCode(this.formData.takeType)) {
-            params.bizIds = this.formData.brand.map(item => item.id)
+            params.bizIds = this.formData.brand
           }
 
           this.loading = true

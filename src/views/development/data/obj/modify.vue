@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-data-obj-category-selector v-model="formData.category" />
+            <gen-data-obj-category-selector v-model="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="12" label="状态" :required="true">
             <a-select v-model="formData.available" allow-clear>
@@ -92,9 +92,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.$nextTick(() => {
-        this.open()
-      })
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {
@@ -106,7 +104,7 @@ export default {
       this.formData = {
         id: '',
         name: '',
-        category: {},
+        categoryId: '',
         description: '',
         mainTableId: '',
         mainTableAlias: '',
@@ -129,10 +127,7 @@ export default {
       await this.$api.development.dataObj.get(this.id).then(data => {
         let columns = data.columns || []
         columns = columns.map(item => {
-          return Object.assign({ subTable: {
-            id: item.subTableId,
-            name: item.subTableName
-          }}, item)
+          return Object.assign({ subTableId: item.subTableId }, item)
         })
         this.columns = columns
         delete data.columns
@@ -140,11 +135,6 @@ export default {
         const queryColumns = data.queryColumns || []
         this.queryColumns = queryColumns
         delete data.queryColumns
-
-        data.category = {
-          id: data.categoryId,
-          name: data.categoryName
-        }
 
         this.formData = data
       }).finally(() => {
@@ -167,7 +157,7 @@ export default {
         return
       }
       const params = Object.assign({
-        categoryId: this.formData.category.id,
+        categoryId: this.formData.categoryId,
         columns: this.$refs.relaTable.getColumns(),
         queryColumns: this.$refs.customQuery.getColumns()
       }, this.formData)

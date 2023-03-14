@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="Role"
       ref="grid"
       resizable
       show-overflow
@@ -76,7 +77,7 @@
     <detail :id="id" ref="viewDialog" />
 
     <!-- 授权窗口 -->
-    <permission ref="permissionDialog" :ids="ids" />
+    <permission ref="permissionDialog" :ids="ids" @confirm="search" />
   </div>
 </template>
 
@@ -220,7 +221,7 @@ export default {
       }
 
       this.ids = records.map(item => item.id)
-      this.$refs.permissionDialog.openDialog()
+      this.$nextTick(() => this.$refs.permissionDialog.openDialog())
     }
   }
 }

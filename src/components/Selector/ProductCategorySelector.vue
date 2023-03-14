@@ -4,13 +4,17 @@
       ref="selector"
       v-model="model"
       :request="getList"
+      :load="getLoad"
+      :show-sum="showSum"
       :only-final="onlyFinal"
       :disabled="disabled"
       :before-open="beforeOpen"
       :multiple="multiple"
-      condition-label="名称"
+      :placeholder="placeholder"
       :handle-search="handleSearch"
       @input="e => $emit('input', e)"
+      @input-label="e => $emit('input-label', e)"
+      @input-row="e => $emit('input-row', e)"
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
@@ -63,6 +67,7 @@ export default {
   components: { DialogTree },
   props: {
     value: { type: [Object, Array], required: true },
+    placeholder: { type: String, default: '' },
     requestParams: {
       type: Object,
       default: e => {
@@ -85,7 +90,11 @@ export default {
         }
       }
     },
-    multiple: { type: Boolean, default: false }
+    multiple: { type: Boolean, default: false },
+    showSum: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -107,6 +116,15 @@ export default {
         region: 'basedata-api',
         method: 'get',
         params: params
+      })
+    },
+    getLoad(ids) {
+      return request({
+        url: '/selector/category/load',
+        region: 'basedata-api',
+        method: 'post',
+        dataType: 'json',
+        data: ids
       })
     },
     handleSearch(datas) {

@@ -1,7 +1,6 @@
 import { request } from '@/utils/request'
 
 export default {
-
   /**
    * 查询列表
    * @param params
@@ -9,13 +8,12 @@ export default {
    */
   query: (params) => {
     return request({
-      url: '/basedata/product/poly/query',
-      region: 'basedata-api',
+      url: '/system/tenant/query',
+      region: 'common-api',
       method: 'get',
       params: params
     })
   },
-
   /**
    * 根据ID查询
    * @param id
@@ -23,15 +21,14 @@ export default {
    */
   get: (id) => {
     return request({
-      url: '/basedata/product/poly',
-      region: 'basedata-api',
+      url: '/system/tenant',
+      region: 'common-api',
       method: 'get',
       params: {
         id: id
       }
     })
   },
-
   /**
    * 新增
    * @param params
@@ -39,14 +36,12 @@ export default {
    */
   create: (params) => {
     return request({
-      url: '/basedata/product/poly',
-      region: 'basedata-api',
+      url: '/system/tenant',
+      region: 'common-api',
       method: 'post',
-      dataType: 'json',
       data: params
     })
   },
-
   /**
    * 修改
    * @param params
@@ -54,11 +49,38 @@ export default {
    */
   modify: (params) => {
     return request({
-      url: '/basedata/product/poly',
-      region: 'basedata-api',
+      url: '/system/tenant',
+      region: 'common-api',
       method: 'put',
-      dataType: 'json',
       data: params
+    })
+  },
+  /**
+   * 批量启用
+   * @param ids
+   * @returns {*}
+   */
+  batchEnable: (ids) => {
+    return request({
+      url: '/system/tenant/enable/batch',
+      region: 'common-api',
+      method: 'patch',
+      dataType: 'json',
+      data: ids
+    })
+  },
+  /**
+   * 批量停用
+   * @param ids
+   * @returns {*}
+   */
+  batchUnable: (ids) => {
+    return request({
+      url: '/system/tenant/unable/batch',
+      region: 'common-api',
+      method: 'patch',
+      dataType: 'json',
+      data: ids
     })
   }
 }

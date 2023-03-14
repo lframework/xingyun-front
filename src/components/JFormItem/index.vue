@@ -3,7 +3,7 @@
     enter-active-class="animated fadeIn"
   >
     <div v-show="visible && itemShow" :class="'item item--default'" :style="{width: itemWidth}">
-      <span :class="'label label--default'" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : (colon ? label + '：' : label) }}</span>
+      <span v-if="!hiddenLabel" :class="'label label--default'" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="_required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : (colon ? label + '：' : label) }}</span>
       <div v-if="contentNest" class="content" :style="{width: contentWidth}">
         <slot />
       </div>
@@ -18,6 +18,10 @@ export default {
   componentName: 'JFormItem',
 
   props: {
+    prop: {
+      type: String,
+      default: undefined
+    },
     /**
      * 文字标签内容
      */
@@ -73,6 +77,13 @@ export default {
     itemShow: {
       type: Boolean,
       default: true
+    },
+    /**
+     * 是否隐藏Label
+     */
+    hiddenLabel: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -94,6 +105,22 @@ export default {
       const span = Math.max(1, Math.min(this.span, 24))
 
       return (span / 24 * 100) + '%'
+    },
+    _required() {
+      if (this.required) {
+        return true
+      }
+
+      if (!this.form || !this.form.rules || !this.prop) {
+        return false
+      }
+
+      const rules = this.form.rules[this.prop]
+      if (!rules) {
+        return false
+      }
+
+      return rules.some(item => item.required)
     }
   },
   mounted() {

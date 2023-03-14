@@ -4,7 +4,7 @@
     <a-auto-complete
       ref="input"
       v-model="searchNode"
-      placeholder="站内搜索"
+      placeholder="菜单搜索"
       :get-popup-container="e => {return e.parentNode || document.body}"
       :data-source="dataSource"
       :class="['search-input', searchMode ? 'enter' : 'leave']"

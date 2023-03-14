@@ -61,6 +61,9 @@ VXETable.setup({
       pageSize: 20,
       pageSizes: [5, 15, 20, 50, 100]
     },
+    customConfig: {
+      storage: true
+    },
     toolbarConfig: {
       // 缩放
       zoom: true,

@@ -75,6 +75,11 @@ export default {
       }
     }
   },
+  watch: {
+    loading(val) {
+      this.$emit('loading', val)
+    }
+  },
   created() {
     this.loadData()
   },

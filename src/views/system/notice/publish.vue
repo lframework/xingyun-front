@@ -3,6 +3,7 @@
     <div v-permission="['system:notice:publish']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="PublishSysNotice"
         ref="grid"
         resizable
         show-overflow
@@ -83,7 +84,7 @@ import Modify from './modify'
 import Detail from './detail'
 import AvailableTag from '@/components/Tag/Available'
 export default {
-  name: 'SysNotice',
+  name: 'PublishSysNotice',
   components: {
     AvailableTag, Add, Modify, Detail
   },

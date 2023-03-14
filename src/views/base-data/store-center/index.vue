@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="StoreCenterInfo"
       ref="grid"
       resizable
       show-overflow

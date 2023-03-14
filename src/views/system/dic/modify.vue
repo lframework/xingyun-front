@@ -13,8 +13,8 @@
         <a-form-model-item label="名称" prop="name">
           <a-input v-model.trim="formData.name" allow-clear />
         </a-form-model-item>
-        <a-form-model-item label="分类" prop="category.id">
-          <sys-data-dic-category-selector v-model="formData.category" />
+        <a-form-model-item label="分类" prop="categoryId">
+          <sys-data-dic-category-selector v-model="formData.categoryId" />
         </a-form-model-item>
         <div class="form-modal-footer">
           <a-space>
@@ -51,8 +51,6 @@ export default {
       loading: false,
       // 表单数据
       formData: {},
-      // 类目
-      category: {},
       // 表单校验规则
       rules: {
         code: [
@@ -73,7 +71,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.open()
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {
@@ -86,7 +84,7 @@ export default {
         id: '',
         code: '',
         name: '',
-        category: {}
+        categoryId: ''
       }
     },
     // 提交表单事件
@@ -101,8 +99,6 @@ export default {
         if (valid) {
           this.loading = true
           const params = Object.assign({}, this.formData)
-          params.categoryId = params.category.id
-          delete params.category
 
           this.$api.system.dic.modify(params).then(() => {
             this.$msg.success('修改成功！')
@@ -127,10 +123,7 @@ export default {
       this.loading = true
       await this.$api.system.dic.get(this.id).then(data => {
         this.formData = Object.assign({}, this.formData, data)
-        this.formData.category = {
-          id: data.categoryId,
-          name: data.categoryName
-        }
+        this.formData.categoryId = data.categoryId
       }).finally(() => {
         this.loading = false
       })

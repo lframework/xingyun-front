@@ -1,6 +1,7 @@
 <template>
   <div v-permission="['base-data:product:category:query']" class="app-container">
     <vxe-grid
+      id="ProductCategory"
       ref="grid"
       resizable
       show-overflow

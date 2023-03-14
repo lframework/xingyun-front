@@ -1,6 +1,6 @@
 <template>
-  <div v-if="visible" class="app-container">
-    <div v-permission="['settle:check-sheet:approve']" v-loading="loading">
+  <div class="app-container simple-app-container">
+    <div v-permission="['customer-settle:check-sheet:approve']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="客户">
@@ -70,13 +70,13 @@
             {{ row.bizCode }}
           </a>
 
-          <span v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:fee-sheet:query']">{{ row.bizCode }}</span>
-          <a v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-permission="['settle:fee-sheet:query']" type="link" @click="e => { $refs.viewSettleFeeSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleFeeSheetDetailDialog.openDialog()) }">
+          <span v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-no-permission="['customer-settle:fee-sheet:query']">{{ row.bizCode }}</span>
+          <a v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-permission="['customer-settle:fee-sheet:query']" type="link" @click="e => { $refs.viewSettleFeeSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleFeeSheetDetailDialog.openDialog()) }">
             {{ row.bizCode }}
           </a>
 
-          <span v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:pre-sheet:query']">{{ row.bizCode }}</span>
-          <a v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-permission="['settle:pre-sheet:query']" type="link" @click="e => { $refs.viewSettlePreSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettlePreSheetDetailDialog.openDialog()) }">
+          <span v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-no-permission="['customer-settle:pre-sheet:query']">{{ row.bizCode }}</span>
+          <a v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-permission="['customer-settle:pre-sheet:query']" type="link" @click="e => { $refs.viewSettlePreSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettlePreSheetDetailDialog.openDialog()) }">
             {{ row.bizCode }}
           </a>
         </template>
@@ -115,8 +115,8 @@
 
       <div v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
         <a-space>
-          <a-button v-permission="['settle:check-sheet:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</a-button>
-          <a-button v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['settle:check-sheet:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</a-button>
+          <a-button v-permission="['customer-settle:check-sheet:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</a-button>
+          <a-button v-if="$enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['customer-settle:check-sheet:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</a-button>
           <a-button :loading="loading" @click="closeDialog">关闭</a-button>
         </a-space>
       </div>
@@ -142,16 +142,9 @@ export default {
   components: {
     ApproveRefuse, SaleOutSheetDetail, SaleReturnDetail, SettleFeeSheetDetail, SettlePreSheetDetail
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -172,21 +165,18 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {

@@ -3,6 +3,7 @@
     <div v-permission="['base-data:shop:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="Shop"
         ref="grid"
         resizable
         show-overflow

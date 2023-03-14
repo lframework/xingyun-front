@@ -44,8 +44,8 @@
 
       <!-- 显示类型配置 列自定义内容 -->
       <template v-slot:viewTypeConfig_default="{ row }">
-        <sys-data-dic-selector v-if="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code" v-model="row.dataDic" :request-params="{ available: true}" />
-        <gen-custom-selector-selector v-else-if="row.viewType === $enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.code" v-model="row.customSelector" :request-params="{ available: true}" />
+        <sys-data-dic-selector v-if="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code" v-model="row.dataDicId" :request-params="{ available: true}" />
+        <gen-custom-selector-selector v-else-if="row.viewType === $enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.code" v-model="row.customSelectorId" :request-params="{ available: true}" />
       </template>
 
       <!-- 是否内置枚举 列自定义内容 -->
@@ -279,14 +279,14 @@ export default {
         }
 
         if (this.$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
-          if (this.$utils.isEmpty(column.dataDic.id)) {
+          if (this.$utils.isEmpty(column.dataDicId)) {
             this.$msg.error('字段【' + column.name + '】数据字典不能为空！')
             return false
           }
         }
 
         if (this.$enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
-          if (this.$utils.isEmpty(column.customSelector.id)) {
+          if (this.$utils.isEmpty(column.customSelectorId)) {
             this.$msg.error('字段【' + column.name + '】自定义选择器不能为空！')
             return false
           }
@@ -343,8 +343,8 @@ export default {
           delete column.len
           delete column.decimals
           column.viewType = this.$enums.GEN_VIEW_TYPE.INPUT.code
-          column.dataDic = {}
-          column.customSelector = {}
+          column.dataDicId = ''
+          column.customSelectorId = ''
           column.fixEnum = false
           delete column.enumBack
           delete column.enumFront
@@ -359,11 +359,11 @@ export default {
           }
 
           if (!that.$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
-            column.dataDic = {}
+            column.dataDicId = ''
           }
 
           if (!that.$enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
-            column.customSelector = {}
+            column.customSelectorId = ''
           }
 
           if (!that.$enums.GEN_VIEW_TYPE.INPUT.equalsCode(column.viewType) && !that.$enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(column.viewType)) {

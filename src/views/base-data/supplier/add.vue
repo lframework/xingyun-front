@@ -77,9 +77,8 @@
   </a-modal>
 </template>
 <script>
-import * as constants from './constants'
 import CitySelector from '@/components/Selector/CitySelector'
-import { validCode } from '@/utils/validate'
+import { validCode, isEmail } from '@/utils/validate'
 export default {
   components: {
     CitySelector
@@ -105,13 +104,37 @@ export default {
           { required: true, message: '请输入助记码' }
         ],
         email: [
-          { validator: constants.validEmail }
+          {
+            validator: (rule, value, callback) => {
+              if (this.$utils.isEmpty(value) || isEmail(value)) {
+                callback()
+              } else {
+                return callback(new Error('邮箱地址格式不正确'))
+              }
+            }
+          }
         ],
         settleType: [
           { required: true, message: '请选择结账方式' }
         ],
         deliveryCycle: [
-          { validator: constants.validDeliveryCycle }
+          {
+            validator: (rule, value, callback) => {
+              if (this.$utils.isEmpty(value)) {
+                return callback()
+              }
+
+              if (!this.$utils.isInteger(value)) {
+                return callback(new Error('送货周期（天）必须为整数'))
+              }
+
+              if (!this.$utils.isIntegerGtZero(value)) {
+                return callback(new Error('送货周期（天）必须大于0'))
+              }
+
+              return callback()
+            }
+          }
         ],
         manageType: [
           { required: true, message: '请选择经营方式' }
@@ -164,7 +187,9 @@ export default {
     },
     // 提交表单事件
     submit() {
-      this.$refs.form.validate((valid) => {
+      console.log('submit')
+      const callback = (valid) => {
+        console.log(valid)
         if (valid) {
           this.loading = true
           const params = Object.assign({}, this.formData)
@@ -180,7 +205,9 @@ export default {
             this.loading = false
           })
         }
-      })
+      }
+      console.log(typeof callback)
+      this.$refs.form.validate(callback)
     },
     // 页面显示时触发
     open() {

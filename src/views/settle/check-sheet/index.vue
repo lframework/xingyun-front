@@ -1,8 +1,9 @@
 <template>
   <div>
-    <div v-show="visible" v-permission="['settle:check-sheet:query']" class="app-container">
+    <div v-permission="['settle:check-sheet:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="SettleCheckSheet"
         ref="grid"
         resizable
         show-overflow
@@ -24,7 +25,7 @@
               </j-form-item>
               <j-form-item label="供应商">
                 <supplier-selector
-                  v-model="searchFormData.supplier"
+                  v-model="searchFormData.supplierId"
                 />
               </j-form-item>
               <j-form-item label="操作人">
@@ -84,7 +85,7 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
-            <a-button v-permission="['settle:check-sheet:add']" type="primary" icon="plus" @click="e => {visible = false; $refs.addDialog.openDialog()}">新增</a-button>
+            <a-button v-permission="['settle:check-sheet:add']" type="primary" icon="plus" @click="$router.push('/settle/supplier/check-sheet/add')">新增</a-button>
             <a-button v-permission="['settle:check-sheet:approve']" icon="check" @click="batchApprovePass">审核通过</a-button>
             <a-button v-permission="['settle:check-sheet:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
             <a-button v-permission="['settle:check-sheet:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
@@ -95,8 +96,8 @@
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
           <a-button v-permission="['settle:check-sheet:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-          <a-button v-if="$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['settle:check-sheet:approve']" type="link" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.approveDialog.openDialog()) }">审核</a-button>
-          <a-button v-if="$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['settle:check-sheet:modify']" type="link" @click="e => { id = row.id;visible = false;$nextTick(() => $refs.modifyDialog.openDialog()) }">修改</a-button>
+          <a-button v-if="$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['settle:check-sheet:approve']" type="link" @click="$router.push('/settle/supplier/check-sheet/approve/' + row.id)">审核</a-button>
+          <a-button v-if="$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['settle:check-sheet:modify']" type="link" @click="$router.push('/settle/supplier/check-sheet/modify/' + row.id)">修改</a-button>
           <a-button v-if="$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['settle:check-sheet:delete']" type="link" class="ant-btn-link-danger" @click="deleteOrder(row)">删除</a-button>
         </template>
       </vxe-grid>
@@ -106,20 +107,11 @@
 
       <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
     </div>
-    <!-- 新增窗口 -->
-    <add ref="addDialog" @confirm="search" @close="visible = true" />
-    <!-- 修改窗口 -->
-    <modify :id="id" ref="modifyDialog" @confirm="search" @close="visible = true" />
-    <!-- 审核窗口 -->
-    <approve :id="id" ref="approveDialog" @confirm="search" @close="visible = true" />
   </div>
 </template>
 
 <script>
-import Add from './add'
-import Modify from './modify'
 import Detail from './detail'
-import Approve from './approve'
 import UserSelector from '@/components/Selector/UserSelector'
 import SupplierSelector from '@/components/Selector/SupplierSelector'
 import ApproveRefuse from '@/components/ApproveRefuse'
@@ -127,26 +119,24 @@ import moment from 'moment'
 export default {
   name: 'SettleCheckSheet',
   components: {
-    Add, Modify, Detail, Approve, UserSelector, ApproveRefuse, SupplierSelector
+    Detail, UserSelector, ApproveRefuse, SupplierSelector
   },
   data() {
     return {
       loading: false,
-      visible: true,
       // 当前行数据
       id: '',
       // 查询列表的查询条件
       searchFormData: {
         code: '',
-        supplier: {},
-        createBy: {},
+        supplierId: '',
+        createBy: '',
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
-        approveBy: {},
+        approveBy: '',
         approveStartTime: '',
         approveEndTime: '',
-        status: undefined,
-        saler: {}
+        status: undefined
       },
       // 分页配置
       pagerConfig: {
@@ -217,11 +207,11 @@ export default {
     buildSearchFormData() {
       return {
         code: this.searchFormData.code,
-        supplierId: this.searchFormData.supplier.id,
-        createBy: this.searchFormData.createBy.id,
+        supplierId: this.searchFormData.supplierId,
+        createBy: this.searchFormData.createBy,
         createStartTime: this.searchFormData.createStartTime,
         createEndTime: this.searchFormData.createEndTime,
-        approveBy: this.searchFormData.approveBy.id,
+        approveBy: this.searchFormData.approveBy,
         approveStartTime: this.searchFormData.approveStartTime,
         approveEndTime: this.searchFormData.approveEndTime,
         status: this.searchFormData.status,

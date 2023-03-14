@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['settle:check-sheet:query']" v-loading="loading">
+    <div v-if="visible" v-permission="['customer-settle:check-sheet:query']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="客户">
@@ -70,13 +70,13 @@
             {{ row.bizCode }}
           </a>
 
-          <span v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:fee-sheet:query']">{{ row.bizCode }}</span>
-          <a v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-permission="['settle:fee-sheet:query']" type="link" @click="e => { $refs.viewSettleFeeSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleFeeSheetDetailDialog.openDialog()) }">
+          <span v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-no-permission="['customer-settle:fee-sheet:query']">{{ row.bizCode }}</span>
+          <a v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-permission="['customer-settle:fee-sheet:query']" type="link" @click="e => { $refs.viewSettleFeeSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleFeeSheetDetailDialog.openDialog()) }">
             {{ row.bizCode }}
           </a>
 
-          <span v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:pre-sheet:query']">{{ row.bizCode }}</span>
-          <a v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-permission="['settle:pre-sheet:query']" type="link" @click="e => { $refs.viewSettlePreSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettlePreSheetDetailDialog.openDialog()) }">
+          <span v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-no-permission="['customer-settle:pre-sheet:query']">{{ row.bizCode }}</span>
+          <a v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-permission="['customer-settle:pre-sheet:query']" type="link" @click="e => { $refs.viewSettlePreSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettlePreSheetDetailDialog.openDialog()) }">
             {{ row.bizCode }}
           </a>
         </template>
@@ -160,7 +160,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.open()
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {

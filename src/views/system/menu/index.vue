@@ -1,6 +1,7 @@
 <template>
   <div v-permission="['system:menu:query']" class="app-container">
     <vxe-grid
+      id="Menu"
       ref="grid"
       resizable
       show-overflow

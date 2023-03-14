@@ -1,22 +1,22 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['sale:out:modify']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="仓库" required>
             <store-center-selector
-              v-model="formData.sc"
+              v-model="formData.scId"
             />
           </j-form-item>
           <j-form-item label="客户" required>
             <customer-selector
-              v-model="formData.customer"
+              v-model="formData.customerId"
               @input="customerChange"
             />
           </j-form-item>
           <j-form-item label="销售员">
             <user-selector
-              v-model="formData.saler"
+              v-model="formData.salerId"
             />
           </j-form-item>
           <j-form-item label="付款日期" required>
@@ -155,7 +155,7 @@
       </j-border>
       <batch-add-product
         ref="batchAddProductDialog"
-        :sc-id="formData.sc.id"
+        :sc-id="formData.scId"
         @confirm="batchAddProduct"
       />
       <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
@@ -178,16 +178,9 @@ export default {
   components: {
     StoreCenterSelector, CustomerSelector, UserSelector, BatchAddProduct
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -224,8 +217,6 @@ export default {
         { field: 'outNum', title: '出库数量', align: 'right', width: 100, slots: { default: 'outNum_default' }},
         { field: 'taxAmount', title: '含税金额', align: 'right', width: 120, slots: { default: 'taxAmount_default' }},
         { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
-        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
-        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
       tableData: []
@@ -234,28 +225,25 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        sc: {},
-        customer: {},
-        saler: {},
+        scId: '',
+        customerId: '',
+        salerId: '',
         paymentDate: '',
         totalNum: 0,
         giftNum: 0,
@@ -277,18 +265,9 @@ export default {
           return
         }
         this.formData = Object.assign(this.formData, {
-          sc: {
-            id: res.scId,
-            name: res.scName
-          },
-          customer: {
-            id: res.customerId,
-            name: res.customerName
-          },
-          saler: {
-            id: res.salerId || '',
-            name: res.salerName || ''
-          },
+          scId: res.scId,
+          customerId: res.customerId,
+          salerId: res.salerId || '',
           paymentDate: res.paymentDate || '',
           description: res.description,
           status: res.status,
@@ -310,7 +289,7 @@ export default {
         })
         this.tableData = tableData.map(item => Object.assign(this.emptyProduct(), item))
 
-        this.customerChange(this.formData.customer, true)
+        this.customerChange(this.formData.customerId, true)
 
         this.calcSum()
       }).finally(() => {
@@ -339,8 +318,6 @@ export default {
         taxRate: '',
         isGift: false,
         taxAmount: '',
-        salePropItemName1: '',
-        salePropItemName2: '',
         description: '',
         isFixed: false,
         products: []
@@ -348,7 +325,7 @@ export default {
     },
     // 新增商品
     addProduct() {
-      if (this.$utils.isEmpty(this.formData.sc)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('请先选择仓库！')
         return
       }
@@ -361,7 +338,7 @@ export default {
         return
       }
 
-      this.$api.sc.sale.saleOrder.searchProduct(this.formData.sc.id, queryString).then(res => {
+      this.$api.sc.sale.saleOrder.searchProduct(this.formData.scId, queryString).then(res => {
         row.products = res
       })
     },
@@ -395,7 +372,7 @@ export default {
       })
     },
     openBatchAddProductDialog() {
-      if (this.$utils.isEmpty(this.formData.sc)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('请先选择仓库！')
         return
       }
@@ -514,12 +491,12 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.sc.id)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('仓库不允许为空！')
         return false
       }
 
-      if (this.$utils.isEmpty(this.formData.customer.id)) {
+      if (this.$utils.isEmpty(this.formData.customerId)) {
         this.$msg.error('客户不允许为空！')
         return false
       }
@@ -606,9 +583,9 @@ export default {
 
       const params = {
         id: this.id,
-        scId: this.formData.sc.id,
-        customerId: this.formData.customer.id,
-        salerId: this.formData.saler.id || '',
+        scId: this.formData.scId,
+        customerId: this.formData.customerId,
+        salerId: this.formData.salerId || '',
         paymentDate: this.formData.paymentDate || '',
         allowModifyPaymentDate: true,
         description: this.formData.description,
@@ -637,9 +614,9 @@ export default {
       })
     },
     // 客户改变时触发
-    customerChange(customer, unModify) {
-      if (!this.$utils.isEmpty(customer.id)) {
-        this.$api.sc.sale.outSheet.getPaymentDate(customer.id).then(res => {
+    customerChange(customerId, unModify) {
+      if (!this.$utils.isEmpty(customerId)) {
+        this.$api.sc.sale.outSheet.getPaymentDate(customerId).then(res => {
           if (!unModify) {
             if (res.allowModify) {
               // 如果允许修改付款日期

@@ -18,19 +18,31 @@ const components = {
     })
   },
   /**
-   * 富文本编辑器上传图片
+   * 通用上传图片
    * @param file
    * @returns {*}
    */
-  editorUploadImage: (file) => {
+  uploadImage: (file) => {
     return request({
-      url: '/component/editor/upload/image',
+      url: '/component/upload/image',
       region: 'common-api',
       method: 'post',
       dataType: 'file',
-      data: {
-        file: file
-      }
+      data: file
+    })
+  },
+  /**
+   * 通用上传视频
+   * @param file
+   * @returns {*}
+   */
+  uploadVideo: (file) => {
+    return request({
+      url: '/component/upload/video',
+      region: 'common-api',
+      method: 'post',
+      dataType: 'file',
+      data: file
     })
   }
 }

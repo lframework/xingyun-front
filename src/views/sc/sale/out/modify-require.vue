@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['sale:out:modify']" v-loading="loading">
       <j-border>
         <j-form>
@@ -11,7 +11,7 @@
           </j-form-item>
           <j-form-item label="销售员">
             <user-selector
-              v-model="formData.saler"
+              v-model="formData.salerId"
             />
           </j-form-item>
           <j-form-item label="付款日期" required>
@@ -171,16 +171,9 @@ export default {
   components: {
     UserSelector, BatchAddProduct
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -219,8 +212,6 @@ export default {
         { field: 'outNum', title: '出库数量', align: 'right', width: 100, slots: { default: 'outNum_default' }},
         { field: 'taxAmount', title: '含税金额', align: 'right', width: 120, slots: { default: 'taxAmount_default' }},
         { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
-        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
-        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
       tableData: []
@@ -229,21 +220,18 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
@@ -251,7 +239,7 @@ export default {
         sc: {},
         customer: {},
         saleOrder: {},
-        saler: {},
+        salerId: '',
         paymentDate: '',
         totalNum: 0,
         giftNum: 0,
@@ -281,10 +269,7 @@ export default {
             id: res.customerId,
             name: res.customerName
           },
-          saler: {
-            id: res.salerId || '',
-            name: res.salerName || ''
-          },
+          salerId: res.salerId || '',
           paymentDate: res.paymentDate || '',
           saleOrder: {
             id: res.saleOrderId,
@@ -344,8 +329,6 @@ export default {
         taxRate: '',
         isGift: true,
         taxAmount: '',
-        salePropItemName1: '',
-        salePropItemName2: '',
         description: '',
         isFixed: false,
         products: []
@@ -598,7 +581,7 @@ export default {
         id: this.id,
         scId: this.formData.sc.id,
         customerId: this.formData.customer.id,
-        salerId: this.formData.saler.id || '',
+        salerId: this.formData.salerId || '',
         paymentDate: this.formData.paymentDate || '',
         allowModifyPaymentDate: true,
         saleOrderId: this.formData.saleOrder.id,

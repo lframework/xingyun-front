@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="ProductStock"
       ref="grid"
       resizable
       show-overflow
@@ -20,7 +21,7 @@
         <j-border>
           <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
             <j-form-item label="仓库">
-              <store-center-selector v-model="searchFormData.sc" />
+              <store-center-selector v-model="searchFormData.scId" />
             </j-form-item>
             <j-form-item label="商品编号">
               <a-input v-model="searchFormData.productCode" allow-clear />
@@ -29,10 +30,10 @@
               <a-input v-model="searchFormData.productName" allow-clear />
             </j-form-item>
             <j-form-item label="商品类目">
-              <product-category-selector v-model="searchFormData.category" :only-final="false" />
+              <product-category-selector v-model="searchFormData.categoryId" :only-final="false" />
             </j-form-item>
             <j-form-item label="商品品牌">
-              <product-brand-selector v-model="searchFormData.brand" />
+              <product-brand-selector v-model="searchFormData.brandId" />
             </j-form-item>
           </j-form>
         </j-border>
@@ -66,11 +67,11 @@ export default {
       ids: [],
       // 查询列表的查询条件
       searchFormData: {
-        sc: {},
+        scId: '',
         productCode: '',
         productName: '',
-        category: {},
-        brand: {}
+        categoryId: '',
+        brandId: ''
       },
       // 分页配置
       pagerConfig: {
@@ -88,14 +89,13 @@ export default {
       },
       // 列表数据配置
       tableColumn: [
+        { type: 'seq', width: 40 },
         { field: 'scCode', title: '仓库编号', width: 100 },
         { field: 'scName', title: '仓库名称', minWidth: 160 },
         { field: 'productCode', title: '商品编号', width: 120 },
         { field: 'productName', title: '商品名称', minWidth: 180 },
         { field: 'categoryName', title: '商品类目', width: 120 },
         { field: 'brandName', title: '商品品牌', width: 120 },
-        { field: 'salePropItem1', title: '销售属性1', width: 120 },
-        { field: 'salePropItem2', title: '销售属性2', width: 120 },
         { field: 'stockNum', title: '库存数量', align: 'right', width: 100 },
         { field: 'taxPrice', title: '含税价格', align: 'right', width: 100 },
         { field: 'taxAmount', title: '含税金额', align: 'right', width: 100 },
@@ -136,14 +136,10 @@ export default {
     // 查询前构建具体的查询参数
     buildSearchFormData() {
       const params = Object.assign({}, this.searchFormData, {
-        scId: this.searchFormData.sc.id,
-        categoryId: this.searchFormData.category.id,
-        brandId: this.searchFormData.brand.id
+        scId: this.searchFormData.scId,
+        categoryId: this.searchFormData.categoryId,
+        brandId: this.searchFormData.brandId
       })
-
-      delete params.sc
-      delete params.category
-      delete params.brand
 
       return params
     },

@@ -29,6 +29,7 @@
           :columns="tableColumn"
           :data="tableData"
           :loading="loading"
+          :max-height="600"
         >
           <!-- 列宽 列自定义内容 -->
           <template v-slot:span_default="{ row }">

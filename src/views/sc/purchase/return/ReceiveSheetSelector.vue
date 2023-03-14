@@ -4,7 +4,11 @@
       ref="selector"
       v-model="model"
       :request="getList"
+      :load="getLoad"
+      :show-sum="showSum"
       :request-params="_requestParams"
+      :multiple="multiple"
+      :placeholder="placeholder"
       :disabled="disabled"
       dialog-width="80%"
       :before-open="beforeOpen"
@@ -20,6 +24,8 @@
         { field: 'createBy', title: '操作人', minWidth: 100 }
       ]"
       @input="e => $emit('input', e)"
+      @input-label="e => $emit('input-label', e)"
+      @input-row="e => $emit('input-row', e)"
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
@@ -31,13 +37,13 @@
             <j-form-item label="仓库">
               <store-center-selector
                 v-if="$utils.isEmpty(requestParams.scId)"
-                v-model="searchParams.sc"
+                v-model="searchParams.scId"
               />
             </j-form-item>
             <j-form-item label="供应商">
               <supplier-selector
                 v-if="$utils.isEmpty(requestParams.supplierId)"
-                v-model="searchParams.supplier"
+                v-model="searchParams.supplierId"
               />
             </j-form-item>
             <j-form-item label="操作人">
@@ -87,6 +93,8 @@ export default {
   components: { DialogTable, StoreCenterSelector, SupplierSelector, UserSelector },
   props: {
     value: { type: [Object, Array], required: true },
+    multiple: { type: Boolean, default: false },
+    placeholder: { type: String, default: '' },
     disabled: {
       type: Boolean,
       default: false
@@ -104,15 +112,19 @@ export default {
       default: e => {
         return {}
       }
+    },
+    showSum: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       searchParams: {
         code: '',
-        sc: {},
-        supplier: {},
-        createBy: {},
+        scId: '',
+        supplierId: '',
+        createBy: '',
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment()))
       }
@@ -133,9 +145,9 @@ export default {
     getList(params) {
       const reqParams = {
         code: params.code,
-        scId: params.sc.id || '',
-        supplierId: params.supplier.id || '',
-        createBy: params.createBy.id || '',
+        scId: params.scId || '',
+        supplierId: params.supplierId || '',
+        createBy: params.createBy || '',
         createStartTime: params.createStartTime,
         createEndTime: params.createEndTime
       }
@@ -144,6 +156,15 @@ export default {
         region: 'sc-api',
         method: 'get',
         params: reqParams
+      })
+    },
+    getLoad(ids) {
+      return request({
+        url: '/purchase/receive/sheet/query/return/load',
+        region: 'sc-api',
+        method: 'post',
+        dataType: 'json',
+        data: ids
       })
     }
   }

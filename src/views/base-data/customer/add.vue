@@ -76,7 +76,7 @@
 </template>
 <script>
 import CitySelector from '@/components/Selector/CitySelector'
-import { validCode } from '@/utils/validate'
+import { validCode, isEmail } from '@/utils/validate'
 export default {
   components: {
     CitySelector
@@ -100,6 +100,17 @@ export default {
         ],
         mnemonicCode: [
           { required: true, message: '请输入助记码' }
+        ],
+        email: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.$utils.isEmpty(value) || isEmail(value)) {
+                return callback()
+              } else {
+                return callback(new Error('邮箱地址格式不正确'))
+              }
+            }
+          }
         ],
         settleType: [
           { required: true, message: '请选择结账方式' }

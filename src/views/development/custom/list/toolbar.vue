@@ -13,6 +13,7 @@
       :columns="tableColumn"
       :data="tableData"
       :loading="loading"
+      :max-height="600"
     >
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>
@@ -155,7 +156,7 @@ export default {
     emptyLine() {
       return {
         id: this.$utils.uuid(),
-        customForm: {},
+        customForm: '',
         orderNo: '',
         name: '',
         viewType: '',
@@ -172,7 +173,7 @@ export default {
       return this.tableData.map(item => {
         if (that.$enums.GEN_CUSTOM_LIST_BTN_TYPE.CUSTOM_FORM.equalsCode(item.btnType)) {
           return Object.assign({}, item, {
-            btnConfig: item.customForm.id
+            btnConfig: item.customForm
           })
         } else {
           return item

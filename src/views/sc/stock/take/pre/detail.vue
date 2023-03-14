@@ -9,8 +9,8 @@
           <j-form-item label="预先盘点状态" :span="16">
             <a-checkbox-group v-model="checkedStatus">
               <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc }}</a-checkbox>
-              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code" :disabled="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</a-checkbox>
-              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code" :disabled="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code">{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</a-checkbox>
+              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</a-checkbox>
+              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code" disabled>{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</a-checkbox>
             </a-checkbox-group>
           </j-form-item>
           <j-form-item label="备注" :span="24">
@@ -100,7 +100,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.open()
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {

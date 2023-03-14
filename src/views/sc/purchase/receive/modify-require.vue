@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['purchase:receive:modify']" v-loading="loading">
       <j-border>
         <j-form>
@@ -11,7 +11,7 @@
           </j-form-item>
           <j-form-item label="采购员">
             <user-selector
-              v-model="formData.purchaser"
+              v-model="formData.purchaserId"
             />
           </j-form-item>
           <j-form-item label="付款日期" required>
@@ -33,7 +33,10 @@
             />
           </j-form-item>
           <j-form-item label="采购订单" required>
-            {{ formData.purchaseOrder.code }}
+            <div v-if="!$utils.isEmpty(formData.purchaseOrder.code)">
+              <a v-permission="['purchase:order:query']" @click="e => $refs.viewPurchaseOrderDetailDialog.openDialog()">{{ formData.purchaseOrder.code }}</a>
+              <span v-no-permission="['purchase:order:query']">{{ formData.purchaseOrder.code }}</span>
+            </div>
           </j-form-item>
           <j-form-item label="状态">
             <span v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span>
@@ -167,27 +170,23 @@
         </a-space>
       </div>
     </div>
+    <!-- 采购订单查看窗口 -->
+    <purchase-order-detail :id="formData.purchaseOrder.id" ref="viewPurchaseOrderDetailDialog" />
   </div>
 </template>
 <script>
 import UserSelector from '@/components/Selector/UserSelector'
 import BatchAddProduct from '@/views/sc/purchase/batch-add-product'
 import Moment from 'moment'
+import PurchaseOrderDetail from '@/views/sc/purchase/order/detail'
 export default {
   name: 'ModifyPurchaseReceiveRequire',
   components: {
-    UserSelector, BatchAddProduct
-  },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
+    PurchaseOrderDetail, UserSelector, BatchAddProduct
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -225,8 +224,6 @@ export default {
         { field: 'receiveNum', title: '收货数量', align: 'right', width: 100, slots: { default: 'receiveNum_default' }},
         { field: 'taxAmount', title: '含税金额', align: 'right', width: 120, slots: { default: 'taxAmount_default' }},
         { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
-        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
-        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
       tableData: []
@@ -239,20 +236,18 @@ export default {
   },
   created() {
     // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
@@ -260,7 +255,7 @@ export default {
         sc: {},
         supplier: {},
         purchaseOrder: {},
-        purchaser: {},
+        purchaserId: '',
         paymentDate: '',
         receiveDate: '',
         totalNum: 0,
@@ -291,10 +286,7 @@ export default {
             id: res.supplierId,
             name: res.supplierName
           },
-          purchaser: {
-            id: res.purchaserId || '',
-            name: res.purchaserName || ''
-          },
+          purchaserId: res.purchaserId || '',
           paymentDate: res.paymentDate || '',
           receiveDate: res.receiveDate,
           purchaseOrder: {
@@ -354,8 +346,6 @@ export default {
         taxRate: '',
         isGift: true,
         taxAmount: '',
-        salePropItemName1: '',
-        salePropItemName2: '',
         description: '',
         isFixed: false,
         products: []
@@ -612,7 +602,7 @@ export default {
         id: this.id,
         scId: this.formData.sc.id,
         supplierId: this.formData.supplier.id,
-        purchaserId: this.formData.purchaser.id || '',
+        purchaserId: this.formData.purchaserId || '',
         paymentDate: this.formData.paymentDate || '',
         receiveDate: this.formData.receiveDate,
         purchaseOrderId: this.formData.purchaseOrder.id,

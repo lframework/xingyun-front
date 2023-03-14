@@ -115,8 +115,16 @@ export default {
       await this.$api.development.gen.getCustomFormConfig(this.customFormId).then(res => {
         that.config = res
         that.config.formConfig = JSON.parse(that.config.formConfig)
+        if (!that.config.formConfig.option) {
+          that.config.formConfig.option = {}
+        }
+
+        that.config.formConfig.option = Object.assign({}, that.config.formConfig.option, { submitBtn: !that.$utils.isEmpty(that.config.handleBean) })
 
         that.loadedConfig = true
+        if (!that.config.isDialog) {
+          that.dialogVisible = true
+        }
       })
     },
     onSubmit(formData) {

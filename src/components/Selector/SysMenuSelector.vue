@@ -21,10 +21,6 @@ import { request } from '@/utils/request'
 export default {
   name: 'SysMenuSelector',
   components: { },
-  inject: {
-    elForm: { default: '' },
-    elFormItem: { default: '' }
-  },
   props: {
     value: { type: [Object, String], required: true },
     requestParams: {

@@ -29,6 +29,7 @@
           :columns="tableColumn"
           :data="tableData"
           :loading="loading"
+          :max-height="600"
         >
           <!-- 宽度类型 列自定义内容 -->
           <template v-slot:widthType_default="{ row }">

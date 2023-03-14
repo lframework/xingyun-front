@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="ProductStockLog"
       ref="grid"
       resizable
       show-overflow
@@ -20,13 +21,7 @@
         <j-border>
           <j-form label-width="100px" @collapse="$refs.grid.refreshColumn()">
             <j-form-item label="仓库">
-              <store-center-selector v-model="searchFormData.sc" />
-            </j-form-item>
-            <j-form-item label="供应商">
-              <supplier-selector v-model="searchFormData.supplier" />
-            </j-form-item>
-            <j-form-item label="批次号">
-              <a-input v-model="searchFormData.lotCode" allow-clear />
+              <store-center-selector v-model="searchFormData.scId" />
             </j-form-item>
             <j-form-item label="商品编号">
               <a-input v-model="searchFormData.productCode" allow-clear />
@@ -35,10 +30,10 @@
               <a-input v-model="searchFormData.productName" allow-clear />
             </j-form-item>
             <j-form-item label="商品类目">
-              <product-category-selector v-model="searchFormData.category" :only-final="false" />
+              <product-category-selector v-model="searchFormData.categoryId" :only-final="false" />
             </j-form-item>
             <j-form-item label="商品品牌">
-              <product-brand-selector v-model="searchFormData.brand" />
+              <product-brand-selector v-model="searchFormData.brandId" />
             </j-form-item>
             <j-form-item label="操作日期" :content-nest="false">
               <div class="date-range-container">
@@ -128,7 +123,6 @@
 import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
 import ProductCategorySelector from '@/components/Selector/ProductCategorySelector'
 import ProductBrandSelector from '@/components/Selector/ProductBrandSelector'
-import SupplierSelector from '@/components/Selector/SupplierSelector'
 import Moment from 'moment'
 import PurchaseReceiveSheetDetail from '@/views/sc/purchase/receive/detail'
 import PurchaseReturnDetail from '@/views/sc/purchase/return/detail'
@@ -140,9 +134,9 @@ import TakeStockPlanDetail from '@/views/sc/stock/take/plan/detail'
 import StockCostAdjustDetail from '@/views/sc/stock/adjust/cost/detail'
 
 export default {
-  name: 'ProductStock',
+  name: 'ProductStockLog',
   components: {
-    StoreCenterSelector, ProductCategorySelector, ProductBrandSelector, SupplierSelector, PurchaseReceiveSheetDetail,
+    StoreCenterSelector, ProductCategorySelector, ProductBrandSelector, PurchaseReceiveSheetDetail,
     PurchaseReturnDetail, SaleOutSheetDetail, SaleReturnDetail, RetailOutSheetDetail, RetailReturnDetail, TakeStockPlanDetail,
     StockCostAdjustDetail
   },
@@ -153,13 +147,11 @@ export default {
       currentRow: '',
       // 查询列表的查询条件
       searchFormData: {
-        sc: {},
-        supplier: {},
+        scId: '',
         productCode: '',
         productName: '',
-        category: {},
-        brand: {},
-        lotCode: '',
+        categoryId: '',
+        brandId: '',
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(Moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(Moment())),
         bizType: undefined
@@ -180,17 +172,13 @@ export default {
       },
       // 列表数据配置
       tableColumn: [
+        { type: 'seq', width: 40 },
         { field: 'scCode', title: '仓库编号', width: 100 },
         { field: 'scName', title: '仓库名称', minWidth: 160 },
-        { field: 'supplierCode', title: '供应商编号', width: 100 },
-        { field: 'supplierName', title: '供应商名称', minWidth: 160 },
-        { field: 'lotCode', title: '批次号', width: 180 },
         { field: 'productCode', title: '商品编号', width: 120 },
         { field: 'productName', title: '商品名称', minWidth: 180 },
         { field: 'categoryName', title: '商品类目', width: 120 },
         { field: 'brandName', title: '商品品牌', width: 120 },
-        { field: 'salePropItem1', title: '销售属性1', width: 120 },
-        { field: 'salePropItem2', title: '销售属性2', width: 120 },
         { field: 'oriStockNum', title: '变动前库存数量', align: 'right', width: 140 },
         { field: 'curStockNum', title: '变动后库存数量', align: 'right', width: 140 },
         { field: 'stockNum', title: '变动库存数量', align: 'right', width: 140 },
@@ -239,16 +227,11 @@ export default {
     // 查询前构建具体的查询参数
     buildSearchFormData() {
       const params = Object.assign({}, this.searchFormData, {
-        scId: this.searchFormData.sc.id,
-        categoryId: this.searchFormData.category.id,
-        brandId: this.searchFormData.brand.id,
-        supplierId: this.searchFormData.supplier.id
+        scId: this.searchFormData.scId,
+        categoryId: this.searchFormData.categoryId,
+        brandId: this.searchFormData.brandId,
+        supplierId: this.searchFormData.supplierId
       })
-
-      delete params.sc
-      delete params.category
-      delete params.brand
-      delete params.supplier
 
       return params
     },

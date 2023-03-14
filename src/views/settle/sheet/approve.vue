@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['settle:sheet:approve']" v-loading="loading">
       <j-border>
         <j-form>
@@ -128,16 +128,9 @@ export default {
   components: {
     ApproveRefuse, SettleCheckSheetDetail
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -162,21 +155,18 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {

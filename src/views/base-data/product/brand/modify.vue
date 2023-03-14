@@ -12,7 +12,7 @@
           <a-input v-model.trim="formData.shortName" allow-clear />
         </a-form-model-item>
         <a-form-model-item label="Logo" prop="logo">
-          <j-img-upload v-model="formData.logo" :url="$api.baseData.product.brand.uploadLogo" />
+          <j-img-upload v-model="formData.logo" />
         </a-form-model-item>
         <a-form-model-item label="简介" prop="introduction">
           <a-textarea v-model.trim="formData.introduction" />

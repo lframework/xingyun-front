@@ -14,6 +14,7 @@
       :toolbar-config="toolbarConfig"
       :data="columns"
       :loading="loading"
+      :max-height="600"
     >
 
       <!-- 工具栏 -->
@@ -130,13 +131,6 @@ export default {
         })
 
         this.columns = columns
-      })
-    },
-    changeSubTable(e, row) {
-      row.subTable = {}
-      row.subTableDetailIds = []
-      this.$nextTick(() => {
-        row.subTable = e
       })
     },
     validDate() {

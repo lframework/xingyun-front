@@ -6,20 +6,26 @@
       v-else
       accept="image/png, image/jpeg, image/bmp, image/jpg, image/gif"
       list-type="picture-card"
-      :show-upload-list="false"
+      :show-upload-list="true"
+      :file-list.sync="fileList"
       :custom-request="onRequest"
+      @preview="handlePreview"
+      @change="handleChange"
     >
-      <img v-if="!$utils.isEmpty(value)" :src="value" class="img-uploader-container">
-      <div v-else>
-        <a-icon :type="loading ? 'loading' : 'plus'" />
-        <div class="ant-upload-text">
-          上传
+      <div v-if="fileList.length < 1">
+        <a-icon style="font-size: 32px; color: #999;" :type="loading ? 'loading' : 'picture'" />
+        <div style="margin-top: 8px; color: #666;">
+          上传图片
         </div>
       </div>
     </a-upload>
+    <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+      <img style="width: 100%" :src="previewImage">
+    </a-modal>
   </div>
 </template>
 <script>
+import Vue from 'vue'
 import { request } from '@/utils/request'
 
 export default {
@@ -34,7 +40,9 @@ export default {
     },
     url: {
       type: [String, Function],
-      required: true
+      default: e => {
+        return Vue.prototype.$api.components.uploadImage
+      }
     },
     region: {
       type: String,
@@ -57,20 +65,61 @@ export default {
   },
   data() {
     return {
-      loading: false
+      loading: false,
+      previewVisible: false,
+      fileList: [],
+      previewImage: ''
     }
   },
   computed: {
 
   },
+  watch: {
+    value(val) {
+      this.loadImg()
+    }
+  },
+  mounted() {
+    this.loadImg()
+  },
   methods: {
+    loadImg() {
+      if (!this.$utils.isEmpty(this.value)) {
+        this.fileList = [{
+          url: this.value,
+          uid: this.$utils.uuid()
+        }]
+      } else {
+        this.fileList = []
+      }
+    },
+    handleCancel() {
+      this.previewVisible = false
+    },
+    handleChange(e) {
+      if (this.$utils.isEmpty(e.fileList)) {
+        this.fileList = []
+        this.$emit('input', undefined)
+      }
+    },
+    async handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.$utils.readImg(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
     onRequest(e) {
       this.loading = true
       const requestPromise = this.$utils.isFunction(this.url) ? this.url : this.doRequest
       requestPromise({
         file: e.file
       }, this.params).then(res => {
+        e.onSuccess({ status: 'success' }, e.file)
         this.$emit('input', res)
+      }).catch(() => {
+        e.onError({ status: 'error' }, e.file)
+        this.$emit('input', undefined)
       }).finally(() => {
         this.loading = false
       })

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['stock:take:sheet:approve']" v-loading="loading">
       <j-border>
         <j-form label-width="120px">
@@ -78,24 +78,21 @@
 
       <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
     </div>
+    <take-stock-plan-detail :id="formData.planId" ref="viewTakeStockPlanDialog" />
+    <pre-take-stock-sheet-detail :id="formData.preSheetId" ref="viewPreTakeStockSheetDialog" />
   </div>
 </template>
 <script>
 import ApproveRefuse from '@/components/ApproveRefuse'
+import TakeStockPlanDetail from '@/views/sc/stock/take/plan/detail.vue'
+import PreTakeStockSheetDetail from '@/views/sc/stock/take/pre/detail.vue'
 export default {
   components: {
-    ApproveRefuse
-  },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
+    ApproveRefuse, TakeStockPlanDetail, PreTakeStockSheetDetail
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -122,22 +119,18 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
-
       this.loadFormData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {

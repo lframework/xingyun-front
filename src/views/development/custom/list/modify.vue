@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-custom-list-category-selector v-model="formData.category" />
+            <gen-custom-list-category-selector v-model="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="12" label="状态" :required="true">
             <a-select v-model="formData.available" allow-clear>
@@ -194,9 +194,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.$nextTick(() => {
-        this.open()
-      })
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {
@@ -208,7 +206,7 @@ export default {
       this.formData = {
         id: '',
         name: '',
-        category: {},
+        categoryId: '',
         description: '',
         available: ''
       }
@@ -228,11 +226,6 @@ export default {
     async loadFormData() {
       this.loading = true
       await this.$api.development.customList.get(this.id).then(data => {
-        data.category = {
-          id: data.categoryId,
-          name: data.categoryName
-        }
-
         this.formData = data
 
         this.changeTable().then(res => {
@@ -261,20 +254,14 @@ export default {
         this.formData.toolbars = this.$utils.isEmpty(this.formData.toolbars) ? [] : this.formData.toolbars
         this.$refs.toolbar.setTableData(this.formData.toolbars.map(item => {
           return Object.assign({}, item, {
-            customForm: {
-              id: item.customFormId,
-              name: item.customFormName
-            }
+            customForm: item.customFormId
           })
         }))
 
         this.formData.handleColumns = this.$utils.isEmpty(this.formData.handleColumns) ? [] : this.formData.handleColumns
         this.$refs.handleColumn.setTableData(this.formData.handleColumns.map(item => {
           return Object.assign({}, item, {
-            customForm: {
-              id: item.customFormId,
-              name: item.customFormName
-            }
+            customForm: item.customFormId
           })
         }))
       }).finally(() => {
@@ -364,7 +351,7 @@ export default {
       }
       const params = Object.assign(this.formData, {
         id: this.id,
-        categoryId: this.formData.category.id,
+        categoryId: this.formData.categoryId,
         queryParams: this.$refs.queryParams.getTableData(),
         details: this.$refs.queryDetail.getTableData(),
         toolbars: this.$refs.toolbar.getTableData(),

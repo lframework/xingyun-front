@@ -85,8 +85,8 @@ export default {
    */
   searchProduct: (params) => {
     return request({
-      url: '/basedata/product/stock/adjust/cost/product/search',
-      region: 'basedata-api',
+      url: '/stock/adjust/cost/product/search',
+      region: 'sc-api',
       method: 'get',
       params: params
     })
@@ -98,8 +98,8 @@ export default {
    */
   queryProduct: (params) => {
     return request({
-      url: '/basedata/product/stock/adjust/cost/product/list',
-      region: 'basedata-api',
+      url: '/stock/adjust/cost/product/list',
+      region: 'sc-api',
       method: 'get',
       params: params
     })

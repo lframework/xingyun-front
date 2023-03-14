@@ -3,6 +3,7 @@
     <div v-permission="['stock:take:plan:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="TakeStockPlan"
         ref="grid"
         resizable
         show-overflow
@@ -24,7 +25,7 @@
               </j-form-item>
               <j-form-item label="仓库">
                 <store-center-selector
-                  v-model="searchFormData.sc"
+                  v-model="searchFormData.scId"
                 />
               </j-form-item>
               <j-form-item label="盘点状态">
@@ -135,12 +136,12 @@ export default {
       // 查询列表的查询条件
       searchFormData: {
         code: '',
-        sc: {},
+        scId: '',
         takeStatus: undefined,
-        createBy: {},
+        createBy: '',
         createTimeStart: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
-        updateBy: {},
+        updateBy: '',
         updateTimeStart: '',
         updateTimeEnd: ''
       },
@@ -199,14 +200,7 @@ export default {
     },
     // 查询前构建具体的查询参数
     buildSearchFormData() {
-      const params = Object.assign({}, this.searchFormData)
-      params.scId = params.sc.id
-      params.createBy = params.createBy.id
-      params.updateBy = params.updateBy.id
-
-      delete params.sc
-
-      return params
+      return Object.assign({}, this.searchFormData)
     },
     cancelRow(row) {
       this.$msg.confirm('对选中的盘点任务执行作废操作？').then(() => {

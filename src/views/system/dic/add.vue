@@ -8,8 +8,8 @@
         <a-form-model-item label="名称" prop="name">
           <a-input v-model.trim="formData.name" allow-clear />
         </a-form-model-item>
-        <a-form-model-item label="分类" prop="category.id">
-          <sys-data-dic-category-selector v-model="formData.category" />
+        <a-form-model-item label="分类" prop="categoryId">
+          <sys-data-dic-category-selector v-model="formData.categoryId" />
         </a-form-model-item>
         <div class="form-modal-footer">
           <a-space>
@@ -59,7 +59,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.open()
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {
@@ -71,7 +71,7 @@ export default {
       this.formData = {
         code: '',
         name: '',
-        category: {}
+        categoryId: ''
       }
     },
     // 提交表单事件
@@ -82,7 +82,7 @@ export default {
           const params = {
             code: this.formData.code,
             name: this.formData.name,
-            categoryId: this.formData.category.id || ''
+            categoryId: this.formData.categoryId || ''
           }
           this.$api.system.dic.create(params).then(() => {
             this.$msg.success('新增成功！')

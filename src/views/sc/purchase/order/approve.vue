@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['purchase:order:approve']" v-loading="loading">
       <j-border>
         <j-form>
@@ -96,16 +96,9 @@ export default {
   components: {
     ApproveRefuse
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -128,8 +121,6 @@ export default {
         { field: 'stockNum', title: '库存数量', align: 'right', width: 100 },
         { field: 'purchaseNum', title: '采购数量', align: 'right', width: 100 },
         { field: 'purchaseAmount', title: '采购含税金额', align: 'right', width: 120, slots: { default: 'purchaseAmount_default' }},
-        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
-        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200 }
       ],
       tableData: []
@@ -138,21 +129,18 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {

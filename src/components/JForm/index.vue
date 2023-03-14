@@ -12,12 +12,21 @@
   </div>
 </template>
 <script>
+import Schema from 'async-validator'
 export default {
   name: 'JForm',
 
   componentName: 'JForm',
 
   props: {
+    model: {
+      type: Object,
+      default: undefined
+    },
+    rules: {
+      type: Object,
+      default: undefined
+    },
     /**
      * 文字标签宽度
      */
@@ -85,6 +94,26 @@ export default {
         }
       }
       this.collapseStatus = !this.collapseStatus
+    },
+    validate() {
+      const that = this
+      return new Promise((resolve, reject) => {
+        if (!that.model || !that.rules) {
+          resolve(true)
+        } else {
+          const validator = new Schema(that.rules)
+          validator.validate(that.model, {
+            suppressWarning: true,
+            first: true,
+            firstFields: true
+          }).then(() => {
+            resolve(true)
+          }).catch(({ errors, fields }) => {
+            that.$msg.error(errors[0].message)
+            resolve(false, errors, fields)
+          })
+        }
+      })
     }
   }
 }

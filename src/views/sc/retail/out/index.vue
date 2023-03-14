@@ -1,8 +1,9 @@
 <template>
   <div>
-    <div v-show="visible" v-permission="['retail:out:query']" class="app-container">
+    <div v-permission="['retail:out:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="RetailOutSheet"
         ref="grid"
         resizable
         show-overflow
@@ -25,13 +26,13 @@
 
               <j-form-item label="会员">
                 <member-selector
-                  v-model="searchFormData.member"
+                  v-model="searchFormData.memberId"
                 />
               </j-form-item>
 
               <j-form-item label="仓库">
                 <store-center-selector
-                  v-model="searchFormData.sc"
+                  v-model="searchFormData.scId"
                 />
               </j-form-item>
 
@@ -103,7 +104,7 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
-            <a-button v-permission="['retail:out:add']" type="primary" icon="plus" @click="visible = false;$refs.addDialog.openDialog()">新增</a-button>
+            <a-button v-permission="['retail:out:add']" type="primary" icon="plus" @click="$router.push('/retail/out/add')">新增</a-button>
             <a-button v-permission="['retail:out:approve']" icon="check" @click="batchApprovePass">审核通过</a-button>
             <a-button v-permission="['retail:out:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
             <a-button v-permission="['retail:out:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
@@ -115,8 +116,8 @@
         <template v-slot:action_default="{ row }">
           <a-space>
             <a-button v-permission="['retail:out:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-            <a-button v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:out:approve']" type="link" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.approveDialog.openDialog()) }">审核</a-button>
-            <a-button v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:out:modify']" type="link" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.modifyDialog.openDialog()) }">修改</a-button>
+            <a-button v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:out:approve']" type="link" @click="$router.push('/retail/out/approve/' + row.id)">审核</a-button>
+            <a-button v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:out:modify']" type="link" @click="$router.push('/retail/out/modify/' + row.id)">修改</a-button>
             <a-button v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:out:delete']" type="link" class="ant-btn-link-danger" @click="deleteOrder(row)">删除</a-button>
           </a-space>
         </template>
@@ -127,20 +128,11 @@
 
       <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
     </div>
-    <!-- 新增窗口 -->
-    <add ref="addDialog" @confirm="search" @close="visible = true" />
-    <!-- 修改窗口 -->
-    <modify :id="id" ref="modifyDialog" @confirm="search" @close="visible = true" />
-    <!-- 审核窗口 -->
-    <approve :id="id" ref="approveDialog" @confirm="search" @close="visible = true" />
   </div>
 </template>
 
 <script>
-import Add from './add'
-import Modify from './modify'
 import Detail from './detail'
-import Approve from './approve'
 import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
 import MemberSelector from '@/components/Selector/MemberSelector'
 import UserSelector from '@/components/Selector/UserSelector'
@@ -150,27 +142,26 @@ import moment from 'moment'
 export default {
   name: 'RetailOutSheet',
   components: {
-    Add, Modify, Detail, Approve, StoreCenterSelector, MemberSelector, UserSelector, ApproveRefuse
+    Detail, StoreCenterSelector, MemberSelector, UserSelector, ApproveRefuse
   },
   data() {
     return {
       loading: false,
-      visible: true,
       // 当前行数据
       id: '',
       // 查询列表的查询条件
       searchFormData: {
         code: '',
-        sc: {},
-        member: {},
-        createBy: {},
+        scId: '',
+        memberId: '',
+        createBy: '',
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
-        approveBy: {},
+        approveBy: '',
         approveStartTime: '',
         approveEndTime: '',
         status: undefined,
-        saler: {},
+        saler: '',
         settleStatus: undefined
       },
       // 分页配置
@@ -242,16 +233,12 @@ export default {
     // 查询前构建具体的查询参数
     buildSearchFormData() {
       const params = Object.assign({}, this.searchFormData, {
-        memberId: this.searchFormData.member.id,
-        scId: this.searchFormData.sc.id,
-        createBy: this.searchFormData.createBy.id,
-        approveBy: this.searchFormData.approveBy.id,
-        salerId: this.searchFormData.saler.id
+        memberId: this.searchFormData.memberId,
+        scId: this.searchFormData.scId,
+        createBy: this.searchFormData.createBy,
+        approveBy: this.searchFormData.approveBy,
+        salerId: this.searchFormData.saler
       })
-
-      delete params.member
-      delete params.sc
-      delete params.saler
 
       return params
     },

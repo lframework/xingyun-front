@@ -1,7 +1,22 @@
 <template>
   <div>
+    <a-space v-if="showSum">
+      <a-input
+        v-model="label"
+        read-only
+        :disabled="disabled"
+        :placeholder="placeholder"
+        class="dialog-table--input"
+        @click.native="onOpen"
+      >
+        <a-icon slot="suffix" type="search" />
+      </a-input>
+      <span v-if="multiple">已选择 <span style="color: #F5222D; font-weight: bold;">{{ selectRow.length }}</span> 项</span>
+      <a v-if="multiple && selectRow.length > 0" @click="sumDialogVisible = true">点此查看</a>
+    </a-space>
     <a-input
-      v-model="_label"
+      v-else
+      v-model="label"
       read-only
       :disabled="disabled"
       :placeholder="placeholder"
@@ -10,6 +25,43 @@
     >
       <a-icon slot="suffix" type="search" />
     </a-input>
+
+    <a-modal
+      v-model="sumDialogVisible"
+      title="已选择"
+      :width="dialogWidth"
+      :mask-closable="false"
+      :keyboard="false"
+      :dialog-style="{ top: '20px' }"
+    >
+      <div>
+        <!-- 数据列表 -->
+        <vxe-grid
+          v-if="sumDialogVisible"
+          ref="sumGrid"
+          resizable
+          show-overflow
+          highlight-hover-row
+          keep-source
+          :max-height="600"
+          :row-id="columnOption.value"
+          :data="selectRow"
+          :columns="_sumTableColumn"
+          :pager-config="undefined"
+        >
+          <!-- 状态 列自定义内容 -->
+          <template v-slot:available_default="{ row }">
+            <available-tag :available="row.available" />
+          </template>
+        </vxe-grid>
+      </div>
+
+      <template slot="footer">
+        <div>
+          <a-button @click="sumDialogVisible = false">关 闭</a-button>
+        </div>
+      </template>
+    </a-modal>
 
     <a-modal
       v-model="dialogVisible"
@@ -28,6 +80,7 @@
           show-overflow
           highlight-hover-row
           keep-source
+          :max-height="600"
           :row-id="columnOption.value"
           :proxy-config="proxyConfig"
           :columns="_tableColumn"
@@ -96,6 +149,10 @@ export default {
       type: Function,
       required: true
     },
+    load: {
+      type: Function,
+      required: true
+    },
     requestParams: {
       type: Object,
       required: true
@@ -121,12 +178,21 @@ export default {
           return true
         }
       }
+    },
+    showSum: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       loading: false,
-      dialogVisible: false
+      sumDialogVisible: false,
+      dialogVisible: false,
+      label: '',
+      selectValue: [],
+      selectRow: [],
+      reloadSeq: ''
     }
   },
   computed: {
@@ -137,12 +203,8 @@ export default {
         return [{ type: 'radio', width: 50 }, ...this.tableColumn]
       }
     },
-    _label() {
-      if (this.multiple) {
-        return this.value.map(item => item[this.option.label]).join('，')
-      } else {
-        return this.value[this.option.label]
-      }
+    _sumTableColumn() {
+      return [{ type: 'seq', width: 50 }, ...this.tableColumn]
     },
     proxyConfig() {
       return {
@@ -180,9 +242,68 @@ export default {
         }
       }
       return {}
+    },
+    _requireReloadValue() {
+      if (!this.$utils.isEmpty(this.reloadSeq)) {
+        return true
+      }
+      if (this.multiple) {
+        const value = this.value || []
+        if (this.selectValue.length !== value.length) {
+          return true
+        }
+        if (this.selectValue.length === 0) {
+          return false
+        }
+        return this.selectValue.some(item => !value.includes(item))
+      } else {
+        return this.value !== this.selectValue[0]
+      }
     }
   },
+  watch: {
+    value(val) {
+      this.reloadValue()
+    }
+  },
+  mounted() {
+    this.reloadValue()
+  },
   methods: {
+    reloadValue() {
+      if (this._requireReloadValue) {
+        this.reloadSeq = this.$utils.uuid()
+        const reloadSeq = this.reloadSeq
+        let params
+        if (this.multiple) {
+          params = this.value
+        } else {
+          params = [this.value]
+        }
+
+        this.load(params).then(res => {
+          if (reloadSeq === this.reloadSeq) {
+            if (!this.$utils.isEmpty(res)) {
+              if (this.multiple) {
+                this.selectValue = res.map(item => item[this.columnOption.value])
+                this.selectRow = res
+                const tmpRes = res.map(item => item[this.columnOption.label])
+                this.label = tmpRes.join('，')
+              } else {
+                this.label = res[0][this.columnOption.label]
+                this.selectValue = [res[0][this.columnOption.value]]
+                this.selectRow = [res[0]]
+              }
+            } else {
+              this.label = ''
+              this.selectValue = []
+              this.selectRow = []
+            }
+            this.reloadSeq = ''
+          }
+        })
+      }
+    },
     onOpen() {
       if (this.disabled) {
         return
@@ -201,9 +322,17 @@ export default {
     clear() {
       if (this.multiple) {
         this.$emit('input', [], this.value)
+        this.$emit('input-label', [])
+        this.$emit('input-row', [])
       } else {
-        this.$emit('input', {}, this.value)
+        this.$emit('input', undefined, this.value)
+        this.$emit('input-label', undefined)
+        this.$emit('input-row', undefined)
       }
+
+      this.label = ''
+      this.selectValue = []
+      this.selectRow = []
 
       this.$emit('clear')
 
@@ -213,6 +342,7 @@ export default {
     },
     doSelect() {
       let selectData
+      let label
       if (this.multiple) {
         selectData = this.$refs.grid.getCheckboxRecords()
       } else {
@@ -226,27 +356,41 @@ export default {
         }
         if (this.multiple) {
           selectData = []
+          label = ''
+          this.selectRow = []
         } else {
-          selectData = {}
+          selectData = undefined
+          label = ''
+          this.selectRow = undefined
         }
       } else {
+        this.label = ''
+        this.selectValue = []
+        this.selectRow = []
         if (this.multiple) {
+          label = selectData.map(item => {
+            return item[this.columnOption.label]
+          })
+          this.label = label.join('，')
+          this.selectValue = selectData.map(item => {
+            return item[this.columnOption.value]
+          })
+          this.selectRow = selectData
           selectData = selectData.map(item => {
-            const data = {}
-            data[this.option.label] = item[this.columnOption.label]
-            data[this.option.value] = item[this.columnOption.value]
-
-            return Object.assign({}, item, data)
+            return item[this.columnOption.value]
           })
         } else {
-          const data = {}
-          data[this.option.label] = selectData[this.columnOption.label]
-          data[this.option.value] = selectData[this.columnOption.value]
-          selectData = Object.assign({}, selectData, data)
+          this.selectRow = selectData
+          label = selectData[this.columnOption.label]
+          this.label = label
+          selectData = selectData[this.columnOption.value]
+          this.selectValue = [selectData]
         }
       }
 
       this.$emit('input', selectData, this.value)
+      this.$emit('input-label', label)
+      this.$emit('input-row', this.selectRow)
       this.handleClose()
     },
     handleClose() {

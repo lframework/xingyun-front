@@ -4,8 +4,11 @@
       ref="selector"
       v-model="model"
       :request="getList"
+      :load="getLoad"
+      :show-sum="showSum"
       :request-params="_requestParams"
       :multiple="multiple"
+      :placeholder="placeholder"
       :disabled="disabled"
       :dialog-width="'80%'"
       :option="{
@@ -23,6 +26,8 @@
       ]"
       :before-open="beforeOpen"
       @input="e => $emit('input', e)"
+      @input-label="e => $emit('input-label', e)"
+      @input-row="e => $emit('input-row', e)"
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
@@ -46,7 +51,7 @@
                     :wrapper-col="{span: 18, offset: 1}"
                   >
                     <store-center-selector
-                      v-model="searchParams.sc"
+                      v-model="searchParams.scId"
                     />
                   </a-form-model-item>
                 </a-col>
@@ -104,6 +109,7 @@ export default {
   components: { DialogTable, StoreCenterSelector },
   props: {
     value: { type: [Object, Array], required: true },
+    placeholder: { type: String, default: '' },
     disabled: {
       type: Boolean,
       default: false
@@ -122,13 +128,17 @@ export default {
         return {}
       }
     },
-    multiple: { type: Boolean, default: false }
+    multiple: { type: Boolean, default: false },
+    showSum: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
       searchParams: {
         code: '',
-        sc: {},
+        scId: '',
         takeStatus: undefined,
         updateTimeStart: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         updateTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment()))
@@ -144,10 +154,6 @@ export default {
     },
     _requestParams() {
       const params = Object.assign({}, this.searchParams, this.requestParams)
-      if (!this.$utils.isEmpty(params.sc)) {
-        params.scId = params.sc.id
-      }
-      delete params.sc
 
       return params
     }
@@ -159,6 +165,15 @@ export default {
         region: 'sc-api',
         method: 'get',
         params: params
+      })
+    },
+    getLoad(ids) {
+      return request({
+        url: '/selector/takestock/pre/load',
+        region: 'sc-api',
+        method: 'post',
+        dataType: 'json',
+        data: ids
       })
     }
   }

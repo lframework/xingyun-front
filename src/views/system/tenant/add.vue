@@ -1,15 +1,18 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['base-data:product:saleprop-item:add']" v-loading="loading">
-      <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
-        <a-form-model-item label="编号" prop="code">
-          <a-input v-model.trim="formData.code" allow-clear />
-        </a-form-model-item>
+    <div v-if="visible" v-permission="['system.tenant:add']" v-loading="loading">
+      <a-form-model ref="form" v-loading="loading" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
         <a-form-model-item label="名称" prop="name">
-          <a-input v-model.trim="formData.name" allow-clear />
+          <a-input v-model="formData.name" allow-clear />
         </a-form-model-item>
-        <a-form-model-item label="备注" prop="description">
-          <a-textarea v-model.trim="formData.description" />
+        <a-form-model-item label="Jdbc Url" prop="jdbcUrl">
+          <a-input v-model="formData.jdbcUrl" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="Jdbc用户名" prop="jdbcUsername">
+          <a-input v-model="formData.jdbcUsername" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="Jdbc密码" prop="jdbcPassword">
+          <a-input v-model="formData.jdbcPassword" allow-clear />
         </a-form-model-item>
         <div class="form-modal-footer">
           <a-space>
@@ -22,16 +25,9 @@
   </a-modal>
 </template>
 <script>
-import { validCode } from '@/utils/validate'
 
 export default {
   components: {
-  },
-  props: {
-    groupId: {
-      type: String,
-      required: true
-    }
   },
   data() {
     return {
@@ -43,12 +39,17 @@ export default {
       formData: {},
       // 表单校验规则
       rules: {
-        code: [
-          { required: true, message: '请输入编号' },
-          { validator: validCode }
-        ],
         name: [
           { required: true, message: '请输入名称' }
+        ],
+        jdbcUrl: [
+          { required: true, message: '请输入Jdbc Url' }
+        ],
+        jdbcUsername: [
+          { required: true, message: '请输入Jdbc用户名' }
+        ],
+        jdbcPassword: [
+          { required: true, message: '请输入Jdbc密码' }
         ]
       }
     }
@@ -73,19 +74,14 @@ export default {
     },
     // 初始化表单数据
     initFormData() {
-      this.formData = {
-        code: '',
-        description: '',
-        name: '',
-        shortName: ''
-      }
+      this.formData = {}
     },
     // 提交表单事件
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.baseData.product.salePropItem.create(Object.assign({ groupId: this.groupId }, this.formData)).then(() => {
+          this.$api.system.tenant.create(this.formData).then(() => {
             this.$msg.success('新增成功！')
             // 初始化表单数据
             this.initFormData()

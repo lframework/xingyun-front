@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="User"
       ref="grid"
       resizable
       show-overflow
@@ -28,8 +29,8 @@
             <j-form-item label="姓名">
               <a-input v-model="searchFormData.name" allow-clear />
             </j-form-item>
-            <j-form-item label="岗位" prop="position">
-              <sys-position-selector v-model="searchFormData.position" />
+            <j-form-item label="岗位" prop="positionId">
+              <sys-position-selector v-model="searchFormData.positionId" />
             </j-form-item>
             <j-form-item label="状态">
               <a-select v-model="searchFormData.available" placeholder="全部" allow-clear>
@@ -89,7 +90,7 @@
     <detail :id="id" ref="viewDialog" />
 
     <!-- 授权窗口 -->
-    <permission ref="permissionDialog" :ids="ids" />
+    <permission ref="permissionDialog" :ids="ids" @confirm="search" />
   </div>
 </template>
 
@@ -114,7 +115,7 @@ export default {
       ids: [],
       // 查询列表的查询条件
       searchFormData: {
-        position: {},
+        positionId: '',
         available: true
       },
       // 工具栏配置
@@ -178,11 +179,7 @@ export default {
     },
     // 查询前构建具体的查询参数
     buildSearchFormData() {
-      const params = Object.assign({}, this.searchFormData, { positionId: this.searchFormData.position.id })
-
-      delete params.position
-
-      return params
+      return Object.assign({}, this.searchFormData, { positionId: this.searchFormData.positionId })
     },
     handleCommand({ key }) {
       if (key === 'batchEnable') {

@@ -1,6 +1,6 @@
 <template>
-  <div v-if="visible" class="app-container">
-    <div v-permission="['settle:sheet:approve']" v-loading="loading">
+  <div class="app-container simple-app-container">
+    <div v-permission="['customer-settle:sheet:approve']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="客户">
@@ -60,8 +60,8 @@
       >
         <!-- 单据号 列自定义内容 -->
         <template v-slot:bizCode_default="{ row }">
-          <span v-no-permission="['settle:check-sheet:query']">{{ row.bizCode }}</span>
-          <a v-permission="['settle:check-sheet:query']" type="link" @click="e => { $refs.viewSettleCheckSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleCheckSheetDetailDialog.openDialog()) }">
+          <span v-no-permission="['customer-settle:check-sheet:query']">{{ row.bizCode }}</span>
+          <a v-permission="['customer-settle:check-sheet:query']" type="link" @click="e => { $refs.viewSettleCheckSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleCheckSheetDetailDialog.openDialog()) }">
             {{ row.bizCode }}
           </a>
         </template>
@@ -110,8 +110,8 @@
 
       <div v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status) || $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
         <a-space>
-          <a-button v-permission="['settle:sheet:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</a-button>
-          <a-button v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['settle:sheet:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</a-button>
+          <a-button v-permission="['customer-settle:sheet:approve']" type="primary" :loading="loading" @click="approvePassOrder">审核通过</a-button>
+          <a-button v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status)" v-permission="['customer-settle:sheet:approve']" type="danger" :loading="loading" @click="approveRefuseOrder">审核拒绝</a-button>
           <a-button :loading="loading" @click="closeDialog">关闭</a-button>
         </a-space>
       </div>
@@ -128,16 +128,9 @@ export default {
   components: {
     ApproveRefuse, SettleCheckSheetDetail
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -162,21 +155,18 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {

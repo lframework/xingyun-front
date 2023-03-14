@@ -102,8 +102,10 @@ export default {
         branding: false, // 隐藏右下角技术支持
         // 图片上传
         images_upload_handler: function(blobInfo, success, failure) {
-          that.$api.components.editorUploadImage(blobInfo.blob()).then(res => {
-            success(res.url)
+          that.$api.components.uploadImage({
+            file: blobInfo.blob()
+          }).then(res => {
+            success(res)
           })
         }
       }
@@ -114,6 +116,9 @@ export default {
   watch: {
     html(val) {
       this.$emit('input', val)
+    },
+    value(val) {
+      this.html = val
     }
   },
   mounted() {

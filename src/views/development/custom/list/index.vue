@@ -8,6 +8,7 @@
         <a-col :span="20">
           <!-- 数据列表 -->
           <vxe-grid
+            id="CustomList"
             ref="grid"
             resizable
             show-overflow

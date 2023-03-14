@@ -15,6 +15,10 @@
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
         :pager-config="{}"
+        :checkbox-config="{
+          trigger: 'row',
+          highlight: true
+        }"
         :loading="loading"
       >
         <template v-slot:form>
@@ -24,10 +28,10 @@
                 <a-input v-model="searchFormData.condition" allow-clear />
               </j-form-item>
               <j-form-item label="商品类目">
-                <product-category-selector v-model="searchFormData.category" :only-final="false" />
+                <product-category-selector v-model="searchFormData.categoryId" :only-final="false" />
               </j-form-item>
               <j-form-item label="商品品牌">
-                <product-brand-selector v-model="searchFormData.brand" :request-params="{ available: true }" />
+                <product-brand-selector v-model="searchFormData.brandId" :request-params="{ available: true }" />
               </j-form-item>
             </j-form>
           </j-border>
@@ -72,8 +76,8 @@ export default {
       // 查询列表的查询条件
       searchFormData: {
         condition: '',
-        category: {},
-        brand: {}
+        categoryId: '',
+        brandId: ''
       },
       // 分页配置
       pagerConfig: {
@@ -102,9 +106,7 @@ export default {
         { field: 'brandName', title: '商品品牌', width: 120 },
         { field: 'salePrice', title: '参考销售价（元）', align: 'right', width: 150 },
         { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
-        { field: 'stockNum', title: '库存数量', align: 'right', width: 100 },
-        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
-        { field: 'salePropItemName2', title: '销售属性2', width: 120 }
+        { field: 'stockNum', title: '库存数量', align: 'right', width: 100 }
       ],
       // 请求接口配置
       proxyConfig: {
@@ -142,8 +144,8 @@ export default {
       return {
         scId: this.scId,
         condition: this.searchFormData.condition,
-        categoryId: this.searchFormData.category.id || '',
-        brandId: this.searchFormData.brand.id || ''
+        categoryId: this.searchFormData.categoryId || '',
+        brandId: this.searchFormData.brandId || ''
       }
     },
     // 打开对话框 由父页面触发

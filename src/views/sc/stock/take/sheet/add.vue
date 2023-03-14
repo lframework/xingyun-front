@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['stock:take:sheet:add']" v-loading="loading">
       <j-border>
         <j-form label-width="120px">
           <j-form-item label="关联盘点任务" required>
             <take-stock-plan-selector
-              v-model="formData.takeStockPlan"
+              v-model="formData.takeStockPlanId"
               :request-params="{
                 taking: true
               }"
@@ -15,7 +15,7 @@
           </j-form-item>
           <j-form-item label="预先盘点单">
             <pre-take-stock-sheet-selector
-              v-model="formData.preTakeStockSheet"
+              v-model="formData.preTakeStockSheetId"
               :request-params="{
                 scId: formData.scId
               }"
@@ -96,7 +96,7 @@
 
       <batch-add-product
         ref="batchAddProductDialog"
-        :plan-id="formData.takeStockPlan.id || ''"
+        :plan-id="formData.takeStockPlanId || ''"
         @confirm="batchAddProduct"
       />
 
@@ -121,8 +121,6 @@ export default {
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -163,26 +161,23 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        takeStockPlan: {},
-        preTakeStockSheet: {},
+        takeStockPlanId: '',
+        preTakeStockSheetId: '',
         description: '',
         scId: '',
         scName: '',
@@ -194,7 +189,7 @@ export default {
       this.tableData = []
     },
     validParams() {
-      if (this.$utils.isEmpty(this.formData.takeStockPlan)) {
+      if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
         this.$msg.error('请选择关联盘点任务！')
         return false
       }
@@ -228,8 +223,8 @@ export default {
         return
       }
       const params = {
-        planId: this.formData.takeStockPlan.id,
-        preSheetId: this.formData.preTakeStockSheet.id || '',
+        planId: this.formData.takeStockPlanId,
+        preSheetId: this.formData.preTakeStockSheetId || '',
         description: this.formData.description,
         products: this.tableData.map(item => {
           return {
@@ -256,8 +251,8 @@ export default {
         return
       }
       const params = {
-        planId: this.formData.takeStockPlan.id,
-        preSheetId: this.formData.preTakeStockSheet.id || '',
+        planId: this.formData.takeStockPlanId,
+        preSheetId: this.formData.preTakeStockSheetId || '',
         description: this.formData.description,
         products: this.tableData.map(item => {
           return {
@@ -303,7 +298,7 @@ export default {
     },
     // 新增商品
     addProduct() {
-      if (this.$utils.isEmpty(this.formData.takeStockPlan)) {
+      if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
         this.$msg.error('请先选择关联盘点任务！')
         return
       }
@@ -317,7 +312,7 @@ export default {
         return
       }
 
-      this.$api.sc.stock.take.takeStockSheet.searchProduct(this.formData.takeStockPlan.id, queryString).then(res => {
+      this.$api.sc.stock.take.takeStockSheet.searchProduct(this.formData.takeStockPlanId, queryString).then(res => {
         row.products = res
       })
     },
@@ -352,7 +347,7 @@ export default {
       })
     },
     openBatchAddProductDialog() {
-      if (this.$utils.isEmpty(this.formData.takeStockPlan)) {
+      if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
         this.$msg.error('请先选择关联盘点任务！')
         return
       }
@@ -373,26 +368,26 @@ export default {
       })
     },
     beforeSelectPreTakeStockSheet() {
-      if (this.$utils.isEmpty(this.formData.takeStockPlan)) {
+      if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
         this.$msg.error('请先选择关联盘点任务')
         return false
       }
 
-      if (!this.$utils.isEmpty(this.formData.preTakeStockSheet)) {
+      if (!this.$utils.isEmpty(this.formData.preTakeStockSheetId)) {
         return this.$msg.confirm('更改关联盘点任务，不会清除已加载的预先盘点单的商品数据，是否确认更改？')
       }
 
       return true
     },
     beforeSelectTakeStockPlan() {
-      if (!this.$utils.isEmpty(this.formData.takeStockPlan)) {
+      if (!this.$utils.isEmpty(this.formData.takeStockPlanId)) {
         return this.$msg.confirm('更改关联盘点任务，会清空商品数据，是否确认更改？')
       } else {
         return true
       }
     },
     afterSelectTakeStockPlan(e) {
-      this.formData.preTakeStockSheet = {}
+      this.formData.preTakeStockSheetId = ''
 
       this.formData.scId = ''
       this.formData.scName = ''
@@ -402,14 +397,14 @@ export default {
 
       if (!this.$utils.isEmpty(e)) {
         this.loading = true
-        this.$api.sc.stock.take.takeStockPlan.get(e.id).then(res => {
+        this.$api.sc.stock.take.takeStockPlan.get(e).then(res => {
           this.formData.scId = res.scId
           this.formData.scName = res.scName
           this.formData.takeType = res.takeType
           this.formData.takeStatus = res.takeStatus
           this.formData.bizName = res.bizName
 
-          this.$api.sc.stock.take.takeStockPlan.getProducts(e.id).then(products => {
+          this.$api.sc.stock.take.takeStockPlan.getProducts(e).then(products => {
             this.tableData = products.map(item => {
               return Object.assign(this.emptyProduct(), { isFixed: true }, item)
             })
@@ -424,8 +419,8 @@ export default {
     afterSelectPreTakeStockSheet(e) {
       this.loading = true
       this.$api.sc.stock.take.preTakeStockSheet.getProducts({
-        id: e.id,
-        planId: this.formData.takeStockPlan.id
+        id: e,
+        planId: this.formData.takeStockPlanId
       }).then(products => {
         products.forEach(item => {
           const tableData = this.tableData.filter(obj => obj.productId === item.productId)

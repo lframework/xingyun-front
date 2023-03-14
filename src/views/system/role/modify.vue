@@ -11,9 +11,7 @@
         <a-form-model-item label="权限" prop="permission">
           <a-input v-model.trim="formData.permission" allow-clear />
         </a-form-model-item>
-        <a-form-model-item
-          label="状态"
-        >
+        <a-form-model-item label="状态" prop="available">
           <a-select v-model="formData.available" allow-clear>
             <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
           </a-select>
@@ -76,7 +74,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.open()
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {

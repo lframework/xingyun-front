@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-show="visible" v-permission="['stock:take:sheet:query']" class="app-container">
+    <div v-permission="['stock:take:sheet:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
         ref="grid"
@@ -27,7 +27,7 @@
               </j-form-item>
               <j-form-item label="仓库">
                 <store-center-selector
-                  v-model="searchFormData.sc"
+                  v-model="searchFormData.scId"
                 />
               </j-form-item>
               <j-form-item label="盘点状态">
@@ -87,7 +87,7 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
-            <a-button v-permission="['stock:take:sheet:add']" type="primary" icon="plus" @click="visible = false; $refs.addDialog.openDialog();">新增</a-button>
+            <a-button v-permission="['stock:take:sheet:add']" type="primary" icon="plus" @click="$router.push('/take/sheet/add')">新增</a-button>
             <a-button v-permission="['stock:take:sheet:approve']" icon="check" @click="batchApprovePass">审核通过</a-button>
             <a-button v-permission="['stock:take:sheet:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
             <a-button v-permission="['stock:take:sheet:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
@@ -98,21 +98,13 @@
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
           <a-button v-permission="['stock:take:sheet:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-          <a-button v-if="($enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)) && $enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:sheet:modify']" type="link" @click="e => { id = row.id; visible= false; $nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
-          <a-button v-if="($enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)) && $enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:sheet:approve']" type="link" @click="e => { id = row.id; visible= false; $nextTick(() => $refs.approveDialog.openDialog()) }">审核</a-button>
+          <a-button v-if="($enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)) && $enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:sheet:modify']" type="link" @click="$router.push('/take/sheet/modify/' + row.id)">修改</a-button>
+          <a-button v-if="($enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)) && $enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:sheet:approve']" type="link" @click="$router.push('/take/sheet/approve/' + row.id)">审核</a-button>
           <a-button v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(row.status) && $enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)" v-permission="['stock:take:sheet:cancel-approve']" type="link" @click="e => { cancelApprove(row.id) }">取消审核</a-button>
           <a-button v-if="$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['stock:take:sheet:delete']" type="link" class="ant-btn-link-danger" @click="e => { deleteRow(row.id) }">删除</a-button>
         </template>
       </vxe-grid>
     </div>
-    <!-- 新增窗口 -->
-    <add ref="addDialog" @confirm="search" @close="visible = true" />
-
-    <!-- 修改窗口 -->
-    <modify :id="id" ref="updateDialog" @confirm="search" @close="visible = true" />
-
-    <!-- 审核窗口 -->
-    <approve :id="id" ref="approveDialog" @confirm="search" @close="visible = true" />
 
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
@@ -123,10 +115,7 @@
 </template>
 
 <script>
-import Add from './add'
-import Modify from './modify'
 import Detail from './detail'
-import Approve from './approve'
 import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
 import UserSelector from '@/components/Selector/UserSelector'
 import moment from 'moment'
@@ -135,11 +124,10 @@ import ApproveRefuse from '@/components/ApproveRefuse'
 export default {
   name: 'TakeStockSheet',
   components: {
-    Add, Modify, Detail, Approve, StoreCenterSelector, UserSelector, ApproveRefuse
+    Detail, StoreCenterSelector, UserSelector, ApproveRefuse
   },
   data() {
     return {
-      visible: true,
       loading: false,
       // 当前行数据
       id: '',
@@ -147,13 +135,13 @@ export default {
       searchFormData: {
         code: '',
         planCode: '',
-        sc: {},
+        scId: '',
         takeStatus: undefined,
         status: undefined,
-        updateBy: {},
+        updateBy: '',
         updateTimeStart: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         updateTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
-        approveBy: {},
+        approveBy: '',
         approveTimeStart: '',
         approveTimeEnd: ''
       },
@@ -214,14 +202,7 @@ export default {
     },
     // 查询前构建具体的查询参数
     buildSearchFormData() {
-      const params = Object.assign({ }, this.searchFormData)
-      params.scId = params.sc.id
-      params.updateBy = params.updateBy.id
-      params.approveBy = params.approveBy.id
-
-      delete params.sc
-
-      return params
+      return Object.assign({}, this.searchFormData)
     },
     // 取消审核
     cancelApprove(id) {

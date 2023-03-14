@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="Qrtz"
       ref="grid"
       resizable
       show-overflow
@@ -69,7 +70,7 @@ import Modify from './modify'
 import Detail from './detail'
 
 export default {
-  name: 'Customer',
+  name: 'Qrtz',
   components: {
     Add, Modify, Detail
   },

@@ -136,7 +136,7 @@ export default {
             description: this.formData.description
           }
           if (!this.$utils.isEmpty(this.formData.categories)) {
-            params.categoryIds = this.formData.categories.map(item => item.id)
+            params.categoryIds = this.formData.categories
           }
           this.$api.baseData.product.property.create(params).then(() => {
             this.$msg.success('新增成功！')

@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-custom-list-category-selector v-model="formData.category" />
+            <gen-custom-list-category-selector v-model="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="24" label="备注" :content-nest="false">
             <a-textarea v-model="formData.description" />
@@ -20,7 +20,7 @@
       <j-border>
         <j-form :enable-collapse="false" label-width="80px">
           <j-form-item :span="12" label="数据对象" :required="true">
-            <gen-data-obj-selector v-model="formData.dataObj" :request-params="{ available: true }" @input="changeTable" />
+            <gen-data-obj-selector v-model="formData.dataObjId" :request-params="{ available: true }" @input="changeTable" />
           </j-form-item>
         </j-form>
       </j-border>
@@ -197,9 +197,9 @@ export default {
     initFormData() {
       this.formData = {
         name: '',
-        category: {},
+        categoryId: '',
         description: '',
-        dataObj: {}
+        dataObjId: ''
       }
 
       this.columns = []
@@ -215,7 +215,7 @@ export default {
       this.columns = []
       this.queryColumns = []
       this.$api.development.dataObj.queryColumns({
-        id: this.formData.dataObj.id
+        id: this.formData.dataObjId
       }).then(res => {
         this.columns = res
         this.columns.forEach(item => {
@@ -241,7 +241,7 @@ export default {
         this.$msg.error('请输入名称')
         return
       }
-      if (this.$utils.isEmpty(this.formData.dataObj.id)) {
+      if (this.$utils.isEmpty(this.formData.dataObjId)) {
         this.$msg.error('请选择数据对象')
         return
       }
@@ -311,8 +311,8 @@ export default {
         return
       }
       const params = Object.assign(this.formData, {
-        dataObjId: this.formData.dataObj.id,
-        categoryId: this.formData.category.id,
+        dataObjId: this.formData.dataObjId,
+        categoryId: this.formData.categoryId,
         queryParams: this.$refs.queryParams.getTableData(),
         details: this.$refs.queryDetail.getTableData(),
         toolbars: this.$refs.toolbar.getTableData(),

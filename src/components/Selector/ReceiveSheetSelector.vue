@@ -4,7 +4,11 @@
       ref="selector"
       v-model="model"
       :request="getList"
+      :load="getLoad"
+      :show-sum="showSum"
       :request-params="_requestParams"
+      :multiple="multiple"
+      :placeholder="placeholder"
       :disabled="disabled"
       :before-open="beforeOpen"
       :dialog-width="'80%'"
@@ -21,6 +25,8 @@
         { field: 'status', title: '审核状态', minWidth: 100, formatter: ({cellValue}) => { return this.$enums.RECEIVE_SHEET_STATUS.getDesc(cellValue) } }
       ]"
       @input="e => $emit('input', e)"
+      @input-label="e => $emit('input-label', e)"
+      @input-row="e => $emit('input-row', e)"
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
@@ -44,7 +50,7 @@
                     :wrapper-col="{span: 18, offset: 1}"
                   >
                     <store-center-selector
-                      v-model="searchParams.sc"
+                      v-model="searchParams.scId"
                     />
                   </a-form-model-item>
                 </a-col>
@@ -55,7 +61,7 @@
                     :wrapper-col="{span: 18, offset: 1}"
                   >
                     <supplier-selector
-                      v-model="searchParams.supplier"
+                      v-model="searchParams.supplierId"
                     />
                   </a-form-model-item>
                 </a-col>
@@ -126,6 +132,8 @@ export default {
   components: { DialogTable, StoreCenterSelector, SupplierSelector, UserSelector },
   props: {
     value: { type: [Object, Array], required: true },
+    multiple: { type: Boolean, default: false },
+    placeholder: { type: String, default: '' },
     disabled: {
       type: Boolean,
       default: false
@@ -143,15 +151,19 @@ export default {
       default: e => {
         return {}
       }
+    },
+    showSum: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       searchParams: {
         code: '',
-        sc: {},
-        supplier: {},
-        createBy: {},
+        scId: '',
+        supplierId: '',
+        createBy: '',
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
         status: undefined
@@ -173,9 +185,9 @@ export default {
     getList(params) {
       const reqParams = {
         code: params.code,
-        scId: params.sc.id || '',
-        supplierId: params.supplier.id || '',
-        createBy: params.createBy.id || '',
+        scId: params.scId || '',
+        supplierId: params.supplierId || '',
+        createBy: params.createBy || '',
         createStartTime: params.createStartTime,
         createEndTime: params.createEndTime,
         status: params.status
@@ -185,6 +197,15 @@ export default {
         region: 'sc-api',
         method: 'get',
         params: reqParams
+      })
+    },
+    getLoad(ids) {
+      return request({
+        url: '/selector/receivesheet/load',
+        region: 'sc-api',
+        method: 'post',
+        dataType: 'json',
+        data: ids
       })
     }
   }

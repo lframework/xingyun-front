@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="ProductBrand"
       ref="grid"
       resizable
       show-overflow

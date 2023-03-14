@@ -1,5 +1,5 @@
 <template>
-  <a-card :loading="loading" :body-style="{padding: '20px 24px 8px'}" :bordered="false">
+  <a-card :loading="loading" :body-style="{padding: '20px 24px 8px'}" :bordered="true">
     <div class="chart-card-header">
       <div class="meta">
         <span class="chart-card-title">{{ title }}</span>

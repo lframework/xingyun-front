@@ -3,6 +3,7 @@
     <div v-permission="['system:parameter:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="SysParameter"
         ref="grid"
         resizable
         show-overflow

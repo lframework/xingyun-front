@@ -39,6 +39,7 @@ export default {
       url: '/system/user',
       region: 'common-api',
       method: 'post',
+      dataType: 'json',
       data: params
     })
   },
@@ -52,6 +53,7 @@ export default {
       url: '/system/user',
       region: 'common-api',
       method: 'put',
+      dataType: 'json',
       data: params
     })
   },

@@ -82,9 +82,8 @@
   </a-modal>
 </template>
 <script>
-import * as constants from './constants'
 import CitySelector from '@/components/Selector/CitySelector'
-import { validCode } from '@/utils/validate'
+import { validCode, isEmail } from '@/utils/validate'
 export default {
   // 使用组件
   components: {
@@ -124,10 +123,36 @@ export default {
           { required: true, message: '请选择状态' }
         ],
         email: [
-          { validator: constants.validEmail }
+          {
+            validator: (rule, value, callback) => {
+              if (this.$utils.isEmpty(value) || isEmail(value)) {
+                callback()
+              } else {
+                return callback(new Error('邮箱地址格式不正确'))
+              }
+
+              return callback()
+            }
+          }
         ],
         deliveryCycle: [
-          { validator: constants.validDeliveryCycle }
+          {
+            validator: (rule, value, callback) => {
+              if (this.$utils.isEmpty(value)) {
+                return callback()
+              }
+
+              if (!this.$utils.isInteger(value)) {
+                return callback(new Error('送货周期（天）必须为整数'))
+              }
+
+              if (!this.$utils.isIntegerGtZero(value)) {
+                return callback(new Error('送货周期（天）必须大于0'))
+              }
+
+              return callback()
+            }
+          }
         ]
       }
     }

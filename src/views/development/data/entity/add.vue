@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-data-entity-category-selector v-model="formData.category" />
+            <gen-data-entity-category-selector v-model="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="24" label="备注" :content-nest="false">
             <a-textarea v-model="formData.description" />
@@ -20,7 +20,7 @@
       <j-border>
         <j-form :enable-collapse="false" label-width="80px">
           <j-form-item :span="12" label="数据表" :required="true">
-            <simple-db-table-selector v-model="formData.table" @input="changeTable" />
+            <simple-db-table-selector v-model="formData.tableId" @input="changeTable" />
           </j-form-item>
         </j-form>
       </j-border>
@@ -84,9 +84,9 @@ export default {
     initFormData() {
       this.formData = {
         name: '',
-        category: {},
+        categoryId: '',
         description: '',
-        table: {}
+        tableId: ''
       }
 
       this.columns = []
@@ -101,8 +101,9 @@ export default {
       if (this.$utils.isEmpty(e)) {
         return
       }
+      this.loading = true
       this.$api.development.dataEntity.queryColumns({
-        tableName: e.id
+        tableName: e
       }).then(res => {
         res = res.map(item => {
           return Object.assign({ dataDic: {
@@ -116,7 +117,9 @@ export default {
         })
         this.columns = res
       }).catch(() => {
-        this.formData.table = {}
+        this.formData.tableId = ''
+      }).finally(() => {
+        this.loading = false
       })
     },
     submit() {
@@ -128,8 +131,8 @@ export default {
         return
       }
       const params = Object.assign({
-        tableName: this.formData.table.id,
-        categoryId: this.formData.category.id,
+        tableName: this.formData.tableId,
+        categoryId: this.formData.categoryId,
         columns: this.$refs.generateColumn.getColumns().map(item => {
           item.dataDicId = item.dataDic.id
           item.customSelectorId = item.customSelector.id

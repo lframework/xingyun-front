@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['settle:fee-sheet:add']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="供应商" required>
             <supplier-selector
-              v-model="formData.supplier"
+              v-model="formData.supplierId"
               :request-params="{
                 manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code
               }"
@@ -88,8 +88,6 @@ export default {
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -120,25 +118,22 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        supplier: {},
+        supplierId: '',
         totalNum: 0,
         giftNum: 0,
         totalAmount: 0,
@@ -150,13 +145,13 @@ export default {
     emptyLine() {
       return {
         id: this.$utils.uuid(),
-        item: {},
+        item: '',
         amount: ''
       }
     },
     // 新增项目
     addItem() {
-      if (this.$utils.isEmpty(this.formData.supplier)) {
+      if (this.$utils.isEmpty(this.formData.supplierId)) {
         this.$msg.error('请先选择供应商！')
         return
       }
@@ -204,7 +199,7 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.supplier.id)) {
+      if (this.$utils.isEmpty(this.formData.supplierId)) {
         this.$msg.error('供应商不允许为空！')
         return false
       }
@@ -257,12 +252,12 @@ export default {
       }
 
       const params = {
-        supplierId: this.formData.supplier.id,
+        supplierId: this.formData.supplierId,
         sheetType: this.formData.sheetType,
         description: this.formData.description,
         items: this.tableData.map(t => {
           return {
-            id: t.item.id,
+            id: t.item,
             amount: t.amount
           }
         })
@@ -285,12 +280,12 @@ export default {
       }
 
       const params = {
-        supplierId: this.formData.supplier.id,
+        supplierId: this.formData.supplierId,
         sheetType: this.formData.sheetType,
         description: this.formData.description,
         items: this.tableData.map(t => {
           return {
-            id: t.item.id,
+            id: t.item,
             amount: t.amount
           }
         })

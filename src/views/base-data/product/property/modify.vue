@@ -75,8 +75,6 @@ export default {
       loading: false,
       // 表单数据
       formData: {},
-      // 类目
-      category: {},
       // 表单校验规则
       rules: {
         code: [
@@ -157,7 +155,7 @@ export default {
             description: this.formData.description
           }
           if (!this.$utils.isEmpty(this.formData.categories)) {
-            params.categoryIds = this.formData.categories.map(item => item.id)
+            params.categoryIds = this.formData.categories
           }
           this.$api.baseData.product.property.modify(params).then(() => {
             this.$msg.success('修改成功！')

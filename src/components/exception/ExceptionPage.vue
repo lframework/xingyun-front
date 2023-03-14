@@ -7,7 +7,7 @@
       <h1>{{ config[type].title }}</h1>
       <div class="desc">{{ config[type].desc }}</div>
       <div class="action">
-        <a-button type="primary" @click="backHome">返回首页</a-button>
+        <a-button type="primary" @click="onBackHome">返回首页</a-button>
       </div>
     </div>
   </div>
@@ -34,11 +34,24 @@ export default {
     }
   },
   methods: {
-    backHome() {
-      if (this.homeRoute) {
-        this.$router.push(this.homeRoute)
+    onBackHome() {
+      let isTabView = false
+      let parent = this.$parent
+      while (parent) {
+        if (parent.$options.name === 'TabsView') {
+          isTabView = true
+        }
+        parent = parent.$parent
       }
-      this.$emit('backHome', this.type)
+      if (isTabView) {
+        this.$utils.closeCurrentPage(this.$parent)
+        this.$emit('backHome', this.type)
+      } else {
+        if (this.homeRoute) {
+          this.$router.push(this.homeRoute)
+        }
+        this.$emit('backHome', this.type)
+      }
     }
   }
 }

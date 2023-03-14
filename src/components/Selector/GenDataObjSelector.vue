@@ -4,14 +4,20 @@
       ref="selector"
       v-model="model"
       :request="getList"
+      :load="getLoad"
+      :show-sum="showSum"
       :request-params="_requestParams"
       :table-column=" [
         { field: 'name', title: '名称', minWidth: 160 },
         { field: 'categoryName', title: '分类', width: 120 }
       ]"
+      :multiple="multiple"
+      :placeholder="placeholder"
       :disabled="disabled"
       :before-open="beforeOpen"
       @input="e => $emit('input', e)"
+      @input-label="e => $emit('input-label', e)"
+      @input-row="e => $emit('input-row', e)"
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
@@ -35,7 +41,7 @@
                     :label-col="{span: 4, offset: 1}"
                     :wrapper-col="{span: 18, offset: 1}"
                   >
-                    <gen-data-entity-category-selector v-model="searchParams.category" />
+                    <gen-data-entity-category-selector v-model="searchParams.categoryId" />
                   </a-form-model-item>
                 </a-col>
                 <a-col v-if="$utils.isEmpty(requestParams.available)" :md="8" :sm="24">
@@ -74,6 +80,8 @@ export default {
   components: { DialogTable, GenDataEntityCategorySelector },
   props: {
     value: { type: [Object, Array], required: true },
+    multiple: { type: Boolean, default: false },
+    placeholder: { type: String, default: '' },
     disabled: {
       type: Boolean,
       default: false
@@ -91,11 +99,15 @@ export default {
       default: e => {
         return {}
       }
+    },
+    showSum: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      searchParams: { code: '', name: '', categoryId: '', category: {}, available: '' }
+      searchParams: { code: '', name: '', categoryId: '', available: '' }
     }
   },
   computed: {
@@ -107,8 +119,6 @@ export default {
     },
     _requestParams() {
       const params = Object.assign({}, this.searchParams)
-      params.categoryId = params.category.id
-      delete params.category
 
       return Object.assign({}, params, this.requestParams)
     }
@@ -120,6 +130,15 @@ export default {
         region: 'common-api',
         method: 'get',
         params: params
+      })
+    },
+    getLoad(ids) {
+      return request({
+        url: '/selector/gen/data/obj/load',
+        region: 'common-api',
+        method: 'post',
+        dataType: 'json',
+        data: ids
       })
     }
   }

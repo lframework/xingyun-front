@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['settle:pre-sheet:query']" v-loading="loading">
+    <div v-if="visible" v-permission="['customer-settle:pre-sheet:query']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="客户">

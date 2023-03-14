@@ -9,6 +9,7 @@ import CustomForm from '@/components/CustomForm'
 import JEditor from '@/components/JEditor'
 import JUpload from '@/components/JUpload'
 import JImgUpload from '@/components/JImgUpload'
+import JVideoUpload from '@/components/JVideoUpload'
 import SvgIcon from '@/components/SvgIcon'
 import IconPicker from '@/components/IconPicker'
 import CronPicker from '@/components/CronPicker'
@@ -26,6 +27,7 @@ instance.install = function(Vue) {
   Vue.component('JEditor', JEditor)
   Vue.component('JUpload', JUpload)
   Vue.component('JImgUpload', JImgUpload)
+  Vue.component('JVideoUpload', JVideoUpload)
   Vue.component('SvgIcon', SvgIcon)
   Vue.component('IconPicker', IconPicker)
   Vue.component('CronPicker', CronPicker)

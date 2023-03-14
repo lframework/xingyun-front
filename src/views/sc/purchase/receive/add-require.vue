@@ -1,23 +1,23 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['purchase:receive:add']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="仓库" required>
             <store-center-selector
-              v-model="formData.sc"
+              v-model="formData.scId"
               :before-open="beforeSelectSc"
             />
           </j-form-item>
           <j-form-item label="供应商" required>
             <supplier-selector
-              v-model="formData.supplier"
+              v-model="formData.supplierId"
               :before-open="beforeSelectSupplier"
             />
           </j-form-item>
           <j-form-item label="采购员">
             <user-selector
-              v-model="formData.purchaser"
+              v-model="formData.purchaserId"
               :before-open="beforeSelectPurchaser"
             />
           </j-form-item>
@@ -41,7 +41,7 @@
           </j-form-item>
           <j-form-item label="采购订单" required>
             <purchase-order-selector
-              v-model="formData.purchaseOrder"
+              v-model="formData.purchaseOrderId"
               @input="purchaseOrderChange"
             />
           </j-form-item>
@@ -145,7 +145,7 @@
 
       <batch-add-product
         ref="batchAddProductDialog"
-        :sc-id="formData.sc.id"
+        :sc-id="formData.scId"
         @confirm="batchAddProduct"
       />
       <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
@@ -172,8 +172,6 @@ export default {
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -211,8 +209,6 @@ export default {
         { field: 'receiveNum', title: '收货数量', align: 'right', width: 100, slots: { default: 'receiveNum_default' }},
         { field: 'taxAmount', title: '含税金额', align: 'right', width: 120, slots: { default: 'taxAmount_default' }},
         { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
-        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
-        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
       tableData: []
@@ -224,28 +220,25 @@ export default {
     }
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     async initFormData() {
       this.formData = {
-        sc: {},
-        supplier: {},
-        purchaseOrder: {},
-        purchaser: {},
+        scId: '',
+        supplierId: '',
+        purchaseOrderId: '',
+        purchaserId: '',
         paymentDate: this.$utils.formatDate(Moment().add(1, 'M')),
         receiveDate: this.$utils.formatDate(Moment()),
         totalNum: 0,
@@ -279,8 +272,6 @@ export default {
         taxRate: '',
         isGift: true,
         taxAmount: '',
-        salePropItemName1: '',
-        salePropItemName2: '',
         description: '',
         isFixed: false,
         products: []
@@ -288,7 +279,7 @@ export default {
     },
     // 新增商品
     addProduct() {
-      if (this.$utils.isEmpty(this.formData.purchaseOrder)) {
+      if (this.$utils.isEmpty(this.formData.purchaseOrderId)) {
         this.$msg.error('请先选择采购订单！')
         return
       }
@@ -301,7 +292,7 @@ export default {
         return
       }
 
-      this.$api.sc.purchase.purchaseOrder.searchProduct(this.formData.sc.id, queryString).then(res => {
+      this.$api.sc.purchase.purchaseOrder.searchProduct(this.formData.scId, queryString).then(res => {
         row.products = res
       })
     },
@@ -340,7 +331,7 @@ export default {
       })
     },
     openBatchAddProductDialog() {
-      if (this.$utils.isEmpty(this.formData.purchaseOrder)) {
+      if (this.$utils.isEmpty(this.formData.purchaseOrderId)) {
         this.$msg.error('请先选择采购订单！')
         return
       }
@@ -421,12 +412,12 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.sc.id)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('仓库不允许为空！')
         return false
       }
 
-      if (this.$utils.isEmpty(this.formData.supplier.id)) {
+      if (this.$utils.isEmpty(this.formData.supplierId)) {
         this.$msg.error('供应商不允许为空！')
         return false
       }
@@ -443,7 +434,7 @@ export default {
         return false
       }
 
-      if (this.$utils.isEmpty(this.formData.purchaseOrder.id)) {
+      if (this.$utils.isEmpty(this.formData.purchaseOrderId)) {
         this.$msg.error('采购订单不允许为空！')
         return false
       }
@@ -534,12 +525,12 @@ export default {
       }
 
       const params = {
-        scId: this.formData.sc.id,
-        supplierId: this.formData.supplier.id,
-        purchaserId: this.formData.purchaser.id || '',
+        scId: this.formData.scId,
+        supplierId: this.formData.supplierId,
+        purchaserId: this.formData.purchaserId || '',
         paymentDate: this.formData.paymentDate || '',
         receiveDate: this.formData.receiveDate,
-        purchaseOrderId: this.formData.purchaseOrder.id,
+        purchaseOrderId: this.formData.purchaseOrderId,
         description: this.formData.description,
         required: true,
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.receiveNum)).map(t => {
@@ -574,12 +565,12 @@ export default {
       }
 
       const params = {
-        scId: this.formData.sc.id,
-        supplierId: this.formData.supplier.id,
-        purchaserId: this.formData.purchaser.id,
+        scId: this.formData.scId,
+        supplierId: this.formData.supplierId,
+        purchaserId: this.formData.purchaserId,
         paymentDate: this.formData.paymentDate || '',
         receiveDate: this.formData.receiveDate,
-        purchaseOrderId: this.formData.purchaseOrder.id,
+        purchaseOrderId: this.formData.purchaseOrderId,
         description: this.formData.description,
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.receiveNum)).map(t => {
           const product = {
@@ -613,7 +604,7 @@ export default {
       // 只要选择了采购订单，清空所有商品，然后将采购订单中所有的明细列出来
       if (!this.$utils.isEmpty(e)) {
         this.loading = true
-        this.$api.sc.purchase.purchaseOrder.getWithReceive(e.id).then(res => {
+        this.$api.sc.purchase.purchaseOrder.getWithReceive(e).then(res => {
           const tableData = this.tableData.filter(item => !item.isFixed)
           let purchaseDetails = res.details || []
           purchaseDetails = purchaseDetails.map(item => {
@@ -624,24 +615,15 @@ export default {
 
           this.tableData = [...purchaseDetails, ...tableData]
 
-          this.formData.sc = {
-            id: res.scId,
-            name: res.scName
-          }
+          this.formData.scId = res.scId
 
-          this.formData.supplier = {
-            id: res.supplierId,
-            name: res.supplierName
-          }
+          this.formData.supplierId = res.supplierId
 
           if (!this.$utils.isEmpty(res.purchaserId)) {
-            this.formData.purchaser = {
-              id: res.purchaserId,
-              name: res.purchaserName
-            }
+            this.formData.purchaserId = res.purchaserId
           }
 
-          this.supplierChange(this.formData.supplier.id)
+          this.supplierChange(this.formData.supplierId)
         }).finally(() => {
           this.loading = false
         })
@@ -667,7 +649,7 @@ export default {
       return this.beforeSelectComponents()
     },
     beforeSelectComponents() {
-      if (this.$utils.isEmpty(this.formData.purchaseOrder.id)) {
+      if (this.$utils.isEmpty(this.formData.purchaseOrderId)) {
         this.$msg.error('请先选择采购订单！')
         return false
       }

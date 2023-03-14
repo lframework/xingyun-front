@@ -80,6 +80,11 @@ export default {
     formData: {
       type: Object,
       default: e => {}
+    },
+    // 完成后是否关闭对话框
+    closeAfterFinish: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -109,6 +114,9 @@ export default {
     openDialog() {
       this.initData()
       this.visible = true
+    },
+    closeDialog() {
+      this.visible = false
     },
     // 下载导入模板
     doDownloadTemplate() {
@@ -142,7 +150,10 @@ export default {
           this.clearTimer()
           this.loading = false
           if (!res.hasError) {
-            this.$emit('confirm')
+            this.$emit('confirm', res.data)
+            if (this.closeAfterFinish) {
+              this.closeDialog()
+            }
           }
         }
       }).catch(() => {

@@ -30,6 +30,20 @@ export default {
     })
   },
   /**
+   * 新增
+   * @param params
+   * @returns {AxiosPromise}
+   */
+  create: (params) => {
+    return request({
+      url: '/basedata/product',
+      region: 'basedata-api',
+      method: 'post',
+      dataType: 'json',
+      data: params
+    })
+  },
+  /**
    * 修改
    * @param params
    * @returns {AxiosPromise}
@@ -39,7 +53,8 @@ export default {
       url: '/basedata/product',
       region: 'basedata-api',
       method: 'put',
-      params: params
+      dataType: 'json',
+      data: params
     })
   }
 }

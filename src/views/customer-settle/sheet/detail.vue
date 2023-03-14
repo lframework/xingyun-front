@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['settle:sheet:query']" v-loading="loading">
+    <div v-if="visible" v-permission="['customer-settle:sheet:query']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="客户">
@@ -60,8 +60,8 @@
       >
         <!-- 单据号 列自定义内容 -->
         <template v-slot:bizCode_default="{ row }">
-          <span v-no-permission="['settle:check-sheet:query']">{{ row.bizCode }}</span>
-          <a v-permission="['settle:check-sheet:query']" type="link" @click="e => { $refs.viewSettleCheckSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleCheckSheetDetailDialog.openDialog()) }">
+          <span v-no-permission="['customer-settle:check-sheet:query']">{{ row.bizCode }}</span>
+          <a v-permission="['customer-settle:check-sheet:query']" type="link" @click="e => { $refs.viewSettleCheckSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleCheckSheetDetailDialog.openDialog()) }">
             {{ row.bizCode }}
           </a>
         </template>

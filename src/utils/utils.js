@@ -78,6 +78,13 @@ utils.PATTERN_IS_NUMBERIC = /^[0-9]*$/
 utils.PATTERN_IS_PRICE = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
 
 /**
+ * 是否是编号
+ * 字母、数字、“-_.”组成，长度不能超过20位
+ * @type {RegExp}
+ */
+utils.PATTERN_IS_CODE = /^[-_.A-Za-z0-9]{1,20}$/
+
+/**
  * 是否为null
  * @param obj
  * @returns {*}
@@ -410,6 +417,20 @@ utils.isPrice = function(value) {
 }
 
 /**
+ * 是否 编号
+ * 字母、数字、“-_.”组成，长度不能超过20位
+ * @param value
+ * @returns {boolean}
+ */
+utils.isCode = function(value) {
+  if (this.isEmpty(value)) {
+    return false
+  }
+
+  return this.PATTERN_IS_CODE.test(String(value))
+}
+
+/**
  * 是否 数字组成
  * @param value
  * @returns {boolean}
@@ -603,6 +624,19 @@ utils.md5 = function(v) {
 }
 
 /**
+ * 读取图片
+ * @param file
+ * @returns {Promise<unknown>}
+ */
+utils.readImg = function(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = error => reject(error)
+  })
+}
+/**
  * 将url参数转对象
  * @param {string} url
  * @returns {Object}
@@ -661,6 +695,57 @@ utils.mul = function(n1, n2) {
 utils.div = function(n1, n2) {
   return math.number(math.divide(math.bignumber(n1), math.bignumber(n2)))
 }
+
+/**
+ * n1 > n2
+ * @param n1
+ * @param n2
+ * @returns {boolean}
+ */
+utils.gt = function(n1, n2) {
+  return math.bignumber(n1).gt(n2)
+}
+
+/**
+ * n1 >= n2
+ * @param n1
+ * @param n2
+ * @returns {boolean}
+ */
+utils.ge = function(n1, n2) {
+  return math.bignumber(n1).gte(n2)
+}
+
+/**
+ * n1 < n2
+ * @param n1
+ * @param n2
+ * @returns {boolean}
+ */
+utils.lt = function(n1, n2) {
+  return math.bignumber(n1).lt(n2)
+}
+
+/**
+ * n1 <= n2
+ * @param n1
+ * @param n2
+ * @returns {boolean}
+ */
+utils.le = function(n1, n2) {
+  return math.bignumber(n1).lte(n2)
+}
+
+/**
+ * n1 == n2
+ * @param n1
+ * @param n2
+ * @returns {any | ((obj1: any, obj2: any) => boolean)}
+ */
+utils.eq = function(n1, n2) {
+  return math.bignumber(n1).eq(n2)
+}
+
 /**
  * 获取当前月有多少天
  * @returns {number}
@@ -749,7 +834,15 @@ utils.buildMenus = function(oriMenus = []) {
           if (component.substring(0, 1) !== '/') {
             component = '/' + component
           }
-          obj.component = (resolve) => require([`@/views${component}`], resolve)
+          obj.component = (resolve) => {
+            require.ensure([], (require) => {
+              const com = require(`@/views${component}`).default
+              resolve(com)
+            }, () => {
+              const com = require(`@/views/exception/404`).default
+              resolve(com)
+            })
+          }
           if (menu.path.indexOf('?') > -1) {
             const queryObj = this.getQueryObject(menu.path)
             if (!this.isEmpty(queryObj)) {
@@ -769,6 +862,7 @@ utils.buildMenus = function(oriMenus = []) {
             customFormId: menu.component,
             requestParam: this.isEmpty(menu.requestParam) ? {} : JSON.parse(menu.requestParam)
           }
+          console.log(obj)
         }
       }
     }
@@ -823,6 +917,12 @@ utils.closeCurrentPage = function(el) {
   }
 }
 
+/**
+ * 字符串Ant匹配
+ * @param str
+ * @param pattern
+ * @returns {boolean|*}
+ */
 utils.strMatch = function(str, pattern) {
   str = this.toString(str)
   pattern = this.toString(pattern)
@@ -848,6 +948,27 @@ utils.strMatch = function(str, pattern) {
   } else {
     return false
   }
+}
+
+/**
+ * 组合数组
+ * @param arr
+ */
+utils.combineArr = function(arr) {
+  const result = arr.reduce((accArr, currentArr) => {
+    const result = []
+    currentArr.forEach(c => {
+      if (accArr.length) {
+        accArr.forEach(a => {
+          result.push(a.concat(c))
+        })
+      } else {
+        result.push([c])
+      }
+    })
+    return result
+  }, [])
+  return result
 }
 
 export default utils

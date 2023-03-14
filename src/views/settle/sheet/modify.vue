@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['settle:sheet:modify']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="供应商" required>
             <supplier-selector
-              v-model="formData.supplier"
+              v-model="formData.supplierId"
               :request-params="{
                 manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code
               }"
@@ -144,16 +144,9 @@ export default {
   components: {
     SupplierSelector
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 工具栏配置
@@ -186,26 +179,23 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        supplier: {},
+        supplierId: '',
         startTime: '',
         endTime: '',
         description: '',
@@ -227,10 +217,7 @@ export default {
         }
         this.initFormData()
         this.formData = Object.assign(this.formData, {
-          supplier: {
-            id: res.supplierId,
-            name: res.supplierName
-          },
+          supplierId: res.supplierId,
           description: res.description,
           startTime: res.startTime,
           endTime: res.endTime,
@@ -325,7 +312,7 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.supplier.id)) {
+      if (this.$utils.isEmpty(this.formData.supplierId)) {
         this.$msg.error('供应商不允许为空！')
         return false
       }
@@ -437,7 +424,7 @@ export default {
 
       const params = {
         id: this.id,
-        supplierId: this.formData.supplier.id,
+        supplierId: this.formData.supplierId,
         description: this.formData.description,
         startDate: this.$utils.dateTimeToDate(this.formData.startTime),
         endDate: this.$utils.dateTimeToDate(this.formData.endTime),
@@ -462,7 +449,7 @@ export default {
       })
     },
     searchUnSettleItems() {
-      if (this.$utils.isEmpty(this.formData.supplier)) {
+      if (this.$utils.isEmpty(this.formData.supplierId)) {
         this.$msg.error('请先选择供应商！')
         return
       }
@@ -479,7 +466,7 @@ export default {
 
       this.loading = true
       this.$api.settle.sheet.getUnSettleItems({
-        supplierId: this.formData.supplier.id,
+        supplierId: this.formData.supplierId,
         startTime: this.formData.startTime,
         endTime: this.formData.endTime
       }).then(res => {

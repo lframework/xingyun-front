@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="Position"
       ref="grid"
       resizable
       show-overflow

@@ -1,11 +1,12 @@
 <template>
   <div class="dashboard-editor-container">
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+    <panel-group @handleSetLineChartData="handleSetLineChartData" @loading="e => loading = e" />
 
     <a-row class="chart-wrapper">
       <a-col :span="24">
-        <line-chart :chart-data="lineChartData" />
+        <a-skeleton v-if="loading" active :paragraph="{ rows: 4 }" />
+        <line-chart v-else :chart-data="lineChartData" />
       </a-col>
     </a-row>
   </div>
@@ -23,7 +24,8 @@ export default {
   },
   data() {
     return {
-      lineChartData: {}
+      lineChartData: {},
+      loading: false
     }
   },
   created() {
@@ -57,7 +59,7 @@ export default {
 
 <style lang="less" scoped>
 .dashboard-editor-container {
-  padding: 0 32px 32px 32px;
+  padding: 0 12px 12px 12px;
   background-color: rgb(240, 242, 245);
   position: relative;
 

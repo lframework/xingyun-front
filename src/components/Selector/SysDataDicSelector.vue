@@ -4,7 +4,11 @@
       ref="selector"
       v-model="model"
       :request="getList"
+      :load="getLoad"
+      :show-sum="showSum"
       :request-params="_requestParams"
+      :multiple="multiple"
+      :placeholder="placeholder"
       :table-column=" [
         { field: 'code', title: '编号', width: 120 },
         { field: 'name', title: '名称', minWidth: 160 }
@@ -12,6 +16,8 @@
       :disabled="disabled"
       :before-open="beforeOpen"
       @input="e => $emit('input', e)"
+      @input-label="e => $emit('input-label', e)"
+      @input-row="e => $emit('input-row', e)"
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
@@ -44,7 +50,7 @@
                     :label-col="{span: 4, offset: 1}"
                     :wrapper-col="{span: 18, offset: 1}"
                   >
-                    <sys-data-dic-category-selector v-model="searchParams.category" />
+                    <sys-data-dic-category-selector v-model="searchParams.categoryId" />
                   </a-form-model-item>
                 </a-col>
               </a-row>
@@ -72,6 +78,8 @@ export default {
   components: { DialogTable, SysDataDicCategorySelector },
   props: {
     value: { type: [Object, Array], required: true },
+    multiple: { type: Boolean, default: false },
+    placeholder: { type: String, default: '' },
     disabled: {
       type: Boolean,
       default: false
@@ -89,11 +97,15 @@ export default {
       default: e => {
         return {}
       }
+    },
+    showSum: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      searchParams: { code: '', name: '', categoryId: '', category: {}}
+      searchParams: { code: '', name: '', categoryId: '' }
     }
   },
   computed: {
@@ -105,8 +117,6 @@ export default {
     },
     _requestParams() {
       const params = Object.assign({}, this.searchParams)
-      params.categoryId = params.category.id
-      delete params.category
 
       return Object.assign({}, params, this.requestParams)
     }
@@ -118,6 +128,15 @@ export default {
         region: 'common-api',
         method: 'get',
         params: params
+      })
+    },
+    getLoad(ids) {
+      return request({
+        url: '/selector/dic/load',
+        region: 'common-api',
+        method: 'post',
+        dataType: 'json',
+        data: ids
       })
     }
   }

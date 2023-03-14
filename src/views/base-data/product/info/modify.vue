@@ -1,99 +1,258 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="50%" title="修改" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['base-data:product:info:modify']" v-loading="loading">
-      <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
-        <a-form-model-item label="商品编号" prop="code">
-          <a-input v-model.trim="formData.code" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="商品名称" prop="name">
-          <a-input v-model.trim="formData.name" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="商品SKU编号" prop="skuCode">
-          <a-input v-model.trim="formData.skuCode" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="外部编号" prop="externalCode">
-          <a-input v-model.trim="formData.externalCode" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="商品类目" prop="categoryName">
-          <a-input v-model.trim="formData.categoryName" disabled />
-        </a-form-model-item>
-        <a-form-model-item label="商品品牌" prop="brandName">
-          <a-input v-model.trim="formData.brandName" disabled />
-        </a-form-model-item>
-        <a-form-model-item label="规格" prop="spec">
-          <a-input v-model.trim="formData.spec" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="单位" prop="unit">
-          <a-input v-model.trim="formData.unit" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item v-if="formData.multiSaleProp" :label="formData.salePropGroup1Name" prop="saleProp1.id">
-          <product-sale-prop-item-selector v-model="formData.saleProp1" :request-params="{salePropGroupId: formData.salePropGroup1Id}" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item v-if="formData.multiSaleProp && !$utils.isEmpty(formData.salePropGroup2Name)" :label="formData.salePropGroup2Name" prop="saleProp2.id">
-          <product-sale-prop-item-selector v-model="formData.saleProp2" :request-params="{salePropGroupId: formData.salePropGroup2Id}" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="采购价（元）" prop="purchasePrice">
-          <a-input v-model.trim="formData.purchasePrice" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="销售价（元）" prop="salePrice">
-          <a-input v-model.trim="formData.salePrice" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="零售价（元）" prop="retailPrice">
-          <a-input v-model.trim="formData.retailPrice" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="状态" prop="available">
-          <a-select v-model="formData.available" allow-clear>
-            <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-          </a-select>
-        </a-form-model-item>
-        <a-form-model-item v-for="item in formData.properties" :key="item.id" :label="item.name">
-          <a-input v-model="item.text" disabled />
-        </a-form-model-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit">保存</a-button>
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
+  <div class="app-container simple-app-container">
+    <div v-loading="loading" v-permission="['base-data:product:info:modify']">
+      <a-form-model ref="form" :label-col="{span: 6}" :wrapper-col="{span: 14}" :model="formData" :rules="rules">
+        <a-row>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="编号" prop="code">
+              <a-input v-model="formData.code" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="名称" prop="name">
+              <a-input v-model="formData.name" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="简称" prop="shortName">
+              <a-input v-model="formData.shortName" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="SKU编号" prop="skuCode">
+              <a-input v-model="formData.skuCode" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="外部编号" prop="externalCode">
+              <a-input v-model="formData.externalCode" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="商品类目" prop="categoryId">
+              <product-category-selector v-model="formData.categoryId" :only-final="false" @input="selectCategory" />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="商品品牌" prop="brandId">
+              <product-brand-selector v-model="formData.brandId" :request-params="{ available: true }" />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="规格" prop="spec">
+              <a-input v-model="formData.spec" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="单位" prop="unit">
+              <a-input v-model="formData.unit" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="进项税率（%）" prop="taxRate">
+              <a-input v-model="formData.taxRate" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="销项税率（%）" prop="saleTaxRate">
+              <a-input v-model="formData.saleTaxRate" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="采购价（元）" prop="purchasePrice">
+              <a-input v-model="formData.purchasePrice" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="销售价（元）" prop="salePrice">
+              <a-input v-model="formData.salePrice" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="零售价（元）" prop="retailPrice">
+              <a-input v-model="formData.retailPrice" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
+            <a-form-model-item label="状态" prop="available">
+              <a-select v-model="formData.available" allow-clear>
+                <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-col v-for="modelor in modelorList" :key="modelor.id" :md="8" :sm="24">
+            <a-form-model-item :label="modelor.name" :required="modelor.isRequired">
+              <a-select v-if="$enums.COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)" v-model="modelor.text" mode="multiple" placeholder="请选择">
+                <a-select-option
+                  v-for="item in modelor.items"
+                  :key="item.id"
+                  :value="item.id"
+                >{{ item.name }}</a-select-option>
+              </a-select>
+              <a-select v-if="$enums.COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)" v-model="modelor.text" placeholder="请选择">
+                <a-select-option
+                  v-for="item in modelor.items"
+                  :key="item.id"
+                  :value="item.id"
+                >{{ item.name }}</a-select-option>
+              </a-select>
+              <div v-else-if="$enums.COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
+                <a-input-number v-if="$enums.COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)" v-model="modelor.text" class="number-input" />
+                <a-input-number v-else-if="$enums.COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)" v-model="modelor.text" :precision="2" class="number-input" />
+                <a-input v-else-if="$enums.COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)" v-model="modelor.text" />
+                <a-date-picker v-else-if="$enums.COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)" v-model="modelor.text" placeholder="" value-format="YYYY-MM-DD" />
+                <a-time-picker
+                  v-else-if="$enums.COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
+                  v-model="modelor.text"
+                  placeholder=""
+                  value-format="HH:mm:ss"
+                />
+                <a-date-picker v-else-if="$enums.COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)" v-model="modelor.text" placeholder="" show-time value-format="YYYY-MM-DD HH:mm:ss" />
+              </div>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
       </a-form-model>
+      <div class="form-modal-footer">
+        <a-space>
+          <a-button type="primary" @click="submit">保存</a-button>
+          <a-button @click="closeDialog">关闭</a-button>
+        </a-space>
+      </div>
     </div>
-  </a-modal>
+  </div>
 </template>
 <script>
 import { validCode } from '@/utils/validate'
-import ProductSalePropItemSelector from '@/components/Selector/ProductSalePropItemSelector'
+import ProductBrandSelector from '@/components/Selector/ProductBrandSelector'
+import ProductCategorySelector from '@/components/Selector/ProductCategorySelector'
 
 export default {
   // 使用组件
   components: {
-    ProductSalePropItemSelector
+    ProductBrandSelector, ProductCategorySelector
   },
 
   props: {
-    id: {
-      type: String,
-      required: true
-    }
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
       formData: {},
+      modelorList: [],
       // 表单校验规则
       rules: {
         code: [
-          { required: true, message: '请输入商品编号' },
-          { validator: validCode, message: '商品编号必须由字母、数字、“-_.”组成，长度不能超过20位' }
+          { required: true, message: '请输入编号' },
+          { validator: validCode, message: '编号必须由字母、数字、“-_.”组成，长度不能超过20位' }
         ],
         name: [
-          { required: true, message: '请输入商品名称' }
+          { required: true, message: '请输入名称' }
         ],
-        skuCode: [
-          { required: true, message: '请输入商品SKU编号' }
+        categoryId: [
+          { required: true, message: '请选择类目' }
+        ],
+        brandId: [
+          { required: true, message: '请选择品牌' }
+        ],
+        taxRate: [
+          { required: true, message: '请输入进项税率（%）' },
+          {
+            validator: (rule, value, callback) => {
+              if (!this.$utils.isEmpty(value)) {
+                if (!this.$utils.isInteger(value)) {
+                  return callback(new Error('销项税率（%）必须为整数'))
+                }
+                if (!this.$utils.isIntegerGeZero(value)) {
+                  return callback(new Error('销项税率（%）不允许小于0'))
+                }
+              }
+
+              callback()
+            }
+          }
+        ],
+        saleTaxRate: [
+          { required: true, message: '请输入销项税率（%）' },
+          {
+            validator: (rule, value, callback) => {
+              if (!this.$utils.isEmpty(value)) {
+                if (!this.$utils.isInteger(value)) {
+                  return callback(new Error('销项税率（%）必须为整数'))
+                }
+                if (!this.$utils.isIntegerGeZero(value)) {
+                  return callback(new Error('销项税率（%）不允许小于0'))
+                }
+              }
+
+              callback()
+            }
+          }
+        ],
+        purchasePrice: [
+          { required: true, message: '请输入采购价（元）' },
+          {
+            validator: (rule, value, callback) => {
+              if (!this.$utils.isEmpty(value)) {
+                if (!this.$utils.isFloat(value)) {
+                  return callback(new Error('采购价（元）必须为数字'))
+                }
+                if (!this.$utils.isFloatGeZero(value)) {
+                  return callback(new Error('采购价（元）不允许小于0'))
+                }
+                if (!this.$utils.isNumberPrecision(value, 2)) {
+                  return callback(new Error('采购价（元）最多允许2位小数'))
+                }
+              }
+
+              callback()
+            }
+          }
+        ],
+        salePrice: [
+          { required: true, message: '请输入销售价（元）' },
+          {
+            validator: (rule, value, callback) => {
+              if (!this.$utils.isEmpty(value)) {
+                if (!this.$utils.isFloat(value)) {
+                  return callback(new Error('销售价（元）必须为数字'))
+                }
+                if (!this.$utils.isFloatGeZero(value)) {
+                  return callback(new Error('销售价（元）不允许小于0'))
+                }
+                if (!this.$utils.isNumberPrecision(value, 2)) {
+                  return callback(new Error('销售价（元）最多允许2位小数'))
+                }
+              }
+
+              callback()
+            }
+          }
+        ],
+        retailPrice: [
+          { required: true, message: '请输入零售价（元）' },
+          {
+            validator: (rule, value, callback) => {
+              if (!this.$utils.isEmpty(value)) {
+                if (!this.$utils.isFloat(value)) {
+                  return callback(new Error('零售价（元）必须为数字'))
+                }
+                if (!this.$utils.isFloatGeZero(value)) {
+                  return callback(new Error('零售价（元）不允许小于0'))
+                }
+                if (!this.$utils.isNumberPrecision(value, 2)) {
+                  return callback(new Error('零售价（元）最多允许2位小数'))
+                }
+              }
+
+              callback()
+            }
+          }
         ],
         available: [
           { required: true, message: '请选择状态' }
@@ -102,166 +261,104 @@ export default {
     }
   },
   created() {
+    // 初始化数据
     this.initFormData()
+    // 查询数据
+    this.loadFormData()
   },
   methods: {
-    // 打开对话框 由父页面触发
-    openDialog() {
-      this.visible = true
-
-      this.$nextTick(() => this.open())
-    },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
-      this.formData = {
-        id: '',
-        code: '',
-        name: '',
-        skuCode: '',
-        externalCode: '',
-        categoryName: '',
-        brandName: '',
-        spec: '',
-        unit: '',
-        purchasePrice: '',
-        salePrice: '',
-        retailPrice: '',
-        available: '',
-        properties: [],
-        salePropGroup1Id: '',
-        salePropGroup2Id: '',
-        salePropGroup1Name: '',
-        salePropGroup2Name: '',
-        saleProp1: {},
-        saleProp2: {}
-      }
+      this.formData = {}
     },
     // 提交表单事件
-    submit() {
-      if (this.$utils.isEmpty(this.formData.code)) {
-        this.$msg.error('请输入商品编号！')
+    async submit() {
+      const that = this
+      let valid = true
+
+      await this.$refs.form.validate((res) => {
+        valid = res
+      })
+
+      if (!valid) {
+        return
+      }
+      if (!this.$utils.isEmpty(this.modelorList)) {
+        this.modelorList.filter(item => item.isRequired).every(item => {
+          if (that.$utils.isEmpty(item.text)) {
+            that.$msg.error(item.name + '不能为空！')
+            valid = false
+            return false
+          }
+
+          return true
+        })
+      }
+
+      if (!valid) {
         return
       }
 
-      if (this.$utils.isEmpty(this.formData.name)) {
-        this.$msg.error('请输入商品名称！')
-        return
-      }
-
-      if (this.$utils.isEmpty(this.formData.skuCode)) {
-        this.$msg.error('请输入商品SKU编号！')
-        return
-      }
-
-      if (!this.$utils.isEmpty(this.formData.purchasePrice)) {
-        if (!this.$utils.isFloat(this.formData.purchasePrice)) {
-          this.$msg.error('采购价必须为数字！')
-          return
-        }
-
-        if (!this.$utils.isFloatGeZero(this.formData.purchasePrice)) {
-          this.$msg.error('采购价不允许小于0！')
-          return
-        }
-
-        if (!this.$utils.isNumberPrecision(this.formData.purchasePrice, 2)) {
-          this.$msg.error('采购价最多允许两位小数！')
-          return
-        }
-      }
-
-      if (!this.$utils.isEmpty(this.formData.salePrice)) {
-        if (!this.$utils.isFloat(this.formData.salePrice)) {
-          this.$msg.error('销售价必须为数字！')
-          return
-        }
-
-        if (!this.$utils.isFloatGeZero(this.formData.salePrice)) {
-          this.$msg.error('销售价不允许小于0！')
-          return
-        }
-
-        if (!this.$utils.isNumberPrecision(this.formData.salePrice, 2)) {
-          this.$msg.error('销售价最多允许两位小数！')
-          return
-        }
-      }
-
-      if (!this.$utils.isEmpty(this.formData.retailPrice)) {
-        if (!this.$utils.isFloat(this.formData.retailPrice)) {
-          this.$msg.error('零售价必须为数字！')
-          return
-        }
-
-        if (!this.$utils.isFloatGeZero(this.formData.retailPrice)) {
-          this.$msg.error('零售价不允许小于0！')
-          return
-        }
-
-        if (!this.$utils.isNumberPrecision(this.formData.retailPrice, 2)) {
-          this.$msg.error('零售价最多允许两位小数！')
-          return
-        }
-      }
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.$api.baseData.product.info.modify({
-            id: this.formData.id,
-            code: this.formData.code,
-            name: this.formData.name,
-            skuCode: this.formData.skuCode,
-            externalCode: this.formData.externalCode || '',
-            spec: this.formData.spec || '',
-            unit: this.formData.unit || '',
-            purchasePrice: this.formData.purchasePrice || '',
-            salePrice: this.formData.salePrice || '',
-            retailPrice: this.formData.retailPrice || '',
-            available: this.formData.available,
-            salePropItem1Id: this.formData.saleProp1.id,
-            salePropItem2Id: this.formData.saleProp2.id
-          }).then(() => {
-            this.$msg.success('修改成功！')
-            this.$emit('confirm')
-            this.visible = false
-          }).finally(() => {
-            this.loading = false
-          })
+      const properties = this.modelorList.filter(item => !this.$utils.isEmpty(item.text)).map(item => {
+        return {
+          id: item.id,
+          text: this.$utils.isArray(item.text) ? JSON.stringify(item.text) : item.text
         }
       })
-    },
-    // 页面显示时触发
-    open() {
-      // 初始化数据
-      this.initFormData()
 
-      // 查询数据
-      this.loadFormData()
-    },
-    // 查询数据
-    async loadFormData() {
+      const params = Object.assign({}, this.formData, {
+        properties: properties
+      })
       this.loading = true
-      await this.$api.baseData.product.info.get(this.id).then(data => {
-        if (data.multiSaleProp) {
-          data.saleProp1 = {
-            id: data.salePropItem1Id,
-            name: data.salePropItem1Name
-          }
-
-          data.saleProp2 = {
-            id: data.salePropItem2Id,
-            name: data.salePropItem2Name
-          }
-        }
-        this.formData = Object.assign({}, this.formData, data)
+      this.$api.baseData.product.info.modify(params).then(() => {
+        this.$msg.success('修改成功！')
+        this.closeDialog()
       }).finally(() => {
         this.loading = false
       })
+    },
+    // 查询数据
+    loadFormData() {
+      this.loading = true
+      this.$api.baseData.product.info.get(this.id).then(data => {
+        this.formData = Object.assign({}, data)
+        this.selectCategory(this.formData.categoryId, this.formData)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    selectCategory(val, formData) {
+      this.modelorList = []
+      if (!this.$utils.isEmpty(val)) {
+        this.$api.baseData.product.property.getModelorByCategory(val).then(res => {
+          const modelorList = res
+          if (formData) {
+            const properties = formData.properties || []
+            modelorList.forEach(item => {
+              item.text = (properties.filter(p => p.id === item.id)[0] || {}).text
+              if (this.$enums.COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
+                item.text = this.$utils.isEmpty(item.text) ? [] : item.text.split(',')
+              }
+            })
+          }
+
+          modelorList.filter(item => this.$utils.isEmpty(item.text)).forEach(item => {
+            if (this.$enums.COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
+              item.text = []
+            } else {
+              item.text = ''
+            }
+          })
+
+          this.modelorList = modelorList
+
+          console.log(this.modelorList)
+        })
+      }
     }
   }
 }

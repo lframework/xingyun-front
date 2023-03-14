@@ -1,20 +1,22 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="40%" title="修改" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['base-data:product:saleprop-item:modify']" v-loading="loading">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="重置密钥" :dialog-style="{ top: '20px' }" :footer="null">
+    <div v-if="visible" v-permission="['system:open-domain:config']" v-loading="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
-        <a-form-model-item label="编号" prop="code">
-          <a-input v-model.trim="formData.code" allow-clear />
+        <a-form-model-item label="ID" prop="id">
+          <a-input v-model.trim="formData.id" read-only />
         </a-form-model-item>
         <a-form-model-item label="名称" prop="name">
-          <a-input v-model.trim="formData.name" allow-clear />
+          <a-input v-model.trim="formData.name" read-only />
         </a-form-model-item>
-        <a-form-model-item label="状态" prop="available">
-          <a-select v-model="formData.available" allow-clear>
-            <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-          </a-select>
-        </a-form-model-item>
-        <a-form-model-item label="备注" prop="description">
-          <a-textarea v-model.trim="formData.description" />
+        <a-form-model-item label="Api密钥" prop="apiSecret">
+          <a-row>
+            <a-col :span="20">
+              <a-input v-model.trim="apiSecret" read-only />
+            </a-col>
+            <a-col :span="4">
+              <a-button type="link" @click="generateApiSecret">点此重置</a-button>
+            </a-col>
+          </a-row>
         </a-form-model-item>
         <div class="form-modal-footer">
           <a-space>
@@ -27,7 +29,6 @@
   </a-modal>
 </template>
 <script>
-import { validCode } from '@/utils/validate'
 
 export default {
   // 使用组件
@@ -35,11 +36,7 @@ export default {
   },
 
   props: {
-    groupId: {
-      type: String,
-      required: true
-    },
-    itemId: {
+    id: {
       type: String,
       required: true
     }
@@ -52,17 +49,11 @@ export default {
       loading: false,
       // 表单数据
       formData: {},
+      apiSecret: '',
       // 表单校验规则
       rules: {
-        code: [
-          { required: true, message: '请输入编号' },
-          { validator: validCode }
-        ],
-        name: [
-          { required: true, message: '请输入名称' }
-        ],
-        available: [
-          { required: true, message: '请选择状态' }
+        apiSecret: [
+          { required: true, message: '请重置密钥' }
         ]
       }
     }
@@ -75,7 +66,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.$nextTick(() => this.open())
+      this.open()
     },
     // 关闭对话框
     closeDialog() {
@@ -84,21 +75,16 @@ export default {
     },
     // 初始化表单数据
     initFormData() {
-      this.formData = {
-        id: '',
-        code: '',
-        name: '',
-        available: '',
-        description: ''
-      }
+      this.formData = {}
+      this.apiSecret = ''
     },
     // 提交表单事件
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.baseData.product.salePropItem.modify(Object.assign({ groupId: this.groupId }, this.formData)).then(() => {
-            this.$msg.success('修改成功！')
+          this.$api.system.openDomain.modifyApiSecret(this.formData).then(() => {
+            this.$msg.success('重置成功！')
             this.$emit('confirm')
             this.visible = false
           }).finally(() => {
@@ -118,11 +104,17 @@ export default {
     // 查询数据
     async loadFormData() {
       this.loading = true
-      await this.$api.baseData.product.salePropItem.get(this.itemId).then(data => {
+      await this.$api.system.openDomain.get(this.id).then(data => {
         this.formData = data
+        this.apiSecret = this.formData.apiSecret
+        this.formData.apiSecret = ''
       }).finally(() => {
         this.loading = false
       })
+    },
+    generateApiSecret() {
+      this.formData.apiSecret = this.$utils.uuid().toUpperCase()
+      this.apiSecret = this.formData.apiSecret
     }
   }
 }

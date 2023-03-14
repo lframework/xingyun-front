@@ -29,6 +29,7 @@
           :columns="tableColumn"
           :data="tableData"
           :loading="loading"
+          :max-height="600"
         >
           <!-- 查询类型 列自定义内容 -->
           <template v-slot:queryType_default="{ row }">

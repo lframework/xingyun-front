@@ -38,11 +38,11 @@
           <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.NORMAL.equalsCode(formData.componentType)" label="组件" prop="component">
             <a-input v-model.trim="formData.component" placeholder="对应路由当中的component属性" allow-clear />
           </a-form-model-item>
-          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)" label="自定义列表" prop="customList.id">
-            <gen-custom-list-selector v-model="formData.customList" :request-params="{ available: true }" />
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)" label="自定义列表" prop="customListId">
+            <gen-custom-list-selector v-model="formData.customListId" :request-params="{ available: true }" />
           </a-form-model-item>
-          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(formData.componentType)" label="自定义表单" prop="customForm.id">
-            <gen-custom-form-selector v-model="formData.customForm" :request-params="{ available: true, isDialog: false }" />
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(formData.componentType)" label="自定义表单" prop="customFormId">
+            <gen-custom-form-selector v-model="formData.customFormId" :request-params="{ available: true, isDialog: false }" />
           </a-form-model-item>
           <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(formData.componentType)" label="自定义请求参数" prop="requestParam">
             <a @click="$refs.requestParamEditor.openDialog()">编辑参数</a>
@@ -117,10 +117,10 @@ export default {
         component: [
           { required: true, message: '请输入组件' }
         ],
-        'customList.id': [
+        customListId: [
           { required: true, message: '请选择自定义列表' }
         ],
-        'customForm.id': [
+        customFormId: [
           { required: true, message: '请选择自定义表单' }
         ],
         path: [
@@ -166,8 +166,8 @@ export default {
         name: '',
         componentType: '',
         component: '',
-        customList: {},
-        customForm: {},
+        customListId: '',
+        customFormId: '',
         requestParam: '',
         path: '',
         noCache: true,
@@ -182,9 +182,9 @@ export default {
           const params = Object.assign({}, this.formData)
           if (this.$enums.MENU_DISPLAY.FUNCTION.equalsCode(params.display)) {
             if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)) {
-              params.component = params.customList.id
+              params.component = params.customListId
             } else if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(this.formData.componentType)) {
-              params.component = params.customForm.id
+              params.component = params.customFormId
             }
           }
           this.$api.system.menu.create(params).then(() => {

@@ -4,11 +4,16 @@
       ref="selector"
       v-model="model"
       :request="getList"
+      :load="getLoad"
+      :show-sum="showSum"
       :request-params="_requestParams"
       :multiple="multiple"
+      :placeholder="placeholder"
       :disabled="disabled"
       :before-open="beforeOpen"
       @input="e => $emit('input', e)"
+      @input-label="e => $emit('input-label', e)"
+      @input-row="e => $emit('input-row', e)"
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
@@ -70,6 +75,7 @@ export default {
   components: { DialogTable },
   props: {
     value: { type: [Object, Array], required: true },
+    placeholder: { type: String, default: '' },
     disabled: {
       type: Boolean,
       default: false
@@ -88,7 +94,11 @@ export default {
         return {}
       }
     },
-    multiple: { type: Boolean, default: false }
+    multiple: { type: Boolean, default: false },
+    showSum: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -113,6 +123,15 @@ export default {
         region: 'basedata-api',
         method: 'get',
         params: params
+      })
+    },
+    getLoad(ids) {
+      return request({
+        url: '/selector/brand/load',
+        region: 'basedata-api',
+        method: 'post',
+        dataType: 'json',
+        data: ids
       })
     }
   }

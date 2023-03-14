@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['settle:sheet:add']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="供应商" required>
             <supplier-selector
-              v-model="formData.supplier"
+              v-model="formData.supplierId"
               :request-params="{
                 manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code
               }"
@@ -124,8 +124,6 @@ export default {
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
       // 是否显示加载框
       loading: false,
       // 工具栏配置
@@ -158,25 +156,22 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        supplier: {},
+        supplierId: '',
         startTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         endTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
         description: '',
@@ -242,7 +237,7 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.supplier.id)) {
+      if (this.$utils.isEmpty(this.formData.supplierId)) {
         this.$msg.error('供应商不允许为空！')
         return false
       }
@@ -353,7 +348,7 @@ export default {
       const records = this.$refs.grid.getCheckboxRecords()
 
       const params = {
-        supplierId: this.formData.supplier.id,
+        supplierId: this.formData.supplierId,
         description: this.formData.description,
         startDate: this.$utils.dateTimeToDate(this.formData.startTime),
         endDate: this.$utils.dateTimeToDate(this.formData.endTime),
@@ -386,7 +381,7 @@ export default {
       const records = this.$refs.grid.getCheckboxRecords()
 
       const params = {
-        supplierId: this.formData.supplier.id,
+        supplierId: this.formData.supplierId,
         description: this.formData.description,
         startDate: this.$utils.dateTimeToDate(this.formData.startTime),
         endDate: this.$utils.dateTimeToDate(this.formData.endTime),
@@ -413,7 +408,7 @@ export default {
       })
     },
     searchUnSettleItems() {
-      if (this.$utils.isEmpty(this.formData.supplier)) {
+      if (this.$utils.isEmpty(this.formData.supplierId)) {
         this.$msg.error('请先选择供应商！')
         return
       }
@@ -430,7 +425,7 @@ export default {
 
       this.loading = true
       this.$api.settle.sheet.getUnSettleItems({
-        supplierId: this.formData.supplier.id,
+        supplierId: this.formData.supplierId,
         startTime: this.formData.startTime,
         endTime: this.formData.endTime
       }).then(res => {

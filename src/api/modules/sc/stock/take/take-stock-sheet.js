@@ -53,8 +53,8 @@ export default {
    */
   searchProduct: (planId, condition) => {
     return request({
-      url: '/basedata/product/stock/take/sheet/product/search',
-      region: 'basedata-api',
+      url: '/stock/take/sheet/product/search',
+      region: 'sc-api',
       method: 'get',
       params: {
         planId: planId,
@@ -69,8 +69,8 @@ export default {
    */
   queryProduct: (params) => {
     return request({
-      url: '/basedata/product/stock/take/sheet/product/list',
-      region: 'basedata-api',
+      url: '/stock/take/sheet/product/list',
+      region: 'sc-api',
       method: 'get',
       params: params
     })

@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-custom-selector-category-selector v-model="formData.category" />
+            <gen-custom-selector-category-selector v-model="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="24" label="备注" :content-nest="false">
             <a-textarea v-model="formData.description" />
@@ -20,7 +20,7 @@
       <j-border>
         <j-form :enable-collapse="false" label-width="100px">
           <j-form-item :span="8" label="自定义列表" :required="true">
-            <gen-custom-list-selector v-model="formData.customList" :request-params="{ available: true }" @input="changeTable" />
+            <gen-custom-list-selector v-model="formData.customListId" :request-params="{ available: true }" @input-row="e => changeTable(e)" />
           </j-form-item>
         </j-form>
       </j-border>
@@ -120,9 +120,9 @@ export default {
     initFormData() {
       this.formData = {
         name: '',
-        category: {},
+        categoryId: '',
         description: '',
-        customList: {}
+        customListId: ''
       }
 
       this.treeColumns = []
@@ -132,11 +132,11 @@ export default {
       // 初始化表单数据
       this.initFormData()
     },
-    changeTable() {
+    changeTable(e) {
       this.columns = []
       this.queryColumns = []
       this.$api.development.dataObj.queryColumns({
-        id: this.formData.customList.dataObjId
+        id: e.dataObjId
       }).then(res => {
         this.treeColumns = res.filter(item => item.id !== 'customQuery')
         this.treeColumns.forEach(item => {
@@ -150,7 +150,7 @@ export default {
         this.$msg.error('请输入名称')
         return
       }
-      if (this.$utils.isEmpty(this.formData.customList.id)) {
+      if (this.$utils.isEmpty(this.formData.customListId)) {
         this.$msg.error('请选择自定义列表')
         return
       }
@@ -178,8 +178,8 @@ export default {
       this.formData.nameColumnRelaId = treeColumns.filter(item => item.id === this.formData.nameColumn)[0].relaId
 
       const params = Object.assign({
-        customListId: this.formData.customList.id,
-        categoryId: this.formData.category.id
+        customListId: this.formData.customListId,
+        categoryId: this.formData.categoryId
       }, this.formData)
 
       this.loading = true

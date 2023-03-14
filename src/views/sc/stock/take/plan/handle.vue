@@ -152,7 +152,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.open()
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {
@@ -179,15 +179,15 @@ export default {
       this.config = {}
     },
     // 页面显示时触发
-    open() {
+    async open() {
       // 初始化数据
       this.initFormData()
 
       // 查询设置信息
-      this.loadConfig()
+      await this.loadConfig()
 
       // 查询数据
-      this.loadFormData()
+      await this.loadFormData()
     },
     async loadConfig() {
       this.loading = true

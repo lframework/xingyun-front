@@ -149,9 +149,9 @@ export default {
         if (valid) {
           this.loading = true
           const params = Object.assign({
-            positionIds: this.formData.positions.map(item => item.id),
+            positionIds: this.formData.positions,
             deptIds: this.formData.depts,
-            roleIds: this.formData.roles.map(item => item.id)
+            roleIds: this.formData.roles
           }, this.formData)
 
           delete params.positions
@@ -180,10 +180,6 @@ export default {
     async loadFormData() {
       this.loading = true
       await this.$api.system.user.get(this.id).then(data => {
-        if (!this.$utils.isEmpty(data.depts)) {
-          data.depts = data.depts.map(item => item.id)
-        }
-
         this.formData = Object.assign({}, this.formData, data)
       }).finally(() => {
         this.loading = false

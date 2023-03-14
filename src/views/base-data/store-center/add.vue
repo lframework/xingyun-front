@@ -37,7 +37,6 @@
   </a-modal>
 </template>
 <script>
-import * as constants from './constants'
 import CitySelector from '@/components/Selector/CitySelector'
 import { validCode } from '@/utils/validate'
 export default {
@@ -62,7 +61,23 @@ export default {
           { required: true, message: '请输入名称' }
         ],
         peopleNum: [
-          { validator: constants.validPeopleNum }
+          {
+            validator: (rule, value, callback) => {
+              if (this.$utils.isEmpty(value) || this.$utils.isIntegerGeZero(value)) {
+                return callback()
+              } else {
+                if (!this.$utils.isInteger(value)) {
+                  return callback(new Error('仓库人数必须为整数'))
+                }
+
+                if (!this.$utils.isIntegerGeZero(value)) {
+                  return callback(new Error('仓库人数不允许小于0'))
+                }
+
+                return callback()
+              }
+            }
+          }
         ]
       }
     }

@@ -133,9 +133,9 @@ export default {
         if (valid) {
           this.loading = true
           const params = Object.assign({
-            positionIds: this.formData.positions.map(item => item.id),
+            positionIds: this.formData.positions,
             deptIds: this.formData.depts,
-            roleIds: this.formData.roles.map(item => item.id)
+            roleIds: this.formData.roles
           }, this.formData)
           delete params.positions
           delete params.depts

@@ -3,6 +3,7 @@
 
     <!-- 数据列表 -->
     <vxe-grid
+      id="Oplog"
       ref="grid"
       resizable
       show-overflow
@@ -84,7 +85,7 @@ export default {
       // 查询列表的查询条件
       searchFormData: {
         name: '',
-        createBy: {},
+        createBy: '',
         logType: undefined,
         startTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(Moment().subtract(1, 'w').add(1, 'd'))),
         endTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(this.$utils.getCurrentDate()))
@@ -138,11 +139,7 @@ export default {
     },
     // 查询前构建具体的查询参数
     buildSearchFormData() {
-      const params = Object.assign({}, this.searchFormData, {
-        createBy: this.searchFormData.createBy.id
-      })
-
-      return params
+      return Object.assign({}, this.searchFormData)
     }
   }
 }

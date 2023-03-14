@@ -125,8 +125,6 @@ export default {
         { field: 'isGift', title: '是否赠品', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
         { field: 'purchaseNum', title: '采购数量', align: 'right', width: 100 },
         { field: 'purchaseAmount', title: '采购含税金额', align: 'right', width: 120, slots: { default: 'purchaseAmount_default' }},
-        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
-        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200 }
       ],
       tableData: []

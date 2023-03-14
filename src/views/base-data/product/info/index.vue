@@ -3,6 +3,7 @@
     <div v-show="visible" v-permission="['base-data:product:info:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="ProductInfo"
         ref="grid"
         resizable
         show-overflow
@@ -19,20 +20,23 @@
         <template v-slot:form>
           <j-border>
             <j-form @collapse="$refs.grid.refreshColumn()">
-              <j-form-item label="商品编号">
+              <j-form-item label="编号">
                 <a-input v-model="searchFormData.code" allow-clear />
               </j-form-item>
-              <j-form-item label="商品名称">
+              <j-form-item label="名称">
                 <a-input v-model="searchFormData.name" allow-clear />
               </j-form-item>
-              <j-form-item label="商品SKU编号">
+              <j-form-item label="简称">
+                <a-input v-model="searchFormData.shortName" allow-clear />
+              </j-form-item>
+              <j-form-item label="SKU编号">
                 <a-input v-model="searchFormData.skuCode" allow-clear />
               </j-form-item>
-              <j-form-item label="商品类目">
-                <product-category-selector v-model="searchFormData.category" :request-params="{available: ''}" />
+              <j-form-item label="类目">
+                <product-category-selector v-model="searchFormData.categoryId" />
               </j-form-item>
-              <j-form-item label="商品品牌">
-                <product-brand-selector v-model="searchFormData.brand" />
+              <j-form-item label="品牌">
+                <product-brand-selector v-model="searchFormData.brandId" />
               </j-form-item>
               <j-form-item label="创建日期" :content-nest="false">
                 <div class="date-range-container">
@@ -57,7 +61,7 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
-            <a-button v-permission="['base-data:product:info:add']" type="primary" icon="plus" @click="e => {visible=false;$refs.addDialog.openDialog()}">新增</a-button>
+            <a-button v-permission="['base-data:product:info:add']" type="primary" icon="plus" @click="$router.push('/product/info/add')">新增</a-button>
             <a-button v-permission="['base-data:product:info:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
           </a-space>
         </template>
@@ -70,36 +74,29 @@
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
           <a-button v-permission="['base-data:product:info:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-          <a-button v-permission="['base-data:product:info:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
+          <a-button v-permission="['base-data:product:info:modify']" type="link" @click="$router.push('/product/info/modify/' + row.id)">修改</a-button>
         </template>
       </vxe-grid>
-
-      <!-- 修改窗口 -->
-      <modify :id="id" ref="updateDialog" @confirm="search" />
 
       <!-- 查看窗口 -->
       <detail :id="id" ref="viewDialog" />
     </div>
-    <!-- 新增窗口 -->
-    <add :id="id" ref="addDialog" @confirm="search" @close="e => visible = true" />
 
     <product-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
 <script>
-import Add from './add'
 import ProductBrandSelector from '@/components/Selector/ProductBrandSelector'
 import ProductCategorySelector from '@/components/Selector/ProductCategorySelector'
 import AvailableTag from '@/components/Tag/Available'
-import Modify from './modify'
 import Detail from './detail'
 import ProductImporter from '@/components/Importer/ProductImporter'
 
 export default {
   name: 'ProductInfo',
   components: {
-    Add, ProductBrandSelector, ProductCategorySelector, Modify, Detail, AvailableTag, ProductImporter
+    ProductBrandSelector, ProductCategorySelector, Detail, AvailableTag, ProductImporter
   },
   data() {
     return {
@@ -113,8 +110,8 @@ export default {
         code: '',
         name: '',
         skuCode: '',
-        category: {},
-        brand: {},
+        categoryId: '',
+        brandId: '',
         startTime: '',
         endTime: '',
         available: this.$enums.AVAILABLE.ENABLE.code
@@ -129,13 +126,12 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'checkbox', width: 40 },
-        { field: 'code', title: '商品编号', width: 120 },
-        { field: 'name', title: '商品名称', minWidth: 160 },
-        { field: 'skuCode', title: '商品SKU编号', width: 120 },
-        { field: 'categoryName', title: '商品类目', width: 120 },
-        { field: 'brandName', title: '商品品牌', width: 120 },
-        { field: 'salePropItem1Name', title: '销售属性1', width: 120 },
-        { field: 'salePropItem2Name', title: '销售属性2', width: 120 },
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'name', title: '名称', minWidth: 160 },
+        { field: 'shortName', title: '简称', width: 140 },
+        { field: 'skuCode', title: 'SKU编号', width: 120 },
+        { field: 'categoryName', title: '类目', width: 120 },
+        { field: 'brandName', title: '品牌', width: 120 },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'createTime', title: '创建时间', width: 170 },
         { field: 'updateTime', title: '修改时间', width: 170 },
@@ -174,15 +170,7 @@ export default {
     },
     // 查询前构建具体的查询参数
     buildSearchFormData() {
-      const params = Object.assign({}, this.searchFormData, {
-        categoryId: this.searchFormData.category.id,
-        brandId: this.searchFormData.brand.id
-      })
-
-      delete params.category
-      delete params.brand
-
-      return params
+      return Object.assign({}, this.searchFormData)
     },
     handleCommand({ key }) {
       if (key === 'batchEnable') {

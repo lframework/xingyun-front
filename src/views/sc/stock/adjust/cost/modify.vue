@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['stock:adjust:cost:modify']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="仓库" required>
             <store-center-selector
-              v-model="formData.sc"
+              v-model="formData.scId"
               :before-open="beforeSelectSc"
               @input="afterSelectSc"
             />
@@ -110,7 +110,7 @@
 
       <batch-add-product
         ref="batchAddProductDialog"
-        :sc-id="formData.sc.id || ''"
+        :sc-id="formData.scId || ''"
         @confirm="batchAddProduct"
       />
 
@@ -131,16 +131,9 @@ export default {
   components: {
     StoreCenterSelector, BatchAddProduct
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -182,27 +175,23 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
-
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        sc: {},
+        scId: '',
         description: '',
         updateBy: '',
         updateTime: '',
@@ -218,7 +207,7 @@ export default {
     },
     // 提交表单事件
     submit() {
-      if (this.$utils.isEmpty(this.formData.sc)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('请选择仓库！')
         return
       }
@@ -256,7 +245,7 @@ export default {
 
       const params = {
         id: this.id,
-        scId: this.formData.sc.id,
+        scId: this.formData.scId,
         description: this.formData.description,
         products: this.tableData.map(item => {
           return {
@@ -301,7 +290,7 @@ export default {
     },
     // 新增商品
     addProduct() {
-      if (this.$utils.isEmpty(this.formData.sc)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('请先选择仓库！')
         return
       }
@@ -315,7 +304,7 @@ export default {
       }
 
       this.$api.sc.stock.adjust.stockCostAdjustSheet.searchProduct({
-        scId: this.formData.sc.id,
+        scId: this.formData.scId,
         condition: queryString
       }).then(res => {
         row.products = res
@@ -355,7 +344,7 @@ export default {
       })
     },
     openBatchAddProductDialog() {
-      if (this.$utils.isEmpty(this.formData.sc)) {
+      if (this.$utils.isEmpty(this.formData.scId)) {
         this.$msg.error('请先选择仓库！')
         return
       }
@@ -377,7 +366,7 @@ export default {
     },
     beforeSelectSc() {
       let flag = false
-      if (!this.$utils.isEmpty(this.formData.sc)) {
+      if (!this.$utils.isEmpty(this.formData.scId)) {
         return this.$msg.confirm('更改仓库，会清空商品数据，是否确认更改？')
       } else {
         flag = true
@@ -414,10 +403,7 @@ export default {
       this.loading = true
       await this.$api.sc.stock.adjust.stockCostAdjustSheet.get(this.id).then(res => {
         Object.assign(this.formData, {
-          sc: {
-            id: res.scId,
-            name: res.scName
-          },
+          scId: res.scId,
           description: res.description,
           updateBy: res.updateBy,
           updateTime: res.updateTime,

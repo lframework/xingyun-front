@@ -1,12 +1,23 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['base-data:product:saleprop-group:add']" v-loading="loading">
+  <a-modal v-model="visible" :mask-closable="false" width="40%" title="修改" :dialog-style="{ top: '20px' }" :footer="null">
+    <div v-if="visible" v-permission="['system:open-domain:config']" v-loading="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
-        <a-form-model-item label="编号" prop="code">
-          <a-input v-model.trim="formData.code" allow-clear />
+        <a-form-model-item label="ID" prop="id">
+          <a-input v-model.trim="formData.id" read-only />
         </a-form-model-item>
         <a-form-model-item label="名称" prop="name">
           <a-input v-model.trim="formData.name" allow-clear />
+        </a-form-model-item>
+        <a-form-model-item label="租户" prop="tenantId">
+          <sys-tenant-selector v-model="formData.tenantId" />
+        </a-form-model-item>
+        <a-form-model-item label="Api密钥" prop="apiSecret">
+          <a-input v-model.trim="formData.apiSecret" read-only />
+        </a-form-model-item>
+        <a-form-model-item label="状态" prop="available">
+          <a-select v-model="formData.available" allow-clear>
+            <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+          </a-select>
         </a-form-model-item>
         <a-form-model-item label="备注" prop="description">
           <a-textarea v-model.trim="formData.description" />
@@ -22,10 +33,19 @@
   </a-modal>
 </template>
 <script>
-import { validCode } from '@/utils/validate'
 
+import SysTenantSelector from '@/components/Selector/SysTenantSelector'
 export default {
+  // 使用组件
   components: {
+    SysTenantSelector
+  },
+
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -37,20 +57,16 @@ export default {
       formData: {},
       // 表单校验规则
       rules: {
-        code: [
-          { required: true, message: '请输入编号' },
-          { validator: validCode }
-        ],
         name: [
           { required: true, message: '请输入名称' }
+        ],
+        available: [
+          { required: true, message: '请选择状态' }
         ]
       }
     }
   },
-  computed: {
-  },
   created() {
-    // 初始化表单数据
     this.initFormData()
   },
   methods: {
@@ -58,7 +74,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.$nextTick(() => this.open())
+      this.open()
     },
     // 关闭对话框
     closeDialog() {
@@ -67,22 +83,15 @@ export default {
     },
     // 初始化表单数据
     initFormData() {
-      this.formData = {
-        code: '',
-        description: '',
-        name: '',
-        shortName: ''
-      }
+      this.formData = {}
     },
     // 提交表单事件
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          this.$api.baseData.product.salePropGroup.create(this.formData).then(() => {
-            this.$msg.success('新增成功！')
-            // 初始化表单数据
-            this.initFormData()
+          this.$api.system.openDomain.modify(this.formData).then(() => {
+            this.$msg.success('修改成功！')
             this.$emit('confirm')
             this.visible = false
           }).finally(() => {
@@ -93,8 +102,20 @@ export default {
     },
     // 页面显示时触发
     open() {
-      // 初始化表单数据
+      // 初始化数据
       this.initFormData()
+
+      // 查询数据
+      this.loadFormData()
+    },
+    // 查询数据
+    async loadFormData() {
+      this.loading = true
+      await this.$api.system.openDomain.get(this.id).then(data => {
+        this.formData = data
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }

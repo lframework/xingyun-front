@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-data-obj-category-selector v-model="formData.category" />
+            <gen-data-obj-category-selector v-model="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="24" label="备注" :content-nest="false">
             <a-textarea v-model="formData.description" />
@@ -20,7 +20,7 @@
       <j-border>
         <j-form :enable-collapse="false" label-width="80px">
           <j-form-item :span="12" label="主表" :required="true">
-            <gen-data-entity-selector v-model="formData.mainTable" :request-params="{ available: true }" @input="changeTable" />
+            <gen-data-entity-selector v-model="formData.mainTableId" :request-params="{ available: true }" @input="changeTable" />
           </j-form-item>
           <j-form-item :span="12" label="主表别名" :required="true">
             <a-input v-model="formData.mainTableAlias" />
@@ -31,11 +31,11 @@
       <div style="height: 10px;" />
 
       <j-border title="关联子表">
-        <rela-table ref="relaTable" :main-table-id="formData.mainTable.id" :columns="columns" />
+        <rela-table ref="relaTable" :main-table-id="formData.mainTableId" :columns="columns" />
       </j-border>
 
       <j-border title="自定义查询">
-        <custom-query ref="customQuery" :main-table-id="formData.mainTable.id" :columns="queryColumns" />
+        <custom-query ref="customQuery" :main-table-id="formData.mainTableId" :columns="queryColumns" />
       </j-border>
 
       <div class="form-modal-footer">
@@ -83,7 +83,7 @@ export default {
     openDialog() {
       this.visible = true
 
-      this.open()
+      this.$nextTick(() => this.open())
     },
     // 关闭对话框
     closeDialog() {
@@ -94,9 +94,9 @@ export default {
     initFormData() {
       this.formData = {
         name: '',
-        category: {},
+        categoryId: '',
         description: '',
-        mainTable: {},
+        mainTableId: '',
         mainTableAlias: ''
       }
 
@@ -117,7 +117,7 @@ export default {
         this.$msg.error('请输入名称')
         return
       }
-      if (this.$utils.isEmpty(this.formData.mainTable.id)) {
+      if (this.$utils.isEmpty(this.formData.mainTableId)) {
         this.$msg.error('请选择主表')
         return
       }
@@ -132,8 +132,8 @@ export default {
         return
       }
       const params = Object.assign({
-        mainTableId: this.formData.mainTable.id,
-        categoryId: this.formData.category.id,
+        mainTableId: this.formData.mainTableId,
+        categoryId: this.formData.categoryId,
         columns: this.$refs.relaTable.getColumns(),
         queryColumns: this.$refs.customQuery.getColumns()
       }, this.formData)

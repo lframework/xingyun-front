@@ -6,7 +6,7 @@
           <a-input v-model="formData.pmKey" allow-clear />
         </a-form-model-item>
         <a-form-model-item label="值" prop="pmValue">
-          <a-input v-model="formData.pmValue" allow-clear />
+          <a-textarea v-model="formData.pmValue" allow-clear />
         </a-form-model-item>
         <a-form-model-item label="备注" prop="description">
           <a-textarea v-model="formData.description" allow-clear />

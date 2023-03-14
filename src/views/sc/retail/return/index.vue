@@ -1,8 +1,9 @@
 <template>
   <div>
-    <div v-show="visible" v-permission="['retail:return:query']" class="app-container">
+    <div v-permission="['retail:return:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="RetailReturn"
         ref="grid"
         resizable
         show-overflow
@@ -25,13 +26,13 @@
 
               <j-form-item label="会员">
                 <member-selector
-                  v-model="searchFormData.member"
+                  v-model="searchFormData.memberId"
                 />
               </j-form-item>
 
               <j-form-item label="仓库">
                 <store-center-selector
-                  v-model="searchFormData.sc"
+                  v-model="searchFormData.scId"
                 />
               </j-form-item>
 
@@ -128,7 +129,7 @@
         <template v-slot:action_default="{ row }">
           <a-space>
             <a-button v-permission="['retail:return:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-            <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:return:approve']" type="link" @click="e => { id = row.id;visible=false;$nextTick(() => $refs.approveDialog.openDialog()) }">审核</a-button>
+            <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:return:approve']" type="link" @click="$router.push('/retail/return/approve/' + row.id)">审核</a-button>
             <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:return:modify']" type="link" @click="openModifyDialog(row)">修改</a-button>
             <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['retail:return:delete']" type="link" class="ant-btn-link-danger" @click="deleteOrder(row)">删除</a-button>
           </a-space>
@@ -143,24 +144,11 @@
       <!-- 采购收货查看窗口 -->
       <out-sheet-detail :id="outSheetId" ref="viewOutSheetDetailDialog" />
     </div>
-    <!-- 新增窗口 -->
-    <add-require ref="addRequireDialog" @confirm="search" @close="visible = true" />
-    <add-un-require ref="addUnRequireDialog" @confirm="search" @close="visible = true" />
-    <!-- 修改窗口 -->
-    <modify-require :id="id" ref="modifyRequireDialog" @confirm="search" @close="visible = true" />
-    <modify-un-require :id="id" ref="modifyUnRequireDialog" @confirm="search" @close="visible = true" />
-    <!-- 审核窗口 -->
-    <approve :id="id" ref="approveDialog" @confirm="search" @close="visible = true" />
   </div>
 </template>
 
 <script>
-import AddRequire from './add-require'
-import AddUnRequire from './add-un-require'
-import ModifyRequire from './modify-require'
-import ModifyUnRequire from './modify-un-require'
 import Detail from './detail'
-import Approve from './approve'
 import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
 import MemberSelector from '@/components/Selector/MemberSelector'
 import UserSelector from '@/components/Selector/UserSelector'
@@ -171,28 +159,27 @@ import OutSheetDetail from '@/views/sc/retail/out/detail'
 export default {
   name: 'RetailReturn',
   components: {
-    AddRequire, AddUnRequire, ModifyRequire, ModifyUnRequire, Detail, Approve, StoreCenterSelector, MemberSelector, UserSelector, ApproveRefuse, OutSheetDetail
+    Detail, StoreCenterSelector, MemberSelector, UserSelector, ApproveRefuse, OutSheetDetail
   },
   data() {
     return {
       loading: false,
-      visible: true,
       // 当前行数据
       id: '',
       outSheetId: '',
       // 查询列表的查询条件
       searchFormData: {
         code: '',
-        sc: {},
-        member: {},
-        createBy: {},
+        scId: '',
+        memberId: '',
+        createBy: '',
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
-        approveBy: {},
+        approveBy: '',
         approveStartTime: '',
         approveEndTime: '',
         status: undefined,
-        saler: {},
+        saler: '',
         outSheetCode: '',
         settleStatus: undefined
       },
@@ -266,39 +253,29 @@ export default {
     // 查询前构建具体的查询参数
     buildSearchFormData() {
       const params = Object.assign({}, this.searchFormData, {
-        memberId: this.searchFormData.member.id,
-        scId: this.searchFormData.sc.id,
-        createBy: this.searchFormData.createBy.id,
-        approveBy: this.searchFormData.approveBy.id,
-        salerId: this.searchFormData.saler.id
+        memberId: this.searchFormData.memberId,
+        scId: this.searchFormData.scId,
+        createBy: this.searchFormData.createBy,
+        approveBy: this.searchFormData.approveBy,
+        salerId: this.searchFormData.saler
       })
-
-      delete params.member
-      delete params.sc
-      delete params.saler
 
       return params
     },
     openAddDialog() {
-      this.loading = true
       this.$api.sc.retail.retailConfig.get().then(res => {
-        this.visible = false
         if (res.retailReturnRequireOutStock) {
-          this.$refs.addRequireDialog.openDialog()
+          this.$router.push('/retail/return/add/require')
         } else {
-          this.$refs.addUnRequireDialog.openDialog()
+          this.$router.push('/retail/return/add/un-require')
         }
-      }).finally(() => {
-        this.loading = false
       })
     },
     openModifyDialog(row) {
-      this.id = row.id
-      this.visible = false
       if (!this.$utils.isEmpty(row.outSheetId)) {
-        this.$nextTick(() => this.$refs.modifyRequireDialog.openDialog())
+        this.$router.push('/retail/return/modify/require/' + row.id)
       } else {
-        this.$nextTick(() => this.$refs.modifyUnRequireDialog.openDialog())
+        this.$router.push('/retail/return/modify/un-require/' + row.id)
       }
     },
     // 删除订单

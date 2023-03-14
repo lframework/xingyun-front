@@ -4,7 +4,11 @@
       ref="selector"
       v-model="model"
       :request="getList"
+      :load="getLoad"
+      :show-sum="showSum"
       :request-params="_requestParams"
+      :multiple="multiple"
+      :placeholder="placeholder"
       :disabled="disabled"
       :before-open="beforeOpen"
       :table-column="[
@@ -13,6 +17,8 @@
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }}
       ]"
       @input="e => $emit('input', e)"
+      @input-label="e => $emit('input-label', e)"
+      @input-row="e => $emit('input-row', e)"
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
@@ -73,6 +79,8 @@ export default {
   components: { DialogTable },
   props: {
     value: { type: [Object, Array], required: true },
+    multiple: { type: Boolean, default: false },
+    placeholder: { type: String, default: '' },
     disabled: {
       type: Boolean,
       default: false
@@ -90,6 +98,10 @@ export default {
       default: e => {
         return {}
       }
+    },
+    showSum: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -115,6 +127,15 @@ export default {
         region: 'common-api',
         method: 'get',
         params: params
+      })
+    },
+    getLoad(ids) {
+      return request({
+        url: '/selector/user/load',
+        region: 'common-api',
+        method: 'post',
+        dataType: 'json',
+        data: ids
       })
     }
   }

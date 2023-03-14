@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="app-container">
-    <div v-permission="['settle:pre-sheet:add']" v-loading="loading">
+  <div class="app-container simple-app-container">
+    <div v-permission="['customer-settle:pre-sheet:add']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="客户" required>
             <customer-selector
-              v-model="formData.customer"
+              v-model="formData.customerId"
             />
           </j-form-item>
         </j-form>
@@ -59,8 +59,8 @@
       </j-border>
       <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
         <a-space>
-          <a-button v-permission="['settle:pre-sheet:add']" type="primary" :loading="loading" @click="createOrder">保存</a-button>
-          <a-button v-permission="['settle:pre-sheet:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</a-button>
+          <a-button v-permission="['customer-settle:pre-sheet:add']" type="primary" :loading="loading" @click="createOrder">保存</a-button>
+          <a-button v-permission="['customer-settle:pre-sheet:approve']" type="primary" :loading="loading" @click="directApprovePassOrder">审核通过</a-button>
           <a-button :loading="loading" @click="closeDialog">关闭</a-button>
         </a-space>
       </div>
@@ -78,8 +78,6 @@ export default {
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -110,25 +108,22 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        customer: {},
+        customerId: '',
         totalNum: 0,
         giftNum: 0,
         totalAmount: 0,
@@ -140,13 +135,13 @@ export default {
     emptyLine() {
       return {
         id: this.$utils.uuid(),
-        item: {},
+        item: '',
         amount: ''
       }
     },
     // 新增项目
     addItem() {
-      if (this.$utils.isEmpty(this.formData.customer)) {
+      if (this.$utils.isEmpty(this.formData.customerId)) {
         this.$msg.error('请先选择客户！')
         return
       }
@@ -190,7 +185,7 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.customer.id)) {
+      if (this.$utils.isEmpty(this.formData.customerId)) {
         this.$msg.error('客户不允许为空！')
         return false
       }
@@ -238,11 +233,11 @@ export default {
       }
 
       const params = {
-        customerId: this.formData.customer.id,
+        customerId: this.formData.customerId,
         description: this.formData.description,
         items: this.tableData.map(t => {
           return {
-            id: t.item.id,
+            id: t.item,
             amount: t.amount
           }
         })
@@ -265,11 +260,11 @@ export default {
       }
 
       const params = {
-        customerId: this.formData.customer.id,
+        customerId: this.formData.customerId,
         description: this.formData.description,
         items: this.tableData.map(t => {
           return {
-            id: t.item.id,
+            id: t.item,
             amount: t.amount
           }
         })

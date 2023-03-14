@@ -14,6 +14,7 @@
       :toolbar-config="toolbarConfig"
       :data="columns"
       :loading="loading"
+      :max-height="600"
     >
 
       <!-- 工具栏 -->
@@ -50,7 +51,7 @@
 
       <!-- 子表 列自定义内容 -->
       <template v-slot:subTable_default="{ row }">
-        <gen-data-entity-selector v-model="row.subTable" @input="e => changeSubTable(e, row)" />
+        <gen-data-entity-selector v-model="row.subTableId" @input="e => changeSubTable(e, row)" />
       </template>
 
       <!-- 子表别名 列自定义内容 -->
@@ -60,7 +61,7 @@
 
       <!-- 子表字段 列自定义内容 -->
       <template v-slot:subTableDetailIds_default="{row}">
-        <gen-data-entity-detail-selector v-if="!$utils.isEmpty(row.subTable.id)" v-model="row.subTableDetailIds" :entity-id="row.subTable.id" />
+        <gen-data-entity-detail-selector v-if="!$utils.isEmpty(row.subTableId)" v-model="row.subTableDetailIds" :entity-id="row.subTableId" />
       </template>
     </vxe-grid>
   </div>
@@ -69,6 +70,7 @@
 import Sortable from 'sortablejs'
 import GenDataEntitySelector from '@/components/Selector/GenDataEntitySelector'
 import GenDataEntityDetailSelector from '@/components/Selector/GenDataEntityDetailSelector'
+
 export default {
   // 使用组件
   components: {
@@ -125,7 +127,7 @@ export default {
         mainTableDetailIds: [],
         relaType: '',
         relaMode: '',
-        subTable: {},
+        subTableId: '',
         subTableAlias: '',
         subTableDetailIds: []
       }
@@ -153,10 +155,10 @@ export default {
       })
     },
     changeSubTable(e, row) {
-      row.subTable = {}
+      row.subTableId = ''
       row.subTableDetailIds = []
       this.$nextTick(() => {
-        row.subTable = e
+        row.subTableId = e
       })
     },
     validDate() {
@@ -178,7 +180,7 @@ export default {
           return false
         }
 
-        if (this.$utils.isEmpty(column.subTable.id)) {
+        if (this.$utils.isEmpty(column.subTableId)) {
           this.$msg.error('第' + (i + 1) + '行子表不能为空！')
           return false
         }
@@ -210,10 +212,7 @@ export default {
     },
     getColumns() {
       const columns = this.columns.map(item => {
-        const column = Object.assign({}, item)
-        column.subTableId = column.subTable.id
-
-        return column
+        return Object.assign({}, item)
       })
 
       return columns

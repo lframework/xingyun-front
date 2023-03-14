@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="app-container">
+  <div class="app-container simple-app-container">
     <div v-permission="['retail:return:modify']" v-loading="loading">
       <j-border>
         <j-form>
@@ -11,7 +11,7 @@
           </j-form-item>
           <j-form-item label="销售员">
             <user-selector
-              v-model="formData.saler"
+              v-model="formData.salerId"
             />
           </j-form-item>
           <j-form-item label="付款日期" required>
@@ -106,12 +106,6 @@
           <a-input v-model="row.returnNum" class="number-input" @input="e => returnNumInput(e.target.value)" />
         </template>
 
-        <!-- 供应商 列自定义内容 -->
-        <template v-slot:supplier_default="{ row }">
-          <span v-if="row.isFixed">{{ row.supplier.name }}</span>
-          <supplier-selector v-else v-model="row.supplier" />
-        </template>
-
         <!-- 含税金额 列自定义内容 -->
         <template v-slot:taxAmount_default="{ row }">
           <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.returnNum)">{{ $utils.mul(row.taxPrice, row.returnNum) }}</span>
@@ -162,24 +156,16 @@
 </template>
 <script>
 import UserSelector from '@/components/Selector/UserSelector'
-import SupplierSelector from '@/components/Selector/SupplierSelector'
 import BatchAddProduct from '@/views/sc/retail/batch-add-product'
 import Moment from 'moment'
 export default {
   name: 'ModifyRetailReturnRequire',
   components: {
-    UserSelector, SupplierSelector, BatchAddProduct
-  },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
+    UserSelector, BatchAddProduct
   },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
@@ -215,11 +201,8 @@ export default {
         { field: 'outNum', title: '出库数量', align: 'right', width: 100, formatter: ({ cellValue }) => { return this.$utils.isEmpty(cellValue) ? '-' : cellValue } },
         { field: 'remainNum', title: '剩余退货数量', align: 'right', width: 120, slots: { default: 'remainNum_default' }},
         { field: 'returnNum', title: '退货数量', align: 'right', width: 100, slots: { default: 'returnNum_default' }},
-        { field: 'supplierName', title: '所属供应商', width: 200, slots: { default: 'supplier_default' }},
         { field: 'taxAmount', title: '含税金额', align: 'right', width: 120, slots: { default: 'taxAmount_default' }},
         { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
-        { field: 'salePropItemName1', title: '销售属性1', width: 120 },
-        { field: 'salePropItemName2', title: '销售属性2', width: 120 },
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
       tableData: [],
@@ -233,20 +216,18 @@ export default {
   },
   created() {
     // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     async initFormData() {
@@ -254,7 +235,7 @@ export default {
         sc: {},
         member: {},
         outSheet: {},
-        saler: {},
+        salerId: '',
         paymentDate: '',
         totalNum: 0,
         giftNum: 0,
@@ -287,10 +268,7 @@ export default {
             id: res.memberId,
             name: res.memberName
           },
-          saler: {
-            id: res.salerId || '',
-            name: res.salerName || ''
-          },
+          salerId: res.salerId || '',
           paymentDate: res.paymentDate || '',
           outSheet: {
             id: res.outSheetId,
@@ -311,10 +289,6 @@ export default {
         const tableData = res.details || []
         tableData.forEach(item => {
           item.isFixed = !this.$utils.isEmpty(item.outSheetDetailId)
-          item.supplier = {
-            id: item.supplierId,
-            name: item.supplierName
-          }
           if (item.isFixed) {
             // 接口返回的剩余退货数量是最新的数据，应加上当前退货数量
             item.remainNum = this.$utils.add(item.remainNum, item.returnNum)
@@ -352,10 +326,7 @@ export default {
         taxRate: '',
         isGift: true,
         taxAmount: '',
-        salePropItemName1: '',
-        salePropItemName2: '',
         description: '',
-        supplier: {},
         isFixed: false,
         products: []
       }
@@ -375,7 +346,7 @@ export default {
         return
       }
 
-      this.$api.sc.retail.retailOrder.searchProduct(this.formData.sc.id, queryString).then(res => {
+      this.$api.sc.retail.outSheet.searchProduct(this.formData.sc.id, queryString).then(res => {
         row.products = res
       })
     },
@@ -514,11 +485,6 @@ export default {
           return false
         }
 
-        if (this.$utils.isEmpty(product.supplier.id)) {
-          this.$msg.error('第' + (i + 1) + '行商品所属供应商不允许为空！')
-          return false
-        }
-
         if (product.isGift) {
           if (parseFloat(product.taxPrice) !== 0) {
             this.$msg.error('第' + (i + 1) + '行商品价格必须等于0！')
@@ -585,7 +551,7 @@ export default {
         id: this.id,
         scId: this.formData.sc.id,
         memberId: this.formData.member.id,
-        salerId: this.formData.saler.id || '',
+        salerId: this.formData.salerId || '',
         paymentDate: this.formData.paymentDate || '',
         allowModifyPaymentDate: true,
         outSheetId: this.formData.outSheet.id,
@@ -595,8 +561,7 @@ export default {
             productId: t.productId,
             oriPrice: t.retailPrice,
             returnNum: t.returnNum,
-            description: t.description,
-            supplierId: t.supplier.id
+            description: t.description
           }
 
           if (t.isFixed) {

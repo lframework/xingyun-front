@@ -2,9 +2,9 @@
   <a-modal v-model="visible" :mask-closable="false" width="40%" title="发送" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-loading="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
-        <a-form-model-item label="接收人" prop="user.id">
+        <a-form-model-item label="接收人" prop="userId">
           <user-selector
-            v-model="formData.user"
+            v-model="formData.userId"
           />
         </a-form-model-item>
         <a-form-model-item label="是否留存副本" prop="selfSave">
@@ -42,7 +42,7 @@ export default {
       formData: {},
       // 表单校验规则
       rules: {
-        'user.id': [
+        userId: [
           { required: true, message: '请选择接收人' }
         ],
         selfSave: [
@@ -69,7 +69,7 @@ export default {
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        user: {},
+        userId: '',
         selfSave: true
       }
     },
@@ -78,7 +78,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.$emit('confirm', {
-            userId: this.formData.user.id,
+            userId: this.formData.userId,
             selfSave: this.formData.selfSave
           })
           this.closeDialog()

@@ -3,6 +3,7 @@
     <div v-show="visible" v-permission="['purchase:order:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="PurchaseOrder"
         ref="grid"
         resizable
         show-overflow
@@ -24,12 +25,12 @@
               </j-form-item>
               <j-form-item label="仓库">
                 <store-center-selector
-                  v-model="searchFormData.sc"
+                  v-model="searchFormData.scId"
                 />
               </j-form-item>
               <j-form-item label="供应商">
                 <supplier-selector
-                  v-model="searchFormData.supplier"
+                  v-model="searchFormData.supplierId"
                 />
               </j-form-item>
               <j-form-item label="操作人">
@@ -81,7 +82,7 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
-            <a-button v-permission="['purchase:order:add']" type="primary" icon="plus" @click="e => {visible = false; $refs.addDialog.openDialog()}">新增</a-button>
+            <a-button v-permission="['purchase:order:add']" type="primary" icon="plus" @click="$router.push('/purchase/order/add')">新增</a-button>
             <a-button v-permission="['purchase:order:approve']" icon="check" @click="batchApprovePass">审核通过</a-button>
             <a-button v-permission="['purchase:order:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
             <a-button v-permission="['purchase:order:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
@@ -93,8 +94,8 @@
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
           <a-button v-permission="['purchase:order:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-          <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['purchase:order:approve']" type="link" @click="e => { id = row.id;visible = false;$nextTick(() => $refs.approveDialog.openDialog()) }">审核</a-button>
-          <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['purchase:order:modify']" type="link" @click="e => { id = row.id;visible = false;$nextTick(() => $refs.modifyDialog.openDialog()) }">修改</a-button>
+          <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['purchase:order:approve']" type="link" @click="$router.push('/purchase/order/approve/' + row.id)">审核</a-button>
+          <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['purchase:order:modify']" type="link" @click="$router.push('/purchase/order/modify/' + row.id)">修改</a-button>
           <a-button v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) || $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['purchase:order:delete']" type="link" class="ant-btn-link-danger" @click="deleteOrder(row)">删除</a-button>
         </template>
       </vxe-grid>
@@ -104,22 +105,13 @@
 
       <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
     </div>
-    <!-- 新增窗口 -->
-    <add ref="addDialog" @confirm="search" @close="visible = true" />
-    <!-- 修改窗口 -->
-    <modify :id="id" ref="modifyDialog" @confirm="search" @close="visible = true" />
-    <!-- 审核窗口 -->
-    <approve :id="id" ref="approveDialog" @confirm="search" @close="visible = true" />
 
     <purchase-order-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
 <script>
-import Add from './add'
-import Modify from './modify'
 import Detail from './detail'
-import Approve from './approve'
 import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
 import SupplierSelector from '@/components/Selector/SupplierSelector'
 import UserSelector from '@/components/Selector/UserSelector'
@@ -130,7 +122,7 @@ import PurchaseOrderImporter from '@/components/Importer/PurchaseOrderImporter'
 export default {
   name: 'PurchaseOrder',
   components: {
-    Add, Modify, Detail, Approve, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderImporter
+    Detail, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderImporter
   },
   data() {
     return {
@@ -141,16 +133,16 @@ export default {
       // 查询列表的查询条件
       searchFormData: {
         code: '',
-        sc: {},
-        supplier: {},
-        createBy: {},
+        scId: '',
+        supplierId: '',
+        createBy: '',
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
-        approveBy: {},
+        approveBy: '',
         approveStartTime: '',
         approveEndTime: '',
         status: undefined,
-        purchaser: {}
+        purchaser: ''
       },
       // 工具栏配置
       toolbarConfig: {
@@ -214,16 +206,12 @@ export default {
     // 查询前构建具体的查询参数
     buildSearchFormData() {
       const params = Object.assign({}, this.searchFormData, {
-        supplierId: this.searchFormData.supplier.id,
-        scId: this.searchFormData.sc.id,
-        createBy: this.searchFormData.createBy.id,
-        approveBy: this.searchFormData.approveBy.id,
-        purchaserId: this.searchFormData.purchaser.id
+        supplierId: this.searchFormData.supplierId,
+        scId: this.searchFormData.scId,
+        createBy: this.searchFormData.createBy,
+        approveBy: this.searchFormData.approveBy,
+        purchaserId: this.searchFormData.purchaser
       })
-
-      delete params.supplier
-      delete params.sc
-      delete params.purchaser
 
       return params
     },

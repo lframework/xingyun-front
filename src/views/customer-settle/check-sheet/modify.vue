@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="app-container">
-    <div v-permission="['settle:check-sheet:modify']" v-loading="loading">
+  <div class="app-container simple-app-container">
+    <div v-permission="['customer-settle:check-sheet:modify']" v-loading="loading">
       <j-border>
         <j-form>
           <j-form-item label="客户" required>
             <customer-selector
-              v-model="formData.customer"
+              v-model="formData.customerId"
             />
           </j-form-item>
           <j-form-item label="审核日期" :content-nest="false" required>
@@ -101,7 +101,7 @@
       </j-border>
       <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
         <a-space>
-          <a-button v-permission="['settle:check-sheet:modify']" type="primary" :loading="loading" @click="updateOrder">保存</a-button>
+          <a-button v-permission="['customer-settle:check-sheet:modify']" type="primary" :loading="loading" @click="updateOrder">保存</a-button>
           <a-button :loading="loading" @click="closeDialog">关闭</a-button>
         </a-space>
       </div>
@@ -115,16 +115,9 @@ export default {
   components: {
     CustomerSelector
   },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      // 是否可见
-      visible: false,
+      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 工具栏配置
@@ -153,26 +146,23 @@ export default {
   computed: {
   },
   created() {
-    // 初始化表单数据
-    this.initFormData()
+    this.openDialog()
   },
   methods: {
     // 打开对话框 由父页面触发
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.visible = true
       this.loadData()
     },
     // 关闭对话框
     closeDialog() {
-      this.visible = false
-      this.$emit('close')
+      this.$utils.closeCurrentPage(this.$parent)
     },
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        customer: {},
+        customerId: '',
         startTime: '',
         endTime: '',
         description: '',
@@ -193,10 +183,7 @@ export default {
         }
         this.initFormData()
         this.formData = Object.assign(this.formData, {
-          customer: {
-            id: res.customerId,
-            name: res.customerName
-          },
+          customerId: res.customerId,
           description: res.description,
           startTime: res.startTime,
           endTime: res.endTime,
@@ -270,7 +257,7 @@ export default {
     },
     // 校验数据
     validData() {
-      if (this.$utils.isEmpty(this.formData.customer.id)) {
+      if (this.$utils.isEmpty(this.formData.customerId)) {
         this.$msg.error('客户不允许为空！')
         return false
       }
@@ -341,7 +328,7 @@ export default {
 
       const params = {
         id: this.id,
-        customerId: this.formData.customer.id,
+        customerId: this.formData.customerId,
         description: this.formData.description,
         startDate: this.$utils.dateTimeToDate(this.formData.startTime),
         endDate: this.$utils.dateTimeToDate(this.formData.endTime),
@@ -366,7 +353,7 @@ export default {
       })
     },
     searchUnCheckItems() {
-      if (this.$utils.isEmpty(this.formData.customer)) {
+      if (this.$utils.isEmpty(this.formData.customerId)) {
         this.$msg.error('请先选择客户！')
         return
       }
@@ -383,7 +370,7 @@ export default {
 
       this.loading = true
       this.$api.customerSettle.checkSheet.getUnCheckItems({
-        customerId: this.formData.customer.id,
+        customerId: this.formData.customerId,
         startTime: this.formData.startTime,
         endTime: this.formData.endTime
       }).then(res => {

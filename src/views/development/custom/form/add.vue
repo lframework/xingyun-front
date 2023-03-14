@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-custom-form-category-selector v-model="formData.category" />
+            <gen-custom-form-category-selector v-model="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="24" label="备注" :content-nest="false">
             <a-textarea v-model="formData.description" />
@@ -124,7 +124,7 @@ export default {
     initFormData() {
       this.formData = {
         name: '',
-        category: {},
+        categoryId: '',
         description: '',
         isDialog: false,
         dialogTittle: '',
@@ -168,7 +168,7 @@ export default {
       }
 
       const params = Object.assign({
-        categoryId: this.formData.category.id,
+        categoryId: this.formData.categoryId,
         formConfig: JSON.stringify({
           rule: this.$refs.designer.getRule(),
           option: this.$refs.designer.getOption()

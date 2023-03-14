@@ -7,7 +7,7 @@
             <a-input v-model="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-data-entity-category-selector v-model="formData.category" />
+            <gen-data-entity-category-selector v-model="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="12" label="状态" :required="true">
             <a-select v-model="formData.available" allow-clear>
@@ -98,7 +98,7 @@ export default {
     initFormData() {
       this.formData = {
         name: '',
-        category: {},
+        categoryId: '',
         description: '',
         tableName: '',
         available: ''
@@ -119,21 +119,14 @@ export default {
       await this.$api.development.dataEntity.get(this.id).then(data => {
         let columns = data.columns
         columns = columns.map(item => {
-          return Object.assign({ dataDic: {
-            id: item.dataDicId,
-            name: item.dataDicName
-          },
-          customSelector: {
-            id: item.customSelectorId,
-            name: item.customSelectorName
-          }, regularExpression: '' }, item)
+          return Object.assign({
+            dataDicId: item.dataDicId,
+            customSelectorId: item.customSelectorId,
+            regularExpression: ''
+          }, item)
         })
         this.columns = columns
         delete data.columns
-        data.category = {
-          id: data.categoryId,
-          name: data.categoryName
-        }
         this.formData = data
       }).finally(() => {
         this.loading = false
@@ -152,12 +145,8 @@ export default {
         return
       }
       const params = Object.assign({
-        categoryId: this.formData.category.id,
-        columns: this.$refs.generateColumn.getColumns().map(item => {
-          item.dataDicId = item.dataDic.id
-          item.customSelectorId = item.customSelector.id
-          return item
-        })
+        categoryId: this.formData.categoryId,
+        columns: this.$refs.generateColumn.getColumns()
       }, this.formData)
 
       this.loading = true

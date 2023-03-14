@@ -3,6 +3,7 @@
     <div class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
+        id="FileBox"
         ref="grid"
         resizable
         show-overflow
@@ -22,11 +23,6 @@
               <j-form-item label="名称">
                 <a-input v-model="searchFormData.name" allow-clear />
               </j-form-item>
-              <j-form-item label="状态">
-                <a-select v-model="searchFormData.available" allow-clear>
-                  <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-                </a-select>
-              </j-form-item>
               <j-form-item label="创建时间" :content-nest="false">
                 <div class="date-range-container">
                   <a-date-picker
@@ -41,6 +37,11 @@
                     value-format="YYYY-MM-DD 23:59:59"
                   />
                 </div>
+              </j-form-item>
+              <j-form-item label="状态">
+                <a-select v-model="searchFormData.available" allow-clear>
+                  <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                </a-select>
               </j-form-item>
             </j-form>
           </j-border>
@@ -166,6 +167,7 @@ export default {
         id: this.id
       }, e)).then(() => {
         this.$msg.success('发送成功！')
+        this.search()
       }).finally(() => {
         this.loading = false
       })
@@ -186,6 +188,7 @@ export default {
         ids: records.map(item => item.id)
       }, e)).then(() => {
         this.$msg.success('发送成功！')
+        this.search()
       }).finally(() => {
         this.loading = false
       })
@@ -196,7 +199,7 @@ export default {
         method: 'get',
         responseType: 'blob'
       }).then(() => {
-        this.$msg.successTip('下载成功！')
+        this.$msg.successTip('获取下载链接成功！')
       })
     }
   }

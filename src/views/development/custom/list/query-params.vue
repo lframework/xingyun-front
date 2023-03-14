@@ -29,6 +29,7 @@
           :columns="tableColumn"
           :data="tableData"
           :loading="loading"
+          :max-height="600"
         >
 
           <!-- 前端显示 列自定义内容 -->
