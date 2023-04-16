@@ -33,6 +33,7 @@ msg.confirm = function(message, title, options = {}) {
     Vue.prototype.$confirm({
       title: title || '提示信息',
       content: message,
+      icon: options.icon,
       onOk: () => resolve(),
       onCancel: () => reject(),
       okText: options.okText || '确定',

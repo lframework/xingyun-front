@@ -25,17 +25,21 @@
     <div class="form-modal-footer">
       <a-space>
         <a-button type="primary" @click="submitEvent">保存</a-button>
+        <a-button v-permission="['system:dept:permission']" @click="$nextTick(() => $refs.dataPermissionDialog.openDialog())">数据权限</a-button>
         <a-button @click="resetForm">重置</a-button>
       </a-space>
     </div>
+    <!-- 数据权限窗口 -->
+    <data-permission ref="dataPermissionDialog" :biz-id="id" :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.DEPT.code" />
   </div>
 </template>
 <script>
 import SysDeptSelector from '@/components/Selector/SysDeptSelector'
 import { validCode } from '@/utils/validate'
+import DataPermission from '@/components/DataPermission/index'
 export default {
   components: {
-    SysDeptSelector
+    SysDeptSelector, DataPermission
   },
   props: {
     id: {

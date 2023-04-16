@@ -3,7 +3,6 @@
     <div v-if="visible" v-permission="['system:user:permission']" v-loading="loading">
       <vxe-grid
         ref="grid"
-        v-loading="loading"
         resizable
         show-overflow
         highlight-hover-row

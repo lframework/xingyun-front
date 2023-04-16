@@ -32,15 +32,6 @@
         <a-descriptions-item label="地址" :span="2">
           {{ formData.address }}
         </a-descriptions-item>
-        <a-descriptions-item label="收货人" :span="2">
-          {{ formData.receiver }}
-        </a-descriptions-item>
-        <a-descriptions-item label="收货人手机号" :span="2">
-          {{ formData.receiveTelephone }}
-        </a-descriptions-item>
-        <a-descriptions-item label="收货地址" :span="2">
-          {{ formData.receiveAddress }}
-        </a-descriptions-item>
         <a-descriptions-item label="结账方式" :span="2">
           {{ $enums.SETTLE_TYPE.getDesc(formData.settleType) }}
         </a-descriptions-item>

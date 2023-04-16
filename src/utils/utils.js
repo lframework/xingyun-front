@@ -249,6 +249,18 @@ utils.eachTree = function(obj, iterate, options, context) {
 }
 
 /**
+ * 从树结构中指定方法后的返回值组成的新数组
+ * @param obj
+ * @param iterate
+ * @param options
+ * @param context
+ * @returns {*}
+ */
+utils.mapTree = function(obj, iterate, options, context) {
+  return XEUtils.mapTree(obj, iterate, options, context)
+}
+
+/**
  *
  * @param val
  * @returns {*}
@@ -862,7 +874,6 @@ utils.buildMenus = function(oriMenus = []) {
             customFormId: menu.component,
             requestParam: this.isEmpty(menu.requestParam) ? {} : JSON.parse(menu.requestParam)
           }
-          console.log(obj)
         }
       }
     }

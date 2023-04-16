@@ -28,7 +28,8 @@ const routesConfig = [
         meta: {
           id: 'dashboard',
           icon: 'a-dashboard',
-          sync: true
+          sync: true,
+          invisible: true
         },
         component: BlankView,
         children: [
@@ -38,7 +39,8 @@ const routesConfig = [
             meta: {
               page: {
                 closable: false
-              }
+              },
+              invisible: true
             },
             component: () => import('@/views/dashboard/index')
           },
@@ -46,7 +48,8 @@ const routesConfig = [
             path: 'profile',
             name: '个人中心',
             meta: {
-              sync: true
+              sync: true,
+              invisible: true
             },
             component: () => import('@/views/profile/index')
           },
@@ -54,7 +57,8 @@ const routesConfig = [
             path: 'settings',
             name: '个人设置',
             meta: {
-              sync: true
+              sync: true,
+              invisible: true
             },
             component: () => import('@/views/settings/index')
           },

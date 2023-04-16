@@ -87,6 +87,7 @@
             <a-button v-permission="['purchase:order:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
             <a-button v-permission="['purchase:order:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
             <a-button v-permission="['purchase:order:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
+            <a-button v-permission="['purchase:order:import']" icon="cloud-upload" @click="$refs.importer2.openDialog()">批量设置支付方式</a-button>
             <a-button v-permission="['purchase:order:export']" icon="download" @click="exportList">导出</a-button>
           </a-space>
         </template>
@@ -107,6 +108,7 @@
     </div>
 
     <purchase-order-importer ref="importer" @confirm="search" />
+    <purchase-order-pay-type-importer ref="importer2" />
   </div>
 </template>
 
@@ -118,11 +120,12 @@ import UserSelector from '@/components/Selector/UserSelector'
 import ApproveRefuse from '@/components/ApproveRefuse'
 import moment from 'moment'
 import PurchaseOrderImporter from '@/components/Importer/PurchaseOrderImporter'
+import PurchaseOrderPayTypeImporter from '@/components/Importer/PurchaseOrderPayTypeImporter.vue'
 
 export default {
   name: 'PurchaseOrder',
   components: {
-    Detail, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderImporter
+    Detail, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderImporter, PurchaseOrderPayTypeImporter
   },
   data() {
     return {

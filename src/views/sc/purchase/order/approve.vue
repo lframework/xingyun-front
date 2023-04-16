@@ -65,10 +65,14 @@
           <j-form-item label="赠品数量" :span="6">
             <a-input v-model="formData.giftNum" class="number-input" read-only />
           </j-form-item>
-          <j-form-item label="采购含税总金额" :span="6">
+          <j-form-item label="含税总金额" :span="6">
             <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
+      </j-border>
+
+      <j-border title="支付方式">
+        <pay-type ref="payType" :disabled="true" />
       </j-border>
 
       <j-border>
@@ -92,9 +96,10 @@
 </template>
 <script>
 import ApproveRefuse from '@/components/ApproveRefuse'
+import PayType from '@/views/sc/pay-type/index'
 export default {
   components: {
-    ApproveRefuse
+    ApproveRefuse, PayType
   },
   data() {
     return {
@@ -184,6 +189,7 @@ export default {
         }
         this.tableData = res.details || []
 
+        this.$refs.payType.setTableData(res.payTypes || [])
         this.calcSum()
       }).finally(() => {
         this.loading = false

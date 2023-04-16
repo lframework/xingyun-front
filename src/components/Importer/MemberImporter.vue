@@ -1,6 +1,6 @@
 <template>
   <div>
-    <excel-importer ref="importer" tip-msg="如果编号不存在，那么就新增会员；如果编号已经存在，那么就修改会员。" :download-template-url="downloadTemplate" :upload-url="upload" @confirm="e => $emit('confirm', e)" />
+    <excel-importer ref="importer" :tip-msg="'如果编号不存在，那么就新增会员；如果编号已经存在，那么就修改会员。'" :download-template-url="downloadTemplate" :upload-url="upload" @confirm="e => $emit('confirm', e)" />
   </div>
 </template>
 

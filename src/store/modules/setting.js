@@ -4,6 +4,7 @@ import { formatFullPath } from '@/utils/i18n'
 import { filterMenu } from '@/utils/authority-utils'
 import { getLocalSetting } from '@/utils/themeUtil'
 import deepClone from 'lodash.clonedeep'
+import utils from '@/utils/utils'
 
 const localSetting = getLocalSetting(true)
 const customTitlesStr = sessionStorage.getItem(process.env.VUE_APP_TBAS_TITLES_KEY)
@@ -47,7 +48,23 @@ export default {
         formatFullPath(menuData)
       }
       const current = menuData.find(menu => menu.fullPath === activatedFirst)
-      return current && current.children || []
+      let subMenu = current && current.children || []
+      const showSubMenu = subMenu.find(menu => !menu.meta || !menu.meta.invisible)
+      if (utils.isEmpty(showSubMenu)) {
+        // 如果没有能显示的菜单，那么从其他菜单中选择
+        const others = menuData.filter(menu => menu.fullPath !== activatedFirst)
+        if (!utils.isEmpty(others)) {
+          others.some((other) => {
+            const tmpSubMenu = other && other.children || []
+            const tmpShowSubMenu = tmpSubMenu.find(menu => !menu.meta || !menu.meta.invisible)
+            if (!utils.isEmpty(tmpShowSubMenu)) {
+              subMenu = tmpSubMenu
+              return true
+            }
+          })
+        }
+      }
+      return subMenu
     }
   },
   mutations: {
@@ -109,6 +126,10 @@ export default {
         }
         sessionStorage.setItem(process.env.VUE_APP_TBAS_TITLES_KEY, JSON.stringify(state.customTitles))
       }
+    },
+    clearTabs(state) {
+      sessionStorage.removeItem(process.env.VUE_APP_TBAS_KEY)
+      sessionStorage.removeItem(process.env.VUE_APP_TBAS_TITLES_KEY)
     }
   }
 }

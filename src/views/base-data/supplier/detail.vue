@@ -32,9 +32,6 @@
         <a-descriptions-item label="地址" :span="2">
           {{ formData.address }}
         </a-descriptions-item>
-        <a-descriptions-item label="发货地址" :span="2">
-          {{ formData.deliveryAddress }}
-        </a-descriptions-item>
         <a-descriptions-item label="送货周期（天）" :span="2">
           {{ formData.deliveryCycle }}
         </a-descriptions-item>
@@ -122,7 +119,7 @@ export default {
         fax: '',
         cityId: '',
         address: '',
-        deliveryAddress: '',
+        sendAddress: '',
         deliveryCycle: '',
         manageType: '',
         settleType: '',

@@ -96,7 +96,8 @@ export default {
       tipMsgs: [],
       timer: null,
       taksId: '',
-      status: ''
+      status: '',
+      reqId: ''
     }
   },
   beforeDestroy() {
@@ -110,6 +111,7 @@ export default {
       this.taskId = this.$utils.uuid()
       this.successProcess = 0
       this.status = 'active'
+      this.reqId = ''
     },
     openDialog() {
       this.initData()
@@ -140,6 +142,10 @@ export default {
       this.timer = setInterval(this.doTimer, 500)
     },
     doTimer() {
+      if (!this.$utils.isEmpty(this.reqId)) {
+        return
+      }
+      this.reqId = this.$utils.uuid()
       this.getTask().then(res => {
         this.process = Math.max(this.process, res.process)
         this.tipMsgs = res.tipMsgs
@@ -156,6 +162,8 @@ export default {
             }
           }
         }
+
+        this.reqId = ''
       }).catch(() => {
         this.clearTimer()
         this.loading = false

@@ -52,6 +52,7 @@
           <a-button type="primary" icon="search" @click="search">查询</a-button>
           <a-button v-permission="['system:user:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
           <a-button v-permission="['system:user:permission']" icon="thunderbolt" @click="batchSetting">批量授权</a-button>
+          <a-button v-permission="['system:user:permission']" icon="setting" @click="batchDataPermmission">批量数据权限</a-button>
           <a-dropdown v-permission="['system:user:modify']">
             <a-menu slot="overlay" @click="handleCommand">
               <a-menu-item key="batchEnable">
@@ -77,6 +78,7 @@
         <a-button v-permission="['system:user:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
         <a-button v-if="row.lockStatus" v-permission="['system:user:modify']" type="link" @click="e => unlock(row)">解锁</a-button>
         <a-button v-permission="['system:user:permission']" type="link" @click="setting(row)">授权</a-button>
+        <a-button v-permission="['system:user:permission']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.dataPermissionDialog.openDialog()) }">数据权限</a-button>
       </template>
     </vxe-grid>
 
@@ -91,6 +93,10 @@
 
     <!-- 授权窗口 -->
     <permission ref="permissionDialog" :ids="ids" @confirm="search" />
+
+    <!-- 数据权限窗口 -->
+    <data-permission ref="dataPermissionDialog" :biz-id="id" :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code" />
+    <batch-data-permission ref="batchDataPermissionDialog" :biz-ids="ids" :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code" />
   </div>
 </template>
 
@@ -101,11 +107,13 @@ import Modify from './modify'
 import Detail from './detail'
 import Permission from './permission'
 import SysPositionSelector from '@/components/Selector/SysPositionSelector'
+import DataPermission from '@/components/DataPermission/index'
+import BatchDataPermission from '@/components/DataPermission/batch'
 
 export default {
   name: 'User',
   components: {
-    Add, Modify, Detail, AvailableTag, Permission, SysPositionSelector
+    Add, Modify, Detail, AvailableTag, Permission, SysPositionSelector, DataPermission, BatchDataPermission
   },
   data() {
     return {
@@ -144,7 +152,7 @@ export default {
         { field: 'createTime', title: '创建时间', width: 170 },
         { field: 'updateBy', title: '修改人', width: 100 },
         { field: 'updateTime', title: '修改时间', width: 170 },
-        { title: '操作', width: 200, fixed: 'right', slots: { default: 'action_default' }}
+        { title: '操作', width: 260, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
@@ -255,6 +263,17 @@ export default {
           this.loading = false
         })
       })
+    },
+    batchDataPermmission() {
+      const records = this.$refs.grid.getCheckboxRecords()
+
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择要设置数据权限的用户！')
+        return
+      }
+
+      this.ids = records.map(item => item.id)
+      this.$nextTick(() => this.$refs.batchDataPermissionDialog.openDialog())
     }
   }
 }

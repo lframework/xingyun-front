@@ -1,76 +1,129 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="40%" title="修改" :dialog-style="{ top: '20px' }" :footer="null">
     <div v-if="visible" v-permission="['base-data:supplier:modify']" v-loading="loading">
-      <a-form-model ref="form" :label-col="{span: 6}" :wrapper-col="{span: 14}" :model="formData" :rules="rules">
-        <a-form-model-item label="编号" prop="code">
-          <a-input v-model.trim="formData.code" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="名称" prop="name">
-          <a-input v-model.trim="formData.name" allow-clear @input="e => changeName(e.target.value)" />
-        </a-form-model-item>
-        <a-form-model-item label="助记码" prop="mnemonicCode">
-          <a-input v-model.trim="formData.mnemonicCode" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="联系人" prop="contact">
-          <a-input v-model.trim="formData.contact" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="联系电话" prop="telephone">
-          <a-input v-model.trim="formData.telephone" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="电子邮箱" prop="email">
-          <a-input v-model.trim="formData.email" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="邮编" prop="zipCode">
-          <a-input v-model.trim="formData.zipCode" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="传真" prop="fax">
-          <a-input v-model.trim="formData.fax" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="地区" prop="city">
-          <city-selector v-model="formData.city" :only-final="true" />
-        </a-form-model-item>
-        <a-form-model-item label="地址" prop="address">
-          <a-input v-model.trim="formData.address" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="发货地址" prop="deliveryAddress">
-          <a-input v-model.trim="formData.deliveryAddress" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="送货周期（天）" prop="deliveryCycle">
-          <a-input v-model="formData.deliveryCycle" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="经营方式" prop="manageType">
-          <a-select v-model="formData.manageType" disabled>
-            <a-select-option v-for="item in $enums.MANAGE_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-          </a-select>
-        </a-form-model-item>
-        <a-form-model-item label="结账方式" prop="settleType">
-          <a-select v-model="formData.settleType" allow-clear>
-            <a-select-option v-for="item in $enums.SETTLE_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-          </a-select>
-        </a-form-model-item>
-        <a-form-model-item label="统一社会信用代码" prop="creditCode">
-          <a-input v-model.trim="formData.creditCode" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="纳税人识别号" prop="taxIdentifyNo">
-          <a-input v-model.trim="formData.taxIdentifyNo" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="开户银行" prop="bankName">
-          <a-input v-model.trim="formData.bankName" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="户名" prop="accountName">
-          <a-input v-model.trim="formData.accountName" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="银行账号" prop="accountNo">
-          <a-input v-model.trim="formData.accountNo" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="状态" prop="available">
-          <a-select v-model="formData.available" allow-clear>
-            <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-          </a-select>
-        </a-form-model-item>
-        <a-form-model-item label="备注" prop="description">
-          <a-textarea v-model.trim="formData.description" />
-        </a-form-model-item>
+      <a-form-model ref="form" layout="vertical" :model="formData" :rules="rules">
+        <a-row :gutter="16">
+          <a-col :span="8">
+            <a-form-model-item label="编号" prop="code">
+              <a-input v-model.trim="formData.code" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="名称" prop="name">
+              <a-input v-model.trim="formData.name" allow-clear @input="e => changeName(e.target.value)" />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="助记码" prop="mnemonicCode">
+              <a-input v-model.trim="formData.mnemonicCode" allow-clear />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="8">
+            <a-form-model-item label="联系人" prop="contact">
+              <a-input v-model.trim="formData.contact" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="联系电话" prop="telephone">
+              <a-input v-model.trim="formData.telephone" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="电子邮箱" prop="email">
+              <a-input v-model.trim="formData.email" allow-clear />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="8">
+            <a-form-model-item label="邮编" prop="zipCode">
+              <a-input v-model.trim="formData.zipCode" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="传真" prop="fax">
+              <a-input v-model.trim="formData.fax" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="地区" prop="city">
+              <city-selector v-model="formData.city" :only-final="true" />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="8">
+            <a-form-model-item label="地址" prop="address">
+              <a-input v-model.trim="formData.address" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="送货周期（天）" prop="deliveryCycle">
+              <a-input v-model="formData.deliveryCycle" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="经营方式" prop="manageType">
+              <a-select v-model="formData.manageType" allow-clear>
+                <a-select-option v-for="item in $enums.MANAGE_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="8">
+            <a-form-model-item label="统一社会信用代码" prop="creditCode">
+              <a-input v-model.trim="formData.creditCode" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="纳税人识别号" prop="taxIdentifyNo">
+              <a-input v-model.trim="formData.taxIdentifyNo" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="开户银行" prop="bankName">
+              <a-input v-model.trim="formData.bankName" allow-clear />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="8">
+            <a-form-model-item label="户名" prop="accountName">
+              <a-input v-model.trim="formData.accountName" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="银行账号" prop="accountNo">
+              <a-input v-model.trim="formData.accountNo" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-model-item label="结账方式" prop="settleType">
+              <a-select v-model="formData.settleType" disabled>
+                <a-select-option v-for="item in $enums.SETTLE_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="8">
+            <a-form-model-item label="状态" prop="available">
+              <a-select v-model="formData.available" allow-clear>
+                <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <a-form-model-item label="备注" prop="description">
+              <a-textarea v-model.trim="formData.description" />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
         <div class="form-modal-footer">
           <a-space>
             <a-button type="primary" :loading="loading" html-type="submit" @click="submit">保存</a-button>
@@ -115,9 +168,6 @@ export default {
         ],
         mnemonicCode: [
           { required: true, message: '请输入助记码' }
-        ],
-        settleType: [
-          { required: true, message: '请选择结账方式' }
         ],
         available: [
           { required: true, message: '请选择状态' }
@@ -186,7 +236,7 @@ export default {
         fax: '',
         city: [],
         address: '',
-        deliveryAddress: '',
+        sendAddress: '',
         deliveryCycle: '',
         manageType: '',
         settleType: '',

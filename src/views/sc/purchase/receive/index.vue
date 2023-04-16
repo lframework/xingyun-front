@@ -105,6 +105,7 @@
             <a-button v-permission="['purchase:receive:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
             <a-button v-permission="['purchase:receive:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
             <a-button v-permission="['purchase:receive:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
+            <a-button v-permission="['purchase:receive:import']" icon="cloud-upload" @click="$refs.importer2.openDialog()">批量设置支付方式</a-button>
             <a-button v-permission="['purchase:receive:export']" icon="download" @click="exportList">导出</a-button>
           </a-space>
         </template>
@@ -136,6 +137,7 @@
       <purchase-order-detail :id="purchaseOrderId" ref="viewPurchaseOrderDetailDialog" />
     </div>
     <receive-sheet-importer ref="importer" @confirm="search" />
+    <receive-sheet-pay-type-importer ref="importer2" />
   </div>
 </template>
 
@@ -148,11 +150,12 @@ import ApproveRefuse from '@/components/ApproveRefuse'
 import PurchaseOrderDetail from '@/views/sc/purchase/order/detail'
 import moment from 'moment'
 import ReceiveSheetImporter from '@/components/Importer/ReceiveSheetImporter'
+import ReceiveSheetPayTypeImporter from '@/components/Importer/ReceiveSheetPayTypeImporter.vue'
 
 export default {
   name: 'ReceiveSheet',
   components: {
-    Detail, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderDetail, ReceiveSheetImporter
+    Detail, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderDetail, ReceiveSheetImporter, ReceiveSheetPayTypeImporter
   },
   data() {
     return {

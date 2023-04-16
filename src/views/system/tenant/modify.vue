@@ -133,8 +133,6 @@ export default {
         this.formData.jdbcUrl = ''
         this.formData.jdbcUsername = ''
         this.formData.jdbcPassword = ''
-
-        console.log(this.formData, this.oriFormData)
       }).finally(() => {
         this.loading = false
       })

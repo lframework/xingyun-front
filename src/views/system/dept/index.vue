@@ -6,6 +6,7 @@
           <a-space>
             <a-button v-permission="['system:dept:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
             <a-button icon="reload" @click="getDeptTrees">刷新</a-button>
+            <a-button v-permission="['system:dept:permission']" icon="setting" @click="batchDataPermmission">批量数据权限</a-button>
             <a-dropdown>
               <a-menu slot="overlay" @click="handleCommand">
                 <a-menu-item key="allOpen">
@@ -59,7 +60,7 @@
                 title: 'name',
                 key: 'id'
               }"
-              :check-strictly="false"
+              :check-strictly="true"
               :indent="0"
               style="margin-top: 10px;"
               @select="currentChange"
@@ -87,17 +88,20 @@
 
     <!-- 新增窗口 -->
     <add ref="addDialog" @confirm="getDeptTrees" />
+    <!-- 数据权限窗口 -->
+    <batch-data-permission ref="batchDataPermissionDialog" :biz-ids="ids" :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.DEPT.code" />
   </div>
 </template>
 
 <script>
 import Add from './add'
 import Modify from './modify'
+import BatchDataPermission from '@/components/DataPermission/batch'
 
 export default {
   name: 'Dept',
   components: {
-    Add, Modify
+    Add, Modify, BatchDataPermission
   },
   data() {
     return {
@@ -110,7 +114,11 @@ export default {
       showAllDepts: false,
       id: '',
       expandedKeys: [],
-      checkedKeys: []
+      checkedKeys: {
+        checked: [],
+        halfChecked: []
+      },
+      ids: []
     }
   },
   created() {
@@ -118,7 +126,10 @@ export default {
   },
   methods: {
     getDeptTrees() {
-      this.checkedKeys = []
+      this.checkedKeys = {
+        checked: [],
+        halfChecked: []
+      }
       this.expandedKeys = []
       this.loading = true
       this.id = ''
@@ -164,19 +175,28 @@ export default {
         this.expandedKeys = []
       } else if (key === 'allCheck') {
         const treeData = this.$utils.toTreeArray(this.treeData, { key: 'id', parentKey: 'parentId', children: 'children', strict: true })
-        this.checkedKeys = treeData.map(item => item.id)
+        this.checkedKeys = {
+          checked: treeData.map(item => item.id),
+          halfChecked: []
+        }
       } else if (key === 'allUnCheck') {
-        this.checkedKeys = []
+        this.checkedKeys = {
+          checked: [],
+          halfChecked: []
+        }
       } else if (key === 'reserveCheck') {
         const treeData = this.$utils.toTreeArray(this.treeData, { key: 'id', parentKey: 'parentId', children: 'children', strict: true })
         const allKeys = treeData.map(item => item.id)
-        const unCheckedKeys = allKeys.filter(item => !this.checkedKeys.includes(item))
+        const unCheckedKeys = allKeys.filter(item => !this.checkedKeys.checked.includes(item) && !this.checkedKeys.halfChecked.includes(item))
 
-        this.checkedKeys = unCheckedKeys
+        this.checkedKeys = {
+          checked: unCheckedKeys,
+          halfChecked: []
+        }
       }
     },
     batchUnable() {
-      const records = this.checkedKeys
+      const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked]
 
       if (this.$utils.isEmpty(records)) {
         this.$msg.error('请选择要停用的部门！')
@@ -195,14 +215,14 @@ export default {
       })
     },
     batchEnable() {
-      const records = this.checkedKeys
+      const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked]
 
       if (this.$utils.isEmpty(records)) {
         this.$msg.error('请选择要启用的部门！')
         return
       }
 
-      this.$msg.confirm('是否确定启用选择的部门及其下级部门？').then(() => {
+      this.$msg.confirm('是否确定启用选择的部门及其上级部门？').then(() => {
         this.loading = true
         const ids = records
         this.$api.system.dept.batchEnable(ids).then(data => {
@@ -219,7 +239,10 @@ export default {
         treeData = treeData.filter(item => item.available)
 
         const currentIds = treeData.map(item => item.id)
-        this.checkedKeys = this.checkedKeys.filter(item => currentIds.includes(item))
+        this.checkedKeys = {
+          checked: this.checkedKeys.checked.filter(item => currentIds.includes(item)),
+          halfChecked: this.checkedKeys.halfChecked.filter(item => currentIds.includes(item))
+        }
       }
       this.treeData = this.$utils.toArrayTree(treeData)
     },
@@ -231,6 +254,17 @@ export default {
           this.id = data[0]
         })
       }
+    },
+    batchDataPermmission() {
+      const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked]
+
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择要设置数据权限的部门！')
+        return
+      }
+
+      this.ids = records
+      this.$nextTick(() => this.$refs.batchDataPermissionDialog.openDialog())
     }
   }
 }

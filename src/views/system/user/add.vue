@@ -12,7 +12,7 @@
           <a-input v-model.trim="formData.name" allow-clear />
         </a-form-model-item>
         <a-form-model-item label="部门" prop="dept">
-          <sys-dept-selector v-model="formData.depts" :only-final="true" :multiple="true" />
+          <sys-dept-selector v-model="formData.depts" :only-final="false" :multiple="true" />
         </a-form-model-item>
         <a-form-model-item label="角色" prop="role">
           <sys-role-selector v-model="formData.roles" :multiple="true" />

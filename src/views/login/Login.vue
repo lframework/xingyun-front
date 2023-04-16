@@ -100,6 +100,7 @@ export default {
   },
   methods: {
     ...mapMutations('account', ['setUser', 'setRoles']),
+    ...mapMutations('setting', ['clearTabs']),
     onSubmit(e) {
       e.preventDefault()
       this.$refs.form.validate((valid) => {
@@ -125,6 +126,7 @@ export default {
       this.$api.user.getInfo().then(info => {
         this.setUser(info.user)
         this.setRoles(info.roles)
+        this.clearTabs()
 
         // 获取路由配置
         this.$api.user.getMenus().then(menus => {

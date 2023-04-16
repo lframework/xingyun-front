@@ -102,10 +102,14 @@
           <j-form-item label="赠品数量" :span="6">
             <a-input v-model="formData.giftNum" class="number-input" read-only />
           </j-form-item>
-          <j-form-item label="采购含税总金额" :span="6">
+          <j-form-item label="含税总金额" :span="6">
             <a-input v-model="formData.totalAmount" class="number-input" read-only />
           </j-form-item>
         </j-form>
+      </j-border>
+
+      <j-border title="支付方式">
+        <pay-type ref="payType" />
       </j-border>
 
       <j-border>
@@ -137,10 +141,11 @@ import SupplierSelector from '@/components/Selector/SupplierSelector'
 import UserSelector from '@/components/Selector/UserSelector'
 import BatchAddProduct from '@/views/sc/purchase/batch-add-product'
 import Moment from 'moment'
+import PayType from '@/views/sc/pay-type/index'
 export default {
   name: 'AddPurchaseOrder',
   components: {
-    StoreCenterSelector, SupplierSelector, UserSelector, BatchAddProduct
+    StoreCenterSelector, SupplierSelector, UserSelector, BatchAddProduct, PayType
   },
   data() {
     return {
@@ -460,6 +465,17 @@ export default {
         }
       }
 
+      if (!this.$refs.payType.validData()) {
+        return false
+      }
+
+      const payTypes = this.$refs.payType.getTableData()
+      const totalPayAmount = payTypes.reduce((tot, item) => this.$utils.add(tot, item.payAmount), 0)
+      if (!this.$utils.eq(this.formData.totalAmount, totalPayAmount)) {
+        this.$msg.error('所有支付方式的支付金额不等于含税总金额，请检查！')
+        return false
+      }
+
       return true
     },
     // 创建订单
@@ -474,6 +490,13 @@ export default {
         purchaserId: this.formData.purchaserId,
         expectArriveDate: this.formData.expectArriveDate,
         description: this.formData.description,
+        payTypes: this.$refs.payType.getTableData().map(t => {
+          return {
+            id: t.payTypeId,
+            payAmount: t.payAmount,
+            text: t.text
+          }
+        }),
         products: this.tableData.map(t => {
           return {
             productId: t.productId,
@@ -506,6 +529,13 @@ export default {
         purchaserId: this.formData.purchaserId,
         expectArriveDate: this.formData.expectArriveDate,
         description: this.formData.description,
+        payTypes: this.$refs.payType.getTableData().map(t => {
+          return {
+            id: t.payTypeId,
+            payAmount: t.payAmount,
+            text: t.text
+          }
+        }),
         products: this.tableData.map(t => {
           return {
             productId: t.productId,

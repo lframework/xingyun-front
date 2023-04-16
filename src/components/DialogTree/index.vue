@@ -4,7 +4,6 @@
       <a-input
         v-model="label"
         read-only
-        :disabled="disabled"
         :placeholder="placeholder"
         class="dialog-tree--input"
         @click.native="onOpen"
@@ -18,7 +17,6 @@
       v-else
       v-model="label"
       read-only
-      :disabled="disabled"
       :placeholder="placeholder"
       class="dialog-tree--input"
       @click.native="onOpen"

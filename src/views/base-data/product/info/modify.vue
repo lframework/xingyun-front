@@ -355,8 +355,6 @@ export default {
           })
 
           this.modelorList = modelorList
-
-          console.log(this.modelorList)
         })
       }
     }
