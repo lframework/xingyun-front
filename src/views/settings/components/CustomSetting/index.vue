@@ -1,15 +1,5 @@
 <template>
   <div class="side-setting">
-    <setting-item title="整体风格设置">
-      <img-checkbox-group
-        :default-values="[theme.mode]"
-        @change="values => setTheme({...theme, mode: values[0]})"
-      >
-        <img-checkbox title="暗色菜单风格" img="/static/images/dark.svg" value="dark" />
-        <img-checkbox title="亮色菜单风格" img="/static/images/light.svg" value="light" />
-      </img-checkbox-group>
-    </setting-item>
-    <a-divider />
     <setting-item>
       <a-list :split="false">
         <a-list-item>
@@ -93,17 +83,15 @@
 
 <script>
 import SettingItem from './SettingItem'
-import { ImgCheckbox } from '@/components/checkbox'
 import { mapState, mapMutations } from 'vuex'
 import { setting } from '@/config/default'
 import sysConfig from '@/config/config'
 import fastEqual from 'fast-deep-equal'
 import deepMerge from 'deepmerge'
 
-const ImgCheckboxGroup = ImgCheckbox.Group
 export default {
   name: 'CustomSetting',
-  components: { ImgCheckboxGroup, ImgCheckbox, SettingItem },
+  components: { SettingItem },
   data() {
     return {
     }

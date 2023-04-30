@@ -54,7 +54,6 @@ export default {
       margin-right: 8px;
     }
     .name{
-      font-weight: 500;
     }
   }
   .avatar-menu{

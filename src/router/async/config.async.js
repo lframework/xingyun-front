@@ -432,7 +432,7 @@ const routesConfig = [
             component: () => import('@/views/sc/stock/take/sheet/approve')
           },
           {
-            path: 'take-adjust/cost/add',
+            path: 'stock-adjust/cost/add',
             name: '新增库存成本调整单',
             meta: {
               sync: true,
@@ -441,7 +441,7 @@ const routesConfig = [
             component: () => import('@/views/sc/stock/adjust/cost/add')
           },
           {
-            path: 'take-adjust/cost/modify/:id',
+            path: 'stock-adjust/cost/modify/:id',
             name: '修改库存成本调整单',
             meta: {
               sync: true,
@@ -450,7 +450,7 @@ const routesConfig = [
             component: () => import('@/views/sc/stock/adjust/cost/modify')
           },
           {
-            path: 'take-adjust/cost/approve/:id',
+            path: 'stock-adjust/cost/approve/:id',
             name: '审核库存成本调整单',
             meta: {
               sync: true,
@@ -673,6 +673,33 @@ const routesConfig = [
               invisible: true
             },
             component: () => import('@/views/customer-settle/sheet/approve')
+          },
+          {
+            path: 'stock-adjust/add',
+            name: '新增库存调整单',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/stock/adjust/stock/add')
+          },
+          {
+            path: 'stock-adjust/modify/:id',
+            name: '修改库存调整单',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/stock/adjust/stock/modify')
+          },
+          {
+            path: 'stock-adjust/approve/:id',
+            name: '审核库存调整单',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/stock/adjust/stock/approve')
           }
         ]
       }

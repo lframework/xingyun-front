@@ -95,7 +95,9 @@ export default {
       id: '',
       ids: [],
       // 查询列表的查询条件
-      searchFormData: {},
+      searchFormData: {
+        available: this.$enums.AVAILABLE.ENABLE.code
+      },
       // 分页配置
       pagerConfig: {
         // 默认每页条数

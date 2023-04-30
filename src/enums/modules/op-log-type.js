@@ -8,7 +8,7 @@ const OP_LOG_TYPE = {
     desc: '用户认证'
   },
   OTHER: {
-    code: 2,
+    code: 99,
     desc: '其他'
   }
 }

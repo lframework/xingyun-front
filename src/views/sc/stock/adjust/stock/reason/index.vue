@@ -1,9 +1,9 @@
 <template>
-  <div v-permission="['settle:in-item:query']" class="app-container">
+  <div v-permission="['stock:adjust:reason:query']" class="app-container">
 
     <!-- 数据列表 -->
     <vxe-grid
-      id="SettleInItem"
+      id="StockAdjustReason"
       ref="grid"
       resizable
       show-overflow
@@ -38,9 +38,8 @@
       <template v-slot:toolbar_buttons>
         <a-space>
           <a-button type="primary" icon="search" @click="search">查询</a-button>
-          <a-button v-permission="['settle:in-item:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
-          <a-button v-permission="['settle:in-item:export']" icon="download" @click="exportList">导出</a-button>
-          <a-dropdown v-permission="['settle:in-item:modify']">
+          <a-button v-permission="['stock:adjust:reason:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-dropdown v-permission="['stock:adjust:reason:modify']">
             <a-menu slot="overlay" @click="handleCommand">
               <a-menu-item key="batchEnable">
                 <a-icon type="check" />批量启用
@@ -61,8 +60,8 @@
 
       <!-- 操作 列自定义内容 -->
       <template v-slot:action_default="{ row }">
-        <a-button v-permission="['settle:in-item:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-        <a-button v-permission="['settle:in-item:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
+        <a-button v-permission="['stock:adjust:reason:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
+        <a-button v-permission="['stock:adjust:reason:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
       </template>
     </vxe-grid>
 
@@ -84,7 +83,7 @@ import Modify from './modify'
 import Detail from './detail'
 
 export default {
-  name: 'SettleInItem',
+  name: 'StockAdjustReason',
   components: {
     Add, Modify, Detail, AvailableTag
   },
@@ -136,7 +135,7 @@ export default {
         ajax: {
           // 查询接口
           query: ({ page, sorts, filters }) => {
-            return this.$api.settle.inItem.query(this.buildQueryParams(page))
+            return this.$api.sc.stock.adjust.stockAdjustReason.query(this.buildQueryParams(page))
           }
         }
       }
@@ -179,7 +178,7 @@ export default {
       this.$msg.confirm('是否确定停用选择的收入项目？').then(() => {
         this.loading = true
         const ids = records.map(t => t.id)
-        this.$api.settle.inItem.batchUnable(ids).then(data => {
+        this.$api.sc.stock.adjust.stockAdjustReason.batchUnable(ids).then(data => {
           this.$msg.success('停用成功！')
           this.search()
         }).finally(() => {
@@ -199,20 +198,12 @@ export default {
       this.$msg.confirm('是否确定启用选择的收入项目？').then(() => {
         this.loading = true
         const ids = records.map(t => t.id)
-        this.$api.settle.inItem.batchEnable(ids).then(data => {
+        this.$api.sc.stock.adjust.stockAdjustReason.batchEnable(ids).then(data => {
           this.$msg.success('启用成功！')
           this.search()
         }).finally(() => {
           this.loading = false
         })
-      })
-    },
-    exportList() {
-      this.loading = true
-      this.$api.settle.inItem.exportList(this.buildQueryParams({})).then(() => {
-        this.$msg.successTip('导出成功！')
-      }).finally(() => {
-        this.loading = false
       })
     }
   }

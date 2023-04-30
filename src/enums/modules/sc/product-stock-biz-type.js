@@ -34,6 +34,10 @@ const PRODUCT_STOCK_BIZ_TYPE = {
   STOCK_COST_ADJUST: {
     code: 9,
     desc: '库存成本调整'
+  },
+  STOCK_ADJUST: {
+    code: 10,
+    desc: '库存调整'
   }
 }
 

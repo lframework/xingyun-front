@@ -97,6 +97,10 @@
           <a v-permission="['stock:adjust:cost:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewStockCostAdjustDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['stock:adjust:cost:query']">{{ row.bizCode }}</span>
         </div>
+        <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.STOCK_ADJUST.equalsCode(row.bizType)">
+          <a v-permission="['stock:adjust:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewStockAdjustDetailDialog.openDialog())}">{{ row.bizCode }}</a>
+          <span v-no-permission="['stock:adjust:query']">{{ row.bizCode }}</span>
+        </div>
         <span v-else>{{ row.bizCode }}</span>
       </template>
 
@@ -116,6 +120,7 @@
     <retail-return-detail :id="currentRow.bizId" ref="viewRetailReturnDetailDialog" />
     <take-stock-plan-detail :id="currentRow.bizId" ref="viewTakeStockPlanDetailDialog" />
     <stock-cost-adjust-detail :id="currentRow.bizId" ref="viewStockCostAdjustDetailDialog" />
+    <stock-adjust-detail :id="currentRow.bizId" ref="viewStockAdjustDetailDialog" />
   </div>
 </template>
 
@@ -132,13 +137,14 @@ import RetailOutSheetDetail from '@/views/sc/retail/out/detail'
 import RetailReturnDetail from '@/views/sc/retail/return/detail'
 import TakeStockPlanDetail from '@/views/sc/stock/take/plan/detail'
 import StockCostAdjustDetail from '@/views/sc/stock/adjust/cost/detail'
+import StockAdjustDetail from '@/views/sc/stock/adjust/stock/detail'
 
 export default {
   name: 'ProductStockLog',
   components: {
     StoreCenterSelector, ProductCategorySelector, ProductBrandSelector, PurchaseReceiveSheetDetail,
     PurchaseReturnDetail, SaleOutSheetDetail, SaleReturnDetail, RetailOutSheetDetail, RetailReturnDetail, TakeStockPlanDetail,
-    StockCostAdjustDetail
+    StockCostAdjustDetail, StockAdjustDetail
   },
   data() {
     return {
@@ -191,7 +197,7 @@ export default {
         { field: 'createTime', title: '操作时间', minWidth: 170 },
         { field: 'createBy', title: '操作人', minWidth: 100 },
         { field: 'bizCode', title: '单据号', width: 180, slots: { default: 'bizCode_default' }},
-        { field: 'bizType', title: '业务类型', width: 100, formatter: ({ cellValue }) => { return this.$enums.PRODUCT_STOCK_BIZ_TYPE.getDesc(cellValue) } }
+        { field: 'bizType', title: '业务类型', width: 140, formatter: ({ cellValue }) => { return this.$enums.PRODUCT_STOCK_BIZ_TYPE.getDesc(cellValue) } }
       ],
       // 请求接口配置
       proxyConfig: {

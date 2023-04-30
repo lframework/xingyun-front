@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-permission="['stock:adjust:cost:query']" class="app-container">
+    <div v-permission="['stock:adjust:query']" class="app-container">
       <!-- 数据列表 -->
       <vxe-grid
-        id="StockCostAdjustSheet"
+        id="StockAdjustSheet"
         ref="grid"
         resizable
         show-overflow
@@ -30,7 +30,7 @@
               </j-form-item>
               <j-form-item label="状态">
                 <a-select v-model="searchFormData.status" placeholder="全部" allow-clear>
-                  <a-select-option v-for="item in $enums.STOCK_COST_ADJUST_SHEET_STATUS.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                  <a-select-option v-for="item in $enums.STOCK_ADJUST_SHEET_STATUS.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
                 </a-select>
               </j-form-item>
               <j-form-item label="操作日期" :content-nest="false">
@@ -80,20 +80,20 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
-            <a-button v-permission="['stock:adjust:cost:add']" type="primary" icon="plus" @click="$router.push('/stock-adjust/cost/add')">新增</a-button>
-            <a-button v-permission="['stock:adjust:cost:approve']" icon="check" @click="batchApprovePass">审核通过</a-button>
-            <a-button v-permission="['stock:adjust:cost:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
-            <a-button v-permission="['stock:adjust:cost:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
-            <a-button v-permission="['stock:adjust:cost:export']" icon="download" @click="exportList">导出</a-button>
+            <a-button v-permission="['stock:adjust:add']" type="primary" icon="plus" @click="$router.push('/stock-adjust/add')">新增</a-button>
+            <a-button v-permission="['stock:adjust:approve']" icon="check" @click="batchApprovePass">审核通过</a-button>
+            <a-button v-permission="['stock:adjust:approve']" icon="close" @click="batchApproveRefuse">审核拒绝</a-button>
+            <a-button v-permission="['stock:adjust:delete']" type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
+            <a-button v-permission="['stock:adjust:export']" icon="download" @click="exportList">导出</a-button>
           </a-space>
         </template>
 
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
-          <a-button v-permission="['stock:adjust:cost:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-          <a-button v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['stock:adjust:cost:approve']" type="link" @click="$router.push('/stock-adjust/cost/approve/' + row.id)">审核</a-button>
-          <a-button v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['stock:adjust:cost:modify']" type="link" @click="$router.push('/stock-adjust/cost/modify/' + row.id)">修改</a-button>
-          <a-button v-if="$enums.STOCK_COST_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['stock:adjust:cost:delete']" type="link" class="ant-btn-link-danger" @click="e => { deleteRow(row.id) }">删除</a-button>
+          <a-button v-permission="['stock:adjust:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
+          <a-button v-if="$enums.STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['stock:adjust:approve']" type="link" @click="$router.push('/stock-adjust/approve/' + row.id)">审核</a-button>
+          <a-button v-if="$enums.STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['stock:adjust:modify']" type="link" @click="$router.push('/stock-adjust/modify/' + row.id)">修改</a-button>
+          <a-button v-if="$enums.STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) || $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)" v-permission="['stock:adjust:delete']" type="link" class="ant-btn-link-danger" @click="e => { deleteRow(row.id) }">删除</a-button>
         </template>
       </vxe-grid>
     </div>
@@ -113,7 +113,7 @@ import ApproveRefuse from '@/components/ApproveRefuse'
 import moment from 'moment'
 
 export default {
-  name: 'StockCostAdjustSheet',
+  name: 'StockAdjustSheet',
   components: {
     Detail, StoreCenterSelector, UserSelector, ApproveRefuse
   },
@@ -147,11 +147,11 @@ export default {
         { field: 'code', title: '单据号', width: 180 },
         { field: 'scCode', title: '仓库编号', width: 100 },
         { field: 'scName', title: '仓库名称', width: 120 },
-        { field: 'productNum', title: '调价品种数', width: 100, align: 'right' },
-        { field: 'diffAmount', title: '库存调价差额', width: 120, align: 'right' },
+        { field: 'bizType', title: '业务类型', width: 100, formatter: ({ cellValue }) => { return this.$enums.STOCK_ADJUST_SHEET_BIZ_TYPE.getDesc(cellValue) } },
+        { field: 'reasonName', title: '调整原因', width: 120 },
         { field: 'updateTime', title: '操作时间', width: 170 },
         { field: 'updateBy', title: '操作人', width: 100 },
-        { field: 'status', title: '状态', width: 100, formatter: ({ cellValue }) => { return this.$enums.STOCK_COST_ADJUST_SHEET_STATUS.getDesc(cellValue) } },
+        { field: 'status', title: '状态', width: 100, formatter: ({ cellValue }) => { return this.$enums.STOCK_ADJUST_SHEET_STATUS.getDesc(cellValue) } },
         { field: 'approveTime', title: '审核时间', width: 170 },
         { field: 'approveBy', title: '审核人', width: 100 },
         { field: 'description', title: '备注', minWidth: 200 },
@@ -168,7 +168,7 @@ export default {
         ajax: {
           // 查询接口
           query: ({ page, sorts, filters }) => {
-            return this.$api.sc.stock.adjust.stockCostAdjustSheet.query(this.buildQueryParams(page))
+            return this.$api.sc.stock.adjust.stockAdjustSheet.query(this.buildQueryParams(page))
           }
         }
       }
@@ -182,9 +182,9 @@ export default {
       this.$refs.grid.commitProxy('reload')
     },
     deleteRow(id) {
-      this.$msg.confirm('对选中的库存成本调整单执行删除操作？').then(() => {
+      this.$msg.confirm('对选中的库存调整单执行删除操作？').then(() => {
         this.loading = true
-        this.$api.sc.stock.adjust.stockCostAdjustSheet.deleteById(id).then(() => {
+        this.$api.sc.stock.adjust.stockAdjustSheet.deleteById(id).then(() => {
           this.$msg.success('删除成功！')
           this.search()
         }).finally(() => {
@@ -207,20 +207,20 @@ export default {
     batchApprovePass() {
       const records = this.$refs.grid.getCheckboxRecords()
       if (this.$utils.isEmpty(records)) {
-        this.$msg.error('请选择要执行操作的库存成本调整单！')
+        this.$msg.error('请选择要执行操作的库存调整单！')
         return
       }
 
       for (let i = 0; i < records.length; i++) {
-        if (this.$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-          this.$msg.error('第' + (i + 1) + '个库存成本调整单已审核通过，不允许继续执行审核！')
+        if (this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          this.$msg.error('第' + (i + 1) + '个库存调整单已审核通过，不允许继续执行审核！')
           return
         }
       }
 
-      this.$msg.confirm('对选中的库存成本调整单执行审核通过操作？').then(() => {
+      this.$msg.confirm('对选中的库存调整单执行审核通过操作？').then(() => {
         this.loading = true
-        this.$api.sc.stock.adjust.stockCostAdjustSheet.batchApprovePass({
+        this.$api.sc.stock.adjust.stockAdjustSheet.batchApprovePass({
           ids: records.map(item => item.id)
         }).then(() => {
           this.$msg.success('审核通过！')
@@ -234,18 +234,18 @@ export default {
     batchApproveRefuse() {
       const records = this.$refs.grid.getCheckboxRecords()
       if (this.$utils.isEmpty(records)) {
-        this.$msg.error('请选择要执行操作的库存成本调整单！')
+        this.$msg.error('请选择要执行操作的库存调整单！')
         return
       }
 
       for (let i = 0; i < records.length; i++) {
-        if (this.$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-          this.$msg.error('第' + (i + 1) + '个库存成本调整单已审核通过，不允许继续执行审核！')
+        if (this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          this.$msg.error('第' + (i + 1) + '个库存调整单已审核通过，不允许继续执行审核！')
           return
         }
 
-        if (this.$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
-          this.$msg.error('第' + (i + 1) + '个库存成本调整单已审核拒绝，不允许继续执行审核！')
+        if (this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
+          this.$msg.error('第' + (i + 1) + '个库存调整单已审核拒绝，不允许继续执行审核！')
           return
         }
       }
@@ -256,7 +256,7 @@ export default {
       const records = this.$refs.grid.getCheckboxRecords()
 
       this.loading = true
-      this.$api.sc.stock.adjust.stockCostAdjustSheet.batchApproveRefuse({
+      this.$api.sc.stock.adjust.stockAdjustSheet.batchApproveRefuse({
         ids: records.map(item => item.id),
         refuseReason: reason
       }).then(() => {
@@ -270,20 +270,20 @@ export default {
     batchDelete() {
       const records = this.$refs.grid.getCheckboxRecords()
       if (this.$utils.isEmpty(records)) {
-        this.$msg.error('请选择要执行操作的库存成本调整单！')
+        this.$msg.error('请选择要执行操作的库存调整单！')
         return
       }
 
       for (let i = 0; i < records.length; i++) {
-        if (this.$enums.STOCK_COST_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-          this.$msg.error('第' + (i + 1) + '个库存成本调整单已审核通过，不允许执行删除操作！')
+        if (this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          this.$msg.error('第' + (i + 1) + '个库存调整单已审核通过，不允许执行删除操作！')
           return
         }
       }
 
-      this.$msg.confirm('对选中的库存成本调整单执行批量删除操作？').then(() => {
+      this.$msg.confirm('对选中的库存调整单执行批量删除操作？').then(() => {
         this.loading = true
-        this.$api.sc.stock.adjust.stockCostAdjustSheet.batchDelete(records.map(item => item.id)).then(() => {
+        this.$api.sc.stock.adjust.stockAdjustSheet.batchDelete(records.map(item => item.id)).then(() => {
           this.$msg.success('删除成功！')
           this.search()
         }).finally(() => {
@@ -293,7 +293,7 @@ export default {
     },
     exportList() {
       this.loading = true
-      this.$api.sc.stock.adjust.stockCostAdjustSheet.exportList(this.buildQueryParams({})).then(() => {
+      this.$api.sc.stock.adjust.stockAdjustSheet.exportList(this.buildQueryParams({})).then(() => {
         this.$msg.successTip('导出成功！')
       }).finally(() => {
         this.loading = false
