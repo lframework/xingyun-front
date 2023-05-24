@@ -73,13 +73,6 @@ export default {
         categoryId: '',
         brandId: ''
       },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏
@@ -98,9 +91,7 @@ export default {
         { field: 'brandName', title: '商品品牌', width: 120 },
         { field: 'stockNum', title: '库存数量', align: 'right', width: 100 },
         { field: 'taxPrice', title: '含税价格', align: 'right', width: 100 },
-        { field: 'taxAmount', title: '含税金额', align: 'right', width: 100 },
-        { field: 'unTaxPrice', title: '无税价格', align: 'right', width: 100 },
-        { field: 'unTaxAmount', title: '无税金额', align: 'right', width: 100 }
+        { field: 'taxAmount', title: '含税金额', align: 'right', width: 100 }
       ],
       // 请求接口配置
       proxyConfig: {
@@ -139,6 +130,24 @@ export default {
         scId: this.searchFormData.scId,
         categoryId: this.searchFormData.categoryId,
         brandId: this.searchFormData.brandId
+      })
+
+      return params
+    },
+    exportList() {
+      this.loading = true
+      this.$api.sc.stock.productStock.exportList(this.buildQueryParams({})).then(() => {
+        this.$msg.successTip('导出成功！')
+      }).finally(() => {
+        this.loading = false
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+</style>
+d: this.searchFormData.brandId
       })
 
       return params

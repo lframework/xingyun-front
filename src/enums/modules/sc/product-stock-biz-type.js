@@ -38,6 +38,10 @@ const PRODUCT_STOCK_BIZ_TYPE = {
   STOCK_ADJUST: {
     code: 10,
     desc: '库存调整'
+  },
+  SC_TRANSFER: {
+    code: 11,
+    desc: '仓库调拨'
   }
 }
 

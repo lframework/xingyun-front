@@ -125,7 +125,6 @@ export default {
         { field: 'brandName', title: '商品品牌', width: 120 },
         { field: 'oriPrice', title: '参考销售价（元）', align: 'right', width: 150 },
         { field: 'isGift', title: '是否赠品', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
-        { field: 'stockNum', title: '库存数量', align: 'right', width: 100 },
         { field: 'discountRate', title: '折扣（%）', align: 'right', width: 120 },
         { field: 'taxPrice', title: '价格（元）', align: 'right', width: 120 },
         { field: 'orderNum', title: '销售数量', align: 'right', width: 100 },
@@ -231,6 +230,15 @@ export default {
         const LODOP = getLodop(res, '打印销售订单')
         LODOP.PREVIEW()
       }).finally(() => {
+        this.loading = false
+      })
+    }
+  }
+}
+</script>
+<style>
+</style>
+=> {
         this.loading = false
       })
     }

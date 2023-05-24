@@ -97,13 +97,6 @@ export default {
       searchFormData: {
         available: this.$enums.AVAILABLE.ENABLE.code
       },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏
@@ -200,6 +193,18 @@ export default {
         const ids = records.map(t => t.id)
         this.$api.sc.stock.adjust.stockAdjustReason.batchEnable(ids).then(data => {
           this.$msg.success('启用成功！')
+          this.search()
+        }).finally(() => {
+          this.loading = false
+        })
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+</style>
+     this.$msg.success('启用成功！')
           this.search()
         }).finally(() => {
           this.loading = false

@@ -79,13 +79,6 @@ export default {
         categoryId: '',
         brandId: ''
       },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏
@@ -167,6 +160,18 @@ export default {
     doSelect() {
       const records = this.$refs.grid.getCheckboxRecords()
       if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择商品数据！')
+        return
+      }
+
+      this.$emit('confirm', records)
+
+      this.closeDialog()
+    }
+  }
+}
+</script>
+s.$utils.isEmpty(records)) {
         this.$msg.error('请选择商品数据！')
         return
       }

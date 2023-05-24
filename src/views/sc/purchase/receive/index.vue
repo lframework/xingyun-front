@@ -179,13 +179,6 @@ export default {
         purchaseOrderCode: '',
         settleStatus: undefined
       },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏
@@ -383,6 +376,18 @@ export default {
         this.$msg.successTip('导出成功！')
       }).finally(() => {
         this.loading = false
+      })
+    },
+    viewPurchaseOrderDetail(id) {
+      this.purchaseOrderId = id
+      this.$refs.viewPurchaseOrderDetailDialog.openDialog()
+    }
+  }
+}
+</script>
+<style scoped>
+</style>
+e
       })
     },
     viewPurchaseOrderDetail(id) {

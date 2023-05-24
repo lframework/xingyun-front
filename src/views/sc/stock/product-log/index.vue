@@ -101,6 +101,10 @@
           <a v-permission="['stock:adjust:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewStockAdjustDetailDialog.openDialog())}">{{ row.bizCode }}</a>
           <span v-no-permission="['stock:adjust:query']">{{ row.bizCode }}</span>
         </div>
+        <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.SC_TRANSFER.equalsCode(row.bizType)">
+          <a v-permission="['stock:sc-transfer:query']" @click="e => {currentRow = row;$nextTick(() => $refs.viewScTransferOrderDetailDialog.openDialog())}">{{ row.bizCode }}</a>
+          <span v-no-permission="['stock:sc-transfer:query']">{{ row.bizCode }}</span>
+        </div>
         <span v-else>{{ row.bizCode }}</span>
       </template>
 
@@ -121,6 +125,7 @@
     <take-stock-plan-detail :id="currentRow.bizId" ref="viewTakeStockPlanDetailDialog" />
     <stock-cost-adjust-detail :id="currentRow.bizId" ref="viewStockCostAdjustDetailDialog" />
     <stock-adjust-detail :id="currentRow.bizId" ref="viewStockAdjustDetailDialog" />
+    <sc-transfer-order-detail :id="currentRow.bizId" ref="viewScTransferOrderDetailDialog" />
   </div>
 </template>
 
@@ -138,13 +143,14 @@ import RetailReturnDetail from '@/views/sc/retail/return/detail'
 import TakeStockPlanDetail from '@/views/sc/stock/take/plan/detail'
 import StockCostAdjustDetail from '@/views/sc/stock/adjust/cost/detail'
 import StockAdjustDetail from '@/views/sc/stock/adjust/stock/detail'
+import ScTransferOrderDetail from '@/views/sc/stock/transfer/detail'
 
 export default {
   name: 'ProductStockLog',
   components: {
     StoreCenterSelector, ProductCategorySelector, ProductBrandSelector, PurchaseReceiveSheetDetail,
     PurchaseReturnDetail, SaleOutSheetDetail, SaleReturnDetail, RetailOutSheetDetail, RetailReturnDetail, TakeStockPlanDetail,
-    StockCostAdjustDetail, StockAdjustDetail
+    StockCostAdjustDetail, StockAdjustDetail, ScTransferOrderDetail
   },
   data() {
     return {
@@ -161,13 +167,6 @@ export default {
         createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(Moment().subtract(1, 'M'))),
         createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(Moment())),
         bizType: undefined
-      },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
       },
       // 工具栏配置
       toolbarConfig: {
@@ -190,10 +189,7 @@ export default {
         { field: 'stockNum', title: '变动库存数量', align: 'right', width: 140 },
         { field: 'oriTaxPrice', title: '变动前含税成本价', align: 'right', width: 140 },
         { field: 'curTaxPrice', title: '变动后含税成本价', align: 'right', width: 140 },
-        { field: 'oriUnTaxPrice', title: '变动前无税成本价', align: 'right', width: 140 },
-        { field: 'curUnTaxPrice', title: '变动后无税成本价', align: 'right', width: 140 },
         { field: 'taxAmount', title: '变动含税金额', align: 'right', width: 140 },
-        { field: 'unTaxAmount', title: '变动无税金额', align: 'right', width: 140 },
         { field: 'createTime', title: '操作时间', minWidth: 170 },
         { field: 'createBy', title: '操作人', minWidth: 100 },
         { field: 'bizCode', title: '单据号', width: 180, slots: { default: 'bizCode_default' }},

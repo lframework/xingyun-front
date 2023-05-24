@@ -700,6 +700,42 @@ const routesConfig = [
               invisible: true
             },
             component: () => import('@/views/sc/stock/adjust/stock/approve')
+          },
+          {
+            path: 'stock-transfer/add',
+            name: '新增仓库调拨单',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/stock/transfer/add')
+          },
+          {
+            path: 'stock-transfer/modify/:id',
+            name: '修改仓库调拨单',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/stock/transfer/modify')
+          },
+          {
+            path: 'stock-transfer/approve/:id',
+            name: '审核仓库调拨单',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/stock/transfer/approve')
+          },
+          {
+            path: 'stock-transfer/receive/:id',
+            name: '仓库调拨单收货',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/stock/transfer/receive')
           }
         ]
       }

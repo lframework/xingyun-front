@@ -30,6 +30,10 @@ const ORDER_TIME_LINE_biZ_TYPE = {
   CANCEL_APPROVE: {
     code: 6,
     desc: '取消审核'
+  },
+  RECEIVE: {
+    code: 7,
+    desc: '收货'
   }
 }
 

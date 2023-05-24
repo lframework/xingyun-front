@@ -143,6 +143,9 @@ export default {
         name: [
           { required: true, message: '请输入名称' }
         ],
+        skuCode: [
+          { required: true, message: '请输入SKU编号' }
+        ],
         categoryId: [
           { required: true, message: '请选择类目' }
         ],

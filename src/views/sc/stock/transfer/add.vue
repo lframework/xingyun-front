@@ -1,62 +1,26 @@
 <template>
   <div class="app-container simple-app-container">
-    <div v-permission="['stock:adjust:modify']" v-loading="loading">
+    <div v-permission="['stock:sc-transfer:add']" v-loading="loading">
       <j-border>
         <j-form
           ref="form"
           :model="formData"
-          :rules="{
-            scId: [
-              { required: true, message: '请选择仓库' }
-            ],
-            bizType: [
-              { required: true, message: '请选择业务类型' }
-            ],
-            reasonId: [
-              { required: true, message: '请选择调整原因' }
-            ]
-          }"
+          :rules="rules"
         >
-          <j-form-item label="仓库" required>
+          <j-form-item label="转出仓库" required>
             <store-center-selector
-              v-model="formData.scId"
+              v-model="formData.sourceScId"
               :before-open="beforeSelectSc"
               @input="afterSelectSc"
             />
           </j-form-item>
-          <j-form-item label="业务类型" required>
-            <a-select v-model="formData.bizType">
-              <a-select-option v-for="item in $enums.STOCK_ADJUST_SHEET_BIZ_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-            </a-select>
-          </j-form-item>
-          <j-form-item label="调整原因" required>
-            <stock-adjust-reason-selector
-              v-model="formData.reasonId"
+          <j-form-item label="转入仓库" required>
+            <store-center-selector
+              v-model="formData.targetScId"
             />
           </j-form-item>
-          <j-form-item :span="16" />
           <j-form-item label="备注" :span="24">
             <a-textarea v-model.trim="formData.description" maxlength="200" />
-          </j-form-item>
-          <j-form-item label="状态">
-            <span v-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else style="color: #303133;">{{ $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span>
-          </j-form-item>
-          <j-form-item label="拒绝理由" :span="16" :content-nest="false">
-            <a-input v-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
-          </j-form-item>
-          <j-form-item label="操作人">
-            <span>{{ formData.updateBy }}</span>
-          </j-form-item>
-          <j-form-item label="操作时间" :span="16">
-            <span>{{ formData.updateTime }}</span>
-          </j-form-item>
-          <j-form-item v-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核人">
-            <span>{{ formData.approveBy }}</span>
-          </j-form-item>
-          <j-form-item v-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核时间" :span="16">
-            <span>{{ formData.approveTime }}</span>
           </j-form-item>
         </j-form>
       </j-border>
@@ -103,9 +67,9 @@
           <span v-else>{{ row.productName }}</span>
         </template>
 
-        <!-- 调整库存数量 列自定义内容 -->
-        <template v-slot:stockNum_default="{ row }">
-          <a-input v-model="row.stockNum" class="number-input" @input="e => stockNumInput(e.target.value)" />
+        <!-- 调拨数量 列自定义内容 -->
+        <template v-slot:transferNum_default="{ row }">
+          <a-input v-model="row.transferNum" class="number-input" @input="e => transferNumInput(e.target.value)" />
         </template>
 
         <!-- 备注 列自定义内容 -->
@@ -114,28 +78,24 @@
         </template>
       </vxe-grid>
 
-      <order-time-line :id="id" />
-
       <j-border title="合计">
         <j-form label-width="140px">
-          <j-form-item label="调整品种数" :span="6">
-            <a-input v-model="formData.productNum" class="number-input" read-only />
-          </j-form-item>
-          <j-form-item label="库存调整数量" :span="6">
-            <a-input v-model="formData.diffStockNum" class="number-input" read-only />
+          <j-form-item label="调拨数量" :span="6">
+            <a-input v-model="formData.totalNum" class="number-input" read-only />
           </j-form-item>
         </j-form>
       </j-border>
 
       <batch-add-product
         ref="batchAddProductDialog"
-        :sc-id="formData.scId || ''"
+        :sc-id="formData.sourceScId || ''"
         @confirm="batchAddProduct"
       />
 
       <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
         <a-space>
-          <a-button v-permission="['stock:adjust:modify']" type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button v-permission="['stock:sc-transfer:add']" type="primary" :loading="loading" @click="submit">保存</a-button>
+          <a-button v-permission="['stock:sc-transfer:approve']" type="primary" :loading="loading" @click="directApprovePass">审核通过</a-button>
           <a-button :loading="loading" @click="closeDialog">关闭</a-button>
         </a-space>
       </div>
@@ -144,20 +104,37 @@
 </template>
 <script>
 import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
-import BatchAddProduct from '@/views/sc/stock/adjust/stock/batch-add-product'
-import StockAdjustReasonSelector from '@/components/Selector/StockAdjustReasonSelector'
+import BatchAddProduct from '@/views/sc/stock/transfer/batch-add-product'
 
 export default {
   components: {
-    StoreCenterSelector, BatchAddProduct, StockAdjustReasonSelector
+    StoreCenterSelector, BatchAddProduct
   },
   data() {
     return {
-      id: this.$route.params.id,
       // 是否显示加载框
       loading: false,
       // 表单数据
       formData: {},
+      rules: {
+        sourceScId: [
+          { required: true, message: '请选择转出仓库' },
+          {
+            validator: (rule, value, callback) => {
+              if (!this.$utils.isEmpty(value)) {
+                if (this.$utils.isEqualWithStr(value, this.formData.targetScId)) {
+                  return callback(new Error('转出仓库不能与转入仓库相同'))
+                }
+              }
+
+              callback()
+            }
+          }
+        ],
+        targetScId: [
+          { required: true, message: '请选择转入仓库' }
+        ]
+      },
       // 工具栏配置
       toolbarConfig: {
         // 缩放
@@ -183,7 +160,7 @@ export default {
         { field: 'categoryName', title: '商品类目', width: 120 },
         { field: 'brandName', title: '商品品牌', width: 120 },
         { field: 'curStockNum', title: '库存数量', width: 120, align: 'right' },
-        { field: 'stockNum', title: '调整库存数量', width: 120, align: 'right', slots: { default: 'stockNum_default' }},
+        { field: 'transferNum', title: '调拨数量', width: 120, align: 'right', slots: { default: 'transferNum_default' }},
         { field: 'description', title: '备注', width: 200, slots: { default: 'description_default' }}
       ],
       tableData: []
@@ -199,7 +176,6 @@ export default {
     openDialog() {
       // 初始化表单数据
       this.initFormData()
-      this.loadData()
     },
     // 关闭对话框
     closeDialog() {
@@ -208,73 +184,104 @@ export default {
     // 初始化表单数据
     initFormData() {
       this.formData = {
-        scId: '',
-        bizType: '',
-        reasonId: '',
+        sourceScId: '',
+        targetScId: '',
         description: '',
-        updateBy: '',
-        updateTime: '',
-        approveBy: '',
-        approveTime: '',
-        status: '',
-        refuseReason: '',
-        productNum: 0,
-        diffStockNum: 0
+        totalNum: 0
       }
 
       this.tableData = []
+    },
+    validData() {
+      if (this.$utils.isEmpty(this.tableData)) {
+        this.$msg.error('请录入商品！')
+        return false
+      }
+      for (let i = 0; i < this.tableData.length; i++) {
+        const data = this.tableData[i]
+        if (this.$utils.isEmpty(data.productId)) {
+          this.$msg.error('第' + (i + 1) + '行商品不允许为空！')
+          return false
+        }
+        if (this.$utils.isEmpty(data.transferNum)) {
+          this.$msg.error('第' + (i + 1) + '行调拨数量不允许为空！')
+          return false
+        }
+        if (!this.$utils.isInteger(data.transferNum)) {
+          this.$msg.error('第' + (i + 1) + '行调拨数量必须是整数！')
+          return false
+        }
+        if (!this.$utils.isIntegerGtZero(data.transferNum)) {
+          this.$msg.error('第' + (i + 1) + '行调拨数量必须大于0！')
+          return false
+        }
+      }
+
+      return true
     },
     // 提交表单事件
     submit() {
       this.$refs.form.validate().then(valid => {
         if (valid) {
-          if (this.$utils.isEmpty(this.tableData)) {
-            this.$msg.error('请录入商品！')
+          if (!this.validData()) {
             return
           }
 
-          for (let i = 0; i < this.tableData.length; i++) {
-            const data = this.tableData[i]
-            if (this.$utils.isEmpty(data.productId)) {
-              this.$msg.error('第' + (i + 1) + '行商品不允许为空！')
-              return
-            }
-            if (this.$utils.isEmpty(data.stockNum)) {
-              this.$msg.error('第' + (i + 1) + '行调整库存数量不允许为空！')
-              return
-            }
-            if (!this.$utils.isInteger(data.stockNum)) {
-              this.$msg.error('第' + (i + 1) + '行调整库存数量必须是整数！')
-              return
-            }
-            if (!this.$utils.isIntegerGtZero(data.stockNum)) {
-              this.$msg.error('第' + (i + 1) + '行调整库存数量必须大于0！')
-              return
-            }
-          }
-
           const params = {
-            id: this.id,
-            scId: this.formData.scId,
-            bizType: this.formData.bizType,
-            reasonId: this.formData.reasonId,
+            sourceScId: this.formData.sourceScId,
+            targetScId: this.formData.targetScId,
             description: this.formData.description,
             products: this.tableData.map(item => {
               return {
                 productId: item.productId,
-                stockNum: item.stockNum,
+                transferNum: item.transferNum,
                 description: item.description
               }
             })
           }
           this.loading = true
-          this.$api.sc.stock.adjust.stockAdjustSheet.modify(params).then(() => {
-            this.$msg.success('修改成功！')
+          this.$api.sc.stock.transfer.scTransferOrder.create(params).then(() => {
+            this.$msg.success('保存成功！')
             this.$emit('confirm')
 
             this.closeDialog()
           }).finally(() => {
             this.loading = false
+          })
+        }
+      })
+    },
+    // 直接审核通过
+    directApprovePass() {
+      this.$refs.form.validate().then(valid => {
+        if (valid) {
+          if (!this.validData()) {
+            return
+          }
+
+          const params = {
+            sourceScId: this.formData.sourceScId,
+            targetScId: this.formData.targetScId,
+            description: this.formData.description,
+            products: this.tableData.map(item => {
+              return {
+                productId: item.productId,
+                transferNum: item.transferNum,
+                description: item.description
+              }
+            })
+          }
+
+          this.$msg.confirm('对仓库调拨单执行审核通过操作？').then(() => {
+            this.loading = true
+            this.$api.sc.stock.transfer.scTransferOrder.directApprovePass(params).then(res => {
+              this.$msg.success('审核通过！')
+
+              this.$emit('confirm')
+              this.closeDialog()
+            }).finally(() => {
+              this.loading = false
+            })
           })
         }
       })
@@ -296,15 +303,16 @@ export default {
         spec: '',
         categoryName: '',
         brandName: '',
-        stockNum: '',
+        transferNum: '',
         curStockNum: '',
-        description: ''
+        description: '',
+        products: []
       }
     },
     // 新增商品
     addProduct() {
-      if (this.$utils.isEmpty(this.formData.scId)) {
-        this.$msg.error('请先选择仓库！')
+      if (this.$utils.isEmpty(this.formData.sourceScId)) {
+        this.$msg.error('请先选择转出仓库！')
         return
       }
       this.tableData.push(this.emptyProduct())
@@ -316,8 +324,8 @@ export default {
         return
       }
 
-      this.$api.sc.stock.adjust.stockAdjustSheet.searchProduct({
-        scId: this.formData.scId,
+      this.$api.sc.stock.transfer.scTransferOrder.searchProduct({
+        scId: this.formData.sourceScId,
         condition: queryString
       }).then(res => {
         row.products = res
@@ -357,8 +365,8 @@ export default {
       })
     },
     openBatchAddProductDialog() {
-      if (this.$utils.isEmpty(this.formData.scId)) {
-        this.$msg.error('请先选择仓库！')
+      if (this.$utils.isEmpty(this.formData.sourceScId)) {
+        this.$msg.error('请先选择转出仓库！')
         return
       }
       this.$refs.batchAddProductDialog.openDialog()
@@ -379,8 +387,8 @@ export default {
     },
     beforeSelectSc() {
       let flag = false
-      if (!this.$utils.isEmpty(this.formData.scId)) {
-        return this.$msg.confirm('更改仓库，会清空商品数据，是否确认更改？')
+      if (!this.$utils.isEmpty(this.formData.sourceScId)) {
+        return this.$msg.confirm('更改转出仓库，会清空商品数据，是否确认更改？')
       } else {
         flag = true
       }
@@ -393,49 +401,20 @@ export default {
         this.calcSum()
       }
     },
-    priceInput(e) {
+    transferNumInput(e) {
       this.calcSum()
     },
     calcSum() {
-      let productNum = 0
-      let diffStockNum = 0
+      let totalNum = 0
       this.tableData.forEach(item => {
         if (!this.$utils.isEmpty(item.productId)) {
-          productNum += 1
-
-          if (this.$utils.isIntegerGeZero(item.stockNum)) {
-            diffStockNum = this.$utils.add(item.stockNum, diffStockNum)
+          if (this.$utils.isIntegerGeZero(item.transferNum)) {
+            totalNum = this.$utils.add(item.transferNum, totalNum)
           }
         }
       })
 
-      this.formData.productNum = productNum
-      this.formData.diffStockNum = diffStockNum
-    },
-    stockNumInput(e) {
-      this.calcSum()
-    },
-    async loadData() {
-      this.loading = true
-      await this.$api.sc.stock.adjust.stockAdjustSheet.get(this.id).then(res => {
-        Object.assign(this.formData, {
-          scId: res.scId,
-          bizType: res.bizType,
-          reasonId: res.reasonId,
-          description: res.description,
-          updateBy: res.updateBy,
-          updateTime: res.updateTime,
-          approveBy: res.approveBy,
-          approveTime: res.approveTime,
-          status: res.status,
-          refuseReason: res.refuseReason
-        })
-
-        this.tableData = res.details
-        this.calcSum()
-      }).finally(() => {
-        this.loading = false
-      })
+      this.formData.totalNum = totalNum
     }
   }
 }

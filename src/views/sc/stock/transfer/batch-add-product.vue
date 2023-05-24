@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="70%" title="批量添加商品" :dialog-style="{ top: '20px' }">
-    <div v-if="visible" v-permission="['stock:take:pre:add', 'stock:take:pre:modify']">
+    <div v-if="visible" v-permission="['stock:sc-transfer:add', 'stock:sc-transfer:modify']">
       <!-- 数据列表 -->
       <vxe-grid
         v-if="visible"
@@ -47,7 +47,7 @@
     <template slot="footer">
       <a-space>
         <a-button @click="closeDialog">取 消</a-button>
-        <a-button v-permission="['stock:take:pre:add', 'stock:take:pre:modify']" type="primary" :loading="loading" @click="doSelect">确 定</a-button>
+        <a-button v-permission="['stock:sc-transfer:add', 'stock:sc-transfer:modify']" type="primary" :loading="loading" @click="doSelect">确 定</a-button>
       </a-space>
     </template>
   </a-modal>
@@ -62,6 +62,10 @@ export default {
     ProductCategorySelector, ProductBrandSelector
   },
   props: {
+    scId: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -86,13 +90,14 @@ export default {
       tableColumn: [
         { type: 'checkbox', width: 40 },
         { field: 'productCode', title: '商品编号', width: 120 },
-        { field: 'productName', title: '商品名称', width: 260 },
+        { field: 'productName', title: '商品名称', minWidth: 260 },
         { field: 'skuCode', title: '商品SKU编号', width: 120 },
         { field: 'externalCode', title: '商品外部编号', width: 120 },
         { field: 'unit', title: '单位', width: 80 },
         { field: 'spec', title: '规格', width: 80 },
         { field: 'categoryName', title: '商品类目', width: 120 },
-        { field: 'brandName', title: '商品品牌', width: 120 }
+        { field: 'brandName', title: '商品品牌', width: 120 },
+        { field: 'curStockNum', title: '库存数量', width: 120, align: 'right' }
       ],
       // 请求接口配置
       proxyConfig: {
@@ -105,7 +110,7 @@ export default {
         ajax: {
           // 查询接口
           query: ({ page, sorts, filters }) => {
-            return this.$api.sc.stock.take.preTakeStockSheet.queryProduct(this.buildQueryParams(page))
+            return this.$api.sc.stock.transfer.scTransferOrder.queryProduct(this.buildQueryParams(page))
           }
         }
       }
@@ -130,7 +135,8 @@ export default {
       return {
         condition: this.searchFormData.condition,
         categoryId: this.searchFormData.categoryId || '',
-        brandId: this.searchFormData.brandId || ''
+        brandId: this.searchFormData.brandId || '',
+        scId: this.scId
       }
     },
     // 打开对话框 由父页面触发
@@ -151,18 +157,6 @@ export default {
     doSelect() {
       const records = this.$refs.grid.getCheckboxRecords()
       if (this.$utils.isEmpty(records)) {
-        this.$msg.error('请选择商品数据！')
-        return
-      }
-
-      this.$emit('confirm', records)
-
-      this.closeDialog()
-    }
-  }
-}
-</script>
-s.$utils.isEmpty(records)) {
         this.$msg.error('请选择商品数据！')
         return
       }

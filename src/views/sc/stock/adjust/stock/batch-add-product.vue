@@ -79,13 +79,6 @@ export default {
         categoryId: '',
         brandId: ''
       },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏
@@ -97,7 +90,7 @@ export default {
       tableColumn: [
         { type: 'checkbox', width: 40 },
         { field: 'productCode', title: '商品编号', width: 120 },
-        { field: 'productName', title: '商品名称', width: 260 },
+        { field: 'productName', title: '商品名称', minWidth: 260 },
         { field: 'skuCode', title: '商品SKU编号', width: 120 },
         { field: 'externalCode', title: '商品外部编号', width: 120 },
         { field: 'unit', title: '单位', width: 80 },
@@ -164,6 +157,18 @@ export default {
     doSelect() {
       const records = this.$refs.grid.getCheckboxRecords()
       if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择商品数据！')
+        return
+      }
+
+      this.$emit('confirm', records)
+
+      this.closeDialog()
+    }
+  }
+}
+</script>
+utils.isEmpty(records)) {
         this.$msg.error('请选择商品数据！')
         return
       }

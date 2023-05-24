@@ -114,13 +114,6 @@ export default {
       searchFormData: {
         available: this.$enums.AVAILABLE.ENABLE.code
       },
-      // 分页配置
-      pagerConfig: {
-        // 默认每页条数
-        pageSize: 20,
-        // 可选每页条数
-        pageSizes: [5, 15, 20, 50, 100, 200, 500, 1000]
-      },
       // 工具栏配置
       toolbarConfig: {
         // 自定义左侧工具栏
@@ -269,6 +262,15 @@ export default {
     download(id) {
       this.loading = true
       this.$api.development.dataEntity.download(id).then(() => {
+        this.$msg.success('下载成功！')
+      }).finally(() => {
+        this.loading = false
+      })
+    }
+  }
+}
+</script>
+ this.$api.development.dataEntity.download(id).then(() => {
         this.$msg.success('下载成功！')
       }).finally(() => {
         this.loading = false
