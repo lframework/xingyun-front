@@ -415,13 +415,3 @@ export default {
   }
 }
 </script>
-toolbar.btnConfig)
-      fn(this)
-    },
-    onExcuteScriptInHandleColumn(handleColumn) {
-      const fn = new Function('_this', handleColumn.btnConfig)
-      fn(this)
-    }
-  }
-}
-</script>

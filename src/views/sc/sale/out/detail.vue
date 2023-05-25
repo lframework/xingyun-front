@@ -258,12 +258,3 @@ export default {
 </script>
 <style>
 </style>
-=> {
-        this.loading = false
-      })
-    }
-  }
-}
-</script>
-<style>
-</style>

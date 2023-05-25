@@ -388,14 +388,3 @@ export default {
 </script>
 <style scoped>
 </style>
-
-    },
-    viewSaleOrderDetail(id) {
-      this.saleOrderId = id
-      this.$nextTick(() => this.$refs.viewSaleOrderDetailDialog.openDialog())
-    }
-  }
-}
-</script>
-<style scoped>
-</style>

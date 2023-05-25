@@ -171,15 +171,3 @@ export default {
   }
 }
 </script>
-s.$utils.isEmpty(records)) {
-        this.$msg.error('请选择商品数据！')
-        return
-      }
-
-      this.$emit('confirm', records)
-
-      this.closeDialog()
-    }
-  }
-}
-</script>

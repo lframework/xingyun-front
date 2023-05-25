@@ -390,14 +390,3 @@ export default {
 </script>
 <style scoped>
 </style>
- })
-    },
-    viewOutSheetDetail(id) {
-      this.outSheetId = id
-      this.$nextTick(() => this.$refs.viewOutSheetDetailDialog.openDialog())
-    }
-  }
-}
-</script>
-<style scoped>
-</style>

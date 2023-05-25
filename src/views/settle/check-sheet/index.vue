@@ -330,14 +330,3 @@ export default {
 </script>
 <style scoped>
 </style>
-ildQueryParams({})).then(() => {
-        this.$msg.successTip('导出成功！')
-      }).finally(() => {
-        this.loading = false
-      })
-    }
-  }
-}
-</script>
-<style scoped>
-</style>

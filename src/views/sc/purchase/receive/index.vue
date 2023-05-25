@@ -387,15 +387,3 @@ export default {
 </script>
 <style scoped>
 </style>
-e
-      })
-    },
-    viewPurchaseOrderDetail(id) {
-      this.purchaseOrderId = id
-      this.$refs.viewPurchaseOrderDetailDialog.openDialog()
-    }
-  }
-}
-</script>
-<style scoped>
-</style>

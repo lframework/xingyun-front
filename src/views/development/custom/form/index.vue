@@ -255,14 +255,3 @@ export default {
   }
 }
 </script>
-ds).then(data => {
-          this.$msg.success('删除成功！')
-          this.search()
-        }).finally(() => {
-          this.loading = false
-        })
-      })
-    }
-  }
-}
-</script>

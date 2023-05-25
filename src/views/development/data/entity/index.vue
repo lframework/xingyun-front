@@ -270,12 +270,3 @@ export default {
   }
 }
 </script>
- this.$api.development.dataEntity.download(id).then(() => {
-        this.$msg.success('下载成功！')
-      }).finally(() => {
-        this.loading = false
-      })
-    }
-  }
-}
-</script>

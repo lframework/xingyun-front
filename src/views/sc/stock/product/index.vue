@@ -147,21 +147,3 @@ export default {
 </script>
 <style scoped>
 </style>
-d: this.searchFormData.brandId
-      })
-
-      return params
-    },
-    exportList() {
-      this.loading = true
-      this.$api.sc.stock.productStock.exportList(this.buildQueryParams({})).then(() => {
-        this.$msg.successTip('导出成功！')
-      }).finally(() => {
-        this.loading = false
-      })
-    }
-  }
-}
-</script>
-<style scoped>
-</style>

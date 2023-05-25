@@ -204,15 +204,3 @@ export default {
 </script>
 <style scoped>
 </style>
-     this.$msg.success('启用成功！')
-          this.search()
-        }).finally(() => {
-          this.loading = false
-        })
-      })
-    }
-  }
-}
-</script>
-<style scoped>
-</style>

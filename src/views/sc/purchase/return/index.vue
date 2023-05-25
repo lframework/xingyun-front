@@ -389,12 +389,3 @@ export default {
 </script>
 <style scoped>
 </style>
-   viewReceiveSheetDetail(id) {
-      this.receiveSheetId = id
-      this.$nextTick(() => this.$refs.viewReceiveSheetDetailDialog.openDialog())
-    }
-  }
-}
-</script>
-<style scoped>
-</style>
