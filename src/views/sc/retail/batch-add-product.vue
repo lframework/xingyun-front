@@ -65,6 +65,10 @@ export default {
     scId: {
       type: String,
       default: ''
+    },
+    isReturn: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -135,6 +139,7 @@ export default {
     // 查询前构建具体的查询参数
     buildSearchFormData() {
       return {
+        isReturn: this.isReturn,
         scId: this.scId,
         condition: this.searchFormData.condition,
         categoryId: this.searchFormData.categoryId || '',

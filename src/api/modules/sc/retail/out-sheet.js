@@ -204,14 +204,15 @@ export default {
    * @param condition
    * @returns {AxiosPromise}
    */
-  searchProduct: (scId, condition) => {
+  searchProduct: (scId, condition, isReturn = false) => {
     return request({
       url: '/retail/out/sheet/product/search',
       region: 'sc-api',
       method: 'get',
       params: {
         scId: scId,
-        condition: condition
+        condition: condition,
+        isReturn: isReturn
       }
     })
   },

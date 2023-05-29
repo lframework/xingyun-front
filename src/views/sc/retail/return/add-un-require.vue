@@ -143,6 +143,7 @@
       <batch-add-product
         ref="batchAddProductDialog"
         :sc-id="formData.scId"
+        :is-return="true"
         @confirm="batchAddProduct"
       />
       <div style="text-align: center; background-color: #FFFFFF;padding: 8px 0;">
@@ -289,7 +290,7 @@ export default {
         return
       }
 
-      this.$api.sc.retail.outSheet.searchProduct(this.formData.scId, queryString).then(res => {
+      this.$api.sc.retail.outSheet.searchProduct(this.formData.scId, queryString, true).then(res => {
         row.products = res
       })
     },
