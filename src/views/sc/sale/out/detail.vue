@@ -135,6 +135,7 @@ export default {
         { field: 'spec', title: '规格', width: 80 },
         { field: 'categoryName', title: '商品类目', width: 120 },
         { field: 'brandName', title: '商品品牌', width: 120 },
+        { field: 'mainProductName', title: '所属组合商品', width: 120 },
         { field: 'salePrice', title: '参考销售价（元）', align: 'right', width: 150 },
         { field: 'isGift', title: '是否赠品', width: 80, formatter: ({ cellValue }) => { return cellValue ? '是' : '否' } },
         { field: 'discountRate', title: '折扣（%）', align: 'right', width: 120 },

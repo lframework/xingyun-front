@@ -1,6 +1,6 @@
 <template>
   <div>
-    <excel-importer ref="importer" :tip-msg="'如果商品编号不存在，那么就新增商品；如果商品编号已经存在，那么就修改商品。\n注：\n如果商品类目发生变化，关联的商品属性会清空。'" :download-template-url="downloadTemplate" :upload-url="upload" @confirm="e => $emit('confirm', e)" />
+    <excel-importer ref="importer" :tip-msg="'如果商品编号不存在，那么就新增商品；如果商品编号已经存在，那么就修改商品。\n注：\n1、如果商品类目发生变化，关联的商品属性会清空。\n2、只支持导入普通商品。'" :download-template-url="downloadTemplate" :upload-url="upload" @confirm="e => $emit('confirm', e)" />
   </div>
 </template>
 

@@ -98,6 +98,12 @@ export default {
     if (this.pageList.findIndex(item => item.path === route.path) === -1) {
       this.pageList.push(this.createPage(route))
     }
+    if (!this.pageList.find(item => item.fullPath === '/dashboard/workplace')) {
+      this.pageList.push(this.createFixPage())
+    }
+    if (this.pageList[0].fullPath !== '/dashboard/workplace') {
+      this.pageList = [this.pageList.filter(item => item.fullPath === '/dashboard/workplace')[0], ...this.pageList.filter(item => item.fullPath !== '/dashboard/workplace')]
+    }
     this.activePage = route.path
     if (this.multiPage) {
       this.$nextTick(() => {
@@ -260,6 +266,15 @@ export default {
     unloadListener() {
       const tabs = this.pageList.map(item => ({ ...item, _init_: false }))
       sessionStorage.setItem(process.env.VUE_APP_TBAS_KEY, JSON.stringify(tabs))
+    },
+    createFixPage() {
+      return {
+        keyPath: '/dashboard/workplace',
+        fullPath: '/dashboard/workplace',
+        loading: false,
+        path: '/dashboard/workplace',
+        unclose: true
+      }
     },
     createPage(route) {
       return {

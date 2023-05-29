@@ -11,11 +11,12 @@
         <a-descriptions-item label="品牌" :span="2">{{ formData.brandName }}</a-descriptions-item>
         <a-descriptions-item label="规格" :span="2">{{ formData.spec }}</a-descriptions-item>
         <a-descriptions-item label="单位" :span="2">{{ formData.unit }}</a-descriptions-item>
-        <a-descriptions-item label="进项税率（%）" :span="2">{{ formData.taxRate }}</a-descriptions-item>
-        <a-descriptions-item label="销项税率（%）" :span="2">{{ formData.saleTaxRate }}</a-descriptions-item>
-        <a-descriptions-item label="采购价（元）" :span="2">{{ formData.purchasePrice }}</a-descriptions-item>
+        <a-descriptions-item label="进项税率（%）" :span="2">{{ $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.taxRate : '-' }}</a-descriptions-item>
+        <a-descriptions-item label="销项税率（%）" :span="2">{{ $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.saleTaxRate : '-' }}</a-descriptions-item>
+        <a-descriptions-item label="采购价（元）" :span="2">{{ $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.purchasePrice : '-' }}</a-descriptions-item>
         <a-descriptions-item label="销售价（元）" :span="2">{{ formData.salePrice }}</a-descriptions-item>
         <a-descriptions-item label="零售价（元）" :span="2">{{ formData.retailPrice }}</a-descriptions-item>
+        <a-descriptions-item label="商品类型" :span="4">{{ $enums.PRODUCT_TYPE.getDesc(formData.productType) }}</a-descriptions-item>
         <a-descriptions-item label="状态" :span="4"><available-tag :available="formData.available" /></a-descriptions-item>
         <a-descriptions-item v-for="item in formData.properties" :key="item.id" :label="item.name" :span="4">
           {{ item.textStr }}

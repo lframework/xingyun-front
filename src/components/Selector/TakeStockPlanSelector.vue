@@ -33,73 +33,39 @@
       @clear="e => $emit('clear', e)"
     >
       <template v-slot:form>
-        <div>
-          <a-form-model>
-            <div>
-              <a-row>
-                <a-col v-if="$utils.isEmpty(requestParams.code)" :md="8" :sm="24">
-                  <a-form-model-item
-                    label="单据号"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <a-input v-model="searchParams.code" />
-                  </a-form-model-item>
-                </a-col>
-                <a-col v-if="$utils.isEmpty(requestParams.scId)" :md="8" :sm="24">
-                  <a-form-model-item
-                    label="仓库"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <store-center-selector
-                      v-model="searchParams.scId"
-                    />
-                  </a-form-model-item>
-                </a-col>
-                <a-col v-if="$utils.isEmpty(requestParams.takeType)" :md="8" :sm="24">
-                  <a-form-model-item
-                    label="盘点类别"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <a-select v-model="searchParams.takeType" placeholder="全部" allow-clear>
-                      <a-select-option v-for="item in $enums.TAKE_STOCK_PLAN_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-                    </a-select>
-                  </a-form-model-item>
-                </a-col>
-                <a-col v-if="$utils.isEmpty(requestParams.takeStatus) && !requestParams.taking" :md="8" :sm="24">
-                  <a-form-model-item
-                    label="盘点状态"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <a-select v-model="searchParams.takeStatus" placeholder="全部" allow-clear>
-                      <a-select-option v-for="item in $enums.TAKE_STOCK_PLAN_STATUS.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-                    </a-select>
-                  </a-form-model-item>
-                </a-col>
-                <a-col :md="8" :sm="24">
-                  <a-form-model-item
-                    label="创建日期"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <div class="date-range-container">
-                      <a-date-picker v-model="searchParams.createTimeStart" placeholder="" value-format="YYYY-MM-DD 00:00:00" />
-                      <span class="date-split">至</span>
-                      <a-date-picker
-                        v-model="searchParams.createTimeEnd"
-                        placeholder=""
-                        value-format="YYYY-MM-DD 23:59:59"
-                      />
-                    </div>
-                  </a-form-model-item>
-                </a-col>
-              </a-row>
-            </div>
-          </a-form-model>
-        </div>
+        <j-border>
+          <j-form>
+            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="单据号">
+              <a-input v-model="searchParams.code" />
+            </j-form-item>
+            <j-form-item v-if="$utils.isEmpty(requestParams.scId)" label="仓库">
+              <store-center-selector
+                v-model="searchParams.scId"
+              />
+            </j-form-item>
+            <j-form-item v-if="$utils.isEmpty(requestParams.takeType)" label="盘点类别">
+              <a-select v-model="searchParams.takeType" placeholder="全部" allow-clear>
+                <a-select-option v-for="item in $enums.TAKE_STOCK_PLAN_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
+            </j-form-item>
+            <j-form-item v-if="$utils.isEmpty(requestParams.takeStatus) && !requestParams.taking" label="盘点状态">
+              <a-select v-model="searchParams.takeStatus" placeholder="全部" allow-clear>
+                <a-select-option v-for="item in $enums.TAKE_STOCK_PLAN_STATUS.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
+            </j-form-item>
+            <j-form-item label="创建日期" :content-nest="false">
+              <div class="date-range-container">
+                <a-date-picker v-model="searchParams.createTimeStart" placeholder="" value-format="YYYY-MM-DD 00:00:00" />
+                <span class="date-split">至</span>
+                <a-date-picker
+                  v-model="searchParams.createTimeEnd"
+                  placeholder=""
+                  value-format="YYYY-MM-DD 23:59:59"
+                />
+              </div>
+            </j-form-item>
+          </j-form>
+        </j-border>
       </template>
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>

@@ -38,6 +38,11 @@
               <j-form-item label="品牌">
                 <product-brand-selector v-model="searchFormData.brandId" />
               </j-form-item>
+              <j-form-item label="商品类型">
+                <a-select v-model="searchFormData.productType" placeholder="全部" allow-clear>
+                  <a-select-option v-for="item in $enums.PRODUCT_TYPE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                </a-select>
+              </j-form-item>
               <j-form-item label="创建日期" :content-nest="false">
                 <div class="date-range-container">
                   <a-date-picker v-model="searchFormData.startTime" placeholder="" value-format="YYYY-MM-DD 00:00:00" />
@@ -132,6 +137,7 @@ export default {
         { field: 'skuCode', title: 'SKU编号', width: 120 },
         { field: 'categoryName', title: '类目', width: 120 },
         { field: 'brandName', title: '品牌', width: 120 },
+        { field: 'productType', title: '商品类型', width: 120, formatter: ({ cellValue }) => { return this.$enums.PRODUCT_TYPE.getDesc(cellValue) } },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'createTime', title: '创建时间', width: 170 },
         { field: 'updateTime', title: '修改时间', width: 170 },

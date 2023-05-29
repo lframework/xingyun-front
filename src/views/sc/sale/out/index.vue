@@ -264,9 +264,9 @@ export default {
     },
     openModifyDialog(row) {
       if (!this.$utils.isEmpty(row.saleOrderId)) {
-        this.$router.push('sale/out/modify/require/' + row.id)
+        this.$router.push('/sale/out/modify/require/' + row.id)
       } else {
-        this.$router.push('sale/out/modify/un-require/' + row.id)
+        this.$router.push('/sale/out/modify/un-require/' + row.id)
       }
     },
     // 删除订单

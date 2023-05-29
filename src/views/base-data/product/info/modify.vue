@@ -2,7 +2,7 @@
   <div class="app-container simple-app-container">
     <div v-loading="loading" v-permission="['base-data:product:info:modify']">
       <a-form-model ref="form" :label-col="{span: 6}" :wrapper-col="{span: 14}" :model="formData" :rules="rules">
-        <a-row>
+        <a-row v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType) || $enums.PRODUCT_TYPE.BUNDLE.equalsCode(productType)">
           <a-col :md="8" :sm="24">
             <a-form-model-item label="编号" prop="code">
               <a-input v-model="formData.code" allow-clear />
@@ -48,17 +48,17 @@
               <a-input v-model="formData.unit" allow-clear />
             </a-form-model-item>
           </a-col>
-          <a-col :md="8" :sm="24">
+          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-model-item label="进项税率（%）" prop="taxRate">
               <a-input v-model="formData.taxRate" allow-clear />
             </a-form-model-item>
           </a-col>
-          <a-col :md="8" :sm="24">
+          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-model-item label="销项税率（%）" prop="saleTaxRate">
               <a-input v-model="formData.saleTaxRate" allow-clear />
             </a-form-model-item>
           </a-col>
-          <a-col :md="8" :sm="24">
+          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-model-item label="采购价（元）" prop="purchasePrice">
               <a-input v-model="formData.purchasePrice" allow-clear />
             </a-form-model-item>
@@ -79,6 +79,88 @@
                 <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
               </a-select>
             </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row v-if="$enums.PRODUCT_TYPE.BUNDLE.equalsCode(productType)">
+          <a-col :span="24">
+            <vxe-grid
+              ref="grid"
+              resizable
+              show-overflow
+              highlight-hover-row
+              keep-source
+              row-id="id"
+              height="500"
+              :data="productBundles"
+              :columns="[
+                { type: 'checkbox', width: 40 },
+                { field: 'product', title: '单品', minWidth: 260, slots: { default: 'product_default' }},
+                { field: 'bundle_num', title: '包含数量', width: 200, align: 'right', slots: { default: 'bundleNum_default', header: 'bundleNum_header' }},
+                { field: 'salePrice', title: '销售价（元）', width: 200, align: 'right', slots: { default: 'salePrice_default', header: 'salePrice_header' }},
+                { field: 'retailPrice', title: '零售价（元）', width: 200, align: 'right', slots: { default: 'retailPrice_default', header: 'retailPrice_header' }}
+              ]"
+              :toolbar-config="{
+                // 缩放
+                zoom: false,
+                // 自定义表头
+                custom: false,
+                // 右侧是否显示刷新按钮
+                refresh: false,
+                // 自定义左侧工具栏
+                slots: {
+                  buttons: 'toolbar_buttons'
+                }
+              }"
+            >
+              <!-- 工具栏 -->
+              <template v-slot:toolbar_buttons>
+                <a-space>
+                  <a-button type="primary" icon="plus" @click="addRow">新增</a-button>
+                  <a-button type="danger" icon="delete" @click="delRow">删除</a-button>
+                </a-space>
+              </template>
+
+              <!-- 商品 列自定义内容 -->
+              <template v-slot:product_default="{ row }">
+                <product-selector v-model="row.productId" :request-params="{productType: $enums.PRODUCT_TYPE.NORMAL.code}" />
+              </template>
+
+              <!-- 包含数量 列自定义表头 -->
+              <template v-slot:bundleNum_header>
+                <a-space>
+                  <span>包含数量</span><a-tooltip title="表示一个组合商品中包含的单品数量"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </template>
+
+              <!-- 包含数量 列自定义内容 -->
+              <template v-slot:bundleNum_default="{ row }">
+                <a-input v-model="row.bundleNum" class="number-input" />
+              </template>
+
+              <!-- 销售价 列自定义表头 -->
+              <template v-slot:salePrice_header>
+                <a-space>
+                  <span>销售价（元）</span><a-tooltip title="表示一个组合商品销售后的单品的销售价，此处的计算公式：每行单品的【包含数量】乘以【销售价】的总和 等于【组合商品的销售价】"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </template>
+
+              <!-- 销售价 列自定义内容 -->
+              <template v-slot:salePrice_default="{ row }">
+                <a-input v-model="row.salePrice" class="number-input" />
+              </template>
+
+              <!-- 零售价 列自定义表头 -->
+              <template v-slot:retailPrice_header>
+                <a-space>
+                  <span>零售价（元）</span><a-tooltip title="表示一个组合商品零售后的单品的零售价，此处的计算公式：每行单品的【包含数量】乘以【零售价】的总和 等于【组合商品的零售价】"><a-icon type="question-circle" /></a-tooltip>
+                </a-space>
+              </template>
+
+              <!-- 零售价 列自定义内容 -->
+              <template v-slot:retailPrice_default="{ row }">
+                <a-input v-model="row.retailPrice" class="number-input" />
+              </template>
+            </vxe-grid>
           </a-col>
         </a-row>
         <a-row>
@@ -128,11 +210,12 @@
 import { validCode } from '@/utils/validate'
 import ProductBrandSelector from '@/components/Selector/ProductBrandSelector'
 import ProductCategorySelector from '@/components/Selector/ProductCategorySelector'
+import ProductSelector from '@/components/Selector/ProductSelector'
 
 export default {
   // 使用组件
   components: {
-    ProductBrandSelector, ProductCategorySelector
+    ProductBrandSelector, ProductCategorySelector, ProductSelector
   },
 
   props: {
@@ -144,6 +227,8 @@ export default {
       loading: false,
       // 表单数据
       formData: {},
+      productType: undefined,
+      productBundles: [],
       modelorList: [],
       // 表单校验规则
       rules: {
@@ -290,6 +375,83 @@ export default {
       if (!valid) {
         return
       }
+      if (this.$enums.PRODUCT_TYPE.BUNDLE.equalsCode(this.productType)) {
+        // 如果是组合商品
+        if (this.$utils.isEmpty(this.productBundles)) {
+          this.$msg.error('组合商品必须包含单品数据！')
+          return
+        }
+
+        let salePrice = 0
+        let retailPrice = 0
+        for (let i = 0; i < this.productBundles.length; i++) {
+          const bundleProduct = this.productBundles[i]
+          if (this.$utils.isEmpty(bundleProduct.productId)) {
+            this.$msg.error('第' + (i + 1) + '行单品不能为空！')
+            return
+          }
+
+          if (this.$utils.isEmpty(bundleProduct.bundleNum)) {
+            this.$msg.error('第' + (i + 1) + '行单品包含数量不能为空！')
+            return
+          }
+          if (!this.$utils.isInteger(bundleProduct.bundleNum)) {
+            this.$msg.error('第' + (i + 1) + '行单品包含数量必须为整数！')
+            return
+          }
+          if (!this.$utils.isIntegerGtZero(bundleProduct.bundleNum)) {
+            this.$msg.error('第' + (i + 1) + '行单品包含数量必须大于0！')
+            return
+          }
+
+          if (this.$utils.isEmpty(bundleProduct.salePrice)) {
+            this.$msg.error('第' + (i + 1) + '行单品销售价（元）不能为空！')
+            return
+          }
+          if (!this.$utils.isFloat(bundleProduct.salePrice)) {
+            this.$msg.error('第' + (i + 1) + '行单品销售价（元）必须为数字！')
+            return
+          }
+          if (!this.$utils.isFloatGtZero(bundleProduct.salePrice)) {
+            this.$msg.error('第' + (i + 1) + '行单品销售价（元）必须大于0！')
+            return
+          }
+          if (!this.$utils.isNumberPrecision(bundleProduct.salePrice, 2)) {
+            this.$msg.error('第' + (i + 1) + '行单品销售价（元）最多允许2位小数！')
+            return
+          }
+
+          if (this.$utils.isEmpty(bundleProduct.retailPrice)) {
+            this.$msg.error('第' + (i + 1) + '行单品零售价（元）不能为空！')
+            return
+          }
+          if (!this.$utils.isFloat(bundleProduct.retailPrice)) {
+            this.$msg.error('第' + (i + 1) + '行单品零售价（元）必须为数字！')
+            return
+          }
+          if (!this.$utils.isFloatGtZero(bundleProduct.retailPrice)) {
+            this.$msg.error('第' + (i + 1) + '行单品零售价（元）必须大于0！')
+            return
+          }
+          if (!this.$utils.isNumberPrecision(bundleProduct.retailPrice, 2)) {
+            this.$msg.error('第' + (i + 1) + '行单品零售价（元）最多允许2位小数！')
+            return
+          }
+
+          salePrice = this.$utils.add(salePrice, this.$utils.mul(bundleProduct.bundleNum, bundleProduct.salePrice))
+          retailPrice = this.$utils.add(retailPrice, this.$utils.mul(bundleProduct.bundleNum, bundleProduct.retailPrice))
+        }
+
+        if (!this.$utils.eq(salePrice, this.formData.salePrice)) {
+          this.$msg.error('当前所有单品的【包含数量】乘以【销售价（元）】的总和为' + salePrice + '元，组合商品的销售价为' + this.formData.salePrice + '元，两个值不相等，请调整！')
+          return
+        }
+
+        if (!this.$utils.eq(retailPrice, this.formData.retailPrice)) {
+          this.$msg.error('当前所有单品的【包含数量】乘以【零售价（元）】的总和为' + retailPrice + '元，组合商品的零售价为' + this.formData.retailPrice + '元，两个值不相等，请调整！')
+          return
+        }
+      }
       if (!this.$utils.isEmpty(this.modelorList)) {
         this.modelorList.filter(item => item.isRequired).every(item => {
           if (that.$utils.isEmpty(item.text)) {
@@ -314,7 +476,8 @@ export default {
       })
 
       const params = Object.assign({}, this.formData, {
-        properties: properties
+        properties: properties,
+        productBundles: this.productBundles
       })
       this.loading = true
       this.$api.baseData.product.info.modify(params).then(() => {
@@ -330,6 +493,8 @@ export default {
       this.$api.baseData.product.info.get(this.id).then(data => {
         this.formData = Object.assign({}, data)
         this.selectCategory(this.formData.categoryId, this.formData)
+        this.productType = this.formData.productType
+        this.productBundles = data.productBundles
       }).finally(() => {
         this.loading = false
       })
@@ -360,6 +525,29 @@ export default {
           this.modelorList = modelorList
         })
       }
+    },
+    addRow() {
+      this.productBundles.push(this.emptyProduct())
+    },
+    emptyProduct() {
+      return {
+        id: this.$utils.uuid(),
+        productId: ''
+      }
+    },
+    delRow() {
+      const records = this.$refs.grid.getCheckboxRecords()
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择要删除的商品数据！')
+        return
+      }
+
+      this.$msg.confirm('是否确定删除选中的商品？').then(() => {
+        this.productBundles = this.productBundles.filter(t => {
+          const tmp = records.filter(item => item.id === t.id)
+          return this.$utils.isEmpty(tmp)
+        })
+      })
     }
   }
 }

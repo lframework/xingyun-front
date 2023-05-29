@@ -23,43 +23,21 @@
     >
       <template v-slot:form>
         <!-- 查询条件 -->
-        <div>
-          <a-form-model>
-            <div>
-              <a-row>
-                <a-col v-if="$utils.isEmpty(requestParams.tenantId)" :md="8" :sm="24">
-                  <a-form-model-item
-                    label="租户ID"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <a-input v-model="searchParams.tenantId" />
-                  </a-form-model-item>
-                </a-col>
-                <a-col v-if="$utils.isEmpty(requestParams.name)" :md="8" :sm="24">
-                  <a-form-model-item
-                    label="名称"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <a-input v-model="searchParams.name" />
-                  </a-form-model-item>
-                </a-col>
-                <a-col v-if="$utils.isEmpty(requestParams.available)" :md="8" :sm="24">
-                  <a-form-model-item
-                    label="状态"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <a-select v-model="searchParams.available" placeholder="全部" allow-clear>
-                      <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-                    </a-select>
-                  </a-form-model-item>
-                </a-col>
-              </a-row>
-            </div>
-          </a-form-model>
-        </div>
+        <j-border>
+          <j-form>
+            <j-form-item v-if="$utils.isEmpty(requestParams.tenantId)" label="租户ID">
+              <a-input v-model="searchParams.tenantId" />
+            </j-form-item>
+            <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="名称">
+              <a-input v-model="searchParams.name" />
+            </j-form-item>
+            <j-form-item v-if="$utils.isEmpty(requestParams.available)" label="状态">
+              <a-select v-model="searchParams.available" placeholder="全部" allow-clear>
+                <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+              </a-select>
+            </j-form-item>
+          </j-form>
+        </j-border>
       </template>
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>

@@ -29,23 +29,13 @@
     >
       <template v-slot:form>
         <!-- 查询条件 -->
-        <div>
-          <a-form-model>
-            <div>
-              <a-row>
-                <a-col v-if="$utils.isEmpty(requestParams.name)" :md="8" :sm="24">
-                  <a-form-model-item
-                    label="表名"
-                    :label-col="{span: 4, offset: 1}"
-                    :wrapper-col="{span: 18, offset: 1}"
-                  >
-                    <a-input v-model="searchParams.name" />
-                  </a-form-model-item>
-                </a-col>
-              </a-row>
-            </div>
-          </a-form-model>
-        </div>
+        <j-border>
+          <j-form>
+            <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="表名">
+              <a-input v-model="searchParams.name" />
+            </j-form-item>
+          </j-form>
+        </j-border>
       </template>
       <!-- 工具栏 -->
       <template v-slot:toolbar_buttons>
