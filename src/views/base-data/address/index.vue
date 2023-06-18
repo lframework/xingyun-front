@@ -53,6 +53,8 @@
         <a-space>
           <a-button type="primary" icon="search" @click="search">查询</a-button>
           <a-button v-permission="['base-data:address:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-button v-permission="['base-data:address:import']" icon="cloud-upload" @click="$refs.importer.openDialog()">导入Excel</a-button>
+          <a-button v-permission="['base-data:address:export']" icon="download" @click="exportList">导出</a-button>
         </a-space>
       </template>
 
@@ -77,7 +79,7 @@
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
 
-    <product-brand-importer ref="importer" @confirm="search" />
+    <address-importer ref="importer" @confirm="search" />
   </div>
 </template>
 
@@ -86,12 +88,12 @@ import AvailableTag from '@/components/Tag/Available'
 import Add from './add'
 import Modify from './modify'
 import Detail from './detail'
-import ProductBrandImporter from '@/components/Importer/ProductBrandImporter'
+import AddressImporter from '@/components/Importer/AddressImporter'
 
 export default {
   name: 'Address',
   components: {
-    Add, Modify, Detail, AvailableTag, ProductBrandImporter
+    Add, Modify, Detail, AvailableTag, AddressImporter
   },
   data() {
     return {
@@ -159,6 +161,14 @@ export default {
     // 查询前构建具体的查询参数
     buildSearchFormData() {
       return Object.assign({ }, this.searchFormData)
+    },
+    exportList() {
+      this.loading = true
+      this.$api.baseData.address.exportList(this.buildQueryParams({})).then(() => {
+        this.$msg.successTip('导出成功！')
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }

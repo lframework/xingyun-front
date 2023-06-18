@@ -505,7 +505,7 @@ export default {
         }
       }
 
-      if (this.tableData.filter(item => item.isFixed && this.$utils.isIntegerGtZero(item.outNum)).length === 0) {
+      if (this.tableData.filter(item => this.$utils.isIntegerGtZero(item.outNum)).length === 0) {
         this.$msg.error('销售订单中的商品必须全部或部分出库！')
         return false
       }

@@ -1,9 +1,9 @@
 <template>
-  <div v-permission="['system.tenant:query']" class="app-container">
+  <div v-permission="['base-data:logistics-company:query']" class="app-container">
 
     <!-- 数据列表 -->
     <vxe-grid
-      id="SysTenant"
+      id="LogisticsCompany"
       ref="grid"
       resizable
       show-overflow
@@ -20,8 +20,8 @@
       <template v-slot:form>
         <j-border>
           <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
-            <j-form-item label="租户ID">
-              <a-input v-model="searchFormData.tenantId" allow-clear />
+            <j-form-item label="编号">
+              <a-input v-model="searchFormData.code" allow-clear />
             </j-form-item>
             <j-form-item label="名称">
               <a-input v-model="searchFormData.name" allow-clear />
@@ -38,7 +38,18 @@
       <template v-slot:toolbar_buttons>
         <a-space>
           <a-button type="primary" icon="search" @click="search">查询</a-button>
-          <a-button v-permission="['system.tenant:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-button v-permission="['base-data:logistics-company:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-dropdown v-permission="['base-data:logistics-company:modify']">
+            <a-menu slot="overlay" @click="handleCommand">
+              <a-menu-item key="batchEnable">
+                <a-icon type="check" />批量启用
+              </a-menu-item>
+              <a-menu-item key="batchUnable">
+                <a-icon type="stop" />批量停用
+              </a-menu-item>
+            </a-menu>
+            <a-button>更多<a-icon type="down" /></a-button>
+          </a-dropdown>
         </a-space>
       </template>
 
@@ -49,9 +60,8 @@
 
       <!-- 操作 列自定义内容 -->
       <template v-slot:action_default="{ row }">
-        <a-button v-permission="['system.tenant:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-        <a-button v-permission="['system.tenant:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
-        <a-button v-permission="['system.tenant:module']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.setModuleDialog.openDialog()) }">授权</a-button>
+        <a-button v-permission="['base-data:logistics-company:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
+        <a-button v-permission="['base-data:logistics-company:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
       </template>
     </vxe-grid>
 
@@ -63,9 +73,6 @@
 
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
-
-    <!-- 授权窗口 -->
-    <set-module :id="id" ref="setModuleDialog" @confirm="search" />
   </div>
 </template>
 
@@ -74,22 +81,20 @@ import AvailableTag from '@/components/Tag/Available'
 import Add from './add'
 import Modify from './modify'
 import Detail from './detail'
-import SetModule from './set-module'
-
 export default {
-  name: 'SysTenant',
+  name: 'LogisticsCompany',
   components: {
-    Add, Modify, Detail, AvailableTag, SetModule
+    Add, Modify, Detail, AvailableTag
   },
   data() {
     return {
       loading: false,
       // 当前行数据
       id: '',
+      ids: [],
       // 查询列表的查询条件
       searchFormData: {
-        deptId: '',
-        available: true
+        available: this.$enums.AVAILABLE.ENABLE.code
       },
       // 工具栏配置
       toolbarConfig: {
@@ -101,11 +106,15 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'checkbox', width: 40 },
-        { field: 'id', title: '租户ID', width: 100 },
+        { field: 'code', title: '编号', width: 100 },
         { field: 'name', title: '名称', minWidth: 180 },
-        { field: 'jdbcUrl', title: 'JDBC Url', minWidth: 260 },
+        { field: 'description', title: '备注', minWidth: 200 },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
-        { title: '操作', width: 160, fixed: 'right', slots: { default: 'action_default' }}
+        { field: 'createBy', title: '创建人', width: 100 },
+        { field: 'createTime', title: '创建时间', width: 170 },
+        { field: 'updateBy', title: '修改人', width: 100 },
+        { field: 'updateTime', title: '修改时间', width: 170 },
+        { title: '操作', width: 120, fixed: 'right', slots: { default: 'action_default' }}
       ],
       // 请求接口配置
       proxyConfig: {
@@ -118,7 +127,7 @@ export default {
         ajax: {
           // 查询接口
           query: ({ page, sorts, filters }) => {
-            return this.$api.system.tenant.query(this.buildQueryParams(page))
+            return this.$api.baseData.logisticsCompany.query(this.buildQueryParams(page))
           }
         }
       }
@@ -141,6 +150,53 @@ export default {
     // 查询前构建具体的查询参数
     buildSearchFormData() {
       return Object.assign({ }, this.searchFormData)
+    },
+    handleCommand({ key }) {
+      if (key === 'batchEnable') {
+        this.batchEnable()
+      } else if (key === 'batchUnable') {
+        this.batchUnable()
+      }
+    },
+    // 批量停用
+    batchUnable() {
+      const records = this.$refs.grid.getCheckboxRecords()
+
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择要停用的物流公司！')
+        return
+      }
+
+      this.$msg.confirm('是否确定停用选择的物流公司？').then(() => {
+        this.loading = true
+        const ids = records.map(t => t.id)
+        this.$api.baseData.logisticsCompany.batchUnable(ids).then(data => {
+          this.$msg.success('停用成功！')
+          this.search()
+        }).finally(() => {
+          this.loading = false
+        })
+      })
+    },
+    // 批量启用
+    batchEnable() {
+      const records = this.$refs.grid.getCheckboxRecords()
+
+      if (this.$utils.isEmpty(records)) {
+        this.$msg.error('请选择要启用的物流公司！')
+        return
+      }
+
+      this.$msg.confirm('是否确定启用选择的物流公司？').then(() => {
+        this.loading = true
+        const ids = records.map(t => t.id)
+        this.$api.baseData.logisticsCompany.batchEnable(ids).then(data => {
+          this.$msg.success('启用成功！')
+          this.search()
+        }).finally(() => {
+          this.loading = false
+        })
+      })
     }
   }
 }

@@ -23,9 +23,10 @@ export default {
     ])
   },
   created() {
-    if (!this.$store.getters['account/roles'].includes('admin')) {
+    // 去掉这个判断，所有的权限都会显示adminDashboard，如果需要根据不同的权限展示不同的页面，再自行修改
+    /* if (!this.$store.getters['account/roles'].includes('admin')) {
       this.currentRole = 'editorDashboard'
-    }
+    } */
   }
 }
 </script>

@@ -736,6 +736,24 @@ const routesConfig = [
               invisible: true
             },
             component: () => import('@/views/sc/stock/transfer/receive')
+          },
+          {
+            path: 'logistics/sheet/add',
+            name: '新增物流单',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/logistics/sheet/add')
+          },
+          {
+            path: 'logistics/sheet/modify/:id',
+            name: '修改物流单',
+            meta: {
+              sync: true,
+              invisible: true
+            },
+            component: () => import('@/views/sc/logistics/sheet/modify')
           }
         ]
       }

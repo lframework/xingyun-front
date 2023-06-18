@@ -49,6 +49,16 @@
             </a-form-model-item>
           </a-col>
           <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+            <a-form-model-item label="重量（kg）" prop="weight">
+              <a-input v-model="formData.weight" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+            <a-form-model-item label="体积（cm³）" prop="volume">
+              <a-input v-model="formData.volume" allow-clear />
+            </a-form-model-item>
+          </a-col>
+          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-model-item label="进项税率（%）" prop="taxRate">
               <a-input v-model="formData.taxRate" allow-clear />
             </a-form-model-item>
@@ -247,6 +257,44 @@ export default {
         ],
         brandId: [
           { required: true, message: '请选择品牌' }
+        ],
+        weight: [
+          {
+            validator: (rule, value, callback) => {
+              if (!this.$utils.isEmpty(value)) {
+                if (!this.$utils.isFloat(value)) {
+                  return callback(new Error('重量（kg）必须为数字'))
+                }
+                if (!this.$utils.isFloatGeZero(value)) {
+                  return callback(new Error('重量（kg）不允许小于0'))
+                }
+                if (!this.$utils.isNumberPrecision(value, 2)) {
+                  return callback(new Error('重量（kg）最多允许2位小数'))
+                }
+              }
+
+              callback()
+            }
+          }
+        ],
+        volume: [
+          {
+            validator: (rule, value, callback) => {
+              if (!this.$utils.isEmpty(value)) {
+                if (!this.$utils.isFloat(value)) {
+                  return callback(new Error('体积（cm³）必须为数字'))
+                }
+                if (!this.$utils.isFloatGeZero(value)) {
+                  return callback(new Error('体积（cm³）不允许小于0'))
+                }
+                if (!this.$utils.isNumberPrecision(value, 2)) {
+                  return callback(new Error('体积（cm³）最多允许2位小数'))
+                }
+              }
+
+              callback()
+            }
+          }
         ],
         taxRate: [
           { required: true, message: '请输入进项税率（%）' },

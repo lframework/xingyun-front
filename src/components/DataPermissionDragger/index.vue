@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="80%" title="设置数据权限" :dialog-style="{ top: '20px' }" :footer="null">
+  <a-modal v-model="visible" v-loading="loading" :mask-closable="false" width="80%" title="设置数据权限" :dialog-style="{ top: '20px' }" :footer="null">
     <a-row>
       <a-col :span="8">
         <div class="panel-wrapper">
@@ -67,6 +67,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       visible: false,
       calcTypes: [{
         id: -1,

@@ -29,6 +29,12 @@
                   <a-select-option :value="false">否</a-select-option>
                 </a-select>
               </a-form-model-item>
+              <a-form-model-item label="销售出库单是否关联物流单" prop="outStockRequireLogistics">
+                <a-select v-model="formData.outStockRequireLogistics" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
             </a-form-model>
             <div class="form-modal-footer">
               <a-space>
@@ -71,6 +77,9 @@ export default {
         ],
         saleReturnMultipleRelateOutStock: [
           { required: true, message: '请选择销售退货单是否多次关联销售出库单' }
+        ],
+        outStockRequireLogistics: [
+          { required: true, message: '请选择销售出库单是否关联物流单' }
         ]
       }
     }
@@ -88,7 +97,8 @@ export default {
         outStockRequireSale: '',
         outStockMultipleRelateSale: '',
         saleReturnRequireOutStock: '',
-        saleReturnMultipleRelateOutStock: ''
+        saleReturnMultipleRelateOutStock: '',
+        outStockRequireLogistics: ''
       }
     },
     // 查询数据

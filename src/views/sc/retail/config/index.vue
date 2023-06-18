@@ -29,6 +29,12 @@
                   <a-select-option :value="false">否</a-select-option>
                 </a-select>
               </a-form-model-item>
+              <a-form-model-item label="零售出库单是否需要发货" prop="retailOutSheetRequireLogistics">
+                <a-select v-model="formData.retailOutSheetRequireLogistics" placeholder="">
+                  <a-select-option :value="true">是</a-select-option>
+                  <a-select-option :value="false">否</a-select-option>
+                </a-select>
+              </a-form-model-item>
             </a-form-model>
             <div class="form-modal-footer">
               <a-space>
@@ -71,6 +77,9 @@ export default {
         ],
         retailReturnMultipleRelateOutStock: [
           { required: true, message: '请选择零售退货单是否多次关联零售出库单' }
+        ],
+        retailOutSheetRequireLogistics: [
+          { required: true, message: '请选择零售出库单是否需要发货' }
         ]
       }
     }
@@ -88,7 +97,8 @@ export default {
         retailOutSheetRequireMember: '',
         retailReturnRequireMember: '',
         retailReturnRequireOutStock: '',
-        retailReturnMultipleRelateOutStock: ''
+        retailReturnMultipleRelateOutStock: '',
+        retailOutSheetRequireLogistics: ''
       }
     },
     // 查询数据

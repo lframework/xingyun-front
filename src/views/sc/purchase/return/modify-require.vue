@@ -557,7 +557,7 @@ export default {
         }
       }
 
-      if (this.tableData.filter(item => item.isFixed && this.$utils.isIntegerGtZero(item.returnNum)).length === 0) {
+      if (this.tableData.filter(item => this.$utils.isIntegerGtZero(item.returnNum)).length === 0) {
         this.$msg.error('采购收货单中的商品必须全部或部分退货！')
         return false
       }

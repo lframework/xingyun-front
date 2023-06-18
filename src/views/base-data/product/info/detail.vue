@@ -11,6 +11,8 @@
         <a-descriptions-item label="品牌" :span="2">{{ formData.brandName }}</a-descriptions-item>
         <a-descriptions-item label="规格" :span="2">{{ formData.spec }}</a-descriptions-item>
         <a-descriptions-item label="单位" :span="2">{{ formData.unit }}</a-descriptions-item>
+        <a-descriptions-item label="重量（kg）" :span="2">{{ $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.weight : '-' }}</a-descriptions-item>
+        <a-descriptions-item label="体积（cm³）" :span="2">{{ $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.volume : '-' }}</a-descriptions-item>
         <a-descriptions-item label="进项税率（%）" :span="2">{{ $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.taxRate : '-' }}</a-descriptions-item>
         <a-descriptions-item label="销项税率（%）" :span="2">{{ $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.saleTaxRate : '-' }}</a-descriptions-item>
         <a-descriptions-item label="采购价（元）" :span="2">{{ $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.purchasePrice : '-' }}</a-descriptions-item>

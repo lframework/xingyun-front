@@ -8,7 +8,7 @@ export default {
    */
   query: (params) => {
     return request({
-      url: '/basedata/address/query',
+      url: '/basedata/logistics/company/query',
       region: 'basedata-api',
       method: 'get',
       params: params
@@ -21,7 +21,7 @@ export default {
    */
   get: (id) => {
     return request({
-      url: '/basedata/address',
+      url: '/basedata/logistics/company',
       region: 'basedata-api',
       method: 'get',
       params: {
@@ -36,7 +36,7 @@ export default {
    */
   create: (params) => {
     return request({
-      url: '/basedata/address',
+      url: '/basedata/logistics/company',
       region: 'basedata-api',
       method: 'post',
       data: params
@@ -49,7 +49,7 @@ export default {
    */
   modify: (params) => {
     return request({
-      url: '/basedata/address',
+      url: '/basedata/logistics/company',
       region: 'basedata-api',
       method: 'put',
       data: params
@@ -62,7 +62,7 @@ export default {
    */
   batchEnable: (ids) => {
     return request({
-      url: '/basedata/address/enable/batch',
+      url: '/basedata/logistics/company/enable/batch',
       region: 'basedata-api',
       method: 'patch',
       dataType: 'json',
@@ -76,37 +76,11 @@ export default {
    */
   batchUnable: (ids) => {
     return request({
-      url: '/basedata/address/unable/batch',
+      url: '/basedata/logistics/company/unable/batch',
       region: 'basedata-api',
       method: 'patch',
       dataType: 'json',
       data: ids
-    })
-  },
-  /**
-   * 选择器
-   * @param params
-   * @returns {*}
-   */
-  selector: (params) => {
-    return request({
-      url: '/selector/address',
-      region: 'common-api',
-      method: 'get',
-      params: params
-    })
-  },
-  /**
-   * 导出列表
-   * @param params
-   */
-  exportList: (params) => {
-    return request({
-      url: '/basedata/address/export',
-      region: 'basedata-api',
-      method: 'post',
-      responseType: 'blob',
-      data: params
     })
   }
 }
