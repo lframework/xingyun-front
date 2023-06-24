@@ -874,6 +874,11 @@ utils.buildMenus = function(oriMenus = []) {
             customFormId: menu.component,
             requestParam: this.isEmpty(menu.requestParam) ? {} : JSON.parse(menu.requestParam)
           }
+        } else if ($enums.MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(menu.componentType)) {
+          obj.component = (resolve) => require([`@/components/CustomPage`], resolve)
+          obj.props = {
+            pageId: menu.component
+          }
         }
       }
     }

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <custom-page :page-id="3" />
     <div v-show="visible" class="app-container">
       <a-row>
         <a-col :span="4" :style="{height: $defaultTableHeight + 'px'}">
@@ -9,7 +8,7 @@
         <a-col :span="20">
           <!-- 数据列表 -->
           <vxe-grid
-            id="CustomForm"
+            id="CustomPage"
             ref="grid"
             resizable
             show-overflow
@@ -26,13 +25,11 @@
             <template v-slot:form>
               <j-border>
                 <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
+                  <j-form-item label="页面ID" :span="6">
+                    <a-input v-model="searchFormData.id" allow-clear />
+                  </j-form-item>
                   <j-form-item label="名称" :span="6">
                     <a-input v-model="searchFormData.name" allow-clear />
-                  </j-form-item>
-                  <j-form-item label="状态" :span="6">
-                    <a-select v-model="searchFormData.available" placeholder="全部" allow-clear>
-                      <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-                    </a-select>
                   </j-form-item>
                 </j-form>
               </j-border>
@@ -43,23 +40,7 @@
                 <a-button type="primary" icon="search" @click="search">查询</a-button>
                 <a-button type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
                 <a-button type="danger" icon="delete" @click="batchDelete">批量删除</a-button>
-                <a-dropdown>
-                  <a-menu slot="overlay" @click="handleCommand">
-                    <a-menu-item key="batchEnable">
-                      <a-icon type="check" />批量启用
-                    </a-menu-item>
-                    <a-menu-item key="batchUnable">
-                      <a-icon type="stop" />批量停用
-                    </a-menu-item>
-                  </a-menu>
-                  <a-button>更多<a-icon type="down" /></a-button>
-                </a-dropdown>
               </a-space>
-            </template>
-
-            <!-- 状态 列自定义内容 -->
-            <template v-slot:available_default="{ row }">
-              <available-tag :available="row.available" />
             </template>
 
             <!-- 操作 列自定义内容 -->
@@ -85,17 +66,16 @@
 </template>
 
 <script>
-import AvailableTag from '@/components/Tag/Available'
 import Add from './add'
 import Modify from './modify'
 import Detail from './detail'
 import CategoryTree from './category-tree'
 
 export default {
-  name: 'CustomForm',
+  name: 'CustomPage',
   // 使用组件
   components: {
-    AvailableTag, Add, Modify, Detail, CategoryTree
+    Add, Modify, Detail, CategoryTree
   },
   data() {
     return {
@@ -106,7 +86,6 @@ export default {
       visible: true,
       // 查询列表的查询条件
       searchFormData: {
-        available: this.$enums.AVAILABLE.ENABLE.code
       },
       // 工具栏配置
       toolbarConfig: {
@@ -118,9 +97,9 @@ export default {
       // 列表数据配置
       tableColumn: [
         { type: 'checkbox', width: 40 },
+        { field: 'id', title: '页面ID', width: 120 },
         { field: 'name', title: '名称', minWidth: 180 },
         { field: 'categoryName', title: '分类', width: 120 },
-        { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
         { field: 'description', title: '备注', minWidth: 200 },
         { field: 'createBy', title: '创建人', width: 100 },
         { field: 'createTime', title: '创建时间', width: 170 },
@@ -137,7 +116,7 @@ export default {
         ajax: {
           // 查询接口
           query: ({ page, sorts, filters }) => {
-            return this.$api.development.customForm.query(this.buildQueryParams(page))
+            return this.$api.development.customPage.query(this.buildQueryParams(page))
           }
         }
       }
@@ -174,58 +153,11 @@ export default {
     buildSearchFormData() {
       return Object.assign({ }, this.searchFormData)
     },
-    handleCommand({ key }) {
-      if (key === 'batchEnable') {
-        this.batchEnable()
-      } else if (key === 'batchUnable') {
-        this.batchUnable()
-      }
-    },
-    // 批量停用
-    batchUnable() {
-      const records = this.$refs.grid.getCheckboxRecords()
-
-      if (this.$utils.isEmpty(records)) {
-        this.$msg.error('请选择要停用的自定义表单！')
-        return
-      }
-
-      this.$msg.confirm('是否确定停用选择的自定义表单？').then(() => {
-        this.loading = true
-        const ids = records.map(t => t.id)
-        this.$api.development.customForm.batchUnable(ids).then(data => {
-          this.$msg.success('停用成功！')
-          this.search()
-        }).finally(() => {
-          this.loading = false
-        })
-      })
-    },
-    // 批量启用
-    batchEnable() {
-      const records = this.$refs.grid.getCheckboxRecords()
-
-      if (this.$utils.isEmpty(records)) {
-        this.$msg.error('请选择要启用的自定义表单！')
-        return
-      }
-
-      this.$msg.confirm('是否确定启用选择的自定义表单？').then(() => {
-        this.loading = true
-        const ids = records.map(t => t.id)
-        this.$api.development.customForm.batchEnable(ids).then(data => {
-          this.$msg.success('启用成功！')
-          this.search()
-        }).finally(() => {
-          this.loading = false
-        })
-      })
-    },
     // 删除
     deleteRow(row) {
-      this.$msg.confirm('是否确定删除该自定义表单？').then(() => {
+      this.$msg.confirm('是否确定删除该自定义页面？').then(() => {
         this.loading = true
-        this.$api.development.customForm.deleteById(row.id).then(() => {
+        this.$api.development.customPage.deleteById(row.id).then(() => {
           this.$msg.success('删除成功！')
           this.search()
         }).finally(() => {
@@ -238,14 +170,14 @@ export default {
       const records = this.$refs.grid.getCheckboxRecords()
 
       if (this.$utils.isEmpty(records)) {
-        this.$msg.error('请选择要删除的自定义表单！')
+        this.$msg.error('请选择要删除的自定义页面！')
         return
       }
 
-      this.$msg.confirm('是否确定删除选择的自定义表单？').then(() => {
+      this.$msg.confirm('是否确定删除选择的自定义页面？').then(() => {
         this.loading = true
         const ids = records.map(t => t.id)
-        this.$api.development.customForm.batchDelete(ids).then(data => {
+        this.$api.development.customPage.batchDelete(ids).then(data => {
           this.$msg.success('删除成功！')
           this.search()
         }).finally(() => {

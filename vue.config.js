@@ -4,6 +4,7 @@ const ThemeColorReplacer = require('webpack-theme-color-replacer')
 const { getThemeColors, modifyVars } = require('./src/utils/themeUtil')
 const { resolveCss } = require('./src/utils/theme-color-replacer-extend')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 const productionGzipExtensions = ['js', 'css']
 const isProd = process.env.NODE_ENV === 'production'
@@ -11,6 +12,7 @@ const isProd = process.env.NODE_ENV === 'production'
 const port = process.env.port || process.env.npm_config_port || 9527 // dev port
 
 module.exports = {
+  runtimeCompiler: true,
   devServer: {
     port: port,
     open: true,
@@ -47,6 +49,7 @@ module.exports = {
         resolveCss
       })
     )
+    config.plugins.push(new MonacoWebpackPlugin())
     // Ignore all locale files of moment.js
     config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/))
     // 生产环境下将资源压缩成gzip格式
@@ -103,16 +106,27 @@ module.exports = {
                   priority: 10,
                   chunks: 'all' // only package third parties that are initially dependent
                 },
-                elementUI: {
-                  name: 'chunk-VXETable', // split elementUI into a single package
-                  priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-                  test: /[\\/]vxe-table[\\/]/ // in order to adapt to cnpm
+                vxeTable: {
+                  name: 'chunk-VXETable',
+                  priority: 20,
+                  test: /[\\/]vxe-table[\\/]/
+                },
+                monacoEditor: {
+                  name: 'chunk-monacoEditor',
+                  priority: 20, //
+                  test: /[\\/]monaco-editor[\\/]/
                 },
                 commons: {
                   name: 'chunk-commons',
                   test: path.resolve(__dirname, 'src/components'), // can customize your rules
                   minChunks: 3, //  minimum common number
                   priority: 5,
+                  reuseExistingChunk: true
+                },
+                fcDesigner: {
+                  name: 'chunk-fcDesigner',
+                  test: path.resolve(__dirname, 'src/components/FcDesigner'),
+                  priority: 15,
                   reuseExistingChunk: true
                 }
               }

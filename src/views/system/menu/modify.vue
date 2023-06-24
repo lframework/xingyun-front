@@ -47,6 +47,9 @@
           <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(formData.componentType)" label="自定义请求参数" prop="requestParam">
             <a @click="$refs.requestParamEditor.openDialog()">编辑参数</a>
           </a-form-model-item>
+          <a-form-model-item v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) && $enums.MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(formData.componentType)" label="自定义页面" prop="customPageId">
+            <gen-custom-page-selector v-model="formData.customPageId" />
+          </a-form-model-item>
           <a-form-model-item v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" label="路由路径" prop="path">
             <a-input v-model.trim="formData.path" placeholder="对应路由当中的path属性" allow-clear />
           </a-form-model-item>
@@ -80,12 +83,14 @@ import IconPicker from '@/components/IconPicker'
 import GenCustomListSelector from '@/components/Selector/GenCustomListSelector'
 import GenCustomFormSelector from '@/components/Selector/GenCustomFormSelector'
 import JsonEditor from './json-editor'
+import GenCustomPageSelector from '@/components/Selector/GenCustomPageSelector'
 export default {
   components: {
     SysMenuSelector,
     IconPicker,
     GenCustomListSelector,
     GenCustomFormSelector,
+    GenCustomPageSelector,
     JsonEditor
   },
   props: {
@@ -128,6 +133,9 @@ export default {
         ],
         customFormId: [
           { required: true, message: '请选择自定义表单' }
+        ],
+        customPageId: [
+          { required: true, message: '请选择自定义页面' }
         ],
         path: [
           { required: true, message: '请输入路由路径' }
@@ -176,6 +184,7 @@ export default {
         customListId: '',
         customFormId: '',
         requestParam: '',
+        customPageId: '',
         path: '',
         noCache: true,
         hidden: false,
@@ -204,6 +213,8 @@ export default {
         params.component = params.customListId
       } else if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(this.formData.componentType)) {
         params.component = params.customFormId
+      } else if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_FORM.equalsCode(this.formData.componentType)) {
+        params.component = params.customPageId
       }
       this.$api.system.menu.modify(params).then(() => {
         this.$msg.success('修改成功！')

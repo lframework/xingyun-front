@@ -103,6 +103,16 @@ const data = {
       },
       data: data
     })
+  },
+  getCustomPageConfig: (id) => {
+    return request({
+      url: '/gen/api/custom/page/config',
+      region: 'common-api',
+      method: 'get',
+      params: {
+        id: id
+      }
+    })
   }
 }
 

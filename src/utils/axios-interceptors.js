@@ -129,7 +129,9 @@ const reqConvert = {
    */
   onFulfilled(config) {
     if (utils.isEqualWithStr(process.env.VUE_APP_CLOUD_ENABLE, true)) {
-      config.url = '/' + config.region + config.url
+      config.url = '/' + config.region + (utils.isEqualWithStr(config.dynamic, true) ? process.env.VUE_APP_DYNAMIC_API_BASE_URL : '') + config.url
+    } else {
+      config.url = (utils.isEqualWithStr(config.dynamic, true) ? process.env.VUE_APP_DYNAMIC_API_BASE_URL : '') + config.url
     }
 
     // 只有显示标注使用json传参时，才会使用json

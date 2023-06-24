@@ -14,6 +14,10 @@ const MENU_COMPONENT_TYPE = {
   CUSTOM_FORM: {
     code: 2,
     desc: '自定义表单'
+  },
+  CUSTOM_PAGE: {
+    code: 3,
+    desc: '自定义页面'
   }
 }
 
