@@ -91,7 +91,9 @@ export default {
     // 列表查询数据
     query() {
       this.loading = true
-      this.$api.system.module.query().then(res => {
+      this.$api.system.module.query({
+        tenantId: this.id
+      }).then(res => {
         this.tableData = res
       }).finally(() => {
         this.loading = false
