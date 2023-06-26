@@ -1,6 +1,5 @@
 <template>
   <div>
-    <custom-page :page-id="3" />
     <div v-show="visible" class="app-container">
       <a-row>
         <a-col :span="4" :style="{height: $defaultTableHeight + 'px'}">
