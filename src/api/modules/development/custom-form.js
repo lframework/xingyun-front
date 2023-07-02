@@ -8,7 +8,7 @@ const data = {
   queryCategories: () => {
     return request({
       url: '/gen/custom/form/category/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -20,7 +20,7 @@ const data = {
   createCategory: (params) => {
     return request({
       url: '/gen/custom/form/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -33,7 +33,7 @@ const data = {
   modifyCategory: (params) => {
     return request({
       url: '/gen/custom/form/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -46,7 +46,7 @@ const data = {
   getCategory: (id) => {
     return request({
       url: '/gen/custom/form/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -61,7 +61,7 @@ const data = {
   removeCategory: (id) => {
     return request({
       url: '/gen/custom/form/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       data: {
         id: id
@@ -71,7 +71,7 @@ const data = {
   query: (data) => {
     return request({
       url: '/gen/custom/form/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: data
     })
@@ -79,7 +79,7 @@ const data = {
   add: (data) => {
     return request({
       url: '/gen/custom/form',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data
@@ -88,7 +88,7 @@ const data = {
   get: (id) => {
     return request({
       url: '/gen/custom/form',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -98,7 +98,7 @@ const data = {
   modify: (data) => {
     return request({
       url: '/gen/custom/form',
-      region: 'common-api',
+      region: 'cloud-api',
       dataType: 'json',
       method: 'put',
       data
@@ -107,7 +107,7 @@ const data = {
   deleteById: (id) => {
     return request({
       url: '/gen/custom/form',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       data: {
         id: id
@@ -117,7 +117,7 @@ const data = {
   batchDelete: (ids) => {
     return request({
       url: '/gen/custom/form/batch',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       dataType: 'json',
       data: ids
@@ -126,7 +126,7 @@ const data = {
   batchEnable: (ids) => {
     return request({
       url: '/gen/custom/form/enable/batch',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -135,7 +135,7 @@ const data = {
   batchUnable: (ids) => {
     return request({
       url: '/gen/custom/form/unable/batch',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: ids

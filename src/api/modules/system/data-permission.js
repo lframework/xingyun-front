@@ -8,7 +8,7 @@ export default {
   getByModelId: (modelId) => {
     return request({
       url: '/system/data/permission/model/detail',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         modelId: modelId
@@ -23,7 +23,7 @@ export default {
   preview: (params) => {
     return request({
       url: '/system/data/permission/model/detail/preview',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -36,7 +36,7 @@ export default {
   queryByBizId: (params) => {
     return request({
       url: '/system/data/permission/model/detail/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -49,7 +49,7 @@ export default {
   saveData: (data) => {
     return request({
       url: '/system/data/permission/data',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: data

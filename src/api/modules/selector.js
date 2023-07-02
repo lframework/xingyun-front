@@ -10,7 +10,7 @@ const selector = {
   getOrderPayType: (params) => {
     return request({
       url: '/selector/paytype/order',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })

@@ -10,7 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/system/notice/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -24,7 +24,7 @@ export default {
   queryMy: (params) => {
     return request({
       url: '/system/notice/query/my',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -38,7 +38,7 @@ export default {
   get: (id) => {
     return request({
       url: '/system/notice',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -54,7 +54,7 @@ export default {
   getContent: (id) => {
     return request({
       url: '/system/notice/content',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -70,7 +70,7 @@ export default {
   create: (params) => {
     return request({
       url: '/system/notice',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -84,7 +84,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/system/notice',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })

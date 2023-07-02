@@ -8,7 +8,7 @@ export default {
   get: () => {
     return request({
       url: '/chart/order',
-      region: 'chart-api',
+      region: 'cloud-api',
       method: 'get'
     })
   }

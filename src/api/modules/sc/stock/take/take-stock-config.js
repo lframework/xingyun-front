@@ -10,7 +10,7 @@ export default {
   get: (id) => {
     return request({
       url: '/stock/take/config',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -25,7 +25,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/stock/take/config',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })

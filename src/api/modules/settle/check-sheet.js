@@ -9,7 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/settle/checksheet/query',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -21,7 +21,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/settle/checksheet/export',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'post',
       responseType: 'blob',
       data: params
@@ -35,7 +35,7 @@ export default {
   get: (id) => {
     return request({
       url: '/settle/checksheet',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -50,7 +50,7 @@ export default {
   createOrder: (params) => {
     return request({
       url: '/settle/checksheet',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -64,7 +64,7 @@ export default {
   directApprovePassOrder: (params) => {
     return request({
       url: '/settle/checksheet/approve/pass/direct',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -78,7 +78,7 @@ export default {
   approvePassOrder: (params) => {
     return request({
       url: '/settle/checksheet/approve/pass',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -92,7 +92,7 @@ export default {
   approveRefuseOrder: (params) => {
     return request({
       url: '/settle/checksheet/approve/refuse',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -106,7 +106,7 @@ export default {
   updateOrder: (params) => {
     return request({
       url: '/settle/checksheet',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'put',
       dataType: 'json',
       data: params
@@ -120,7 +120,7 @@ export default {
   deleteOrder: (params) => {
     return request({
       url: '/settle/checksheet',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'delete',
       data: params
     })
@@ -129,7 +129,7 @@ export default {
   batchDeleteOrder: (params) => {
     return request({
       url: '/settle/checksheet/batch',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'delete',
       dataType: 'json',
       data: params
@@ -139,7 +139,7 @@ export default {
   batchApprovePassOrder: (params) => {
     return request({
       url: '/settle/checksheet/approve/pass/batch',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -149,7 +149,7 @@ export default {
   batchApproveRefuseOrder: (params) => {
     return request({
       url: '/settle/checksheet/approve/refuse/batch',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -159,7 +159,7 @@ export default {
   getUnCheckItems: (params) => {
     return request({
       url: '/settle/checksheet/uncheck-items',
-      region: 'settle-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })

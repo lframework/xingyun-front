@@ -152,7 +152,7 @@ export default {
       }
       return request({
         url: '/sale/order/query/out',
-        region: 'sc-api',
+        region: 'cloud-api',
         method: 'get',
         params: reqParams
       })
@@ -160,7 +160,7 @@ export default {
     getLoad(ids) {
       return request({
         url: '/sale/order/query/out/load',
-        region: 'sc-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'json',
         data: ids

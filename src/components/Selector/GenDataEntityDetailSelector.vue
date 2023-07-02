@@ -41,7 +41,7 @@ export default {
     getList() {
       return request({
         url: '/selector/gen/data/entity/detail',
-        region: 'common-api',
+        region: 'cloud-api',
         method: 'get',
         params: {
           entityId: this.entityId

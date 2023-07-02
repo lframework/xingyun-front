@@ -10,7 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/stock/transfer/sc/query',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -24,7 +24,7 @@ export default {
   get: (id) => {
     return request({
       url: '/stock/transfer/sc/detail',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -40,7 +40,7 @@ export default {
   create: (params) => {
     return request({
       url: '/stock/transfer/sc',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -55,7 +55,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/stock/transfer/sc',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'put',
       dataType: 'json',
       data: params
@@ -70,7 +70,7 @@ export default {
   deleteById: (id) => {
     return request({
       url: '/stock/transfer/sc',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'delete',
       data: {
         id: id
@@ -86,7 +86,7 @@ export default {
   searchProduct: (params) => {
     return request({
       url: '/stock/transfer/sc/product/search',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -99,7 +99,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/stock/transfer/sc/product/list',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -111,7 +111,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/stock/transfer/sc/export',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       responseType: 'blob',
       data: params
@@ -125,7 +125,7 @@ export default {
   directApprovePass: (params) => {
     return request({
       url: '/stock/transfer/sc/approve/pass/direct',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -139,7 +139,7 @@ export default {
   approvePass: (params) => {
     return request({
       url: '/stock/transfer/sc/approve/pass',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -153,7 +153,7 @@ export default {
   approveRefuse: (params) => {
     return request({
       url: '/stock/transfer/sc/approve/refuse',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -163,7 +163,7 @@ export default {
   batchDelete: (params) => {
     return request({
       url: '/stock/transfer/sc/batch',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'delete',
       dataType: 'json',
       data: params
@@ -177,7 +177,7 @@ export default {
   batchApprovePass: (params) => {
     return request({
       url: '/stock/transfer/sc/approve/pass/batch',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -191,7 +191,7 @@ export default {
   batchApproveRefuse: (params) => {
     return request({
       url: '/stock/transfer/sc/approve/refuse/batch',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -205,7 +205,7 @@ export default {
   receive: (params) => {
     return request({
       url: '/stock/transfer/sc/receive',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -219,7 +219,7 @@ export default {
   queryDetailReceive: (params) => {
     return request({
       url: '/stock/transfer/sc/receive/detail',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })

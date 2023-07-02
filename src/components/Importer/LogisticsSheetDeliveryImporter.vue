@@ -23,7 +23,7 @@ export default {
     downloadTemplate() {
       return request({
         url: '/logistics/sheet/import/template/delivery',
-        region: 'sc-api',
+        region: 'cloud-api',
         method: 'get',
         responseType: 'blob'
       })
@@ -31,7 +31,7 @@ export default {
     upload(params) {
       return request({
         url: '/logistics/sheet/import/delivery',
-        region: 'sc-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'file',
         data: params

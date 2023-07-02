@@ -4,7 +4,7 @@ const simpledb = {
   getTables: (data) => {
     return request({
       url: '/gen/simpledb/tables',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: data
     })

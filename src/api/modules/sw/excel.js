@@ -10,7 +10,7 @@ export default {
   query: (params) => {
     return request({
       url: '/sw/excel/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -24,7 +24,7 @@ export default {
   get: (id) => {
     return request({
       url: '/sw/excel',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -40,7 +40,7 @@ export default {
   create: (params) => {
     return request({
       url: '/sw/excel',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -54,7 +54,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/sw/excel',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -68,7 +68,7 @@ export default {
   getContent: (id) => {
     return request({
       url: '/sw/excel/content',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -84,7 +84,7 @@ export default {
   modifyContent: (params) => {
     return request({
       url: '/sw/excel/content',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -98,7 +98,7 @@ export default {
   send: (params) => {
     return request({
       url: '/sw/excel/send',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -112,7 +112,7 @@ export default {
   batchSend: (params) => {
     return request({
       url: '/sw/excel/send/batch',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params

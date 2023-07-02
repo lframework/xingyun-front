@@ -8,7 +8,7 @@ export default {
   query: () => {
     return request({
       url: '/basedata/product/category/query',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -20,7 +20,7 @@ export default {
   get: (id) => {
     return request({
       url: '/basedata/product/category',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -35,7 +35,7 @@ export default {
   create: (params) => {
     return request({
       url: '/basedata/product/category',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -48,7 +48,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/basedata/product/category',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -61,7 +61,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/basedata/product/category/enable/batch',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -75,7 +75,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/basedata/product/category/unable/batch',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: ids

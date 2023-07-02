@@ -9,7 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/logistics/sheet/query',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -22,7 +22,7 @@ export default {
   queryBizOrder: (params) => {
     return request({
       url: '/logistics/sheet/biz',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -35,7 +35,7 @@ export default {
   get: (id) => {
     return request({
       url: '/logistics/sheet',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -50,7 +50,7 @@ export default {
   calcWeight: (params) => {
     return request({
       url: '/logistics/sheet/calc/weight',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -64,7 +64,7 @@ export default {
   calcVolume: (params) => {
     return request({
       url: '/logistics/sheet/calc/volume',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -78,7 +78,7 @@ export default {
   create: (params) => {
     return request({
       url: '/logistics/sheet',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -92,7 +92,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/logistics/sheet',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'put',
       dataType: 'json',
       data: params
@@ -106,7 +106,7 @@ export default {
   deleteOrder: (params) => {
     return request({
       url: '/logistics/sheet',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'delete',
       data: params
     })
@@ -115,7 +115,7 @@ export default {
   batchDeleteOrder: (params) => {
     return request({
       url: '/logistics/sheet/batch',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'delete',
       dataType: 'json',
       data: params
@@ -125,7 +125,7 @@ export default {
   queryDelivery: (id) => {
     return request({
       url: '/logistics/sheet/delivery',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -136,7 +136,7 @@ export default {
   delivery: (params) => {
     return request({
       url: '/logistics/sheet/delivery',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -149,7 +149,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/logistics/sheet/export',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       responseType: 'blob',
       params: params

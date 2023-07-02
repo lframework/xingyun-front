@@ -10,7 +10,7 @@ const user = {
   getInit: () => {
     return request({
       url: '/auth/init',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -23,7 +23,7 @@ const user = {
   regist: (params) => {
     return request({
       url: '/auth/regist',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -36,7 +36,7 @@ const user = {
   login: (data) => {
     return request({
       url: '/auth/login',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data
     })
@@ -48,7 +48,7 @@ const user = {
   getInfo: () => {
     return request({
       url: '/auth/info',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -59,7 +59,7 @@ const user = {
   logout: () => {
     return request({
       url: '/auth/logout',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post'
     })
   },
@@ -70,7 +70,7 @@ const user = {
   getCaptcha: () => {
     return request({
       url: '/auth/captcha',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -81,7 +81,7 @@ const user = {
   getMenus: () => {
     return request({
       url: '/auth/menus',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -93,7 +93,7 @@ const user = {
   collectMenu: (menuId) => {
     return request({
       url: '/menu/collect',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: {
         menuId: menuId
@@ -108,7 +108,7 @@ const user = {
   cancelCollectMenu: (menuId) => {
     return request({
       url: '/menu/collect/cancel',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: {
         menuId: menuId
@@ -123,7 +123,7 @@ const user = {
   forgetUsername: (username) => {
     return request({
       url: '/auth/forget/username',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         username: username
@@ -137,7 +137,7 @@ const user = {
   getMailCaptcha: (username) => {
     return request({
       url: '/auth/forget/mail/code',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         username: username
@@ -151,7 +151,7 @@ const user = {
   resetPswByMail: (params) => {
     return request({
       url: '/auth/forget/mail',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -163,7 +163,7 @@ const user = {
   getSmsCaptcha: (username) => {
     return request({
       url: '/auth/forget/sms/code',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         username: username
@@ -177,7 +177,7 @@ const user = {
   resetPswBySms: (params) => {
     return request({
       url: '/auth/forget/sms',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -190,7 +190,7 @@ const user = {
   getTelephoneLoginSmsCaptcha: (params) => {
     return request({
       url: '/auth/login/telephone/captcha',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -203,7 +203,7 @@ const user = {
   telephoneLogin: (params) => {
     return request({
       url: '/auth/login/telephone',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -216,7 +216,7 @@ const user = {
   telephoneBindUser: (params) => {
     return request({
       url: '/auth/bind/telephone',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })

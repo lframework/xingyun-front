@@ -1,5 +1,3 @@
-import settings from '@/config'
-
 export default {
   namespaced: true,
   state: {
@@ -9,7 +7,7 @@ export default {
     token: state => {
       if (!state.token) {
         try {
-          const token = localStorage.getItem(settings.tokenKey)
+          const token = localStorage.getItem('X-Auth-Token')
           state.token = token
         } catch (e) {
           console.error(e)
@@ -21,11 +19,11 @@ export default {
   mutations: {
     setToken(state, token) {
       state.token = token
-      localStorage.setItem(settings.tokenKey, token)
+      localStorage.setItem('X-Auth-Token', token)
     },
     removeToken(state) {
       state.token = undefined
-      localStorage.removeItem(settings.tokenKey)
+      localStorage.removeItem('X-Auth-Token')
     }
   }
 }

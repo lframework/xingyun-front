@@ -9,7 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/system/module/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -22,7 +22,7 @@ export default {
   setting: (params) => {
     return request({
       url: '/system/module/setting',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params

@@ -107,7 +107,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/tenant',
-        region: 'common-api',
+        region: 'cloud-api',
         method: 'get',
         params: params
       })
@@ -115,7 +115,7 @@ export default {
     getLoad(ids) {
       return request({
         url: '/selector/tenant/load',
-        region: 'common-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'json',
         data: ids

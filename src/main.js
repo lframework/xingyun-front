@@ -33,6 +33,7 @@ const router = initRouter(store.state.setting.asyncRoutes)
 const i18n = initI18n('CN', 'US')
 
 import formCreate from '@form-create/ant-design-vue'
+import eventBus from '@/ws/eventBus'
 
 Vue.use(Antd)
 Vue.use(Components)
@@ -87,6 +88,7 @@ Vue.use(VXETable)
 
 Vue.prototype.$vh = (document.documentElement.clientHeight || document.body.clientHeight) / 100
 Vue.prototype.$defaultTableHeight = Vue.prototype.$vh * 100 - 140
+Vue.prototype.$eventBus = eventBus
 
 bootstrap({ router, store, i18n, message: Vue.prototype.$message })
 

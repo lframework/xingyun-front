@@ -23,7 +23,7 @@ export default {
     downloadTemplate() {
       return request({
         url: '/basedata/product/poly/import/template',
-        region: 'basedata-api',
+        region: 'cloud-api',
         method: 'get',
         responseType: 'blob'
       })
@@ -31,7 +31,7 @@ export default {
     upload(params) {
       return request({
         url: '/basedata/product/poly/import',
-        region: 'basedata-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'file',
         data: params

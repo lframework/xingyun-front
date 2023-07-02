@@ -98,7 +98,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/settle/item/in',
-        region: 'settle-api',
+        region: 'cloud-api',
         method: 'get',
         params: params
       })
@@ -106,7 +106,7 @@ export default {
     getLoad(ids) {
       return request({
         url: '/selector/settle/item/in/load',
-        region: 'settle-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'json',
         data: ids

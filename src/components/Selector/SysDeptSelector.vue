@@ -78,7 +78,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/dept',
-        region: 'common-api',
+        region: 'cloud-api',
         method: 'get',
         params: params
       })

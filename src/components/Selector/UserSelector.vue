@@ -102,7 +102,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/user',
-        region: 'common-api',
+        region: 'cloud-api',
         method: 'get',
         params: params
       })
@@ -110,7 +110,7 @@ export default {
     getLoad(ids) {
       return request({
         url: '/selector/user/load',
-        region: 'common-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'json',
         data: ids

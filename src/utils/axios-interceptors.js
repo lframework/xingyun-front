@@ -2,7 +2,6 @@ import qs from 'qs'
 import msg from '@/utils/msg'
 import utils from '@/utils/utils'
 import { DATA_TYPE, RESP_TYPE, removeAuthorization, getAuthorization } from '@/utils/request'
-import settings from '@/config'
 
 const respCommon = {
   /**
@@ -104,7 +103,7 @@ const reqCommon = {
   onFulfilled(config) {
     const token = getAuthorization()
 
-    config.headers[settings.tokenKey] = token || ''
+    config.headers['X-Auth-Token'] = token || ''
 
     return config
   },

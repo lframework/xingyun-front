@@ -9,7 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/purchase/order/query',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -21,7 +21,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/purchase/order/export',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       responseType: 'blob',
       data: params
@@ -35,7 +35,7 @@ export default {
   get: (id) => {
     return request({
       url: '/purchase/order',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -50,7 +50,7 @@ export default {
   getWithReceive: (id) => {
     return request({
       url: '/purchase/order/receive',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -65,7 +65,7 @@ export default {
   searchProduct: (scId, condition) => {
     return request({
       url: '/purchase/order/product/search',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         scId: scId,
@@ -81,7 +81,7 @@ export default {
   queryProduct: (params) => {
     return request({
       url: '/purchase/order/product/list',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -94,7 +94,7 @@ export default {
   createOrder: (params) => {
     return request({
       url: '/purchase/order',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -108,7 +108,7 @@ export default {
   directApprovePassOrder: (params) => {
     return request({
       url: '/purchase/order/approve/pass/direct',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data: params
@@ -122,7 +122,7 @@ export default {
   approvePassOrder: (params) => {
     return request({
       url: '/purchase/order/approve/pass',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -136,7 +136,7 @@ export default {
   approveRefuseOrder: (params) => {
     return request({
       url: '/purchase/order/approve/refuse',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -150,7 +150,7 @@ export default {
   updateOrder: (params) => {
     return request({
       url: '/purchase/order',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'put',
       dataType: 'json',
       data: params
@@ -164,7 +164,7 @@ export default {
   deleteOrder: (params) => {
     return request({
       url: '/purchase/order',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'delete',
       data: params
     })
@@ -173,7 +173,7 @@ export default {
   batchDeleteOrder: (params) => {
     return request({
       url: '/purchase/order/batch',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'delete',
       dataType: 'json',
       data: params
@@ -183,7 +183,7 @@ export default {
   batchApprovePassOrder: (params) => {
     return request({
       url: '/purchase/order/approve/pass/batch',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -193,7 +193,7 @@ export default {
   batchApproveRefuseOrder: (params) => {
     return request({
       url: '/purchase/order/approve/refuse/batch',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -207,7 +207,7 @@ export default {
   print: (id) => {
     return request({
       url: '/purchase/order/print',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id

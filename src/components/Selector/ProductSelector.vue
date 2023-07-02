@@ -139,7 +139,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/product',
-        region: 'basedata-api',
+        region: 'cloud-api',
         method: 'get',
         params: params
       })
@@ -147,7 +147,7 @@ export default {
     getLoad(ids) {
       return request({
         url: '/selector/product/load',
-        region: 'basedata-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'json',
         data: ids

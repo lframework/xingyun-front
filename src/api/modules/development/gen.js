@@ -4,7 +4,7 @@ const data = {
   getCustomListConfig: (id) => {
     return request({
       url: '/gen/api/custom/list/config',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -14,7 +14,7 @@ const data = {
   queryCustomListPage: (id, data) => {
     return request({
       url: '/gen/api/custom/list/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       params: {
@@ -26,7 +26,7 @@ const data = {
   queryCustomListDatas: (id, data) => {
     return request({
       url: '/gen/api/custom/list/query/list',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       params: {
@@ -38,7 +38,7 @@ const data = {
   exportCustomListDatas: (id, data) => {
     return request({
       url: '/gen/api/custom/list/query/list/export',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       responseType: 'blob',
@@ -51,7 +51,7 @@ const data = {
   queryCustomListTree: (id, data) => {
     return request({
       url: '/gen/api/custom/list/query/tree',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       params: {
@@ -63,7 +63,7 @@ const data = {
   getCustomSelectorConfig: (id) => {
     return request({
       url: '/gen/api/custom/selector/config',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -73,7 +73,7 @@ const data = {
   getCustomFormConfig: (id) => {
     return request({
       url: '/gen/api/custom/form/config',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -83,7 +83,7 @@ const data = {
   customFormGetData: (id, data) => {
     return request({
       url: '/gen/api/custom/form/get',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       params: {
@@ -95,7 +95,7 @@ const data = {
   customFormHandleData: (id, data) => {
     return request({
       url: '/gen/api/custom/form/handle',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       params: {
@@ -107,7 +107,7 @@ const data = {
   getCustomPageConfig: (id) => {
     return request({
       url: '/gen/api/custom/page/config',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id

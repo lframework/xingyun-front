@@ -8,7 +8,7 @@ export default {
   queryCategories: () => {
     return request({
       url: '/system/dic/category/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -20,7 +20,7 @@ export default {
   createCategory: (params) => {
     return request({
       url: '/system/dic/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -33,7 +33,7 @@ export default {
   modifyCategory: (params) => {
     return request({
       url: '/system/dic/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -46,7 +46,7 @@ export default {
   getCategory: (id) => {
     return request({
       url: '/system/dic/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -61,7 +61,7 @@ export default {
   removeCategory: (id) => {
     return request({
       url: '/system/dic/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       data: {
         id: id
@@ -75,7 +75,7 @@ export default {
   query: (params) => {
     return request({
       url: '/system/dic/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -88,7 +88,7 @@ export default {
   create: (params) => {
     return request({
       url: '/system/dic',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -101,7 +101,7 @@ export default {
   get: (id) => {
     return request({
       url: '/system/dic',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -116,7 +116,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/system/dic',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -129,7 +129,7 @@ export default {
   remove: (id) => {
     return request({
       url: '/system/dic',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       data: {
         id: id
@@ -143,7 +143,7 @@ export default {
   queryItem: (params) => {
     return request({
       url: '/system/dic/item/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -156,7 +156,7 @@ export default {
   createItem: (params) => {
     return request({
       url: '/system/dic/item',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -169,7 +169,7 @@ export default {
   getItem: (id) => {
     return request({
       url: '/system/dic/item',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -184,7 +184,7 @@ export default {
   modifyItem: (params) => {
     return request({
       url: '/system/dic/item',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -197,7 +197,7 @@ export default {
   removeItem: (id) => {
     return request({
       url: '/system/dic/item',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       data: {
         id: id
@@ -212,7 +212,7 @@ export default {
   getItemByDicCode: (code) => {
     return request({
       url: '/system/dic/item/bydic',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         code: code

@@ -135,7 +135,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/takestock/pre',
-        region: 'sc-api',
+        region: 'cloud-api',
         method: 'get',
         params: params
       })
@@ -143,7 +143,7 @@ export default {
     getLoad(ids) {
       return request({
         url: '/selector/takestock/pre/load',
-        region: 'sc-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'json',
         data: ids

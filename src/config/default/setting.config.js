@@ -31,7 +31,5 @@ module.exports = {
     { link: 'https://www.lframework.com', name: '首页' },
     { link: 'https://gitee.com/lframework/xingyun', icon: 'github' }
   ],
-  // Token在Header中的Name
-  tokenKey: 'X-Auth-Token',
   timeout: 30000
 }

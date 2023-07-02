@@ -9,7 +9,7 @@ const data = {
   query: (data) => {
     return request({
       url: '/qrtz/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: data
     })
@@ -22,7 +22,7 @@ const data = {
   create: (data) => {
     return request({
       url: '/qrtz',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data
@@ -36,7 +36,7 @@ const data = {
   get: (params) => {
     return request({
       url: '/qrtz',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -49,7 +49,7 @@ const data = {
   modify: (data) => {
     return request({
       url: '/qrtz',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       dataType: 'json',
       data
@@ -63,7 +63,7 @@ const data = {
   remove: (params) => {
     return request({
       url: '/qrtz',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       data: params
     })
@@ -76,7 +76,7 @@ const data = {
   resume: (params) => {
     return request({
       url: '/qrtz/resume',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -89,7 +89,7 @@ const data = {
   pause: (params) => {
     return request({
       url: '/qrtz/pause',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -102,7 +102,7 @@ const data = {
   trigger: (params) => {
     return request({
       url: '/qrtz/trigger',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })

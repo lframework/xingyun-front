@@ -9,7 +9,7 @@ export default {
   getInfo: () => {
     return request({
       url: '/center/info',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -21,7 +21,7 @@ export default {
   updateEmail: (params) => {
     return request({
       url: '/center/email',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'patch',
       data: params
     })
@@ -34,7 +34,7 @@ export default {
   updateTelephone: (params) => {
     return request({
       url: '/center/telephone',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'patch',
       data: params
     })
@@ -47,7 +47,7 @@ export default {
   updatePsw: (params) => {
     return request({
       url: '/center/password',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'patch',
       data: params
     })
@@ -60,7 +60,7 @@ export default {
   queryOpLogs: (params) => {
     return request({
       url: '/center/oplog',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })

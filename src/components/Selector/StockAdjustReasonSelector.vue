@@ -107,7 +107,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/stock/adjust/reason',
-        region: 'sc-api',
+        region: 'cloud-api',
         method: 'get',
         params: params
       })
@@ -115,7 +115,7 @@ export default {
     getLoad(ids) {
       return request({
         url: '/selector/stock/adjust/reason/load',
-        region: 'sc-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'json',
         data: ids

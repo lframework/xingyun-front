@@ -8,7 +8,7 @@ const data = {
   queryCategories: () => {
     return request({
       url: '/gen/data/entity/category/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -20,7 +20,7 @@ const data = {
   createCategory: (params) => {
     return request({
       url: '/gen/data/entity/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -33,7 +33,7 @@ const data = {
   modifyCategory: (params) => {
     return request({
       url: '/gen/data/entity/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -46,7 +46,7 @@ const data = {
   getCategory: (id) => {
     return request({
       url: '/gen/data/entity/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -61,7 +61,7 @@ const data = {
   removeCategory: (id) => {
     return request({
       url: '/gen/data/entity/category',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       data: {
         id: id
@@ -71,7 +71,7 @@ const data = {
   query: (data) => {
     return request({
       url: '/gen/data/entity/query',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: data
     })
@@ -79,7 +79,7 @@ const data = {
   queryColumns: (data) => {
     return request({
       url: '/gen/data/entity/query/columns',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: data
     })
@@ -87,7 +87,7 @@ const data = {
   add: (data) => {
     return request({
       url: '/gen/data/entity',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'json',
       data
@@ -96,7 +96,7 @@ const data = {
   get: (id) => {
     return request({
       url: '/gen/data/entity',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -106,7 +106,7 @@ const data = {
   modify: (data) => {
     return request({
       url: '/gen/data/entity',
-      region: 'common-api',
+      region: 'cloud-api',
       dataType: 'json',
       method: 'put',
       data
@@ -115,7 +115,7 @@ const data = {
   deleteById: (id) => {
     return request({
       url: '/gen/data/entity',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       data: {
         id: id
@@ -125,7 +125,7 @@ const data = {
   batchDelete: (ids) => {
     return request({
       url: '/gen/data/entity/batch',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'delete',
       dataType: 'json',
       data: ids
@@ -134,7 +134,7 @@ const data = {
   batchEnable: (ids) => {
     return request({
       url: '/gen/data/entity/enable/batch',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -143,7 +143,7 @@ const data = {
   batchUnable: (ids) => {
     return request({
       url: '/gen/data/entity/unable/batch',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -152,7 +152,7 @@ const data = {
   getGenerate: (id) => {
     return request({
       url: '/gen/data/entity/generate',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -162,7 +162,7 @@ const data = {
   updateGenerate: (params) => {
     return request({
       url: '/gen/data/entity/generate',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: params
@@ -171,7 +171,7 @@ const data = {
   preView: (id) => {
     return request({
       url: '/gen/data/entity/preview',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -181,7 +181,7 @@ const data = {
   download: (id) => {
     return request({
       url: '/gen/data/entity/download',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       responseType: 'blob',
       params: {
@@ -192,7 +192,7 @@ const data = {
   syncTable: (id) => {
     return request({
       url: '/gen/data/entity/sync/table',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'put',
       data: {
         id: id

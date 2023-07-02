@@ -10,7 +10,7 @@ export default {
   get: () => {
     return request({
       url: '/retail/config',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'get'
     })
   },
@@ -22,7 +22,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/retail/config',
-      region: 'sc-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })

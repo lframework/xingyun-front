@@ -9,7 +9,7 @@ export default {
   query: (params) => {
     return request({
       url: '/basedata/address/query',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -22,7 +22,7 @@ export default {
   get: (id) => {
     return request({
       url: '/basedata/address',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         id: id
@@ -37,7 +37,7 @@ export default {
   create: (params) => {
     return request({
       url: '/basedata/address',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'post',
       data: params
     })
@@ -50,7 +50,7 @@ export default {
   modify: (params) => {
     return request({
       url: '/basedata/address',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'put',
       data: params
     })
@@ -63,7 +63,7 @@ export default {
   batchEnable: (ids) => {
     return request({
       url: '/basedata/address/enable/batch',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -77,7 +77,7 @@ export default {
   batchUnable: (ids) => {
     return request({
       url: '/basedata/address/unable/batch',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'patch',
       dataType: 'json',
       data: ids
@@ -91,7 +91,7 @@ export default {
   selector: (params) => {
     return request({
       url: '/selector/address',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: params
     })
@@ -103,7 +103,7 @@ export default {
   exportList: (params) => {
     return request({
       url: '/basedata/address/export',
-      region: 'basedata-api',
+      region: 'cloud-api',
       method: 'post',
       responseType: 'blob',
       data: params

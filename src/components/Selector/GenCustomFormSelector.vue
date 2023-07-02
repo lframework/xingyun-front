@@ -105,7 +105,7 @@ export default {
     getList(params) {
       return request({
         url: '/selector/gen/custom/form',
-        region: 'common-api',
+        region: 'cloud-api',
         method: 'get',
         params: params
       })
@@ -113,7 +113,7 @@ export default {
     getLoad(ids) {
       return request({
         url: '/selector/gen/custom/form/load',
-        region: 'common-api',
+        region: 'cloud-api',
         method: 'post',
         dataType: 'json',
         data: ids

@@ -47,7 +47,6 @@ export default {
   },
   data() {
     return {
-      timer: null,
       show: false,
       interval: 5000,
       errorCount: 0,
@@ -60,28 +59,17 @@ export default {
       return this.todoTasks.filter(item => !item.readed).length > 0 || this.noticeTasks.filter(item => !item.readed).length > 0
     }
   },
-  created() {
-    this.timer = setInterval(this.onTimer, this.interval)
-  },
-  beforeDestroy() {
-    clearInterval(this.timer)
-  },
   mounted() {
+    this.$eventBus.$on(this.$eventBus.$pullEvent.SYS_NOTICE, this.onRefreshNotice)
   },
   methods: {
-    onTimer() {
-      this.$api.message.messageBus.query().then(res => {
-        this.todoTasks = !this.$utils.isEmpty(res.todo) ? (res.todo.datas || []) : []
-        this.noticeTasks = !this.$utils.isEmpty(res.notice) ? (res.notice.datas || []) : []
-        if (this.errorCount > 0) {
-          this.errorCount = 0
-          clearInterval(this.timer)
-          this.timer = setInterval(this.onTimer, this.interval)
-        }
-      }).catch(() => {
-        this.errorCount++
-        clearInterval(this.timer)
-        this.timer = setInterval(this.onTimer, this.interval * this.errorCount)
+    onRefreshNotice() {
+      this.$api.system.notice.queryMy({
+        pageIndex: 1,
+        pageSize: 20,
+        readed: false
+      }).then(res => {
+        this.noticeTasks = res.datas || []
       })
     }
   }

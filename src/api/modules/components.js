@@ -10,7 +10,7 @@ const components = {
   getMapLocation: (address) => {
     return request({
       url: '/component/map/location',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'get',
       params: {
         address: address
@@ -25,7 +25,7 @@ const components = {
   uploadImage: (file) => {
     return request({
       url: '/component/upload/image',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'file',
       data: file
@@ -39,7 +39,7 @@ const components = {
   uploadVideo: (file) => {
     return request({
       url: '/component/upload/video',
-      region: 'common-api',
+      region: 'cloud-api',
       method: 'post',
       dataType: 'file',
       data: file
