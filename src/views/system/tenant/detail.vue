@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="40%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
-    <div v-if="visible" v-permission="['system.tenant:query']" v-loading="loading">
+    <div v-if="visible" v-permission="['system:tenant:query']" v-loading="loading">
       <a-descriptions bordered :xs="4" :sm="2" :md="2">
         <a-descriptions-item label="租户ID" :span="2">
           {{ formData.id }}

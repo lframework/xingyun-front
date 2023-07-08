@@ -18,9 +18,9 @@
           <span>{{ name }}</span>
           <template #overlay>
             <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
-              <a-menu-item v-if="$utils.isEqualWithStr(0, treeKey)" key="1" v-permission="['system.dic-category:add']">新增子项</a-menu-item>
-              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="2" v-permission="['system.dic-category:modify']">编辑</a-menu-item>
-              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="3" v-permission="['system.dic-category:delete']">删除</a-menu-item>
+              <a-menu-item v-if="$utils.isEqualWithStr(0, treeKey)" key="1" v-permission="['system:dic-category:add']">新增子项</a-menu-item>
+              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="2" v-permission="['system:dic-category:modify']">编辑</a-menu-item>
+              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="3" v-permission="['system:dic-category:delete']">删除</a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>

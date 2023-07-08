@@ -1,5 +1,5 @@
 <template>
-  <div v-permission="['system.tenant:query']" class="app-container">
+  <div v-permission="['system:tenant:query']" class="app-container">
 
     <!-- 数据列表 -->
     <vxe-grid
@@ -38,7 +38,7 @@
       <template v-slot:toolbar_buttons>
         <a-space>
           <a-button type="primary" icon="search" @click="search">查询</a-button>
-          <a-button v-permission="['system.tenant:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+          <a-button v-permission="['system:tenant:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
         </a-space>
       </template>
 
@@ -49,9 +49,9 @@
 
       <!-- 操作 列自定义内容 -->
       <template v-slot:action_default="{ row }">
-        <a-button v-permission="['system.tenant:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-        <a-button v-permission="['system.tenant:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
-        <a-button v-permission="['system.tenant:module']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.setModuleDialog.openDialog()) }">授权</a-button>
+        <a-button v-permission="['system:tenant:query']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
+        <a-button v-permission="['system:tenant:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
+        <a-button v-permission="['system:tenant:module']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.setModuleDialog.openDialog()) }">授权</a-button>
       </template>
     </vxe-grid>
 

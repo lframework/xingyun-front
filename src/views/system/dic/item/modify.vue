@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="40%" :dialog-style="{ top: '20px' }" title="修改" :footer="null">
-    <div v-if="visible" v-permission="['system.dic-item:modify']" v-loading="loading">
+    <div v-if="visible" v-permission="['system:dic-item:modify']" v-loading="loading">
       <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
         <a-form-model-item label="编号" prop="code">
           <a-col :span="20">

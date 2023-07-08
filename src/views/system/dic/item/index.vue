@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible" :mask-closable="false" width="80%" :dialog-style="{ top: '20px' }" title="字典值管理" :footer="null">
-    <div v-if="visible" v-permission="['system.dic:query']">
+    <div v-if="visible" v-permission="['system:dic:query']">
       <!-- 数据列表 -->
       <vxe-grid
         ref="grid"
@@ -31,14 +31,14 @@
         <template v-slot:toolbar_buttons>
           <a-space>
             <a-button type="primary" icon="search" @click="search">查询</a-button>
-            <a-button v-permission="['system.dic-item:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+            <a-button v-permission="['system:dic-item:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
           </a-space>
         </template>
 
         <!-- 操作 列自定义内容 -->
         <template v-slot:action_default="{ row }">
-          <a-button v-permission="['system.dic-item:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
-          <a-button v-permission="['system.dic-item:delete']" type="link" class="ant-btn-link-danger" @click="deleteRow(row)">删除</a-button>
+          <a-button v-permission="['system:dic-item:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
+          <a-button v-permission="['system:dic-item:delete']" type="link" class="ant-btn-link-danger" @click="deleteRow(row)">删除</a-button>
         </template>
       </vxe-grid>
 

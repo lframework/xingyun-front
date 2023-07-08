@@ -37,7 +37,7 @@
           <template v-slot:toolbar_buttons>
             <a-space>
               <a-button type="primary" icon="search" @click="search">查询</a-button>
-              <a-button v-permission="['system.dic:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
+              <a-button v-permission="['system:dic:add']" type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
             </a-space>
           </template>
 
@@ -49,8 +49,8 @@
           <!-- 操作 列自定义内容 -->
           <template v-slot:action_default="{ row }">
             <a-button v-if="!$enums.COLUMN_TYPE.CUSTOM.equalsCode(row.columnType)" type="link" @click="e => { id = row.id;$nextTick(() => $refs.itemDialog.openDialog()) }">字典值管理</a-button>
-            <a-button v-permission="['system.dic:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
-            <a-button v-permission="['system.dic:delete']" type="link" class="ant-btn-link-danger" @click="deleteRow(row)">删除</a-button>
+            <a-button v-permission="['system:dic:modify']" type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
+            <a-button v-permission="['system:dic:delete']" type="link" class="ant-btn-link-danger" @click="deleteRow(row)">删除</a-button>
           </template>
         </vxe-grid>
       </a-col>
