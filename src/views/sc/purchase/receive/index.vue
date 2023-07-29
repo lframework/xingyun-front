@@ -150,12 +150,11 @@ import ApproveRefuse from '@/components/ApproveRefuse'
 import PurchaseOrderDetail from '@/views/sc/purchase/order/detail'
 import moment from 'moment'
 import ReceiveSheetImporter from '@/components/Importer/ReceiveSheetImporter'
-import ReceiveSheetPayTypeImporter from '@/components/Importer/ReceiveSheetPayTypeImporter.vue'
 
 export default {
   name: 'ReceiveSheet',
   components: {
-    Detail, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderDetail, ReceiveSheetImporter, ReceiveSheetPayTypeImporter
+    Detail, StoreCenterSelector, SupplierSelector, UserSelector, ApproveRefuse, PurchaseOrderDetail, ReceiveSheetImporter
   },
   data() {
     return {

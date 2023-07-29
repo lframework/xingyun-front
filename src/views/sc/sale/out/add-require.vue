@@ -129,10 +129,6 @@
         </j-form>
       </j-border>
 
-      <j-border title="支付方式">
-        <pay-type ref="payType" />
-      </j-border>
-
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
@@ -163,11 +159,10 @@ import UserSelector from '@/components/Selector/UserSelector'
 import SaleOrderSelector from './SaleOrderSelector'
 import BatchAddProduct from '@/views/sc/sale/batch-add-product'
 import Moment from 'moment'
-import PayType from '@/views/sc/pay-type/index'
 export default {
   name: 'AddSaleOutRequire',
   components: {
-    StoreCenterSelector, CustomerSelector, UserSelector, SaleOrderSelector, BatchAddProduct, PayType
+    StoreCenterSelector, CustomerSelector, UserSelector, SaleOrderSelector, BatchAddProduct
   },
   data() {
     return {
@@ -510,17 +505,6 @@ export default {
         return false
       }
 
-      if (!this.$refs.payType.validData()) {
-        return false
-      }
-
-      const payTypes = this.$refs.payType.getTableData()
-      const totalPayAmount = payTypes.reduce((tot, item) => this.$utils.add(tot, item.payAmount), 0)
-      if (!this.$utils.eq(this.formData.totalAmount, totalPayAmount)) {
-        this.$msg.error('所有支付方式的支付金额不等于含税总金额，请检查！')
-        return false
-      }
-
       return true
     },
     // 创建订单
@@ -537,13 +521,6 @@ export default {
         saleOrderId: this.formData.saleOrderId,
         description: this.formData.description,
         required: true,
-        payTypes: this.$refs.payType.getTableData().map(t => {
-          return {
-            id: t.payTypeId,
-            payAmount: t.payAmount,
-            text: t.text
-          }
-        }),
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.outNum)).map(t => {
           const product = {
             productId: t.productId,
@@ -606,13 +583,6 @@ export default {
         paymentDate: this.formData.paymentDate || '',
         saleOrderId: this.formData.saleOrderId,
         description: this.formData.description,
-        payTypes: this.$refs.payType.getTableData().map(t => {
-          return {
-            id: t.payTypeId,
-            payAmount: t.payAmount,
-            text: t.text
-          }
-        }),
         products: this.tableData.filter(t => this.$utils.isIntegerGtZero(t.outNum)).map(t => {
           const product = {
             productId: t.productId,
@@ -643,7 +613,6 @@ export default {
     // 选择销售订单
     saleOrderChange(e) {
       // 只要选择了销售订单，清空所有商品，然后将销售订单中所有的明细列出来
-      this.$refs.payType.setTableData([])
       if (!this.$utils.isEmpty(e)) {
         this.loading = true
         this.$api.sc.sale.saleOrder.getWithOut(e).then(res => {
@@ -668,12 +637,6 @@ export default {
           this.customerChange(this.formData.customerId)
         }).finally(() => {
           this.loading = false
-        })
-
-        this.$api.selector.getOrderPayType({
-          orderId: e
-        }).then(res => {
-          this.$refs.payType.setTableData(res || [])
         })
       }
     },

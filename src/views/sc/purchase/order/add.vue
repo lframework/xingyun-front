@@ -108,7 +108,7 @@
         </j-form>
       </j-border>
 
-      <j-border title="支付方式">
+      <j-border title="约定支付">
         <pay-type ref="payType" />
       </j-border>
 
@@ -472,7 +472,7 @@ export default {
       const payTypes = this.$refs.payType.getTableData()
       const totalPayAmount = payTypes.reduce((tot, item) => this.$utils.add(tot, item.payAmount), 0)
       if (!this.$utils.eq(this.formData.totalAmount, totalPayAmount)) {
-        this.$msg.error('所有支付方式的支付金额不等于含税总金额，请检查！')
+        this.$msg.error('所有约定支付的支付金额不等于含税总金额，请检查！')
         return false
       }
 

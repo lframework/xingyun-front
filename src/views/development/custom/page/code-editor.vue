@@ -15,10 +15,6 @@ export default {
       type: String,
       required: true
     },
-    mode: {
-      type: String,
-      required: true
-    },
     opts: {
       type: Object,
       default: () => {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <excel-importer ref="importer" :tip-msg="'注：\n1、状态为“' + $enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.desc + '”的单据不允许导入。\n2、对于相同的支付方式不会合并。\n3、支付金额为0的支付方式不允许导入。'" :download-template-url="downloadTemplate" :upload-url="upload" @confirm="e => $emit('confirm', e)" />
+    <excel-importer ref="importer" :tip-msg="'注：\n1、状态为“' + $enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.desc + '”的单据不允许导入。\n2、对于相同的约定支付不会合并。\n3、支付金额为0的约定支付不允许导入。'" :download-template-url="downloadTemplate" :upload-url="upload" @confirm="e => $emit('confirm', e)" />
   </div>
 </template>
 

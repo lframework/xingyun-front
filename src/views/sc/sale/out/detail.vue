@@ -77,10 +77,6 @@
         </j-form>
       </j-border>
 
-      <j-border title="支付方式">
-        <pay-type ref="payType" :disabled="true" />
-      </j-border>
-
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
@@ -104,11 +100,10 @@
 <script>
 import SaleOrderDetail from '@/views/sc/sale/order/detail'
 import { getLodop } from '@/utils/lodop'
-import PayType from '@/views/sc/pay-type/index'
 
 export default {
   components: {
-    SaleOrderDetail, PayType
+    SaleOrderDetail
   },
   props: {
     id: {
@@ -209,7 +204,6 @@ export default {
         }
         this.tableData = res.details || []
 
-        this.$refs.payType.setTableData(res.payTypes || [])
         this.calcSum()
       }).finally(() => {
         this.loading = false

@@ -71,7 +71,7 @@
         </j-form>
       </j-border>
 
-      <j-border title="支付方式">
+      <j-border title="约定支付">
         <pay-type ref="payType" :disabled="true" />
       </j-border>
 
