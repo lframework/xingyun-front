@@ -3,7 +3,12 @@
     enter-active-class="animated fadeIn"
   >
     <div v-show="visible && itemShow" :class="'item item--default'" :style="{width: itemWidth}">
-      <span v-if="!hiddenLabel" :class="'label label--default'" :style="{width: form.labelWidth, minWidth: form.labelWidth}"><span v-if="_required" class="required" />{{ autoHiddenLabel && !$slots.default ? '' : (colon ? label + '：' : label) }}</span>
+      <span v-if="!hiddenLabel" :class="'label label--default'" :style="{width: form.labelWidth, minWidth: form.labelWidth}">
+        <span v-if="_required" class="required" />
+        <slot v-if="!(autoHiddenLabel && !$slots.default)" name="label" />
+        <span v-if="!$slots.label">{{ autoHiddenLabel && !$slots.default ? '' : label }}</span>
+        <span>{{ autoHiddenLabel && !$slots.default ? '' : '：' }}</span>
+      </span>
       <div v-if="contentNest" class="content" :style="{width: contentWidth}">
         <slot />
       </div>
@@ -124,9 +129,6 @@ export default {
     }
   },
   mounted() {
-    if (!this.$utils.isEmpty(this.form)) {
-      this.form.addItem(this)
-    }
   },
   methods: {
     setVisible(v) {

@@ -3,6 +3,9 @@ import utils from '@/utils/utils'
 
 export function hasPermission(value) {
   const roles = store.getters && store.getters['account/roles']
+  if (value && typeof value === 'string') {
+    value = [value]
+  }
 
   if (value && value instanceof Array) {
     if (value.length > 0) {

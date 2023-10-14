@@ -13,6 +13,7 @@
 </template>
 <script>
 import Schema from 'async-validator'
+
 export default {
   name: 'JForm',
 
@@ -41,15 +42,14 @@ export default {
   },
   data() {
     return {
-      items: [],
       collapseStatus: true
     }
   },
   computed: {
     showCollapse() {
       let totalSpan = 0
-      for (let i = 0; i < this.items.length; i++) {
-        const item = this.items[i]
+      for (let i = 0; i < this.getItems().length; i++) {
+        const item = this.getItems()[i]
         if (!item.itemShow) {
           continue
         }
@@ -63,13 +63,10 @@ export default {
     }
   },
   methods: {
-    addItem(item) {
-      this.items.push(item)
-    },
     collapse() {
       let totalSpan = 0
-      for (let i = 0; i < this.items.length; i++) {
-        const item = this.items[i]
+      for (let i = 0; i < this.getItems().length; i++) {
+        const item = this.getItems()[i]
         if (!item.itemShow) {
           continue
         }
@@ -83,8 +80,8 @@ export default {
     },
     expand() {
       let totalSpan = 0
-      for (let i = 0; i < this.items.length; i++) {
-        const item = this.items[i]
+      for (let i = 0; i < this.getItems().length; i++) {
+        const item = this.getItems()[i]
         if (!item.itemShow) {
           continue
         }
@@ -101,7 +98,13 @@ export default {
         if (!that.model || !that.rules) {
           resolve(true)
         } else {
-          const validator = new Schema(that.rules)
+          const itemProps = that.getItems().map(item => item.prop)
+          const ruleKeys = that.$utils.keys(that.rules).filter(ruleKey => itemProps.includes(ruleKey))
+          const rules = {}
+          ruleKeys.forEach(ruleKey => {
+            rules[ruleKey] = that.rules[ruleKey]
+          })
+          const validator = new Schema(rules)
           validator.validate(that.model, {
             suppressWarning: true,
             first: true,
@@ -114,6 +117,13 @@ export default {
           })
         }
       })
+    },
+    getItems() {
+      const formItems = this.$slots.default.filter(vnode => {
+        return vnode.componentOptions && vnode.componentOptions.tag === 'j-form-item'
+      })
+
+      return formItems.map(vnode => vnode.componentInstance).filter(item => item)
     }
   }
 }

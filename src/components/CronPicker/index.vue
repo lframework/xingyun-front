@@ -2,7 +2,7 @@
   <div class="components-input-demo-presuffix">
     <a-input ref="cronInput" v-model="cron" read-only @click="openModal" @change="handleCronChange" @keyup.enter="openModal">
       <a-icon slot="prefix" type="schedule" />
-      <a-icon v-if="cron" slot="suffix" type="close-circle" title="清空" @click="handleEmpty" />
+      <a-icon v-if="cron && !disabled" slot="suffix" type="close-circle" title="清空" @click="handleEmpty" />
     </a-input>
     <CronModal ref="innerVueCron" :data="cron" @ok="handleOK" />
   </div>
