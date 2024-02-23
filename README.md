@@ -2,10 +2,10 @@
 星云ERP是基于SpringBoot框架的中小企业完全开源的ERP。
 
 ### 主要技术框架
-* Vue 2.6.11
-* ant-design-vue 1.7.8
-* vxe-table 3.6.6
-* vue-antd-admin
+* Vue 3.3.4
+* ant-design-vue 4.0.7
+* vxe-table 4.4.5
+* vue-vben-admin
 
 ### License
 项目使用Apache 2.0许可证，请遵守此许可证的限制条件。
@@ -16,5 +16,6 @@
 
 ### 注意事项
 老版项目基于ElementUI，已转移到v1分支。
+Vue2项目已转移至v3分支。
 
 [xingyunGitee]: https://gitee.com/lframework/xingyun

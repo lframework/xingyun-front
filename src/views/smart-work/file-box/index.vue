@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="app-container">
+    <page-wrapper content-full-height fixed-height>
       <!-- 数据列表 -->
       <vxe-grid
         id="FileBox"
@@ -13,197 +13,282 @@
         :proxy-config="proxyConfig"
         :columns="tableColumn"
         :toolbar-config="toolbarConfig"
+        :custom-config="{}"
         :pager-config="{}"
         :loading="loading"
-        :height="$defaultTableHeight"
+        height="auto"
       >
-        <template v-slot:form>
+        <template #form>
           <j-border>
-            <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
-              <j-form-item label="名称">
-                <a-input v-model="searchFormData.name" allow-clear />
-              </j-form-item>
-              <j-form-item label="创建时间" :content-nest="false">
-                <div class="date-range-container">
-                  <a-date-picker
-                    v-model="searchFormData.createTimeStart"
-                    placeholder=""
-                    value-format="YYYY-MM-DD 00:00:00"
-                  />
-                  <span class="date-split">至</span>
-                  <a-date-picker
-                    v-model="searchFormData.createTimeEnd"
-                    placeholder=""
-                    value-format="YYYY-MM-DD 23:59:59"
-                  />
-                </div>
-              </j-form-item>
-              <j-form-item label="状态">
-                <a-select v-model="searchFormData.available" allow-clear>
-                  <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
-                </a-select>
-              </j-form-item>
-            </j-form>
+            <a-breadcrumb>
+              <a-breadcrumb-item href="" @click="changeFolder(-1)"
+                ><FolderOutlined /> 根目录</a-breadcrumb-item
+              >
+              <a-breadcrumb-item
+                href=""
+                @click="changeFolder(index)"
+                v-for="(item, index) in currentPathList"
+                :key="index"
+                >{{ item }}</a-breadcrumb-item
+              >
+            </a-breadcrumb>
           </j-border>
         </template>
         <!-- 工具栏 -->
-        <template v-slot:toolbar_buttons>
+        <template #toolbar_buttons>
           <a-space>
-            <a-button type="primary" icon="search" @click="search">查询</a-button>
-            <a-button type="primary" icon="plus" @click="$refs.addDialog.openDialog()">新增</a-button>
-            <a-button icon="share-alt" @click="onBatchSendFile">批量发送给他人</a-button>
+            <a-button type="primary" :icon="h(SearchOutlined)" @click="doSearch">全盘搜索</a-button>
+            <a-button
+              type="primary"
+              :icon="h(CloudUploadOutlined)"
+              @click="$refs.uploadFileDialog.openDialog()"
+              >上传文件</a-button
+            >
+            <a-button :icon="h(FolderAddOutlined)" @click="$refs.createDirDialog.openDialog()"
+              >创建文件夹</a-button
+            >
+            <a-dropdown>
+              <template #overlay>
+                <a-menu @click="handleCommand">
+                  <a-menu-item key="batchDelete" :icon="h(DeleteOutlined)"> 删除所选 </a-menu-item>
+                </a-menu>
+              </template>
+              <a-button>更多<DownOutlined /></a-button>
+            </a-dropdown>
           </a-space>
         </template>
 
-        <!-- 状态 列自定义内容 -->
-        <template v-slot:available_default="{ row }">
-          <available-tag :available="row.available" />
+        <!-- 文件名 列自定义内容 -->
+        <template #name_default="{ row }">
+          <a @click="() => clickRow(row)">
+            <a-space>
+              <icon
+                v-if="$enums.FILE_BOX_FILE_TYPE.DIR.equalsCode(row.fileType)"
+                icon="flat-color-icons:folder"
+              />
+              <icon v-else icon="flat-color-icons:file" />
+              <span>{{ row.name }}</span>
+            </a-space>
+          </a>
         </template>
 
         <!-- 操作 列自定义内容 -->
-        <template v-slot:action_default="{ row }">
-          <a-button type="link" @click="e => { id = row.id;$nextTick(() => $refs.viewDialog.openDialog()) }">查看</a-button>
-          <a-button type="link" @click="e => { id = row.id;$nextTick(() => $refs.updateDialog.openDialog()) }">修改</a-button>
-          <a-button type="link" @click="e => { id = row.id;download(row) }">下载</a-button>
-          <a-button type="link" @click="e => { id = row.id;$nextTick(() => $refs.sendDialog.openDialog()) }">发送给他人</a-button>
+        <template #action_default="{ row }">
+          <table-action outside :actions="createActions(row)" />
         </template>
       </vxe-grid>
-    </div>
-    <!-- 新增窗口 -->
-    <add ref="addDialog" @confirm="search" />
+    </page-wrapper>
+
+    <create-dir :parent-path="currentPath" ref="createDirDialog" @confirm="search()" />
+
+    <upload-file :parent-path="currentPath" ref="uploadFileDialog" @confirm="search()" />
+
+    <search-dialog ref="searchDialog" @change-folder="changeFolderAndSearch" />
 
     <!-- 修改窗口 -->
     <modify :id="id" ref="updateDialog" @confirm="search" />
 
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
-
-    <send ref="sendDialog" @confirm="sendFile" />
-
-    <send ref="batchSendDialog" @confirm="batchSendFile" />
   </div>
 </template>
 
 <script>
-import Add from './add'
-import Modify from './modify'
-import Detail from './detail'
-import AvailableTag from '@/components/Tag/Available'
-import Send from './send'
-import { request } from '@/utils/request'
+  import { h, defineComponent } from 'vue';
+  import {
+    SearchOutlined,
+    DeleteOutlined,
+    FolderOutlined,
+    FolderAddOutlined,
+    CloudUploadOutlined,
+    DownOutlined,
+  } from '@ant-design/icons-vue';
+  import CreateDir from './create-dir.vue';
+  import UploadFile from './upload-file.vue';
+  import SearchDialog from './search.vue';
+  import Modify from './modify.vue';
+  import Detail from './detail.vue';
+  import * as api from '@/api/smart-work/file-box';
+  import Icon from '@/components/Icon/Icon.vue';
 
-export default {
-  name: 'FileBox',
-  components: {
-    AvailableTag, Add, Modify, Detail, Send
-  },
-  data() {
-    return {
-      loading: false,
-      // 当前行数据
-      id: '',
-      // 查询列表的查询条件
-      searchFormData: {
-        name: '',
-        available: this.$enums.AVAILABLE.ENABLE.code,
-        createTimeStart: '',
-        createTimeEnd: ''
-      },
-      // 工具栏配置
-      toolbarConfig: {
-        // 自定义左侧工具栏
-        slots: {
-          buttons: 'toolbar_buttons'
-        }
-      },
-      // 列表数据配置
-      tableColumn: [
-        { type: 'checkbox', width: 40 },
-        { field: 'name', title: '名称', width: 180 },
-        { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' }},
-        { field: 'description', title: '备注', minWidth: 200 },
-        { field: 'createTime', title: '创建时间', width: 170 },
-        { field: 'updateTime', title: '修改时间', width: 170 },
-        { title: '操作', width: 240, fixed: 'right', slots: { default: 'action_default' }}
-      ],
-      // 请求接口配置
-      proxyConfig: {
-        props: {
-          // 响应结果列表字段
-          result: 'datas',
-          // 响应结果总条数字段
-          total: 'totalCount'
+  export default defineComponent({
+    name: 'FileBox',
+    components: {
+      Icon,
+      DownOutlined,
+      FolderOutlined,
+      CreateDir,
+      UploadFile,
+      SearchDialog,
+      Modify,
+      Detail,
+    },
+    setup() {
+      return {
+        h,
+        SearchOutlined,
+        DeleteOutlined,
+        CloudUploadOutlined,
+        FolderAddOutlined,
+      };
+    },
+    data() {
+      return {
+        currentPath: '/',
+        loading: false,
+        // 当前行数据
+        id: '',
+        ids: [],
+        // 查询列表的查询条件
+        searchFormData: {},
+        // 工具栏配置
+        toolbarConfig: {
+          // 自定义左侧工具栏
+          slots: {
+            buttons: 'toolbar_buttons',
+          },
         },
-        ajax: {
-          // 查询接口
-          query: ({ page, sorts, filters }) => {
-            return this.$api.sw.filebox.query(this.buildQueryParams(page))
-          }
+        // 列表数据配置
+        tableColumn: [
+          { type: 'checkbox', width: 45 },
+          { field: 'name', title: '文件', minWidth: 100, slots: { default: 'name_default' } },
+          { field: 'fileSize', title: '大小', width: 180 },
+          { field: 'createTime', title: '上传时间', width: 170 },
+          { title: '操作', width: 120, fixed: 'right', slots: { default: 'action_default' } },
+        ],
+        // 请求接口配置
+        proxyConfig: {
+          props: {
+            // 响应结果列表字段
+            result: 'datas',
+            // 响应结果总条数字段
+            total: 'totalCount',
+          },
+          ajax: {
+            // 查询接口
+            query: ({ page }) => {
+              return api.query(this.buildQueryParams(page));
+            },
+          },
+        },
+      };
+    },
+    computed: {
+      currentPathList() {
+        if (!this.currentPath) {
+          return [];
         }
-      }
-    }
-  },
-  created() {
-  },
-  methods: {
-    // 列表发生查询时的事件
-    search() {
-      this.$refs.grid.commitProxy('reload')
-    },
-    // 查询前构建查询参数结构
-    buildQueryParams(page) {
-      return Object.assign({
-        pageIndex: page.currentPage,
-        pageSize: page.pageSize
-      }, this.buildSearchFormData())
-    },
-    // 查询前构建具体的查询参数
-    buildSearchFormData() {
-      return Object.assign({ }, this.searchFormData)
-    },
-    sendFile(e) {
-      this.loading = true
-      this.$api.sw.filebox.send(Object.assign({
-        id: this.id
-      }, e)).then(() => {
-        this.$msg.success('发送成功！')
-        this.search()
-      }).finally(() => {
-        this.loading = false
-      })
-    },
-    onBatchSendFile() {
-      const records = this.$refs.grid.getCheckboxRecords()
-      if (this.$utils.isEmpty(records)) {
-        this.$msg.error('请先选择需要发送的文件！')
-        return
-      }
 
-      this.$refs.batchSendDialog.openDialog()
+        if (this.currentPath === '/') {
+          return [];
+        }
+
+        const arr = this.currentPath.split('/');
+        arr.shift();
+
+        return arr;
+      },
     },
-    batchSendFile(e) {
-      const records = this.$refs.grid.getCheckboxRecords()
-      this.loading = true
-      this.$api.sw.filebox.batchSend(Object.assign({
-        ids: records.map(item => item.id)
-      }, e)).then(() => {
-        this.$msg.success('发送成功！')
-        this.search()
-      }).finally(() => {
-        this.loading = false
-      })
+    created() {},
+    methods: {
+      doSearch() {
+        this.$refs.searchDialog.openDialog();
+      },
+      // 列表发生查询时的事件
+      search() {
+        this.$refs.grid.commitProxy('reload');
+      },
+      // 查询前构建查询参数结构
+      buildQueryParams(page) {
+        return Object.assign(
+          {
+            pageIndex: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          this.buildSearchFormData(),
+        );
+      },
+      // 查询前构建具体的查询参数
+      buildSearchFormData() {
+        return {
+          ...this.searchFormData,
+          path: this.currentPath,
+        };
+      },
+      handleCommand({ key }) {
+        if (key === 'batchDelete') {
+          this.batchDelete();
+        }
+      },
+      // 批量删除
+      batchDelete() {
+        const records = this.$refs.grid.getCheckboxRecords();
+
+        if (this.$utils.isEmpty(records)) {
+          this.$msg.createError('请选择要删除的文件或目录！');
+          return;
+        }
+
+        this.$msg.createConfirm('是否确定删除选择的文件？').then(() => {
+          this.loading = true;
+          const ids = records.map((t) => t.id);
+          api
+            .batchDelete(ids)
+            .then((data) => {
+              this.$msg.createSuccess('删除成功！');
+              this.search();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        });
+      },
+      createActions(row) {
+        return [
+          {
+            label: '查看',
+            onClick: () => {
+              this.id = row.id;
+              this.$nextTick(() => this.$refs.viewDialog.openDialog());
+            },
+          },
+          {
+            label: '修改',
+            onClick: () => {
+              this.id = row.id;
+              this.$nextTick(() => this.$refs.updateDialog.openDialog());
+            },
+          },
+        ];
+      },
+      clickRow(row) {
+        if (this.$enums.FILE_BOX_FILE_TYPE.DIR.equalsCode(row.fileType)) {
+          this.currentPath += (this.currentPath === '/' ? '' : '/') + row.name;
+          this.search();
+        } else {
+          this.id = row.id;
+          this.$refs.viewDialog.openDialog();
+        }
+      },
+      changeFolder(index) {
+        if (index < 0) {
+          this.currentPath = '/';
+          this.search();
+        } else {
+          let currentPath = [];
+          for (let i = 0; i <= index; i++) {
+            currentPath.push(this.currentPathList[i]);
+          }
+
+          this.currentPath = '/' + currentPath.join('/');
+          this.search();
+        }
+      },
+      changeFolderAndSearch(val) {
+        this.currentPath = val ? val : '/';
+        this.search();
+      },
     },
-    download(row) {
-      request({
-        url: row.url,
-        method: 'get',
-        responseType: 'blob'
-      }).then(() => {
-        this.$msg.successTip('获取下载链接成功！')
-      })
-    }
-  }
-}
+  });
 </script>
-<style scoped>
-</style>
+<style scoped></style>

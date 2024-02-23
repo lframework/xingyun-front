@@ -1,26 +1,41 @@
 <template>
-  <a-card :body-style="{height: height + 'px', padding: '10px'}">
+  <a-card :body-style="{ height: height + 'px', padding: '10px' }">
     <a-tree
       :tree-data="treeData"
       default-expand-all
       show-line
       :default-expanded-keys="expandedKeys"
-      :selected-keys.sync="selectedKeys"
-      :replace-fields="{
+      v-model:selected-keys="selectedKeys"
+      :field-names="{
         children: 'children',
         title: 'name',
-        key: 'id'
+        key: 'id',
       }"
       @select="onSelect"
     >
-      <template v-slot:title="{ id: treeKey, name }">
+      <template #title="{ id: treeKey, name }">
         <a-dropdown :trigger="['contextmenu']">
           <span>{{ name }}</span>
           <template #overlay>
             <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
-              <a-menu-item v-if="$utils.isEqualWithStr(0, treeKey)" key="1" v-permission="['system:dic-category:add']">新增子项</a-menu-item>
-              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="2" v-permission="['system:dic-category:modify']">编辑</a-menu-item>
-              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="3" v-permission="['system:dic-category:delete']">删除</a-menu-item>
+              <a-menu-item
+                v-if="$utils.isEqualWithStr(0, treeKey)"
+                key="1"
+                v-permission="['system:dic-category:add']"
+                >新增子项</a-menu-item
+              >
+              <a-menu-item
+                v-if="!$utils.isEqualWithStr(0, treeKey)"
+                key="2"
+                v-permission="['system:dic-category:modify']"
+                >编辑</a-menu-item
+              >
+              <a-menu-item
+                v-if="!$utils.isEqualWithStr(0, treeKey)"
+                key="3"
+                v-permission="['system:dic-category:delete']"
+                >删除</a-menu-item
+              >
             </a-menu>
           </template>
         </a-dropdown>
@@ -31,57 +46,63 @@
   </a-card>
 </template>
 <script>
-import AddCategory from './category/add'
-import ModifyCategory from './category/modify'
-export default {
-  components: {
-    AddCategory, ModifyCategory
-  },
-  props: {
-    height: {
-      type: Number,
-      default: 100
-    }
-  },
-  data() {
-    return {
-      treeData: [{
-        id: 0,
-        name: '全部分类',
-        children: []
-      }],
-      expandedKeys: [0],
-      selectedKeys: [],
-      id: ''
-    }
-  },
-  created() {
-    this.doSearch()
-  },
-  methods: {
-    onContextMenuClick(treeKey, menuKey) {
-      if (menuKey === '1') {
-        this.$refs.addCategoryDialog.openDialog()
-      } else if (menuKey === '2') {
-        this.id = treeKey
-        this.$refs.updateCategoryDialog.openDialog()
-      } else if (menuKey === '3') {
-        this.$msg.confirm('是否确认删除此分类？').then(() => {
-          this.$api.system.dic.removeCategory(treeKey).then(() => {
-            this.$msg.success('删除成功！')
-            this.doSearch()
-          })
-        })
-      }
+  import { defineComponent } from 'vue';
+  import AddCategory from './category/add.vue';
+  import ModifyCategory from './category/modify.vue';
+  import * as api from '@/api/system/dic-category';
+
+  export default defineComponent({
+    components: {
+      AddCategory,
+      ModifyCategory,
     },
-    doSearch() {
-      this.$api.system.dic.queryCategories().then(res => {
-        this.treeData[0].children = [...res.map(item => Object.assign({ parentId: 0 }, item))]
-      })
+    props: {
+      height: {
+        type: Number,
+        default: 100,
+      },
     },
-    onSelect(keys) {
-      this.$emit('change', keys[0])
-    }
-  }
-}
+    data() {
+      return {
+        treeData: [
+          {
+            id: 0,
+            name: '全部分类',
+            children: [],
+          },
+        ],
+        expandedKeys: [0],
+        selectedKeys: [],
+        id: '',
+      };
+    },
+    created() {
+      this.doSearch();
+    },
+    methods: {
+      onContextMenuClick(treeKey, menuKey) {
+        if (menuKey === '1') {
+          this.$refs.addCategoryDialog.openDialog();
+        } else if (menuKey === '2') {
+          this.id = treeKey;
+          this.$refs.updateCategoryDialog.openDialog();
+        } else if (menuKey === '3') {
+          this.$msg.createConfirm('是否确认删除此分类？').then(() => {
+            api.deleteById(treeKey).then(() => {
+              this.$msg.createSuccess('删除成功！');
+              this.doSearch();
+            });
+          });
+        }
+      },
+      doSearch() {
+        api.query().then((res) => {
+          this.treeData[0].children = [...res.map((item) => Object.assign({ parentId: 0 }, item))];
+        });
+      },
+      onSelect(keys) {
+        this.$emit('change', keys[0]);
+      },
+    },
+  });
 </script>

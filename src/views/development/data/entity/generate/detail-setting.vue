@@ -1,20 +1,22 @@
 <template>
-  <div class="gen-container">
+  <div>
     <a-row>
       <a-col :span="4">
-        <a-tree
-          ref="tree"
-          v-model="checkedKeys"
-          :tree-data="_columns"
-          :checkable="true"
-          node-key="id"
-          :replace-fields="{
-            children: 'children',
-            title: 'name',
-            key: 'id'
-          }"
-          @check="onCheckChange"
-        />
+        <j-border class="mr-4">
+          <a-tree
+            ref="tree"
+            v-model:checked-keys="checkedKeys"
+            :tree-data="_columns"
+            :checkable="true"
+            node-key="id"
+            :field-names="{
+              children: 'children',
+              title: 'name',
+              key: 'id',
+            }"
+            @check="onCheckChange"
+          />
+        </j-border>
       </a-col>
       <a-col :span="20">
         <!-- 数据列表 -->
@@ -25,20 +27,20 @@
           highlight-hover-row
           keep-source
           row-id="id"
-          :row-config="{useKey: true}"
+          :row-config="{ useKey: true }"
           :columns="tableColumn"
           :data="tableData"
           :loading="loading"
           :max-height="600"
         >
           <!-- 列宽 列自定义内容 -->
-          <template v-slot:span_default="{ row }">
-            <a-input v-model="row.span" class="number-input" />
+          <template #span_default="{ row }">
+            <a-input v-model:value="row.span" class="number-input" />
           </template>
 
           <!-- 是否必填 列自定义内容 -->
-          <template v-slot:orderNo_default>
-            <span class="sort-btn"><a-icon type="drag" /></span>
+          <template #orderNo_default>
+            <span class="sort-btn"><DragOutlined /></span>
           </template>
         </vxe-grid>
       </a-col>
@@ -46,122 +48,152 @@
   </div>
 </template>
 <script>
-import Sortable from 'sortablejs'
+  import { defineComponent } from 'vue';
+  import Sortable from 'sortablejs';
+  import { DragOutlined } from '@ant-design/icons-vue';
 
-export default {
-  // 使用组件
-  components: {
-  },
+  export default defineComponent({
+    // 使用组件
+    components: {
+      DragOutlined,
+    },
 
-  props: {
-    columns: {
-      type: Array,
-      required: true
-    }
-  },
-  data() {
-    return {
-      // 是否显示加载框
-      loading: false,
-      tableColumn: [
-        { field: 'orderNo', title: '排序', width: 50, slots: { default: 'orderNo_default' }},
-        { field: 'name', title: '显示名称', width: 160, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).name } },
-        { field: 'columnName', title: '属性名', width: 120, formatter: ({ cellValue, row }) => { return this.convertToColumn(row.id).columnName } },
-        { field: 'span', title: '列宽', width: 80, slots: { default: 'span_default' }, align: 'right' }
-      ],
-      tableData: [],
-      checkedKeys: []
-    }
-  },
-  computed: {
-    _columns() {
-      return this.columns.filter(item => !item.isKey)
-    }
-  },
-  created() {
-    this.rowDrop()
-  },
-  beforeDestroy() {
-    if (this.sortable) {
-      this.sortable.destroy()
-    }
-  },
-  methods: {
-    validDate() {
-      if (!this.$utils.isEmpty(this.tableData)) {
-        for (let i = 0; i < this.tableData.length; i++) {
-          const obj = this.tableData[i]
-          if (!this.$utils.isInteger(obj.span)) {
-            this.$msg.error('字段【' + obj.name + '】列宽必须为数字！')
-            return false
-          }
+    props: {
+      columns: {
+        type: Array,
+        required: true,
+      },
+    },
+    data() {
+      return {
+        // 是否显示加载框
+        loading: false,
+        tableColumn: [
+          { field: 'orderNo', title: '排序', width: 50, slots: { default: 'orderNo_default' } },
+          {
+            field: 'name',
+            title: '显示名称',
+            width: 160,
+            formatter: ({ cellValue, row }) => {
+              return this.convertToColumn(row.id).name;
+            },
+          },
+          {
+            field: 'columnName',
+            title: '属性名',
+            width: 120,
+            formatter: ({ cellValue, row }) => {
+              return this.convertToColumn(row.id).columnName;
+            },
+          },
+          {
+            field: 'span',
+            title: '列宽',
+            width: 80,
+            slots: { default: 'span_default' },
+            align: 'right',
+          },
+        ],
+        tableData: [],
+        checkedKeys: [],
+      };
+    },
+    computed: {
+      _columns() {
+        return this.columns.filter((item) => !item.isKey);
+      },
+    },
+    created() {
+      this.rowDrop();
+    },
+    beforeUnmount() {
+      if (this.sortable) {
+        this.sortable.destroy();
+      }
+    },
+    methods: {
+      validDate() {
+        if (!this.$utils.isEmpty(this.tableData)) {
+          for (let i = 0; i < this.tableData.length; i++) {
+            const obj = this.tableData[i];
+            if (!this.$utils.isInteger(obj.span)) {
+              this.$msg.createError('字段【' + obj.name + '】列宽必须为数字！');
+              return false;
+            }
 
-          if (!this.$utils.isIntegerGtZero(obj.span)) {
-            this.$msg.error('字段【' + obj.name + '】列宽必须大于0！')
-            return false
-          }
+            if (!this.$utils.isIntegerGtZero(obj.span)) {
+              this.$msg.createError('字段【' + obj.name + '】列宽必须大于0！');
+              return false;
+            }
 
-          if (obj.span > 24) {
-            this.$msg.error('字段【' + obj.name + '】列宽不能超过24！')
-            return false
+            if (obj.span > 24) {
+              this.$msg.createError('字段【' + obj.name + '】列宽不能超过24！');
+              return false;
+            }
           }
         }
-      }
-      return true
-    },
-    emptyLine() {
-      return {
-        id: '',
-        span: 2,
-        orderNo: ''
-      }
-    },
-    onCheckChange(checkedKeys, { checked, checkedNodes, node, event }) {
-      const tableData = this.tableData
-      const tableKeys = tableData.map(item => item.id)
-      if (checked) {
-        checkedKeys.filter(item => !tableKeys.includes(item)).forEach(item => {
-          const data = this._columns.filter(c => c.id === item)[0]
-          tableData.push(Object.assign(this.emptyLine(), { id: data.id, orderNo: data.columnOrder }))
-          tableData.sort((t1, t2) => {
-            return t1.orderNo - t2.orderNo
-          })
-        })
+        return true;
+      },
+      emptyLine() {
+        return {
+          id: '',
+          span: 2,
+          orderNo: '',
+        };
+      },
+      onCheckChange(checkedKeys, { checked, checkedNodes, node, event }) {
+        const tableData = this.tableData;
+        const tableKeys = tableData.map((item) => item.id);
+        if (checked) {
+          checkedKeys
+            .filter((item) => !tableKeys.includes(item))
+            .forEach((item) => {
+              const data = this._columns.filter((c) => c.id === item)[0];
+              tableData.push(
+                Object.assign(this.emptyLine(), { id: data.id, orderNo: data.columnOrder }),
+              );
+              tableData.sort((t1, t2) => {
+                return t1.orderNo - t2.orderNo;
+              });
+            });
 
-        this.tableData = tableData
-      } else {
-        this.tableData = tableData.filter(item => checkedKeys.includes(item.id))
-      }
+          this.tableData = tableData;
+        } else {
+          this.tableData = tableData.filter((item) => checkedKeys.includes(item.id));
+        }
+      },
+      convertToColumn(id) {
+        return this.columns.filter((item) => item.id === id)[0];
+      },
+      setTableData(datas) {
+        this.tableData = datas || [];
+        this.checkedKeys = this.tableData.map((item) => item.id);
+      },
+      getTableData() {
+        return this.tableData;
+      },
+      rowDrop() {
+        this.$nextTick(() => {
+          const grid = this.$refs.grid;
+          this.sortable = Sortable.create(
+            grid.$el.querySelector('.body--wrapper>.vxe-table--body tbody'),
+            {
+              handle: '.sort-btn',
+              onEnd: ({ newIndex, oldIndex }) => {
+                const currRow = this.tableData.splice(oldIndex, 1)[0];
+                this.tableData.splice(newIndex, 0, currRow);
+              },
+            },
+          );
+        });
+      },
     },
-    convertToColumn(id) {
-      return this.columns.filter(item => item.id === id)[0]
-    },
-    setTableData(datas) {
-      this.tableData = datas || []
-      this.checkedKeys = this.tableData.map(item => item.id)
-    },
-    getTableData() {
-      return this.tableData
-    },
-    rowDrop() {
-      this.$nextTick(() => {
-        const grid = this.$refs.grid
-        this.sortable = Sortable.create(grid.$el.querySelector('.body--wrapper>.vxe-table--body tbody'), {
-          handle: '.sort-btn',
-          onEnd: ({ newIndex, oldIndex }) => {
-            const currRow = this.tableData.splice(oldIndex, 1)[0]
-            this.tableData.splice(newIndex, 0, currRow)
-          }
-        })
-      })
-    }
-  }
-}
+  });
 </script>
 
 <style scoped>
-.sort-btn {
-  margin: 0 5px;
-  cursor: pointer;
-}
+  .sort-btn {
+    margin: 0 5px;
+    cursor: pointer;
+  }
 </style>

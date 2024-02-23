@@ -1,102 +1,110 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="40%" title="新增" :dialog-style="{ top: '20px' }" :footer="null">
+  <a-modal
+    v-model:open="visible"
+    :mask-closable="false"
+    width="40%"
+    title="新增"
+    :style="{ top: '20px' }"
+    :footer="null"
+  >
     <div v-if="visible" v-permission="['system:parameter:add']" v-loading="loading">
-      <a-form-model ref="form" :label-col="{span: 4}" :wrapper-col="{span: 16}" :model="formData" :rules="rules">
-        <a-form-model-item label="键" prop="pmKey">
-          <a-input v-model="formData.pmKey" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="值" prop="pmValue">
-          <a-textarea v-model="formData.pmValue" allow-clear />
-        </a-form-model-item>
-        <a-form-model-item label="备注" prop="description">
-          <a-textarea v-model="formData.description" allow-clear />
-        </a-form-model-item>
+      <a-form
+        ref="form"
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 16 }"
+        :model="formData"
+        :rules="rules"
+      >
+        <a-form-item label="键" name="pmKey">
+          <a-input v-model:value="formData.pmKey" allow-clear />
+        </a-form-item>
+        <a-form-item label="值" name="pmValue">
+          <a-textarea v-model:value="formData.pmValue" allow-clear />
+        </a-form-item>
+        <a-form-item label="备注" name="description">
+          <a-textarea v-model:value="formData.description" allow-clear />
+        </a-form-item>
         <div class="form-modal-footer">
           <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit">保存</a-button>
+            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+              >保存</a-button
+            >
             <a-button :loading="loading" @click="closeDialog">取消</a-button>
           </a-space>
         </div>
-      </a-form-model>
+      </a-form>
     </div>
   </a-modal>
 </template>
 <script>
-export default {
-  components: {
-  },
-  data() {
-    return {
-      // 是否可见
-      visible: false,
-      // 是否显示加载框
-      loading: false,
-      // 表单数据
-      formData: {},
-      // 表单校验规则
-      rules: {
-        pmKey: [
-          { required: true, message: '请输入键' },
-          { validator: this.validKey }
-        ]
-      }
-    }
-  },
-  computed: {
-  },
-  created() {
-    // 初始化表单数据
-    this.initFormData()
-  },
-  methods: {
-    // 打开对话框 由父页面触发
-    openDialog() {
-      this.visible = true
+  import { defineComponent } from 'vue';
+  import * as api from '@/api/system/parameter';
+  import { validKey } from './constants';
 
-      this.$nextTick(() => this.open())
+  export default defineComponent({
+    components: {},
+    data() {
+      return {
+        // 是否可见
+        visible: false,
+        // 是否显示加载框
+        loading: false,
+        // 表单数据
+        formData: {},
+        // 表单校验规则
+        rules: {
+          pmKey: [{ required: true, message: '请输入键' }, { validator: validKey }],
+        },
+      };
     },
-    // 关闭对话框
-    closeDialog() {
-      this.visible = false
-      this.$emit('close')
-    },
-    // 初始化表单数据
-    initFormData() {
-      this.formData = {
-        pmKey: '',
-        pmValue: '',
-        description: ''
-      }
-    },
-    // 提交表单事件
-    submit() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.$api.system.parameter.create(this.formData).then(() => {
-            this.$msg.success('新增成功！')
-            this.$emit('confirm')
-            this.visible = false
-          }).finally(() => {
-            this.loading = false
-          })
-        }
-      })
-    },
-    // 页面显示时触发
-    open() {
+    computed: {},
+    created() {
       // 初始化表单数据
-      this.initFormData()
+      this.initFormData();
     },
-    validKey(rule, value, callback) {
-      if (!this.$utils.isEmpty(value)) {
-        if (!/^[A-Za-z0-9\.\-_]+$/.test(value)) {
-          return callback(new Error('键只能由大写字母、小写字母、数字或._-组成'))
-        }
-      }
+    methods: {
+      // 打开对话框 由父页面触发
+      openDialog() {
+        this.visible = true;
 
-      callback()
-    }
-  }
-}
+        this.$nextTick(() => this.open());
+      },
+      // 关闭对话框
+      closeDialog() {
+        this.visible = false;
+        this.$emit('close');
+      },
+      // 初始化表单数据
+      initFormData() {
+        this.formData = {
+          pmKey: '',
+          pmValue: '',
+          description: '',
+        };
+      },
+      // 提交表单事件
+      submit() {
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            this.loading = true;
+            api
+              .create(this.formData)
+              .then(() => {
+                this.$msg.createSuccess('新增成功！');
+                this.$emit('confirm');
+                this.visible = false;
+              })
+              .finally(() => {
+                this.loading = false;
+              });
+          }
+        });
+      },
+      // 页面显示时触发
+      open() {
+        // 初始化表单数据
+        this.initFormData();
+      },
+    },
+  });
 </script>

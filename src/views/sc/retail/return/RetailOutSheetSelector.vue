@@ -2,15 +2,10 @@
   <div>
     <dialog-table
       ref="selector"
-      v-model="model"
       :request="getList"
       :load="getLoad"
-      :show-sum="showSum"
+      :dialog-width="'80%'"
       :request-params="_requestParams"
-      :multiple="multiple"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      :before-open="beforeOpen"
       :option="{ label: 'code', value: 'id' }"
       :column-option="{ label: 'code', value: 'id' }"
       :table-column="[
@@ -20,47 +15,45 @@
         { field: 'memberCode', title: '会员编号', minWidth: 100 },
         { field: 'memberName', title: '会员名称', minWidth: 120 },
         { field: 'createTime', title: '操作时间', minWidth: 150 },
-        { field: 'createBy', title: '操作人', minWidth: 100 }
+        { field: 'createBy', title: '操作人', minWidth: 100 },
       ]"
-      @input="e => $emit('input', e)"
-      @input-label="e => $emit('input-label', e)"
-      @input-row="e => $emit('input-row', e)"
-      @clear="e => $emit('clear', e)"
+      v-bind="$attrs"
     >
-      <template v-slot:form>
+      <template #form>
+        <!-- 查询条件 -->
         <j-border>
           <j-form>
             <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="零售出库单号">
-              <a-input v-model="searchParams.code" allow-clear />
+              <a-input v-model:value="searchParams.code" allow-clear />
             </j-form-item>
             <j-form-item label="仓库">
               <store-center-selector
                 v-if="$utils.isEmpty(requestParams.scId)"
-                v-model="searchParams.scId"
+                v-model:value="searchParams.scId"
               />
             </j-form-item>
             <j-form-item label="会员">
               <member-selector
                 v-if="$utils.isEmpty(requestParams.memberId)"
-                v-model="searchParams.memberId"
+                v-model:value="searchParams.memberId"
               />
             </j-form-item>
             <j-form-item label="操作人">
               <user-selector
                 v-if="$utils.isEmpty(requestParams.createBy)"
-                v-model="searchParams.createBy"
+                v-model:value="searchParams.createBy"
               />
             </j-form-item>
             <j-form-item label="操作日期" :content-nest="false" :span="12">
               <div class="date-range-container">
                 <a-date-picker
-                  v-model="searchParams.createStartTime"
+                  v-model:value="searchParams.createStartTime"
                   placeholder=""
                   value-format="YYYY-MM-DD 00:00:00"
                 />
                 <span class="date-split">至</span>
                 <a-date-picker
-                  v-model="searchParams.createEndTime"
+                  v-model:value="searchParams.createEndTime"
                   placeholder=""
                   value-format="YYYY-MM-DD 23:59:59"
                 />
@@ -70,9 +63,14 @@
         </j-border>
       </template>
       <!-- 工具栏 -->
-      <template v-slot:toolbar_buttons>
+      <template #toolbar_buttons>
         <a-space class="operator">
-          <a-button type="primary" icon="search" @click="$refs.selector.search()">查询</a-button>
+          <a-button type="primary" @click="$refs.selector.search()">
+            <template #icon>
+              <SearchOutlined />
+            </template>
+            查询</a-button
+          >
         </a-space>
       </template>
     </dialog-table>
@@ -80,95 +78,66 @@
 </template>
 
 <script>
-import DialogTable from '@/components/DialogTable'
-import { request } from '@/utils/request'
-import StoreCenterSelector from '@/components/Selector/StoreCenterSelector'
-import MemberSelector from '@/components/Selector/MemberSelector'
-import UserSelector from '@/components/Selector/UserSelector'
-import moment from 'moment'
+  import { defineComponent } from 'vue';
+  import { SearchOutlined } from '@ant-design/icons-vue';
+  import Moment from 'moment';
+  import * as api from '@/api/sc/retail/out';
 
-export default {
-  name: 'RetailOutSheetSelectorWithReturn',
-  components: { DialogTable, StoreCenterSelector, MemberSelector, UserSelector },
-  props: {
-    value: { type: [Object, Array], required: true },
-    multiple: { type: Boolean, default: false },
-    placeholder: { type: String, default: '' },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    beforeOpen: {
-      type: Function,
-      default: e => {
-        return () => {
-          return true
-        }
-      }
-    },
-    requestParams: {
-      type: Object,
-      default: e => {
-        return {}
-      }
-    },
-    showSum: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data() {
-    return {
-      searchParams: {
-        code: '',
-        scId: '',
-        memberId: '',
-        createBy: '',
-        createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
-        createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment()))
-      }
-    }
-  },
-  computed: {
-    model: {
-      get() {
-        return this.value
+  export default defineComponent({
+    name: 'RetailOutSheetSelector',
+    components: { SearchOutlined },
+    props: {
+      requestParams: {
+        type: Object,
+        default: () => {
+          return {};
+        },
       },
-      set() {}
     },
-    _requestParams() {
-      return Object.assign({}, this.searchParams, { available: true }, this.requestParams)
-    }
-  },
-  methods: {
-    getList(params) {
-      const reqParams = {
-        code: params.code,
-        scId: params.scId || '',
-        memberId: params.memberId || '',
-        createBy: params.createBy || '',
-        createStartTime: params.createStartTime,
-        createEndTime: params.createEndTime
-      }
-      return request({
-        url: '/retail/out/sheet/query/return',
-        region: 'cloud-api',
-        method: 'get',
-        params: reqParams
-      })
+    setup() {
+      const moment = Moment;
+      return {
+        moment,
+      };
     },
-    getLoad(ids) {
-      return request({
-        url: '/retail/out/sheet/query/return/load',
-        region: 'cloud-api',
-        method: 'post',
-        dataType: 'json',
-        data: ids
-      })
-    }
-  }
-}
+    data() {
+      return {
+        searchParams: {
+          code: '',
+          scId: '',
+          memberId: '',
+          createBy: '',
+          createStartTime: this.$utils.formatDateTime(
+            this.$utils.getDateTimeWithMinTime(this.moment().subtract(1, 'M')),
+          ),
+          createEndTime: this.$utils.formatDateTime(
+            this.$utils.getDateTimeWithMaxTime(this.moment()),
+          ),
+        },
+      };
+    },
+    computed: {
+      _requestParams() {
+        return Object.assign({}, this.searchParams, { available: true }, this.requestParams);
+      },
+    },
+    methods: {
+      getList(params) {
+        const reqParams = {
+          code: params.code,
+          scId: params.scId || '',
+          memberId: params.memberId || '',
+          createBy: params.createBy || '',
+          createStartTime: params.createStartTime,
+          createEndTime: params.createEndTime,
+        };
+        return api.queryWithReturn(reqParams);
+      },
+      getLoad(ids) {
+        return api.loadWithReturn(ids);
+      },
+    },
+  });
 </script>
 
-<style lang="less">
-</style>
+<style lang="less"></style>

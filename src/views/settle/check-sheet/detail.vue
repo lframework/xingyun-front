@@ -1,5 +1,12 @@
 <template>
-  <a-modal v-model="visible" :mask-closable="false" width="75%" title="查看" :dialog-style="{ top: '20px' }" :footer="null">
+  <a-modal
+    v-model:open="visible"
+    :mask-closable="false"
+    width="75%"
+    title="查看"
+    :style="{ top: '20px' }"
+    :footer="null"
+  >
     <div v-if="visible" v-permission="['settle:check-sheet:query']" v-loading="loading">
       <j-border>
         <j-form>
@@ -9,14 +16,14 @@
           <j-form-item label="审核日期" :content-nest="false" required>
             <div class="date-range-container">
               <a-date-picker
-                v-model="formData.startTime"
+                v-model:value="formData.startTime"
                 placeholder=""
                 value-format="YYYY-MM-DD 00:00:00"
                 disabled
               />
               <span class="date-split">至</span>
               <a-date-picker
-                v-model="formData.endTime"
+                v-model:value="formData.endTime"
                 placeholder=""
                 value-format="YYYY-MM-DD 23:59:59"
                 disabled
@@ -25,12 +32,28 @@
           </j-form-item>
           <j-form-item />
           <j-form-item label="状态">
-            <span v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)" style="color: #52C41A;">{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" style="color: #F5222D;">{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span>
-            <span v-else style="color: #303133;">{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span>
+            <span
+              v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              style="color: #52c41a"
+              >{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
+            >
+            <span
+              v-else-if="
+                $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              "
+              style="color: #f5222d"
+              >{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
+            >
+            <span v-else style="color: #303133">{{
+              $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status)
+            }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
-            <a-input v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" v-model="formData.refuseReason" read-only />
+            <a-input
+              v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-model:value="formData.refuseReason"
+              readonly
+            />
           </j-form-item>
           <j-form-item label="操作人">
             <span>{{ formData.createBy }}</span>
@@ -38,10 +61,23 @@
           <j-form-item label="操作时间" :span="16">
             <span>{{ formData.createTime }}</span>
           </j-form-item>
-          <j-form-item v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核人">
+          <j-form-item
+            v-if="
+              $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+            "
+            label="审核人"
+          >
             <span>{{ formData.approveBy }}</span>
           </j-form-item>
-          <j-form-item v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) || $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)" label="审核时间" :span="16">
+          <j-form-item
+            v-if="
+              $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+            "
+            label="审核时间"
+            :span="16"
+          >
             <span>{{ formData.approveTime }}</span>
           </j-form-item>
         </j-form>
@@ -59,24 +95,80 @@
         :columns="tableColumn"
       >
         <!-- 单据号 列自定义内容 -->
-        <template v-slot:bizCode_default="{ row }">
-          <span v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)" v-no-permission="['purchase:receive:query']">{{ row.bizCode }}</span>
-          <a v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)" v-permission="['purchase:receive:query']" type="link" @click="e => { $refs.viewPurchaseReceiveSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewPurchaseReceiveSheetDetailDialog.openDialog()) }">
+        <template #bizCode_default="{ row }">
+          <span
+            v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)"
+            v-no-permission="['purchase:receive:query']"
+            >{{ row.bizCode }}</span
+          >
+          <a
+            v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)"
+            v-permission="['purchase:receive:query']"
+            type="link"
+            @click="
+              (e) => {
+                $refs.viewPurchaseReceiveSheetDetailDialog.id = row.bizId;
+                $nextTick(() => $refs.viewPurchaseReceiveSheetDetailDialog.openDialog());
+              }
+            "
+          >
             {{ row.bizCode }}
           </a>
 
-          <span v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)" v-no-permission="['purchase:return:query']">{{ row.bizCode }}</span>
-          <a v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)" v-permission="['purchase:return:query']" type="link" @click="e => { $refs.viewPurchaseReturnDetailDialog.id = row.bizId; $nextTick(() => $refs.viewPurchaseReturnDetailDialog.openDialog()) }">
+          <span
+            v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)"
+            v-no-permission="['purchase:return:query']"
+            >{{ row.bizCode }}</span
+          >
+          <a
+            v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)"
+            v-permission="['purchase:return:query']"
+            type="link"
+            @click="
+              (e) => {
+                $refs.viewPurchaseReturnDetailDialog.id = row.bizId;
+                $nextTick(() => $refs.viewPurchaseReturnDetailDialog.openDialog());
+              }
+            "
+          >
             {{ row.bizCode }}
           </a>
 
-          <span v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:fee-sheet:query']">{{ row.bizCode }}</span>
-          <a v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)" v-permission="['settle:fee-sheet:query']" type="link" @click="e => { $refs.viewSettleFeeSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettleFeeSheetDetailDialog.openDialog()) }">
+          <span
+            v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)"
+            v-no-permission="['settle:fee-sheet:query']"
+            >{{ row.bizCode }}</span
+          >
+          <a
+            v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)"
+            v-permission="['settle:fee-sheet:query']"
+            type="link"
+            @click="
+              (e) => {
+                $refs.viewSettleFeeSheetDetailDialog.id = row.bizId;
+                $nextTick(() => $refs.viewSettleFeeSheetDetailDialog.openDialog());
+              }
+            "
+          >
             {{ row.bizCode }}
           </a>
 
-          <span v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-no-permission="['settle:pre-sheet:query']">{{ row.bizCode }}</span>
-          <a v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)" v-permission="['settle:pre-sheet:query']" type="link" @click="e => { $refs.viewSettlePreSheetDetailDialog.id = row.bizId; $nextTick(() => $refs.viewSettlePreSheetDetailDialog.openDialog()) }">
+          <span
+            v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)"
+            v-no-permission="['settle:pre-sheet:query']"
+            >{{ row.bizCode }}</span
+          >
+          <a
+            v-show="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)"
+            v-permission="['settle:pre-sheet:query']"
+            type="link"
+            @click="
+              (e) => {
+                $refs.viewSettlePreSheetDetailDialog.id = row.bizId;
+                $nextTick(() => $refs.viewSettlePreSheetDetailDialog.openDialog());
+              }
+            "
+          >
             {{ row.bizCode }}
           </a>
         </template>
@@ -87,10 +179,10 @@
       <j-border title="合计">
         <j-form label-width="140px">
           <j-form-item label="单据总金额" :span="6">
-            <a-input v-model="formData.totalAmount" class="number-input" read-only />
+            <a-input v-model:value="formData.totalAmount" class="number-input" readonly />
           </j-form-item>
           <j-form-item label="应付总金额" :span="6">
-            <a-input v-model="formData.totalPayAmount" class="number-input" read-only />
+            <a-input v-model:value="formData.totalPayAmount" class="number-input" readonly />
           </j-form-item>
         </j-form>
       </j-border>
@@ -98,7 +190,7 @@
       <j-border>
         <j-form label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
-            <a-textarea v-model.trim="formData.description" read-only />
+            <a-textarea v-model:value.trim="formData.description" readonly />
           </j-form-item>
         </j-form>
       </j-border>
@@ -114,134 +206,148 @@
   </a-modal>
 </template>
 <script>
-import PurchaseReceiveSheetDetail from '@/views/sc/purchase/receive/detail'
-import PurchaseReturnDetail from '@/views/sc/purchase/return/detail'
-import SettleFeeSheetDetail from '@/views/settle/fee-sheet/detail'
-import SettlePreSheetDetail from '@/views/settle/pre-sheet/detail'
-export default {
-  components: {
-    PurchaseReceiveSheetDetail, PurchaseReturnDetail, SettleFeeSheetDetail, SettlePreSheetDetail
-  },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
-  data() {
-    return {
-      // 是否可见
-      visible: false,
-      // 是否显示加载框
-      loading: false,
-      // 表单数据
-      formData: {},
-      // 列表数据配置
-      tableColumn: [
-        { type: 'seq', width: 40 },
-        { field: 'bizCode', title: '单据号', width: 200, slots: { default: 'bizCode_default' }},
-        { field: 'bizType', title: '单据类型', width: 120, formatter: ({ cellValue }) => { return this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue) } },
-        { field: 'approveTime', title: '审核时间', width: 170 },
-        { field: 'totalAmount', title: '单据金额', align: 'right', width: 100 },
-        { field: 'payAmount', title: '应付金额', align: 'right', width: 100 },
-        { field: 'description', title: '备注', width: 260 }
-      ],
-      tableData: []
-    }
-  },
-  computed: {
-  },
-  created() {
-    // 初始化表单数据
-    this.initFormData()
-  },
-  methods: {
-    // 打开对话框 由父页面触发
-    openDialog() {
-      this.visible = true
+  import { defineComponent } from 'vue';
+  import PurchaseReceiveSheetDetail from '@/views/sc/purchase/receive/detail.vue';
+  import PurchaseReturnDetail from '@/views/sc/purchase/return/detail.vue';
+  import SettleFeeSheetDetail from '@/views/settle/fee-sheet/detail.vue';
+  import SettlePreSheetDetail from '@/views/settle/pre-sheet/detail.vue';
+  import * as api from '@/api/settle/check';
 
-      this.$nextTick(() => this.open())
+  export default defineComponent({
+    components: {
+      PurchaseReceiveSheetDetail,
+      PurchaseReturnDetail,
+      SettleFeeSheetDetail,
+      SettlePreSheetDetail,
     },
-    // 关闭对话框
-    closeDialog() {
-      this.visible = false
-      this.$emit('close')
+    props: {
+      id: {
+        type: String,
+        required: true,
+      },
     },
-    // 初始化表单数据
-    initFormData() {
-      this.formData = {
-        supplierName: '',
-        description: '',
-        startTime: '',
-        endTime: '',
-        totalAmount: 0,
-        totalPayAmount: 0
-      }
+    data() {
+      return {
+        // 是否可见
+        visible: false,
+        // 是否显示加载框
+        loading: false,
+        // 表单数据
+        formData: {},
+        // 列表数据配置
+        tableColumn: [
+          { type: 'seq', width: 45 },
+          { field: 'bizCode', title: '单据号', width: 200, slots: { default: 'bizCode_default' } },
+          {
+            field: 'bizType',
+            title: '单据类型',
+            width: 120,
+            formatter: ({ cellValue }) => {
+              return this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
+            },
+          },
+          { field: 'approveTime', title: '审核时间', width: 170 },
+          { field: 'totalAmount', title: '单据金额', align: 'right', width: 100 },
+          { field: 'payAmount', title: '应付金额', align: 'right', width: 100 },
+          { field: 'description', title: '备注', width: 260 },
+        ],
+        tableData: [],
+      };
     },
-    // 加载数据
-    loadData() {
-      this.loading = true
-      this.$api.settle.checkSheet.get(this.id).then(res => {
-        this.formData = {
-          supplierName: res.supplierName,
-          description: res.description,
-          startTime: res.startTime,
-          endTime: res.endTime,
-          status: res.status,
-          createBy: res.createBy,
-          createTime: res.createTime,
-          approveBy: res.approveBy,
-          approveTime: res.approveTime,
-          refuseReason: res.refuseReason,
-          totalAmount: 0,
-          totalPayAmount: 0
-        }
-        const details = res.details.map(item => {
-          return {
-            id: item.id,
-            bizId: item.bizId,
-            bizCode: item.bizCode,
-            bizType: item.bizType,
-            totalAmount: item.totalAmount,
-            payAmount: item.payAmount,
-            approveTime: item.approveTime,
-            description: item.description
-          }
-        })
-
-        this.tableData = details
-
-        this.calcSum()
-      }).finally(() => {
-        this.loading = false
-      })
-    },
-    // 页面显示时触发
-    open() {
+    computed: {},
+    created() {
       // 初始化表单数据
-      this.initFormData()
-
-      this.loadData()
+      this.initFormData();
     },
-    // 计算汇总数据
-    calcSum() {
-      let totalAmount = 0
-      let totalPayAmount = 0
-      this.tableData.forEach(item => {
-        if (this.$utils.isFloat(item.totalAmount)) {
-          totalAmount = this.$utils.add(totalAmount, item.totalAmount)
-        }
+    methods: {
+      // 打开对话框 由父页面触发
+      openDialog() {
+        this.visible = true;
 
-        if (this.$utils.isFloat(item.payAmount)) {
-          totalPayAmount = this.$utils.add(totalPayAmount, item.payAmount)
-        }
-      })
+        this.$nextTick(() => this.open());
+      },
+      // 关闭对话框
+      closeDialog() {
+        this.visible = false;
+        this.$emit('close');
+      },
+      // 初始化表单数据
+      initFormData() {
+        this.formData = {
+          supplierName: '',
+          description: '',
+          startTime: '',
+          endTime: '',
+          totalAmount: 0,
+          totalPayAmount: 0,
+        };
+      },
+      // 加载数据
+      loadData() {
+        this.loading = true;
+        api
+          .get(this.id)
+          .then((res) => {
+            this.formData = {
+              supplierName: res.supplierName,
+              description: res.description,
+              startTime: res.startTime,
+              endTime: res.endTime,
+              status: res.status,
+              createBy: res.createBy,
+              createTime: res.createTime,
+              approveBy: res.approveBy,
+              approveTime: res.approveTime,
+              refuseReason: res.refuseReason,
+              totalAmount: 0,
+              totalPayAmount: 0,
+            };
+            const details = res.details.map((item) => {
+              return {
+                id: item.id,
+                bizId: item.bizId,
+                bizCode: item.bizCode,
+                bizType: item.bizType,
+                totalAmount: item.totalAmount,
+                payAmount: item.payAmount,
+                approveTime: item.approveTime,
+                description: item.description,
+              };
+            });
 
-      this.formData.totalAmount = totalAmount
-      this.formData.totalPayAmount = totalPayAmount
-    }
-  }
-}
+            this.tableData = details;
+
+            this.calcSum();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      },
+      // 页面显示时触发
+      open() {
+        // 初始化表单数据
+        this.initFormData();
+
+        this.loadData();
+      },
+      // 计算汇总数据
+      calcSum() {
+        let totalAmount = 0;
+        let totalPayAmount = 0;
+        this.tableData.forEach((item) => {
+          if (this.$utils.isFloat(item.totalAmount)) {
+            totalAmount = this.$utils.add(totalAmount, item.totalAmount);
+          }
+
+          if (this.$utils.isFloat(item.payAmount)) {
+            totalPayAmount = this.$utils.add(totalPayAmount, item.payAmount);
+          }
+        });
+
+        this.formData.totalAmount = totalAmount;
+        this.formData.totalPayAmount = totalPayAmount;
+      },
+    },
+  });
 </script>
-<style>
-</style>
+<style></style>
