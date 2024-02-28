@@ -35,7 +35,7 @@
           <sys-position-selector v-model:value="formData.positions" :multiple="true" />
         </a-form-item>
         <a-form-item v-if="!formData.modifyPassword" label="更新密码">
-          <a-checkbox v-model:value="formData.modifyPassword" />
+          <a-checkbox v-model:checked="formData.modifyPassword" />
         </a-form-item>
         <a-form-item v-show="formData.modifyPassword" label="密码" name="password">
           <a-input-password v-model:value="formData.password" allow-clear />
