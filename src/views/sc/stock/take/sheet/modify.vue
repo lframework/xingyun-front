@@ -378,12 +378,18 @@
         for (let i = 0; i < this.tableData.length; i++) {
           const data = this.tableData[i];
           if (data.productId === value.productId) {
+            if (i === index) {
+              this.tableData[index] = Object.assign(this.tableData[index], value);
+              return;
+            }
             this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
-            this.tableData[index] = Object.assign(this.tableData[index], this.emptyProduct());
+            this.tableData = this.tableData.filter((t) => {
+              return t.id !== row.id;
+            });
             return;
           }
         }
-        this.tableData[index] = Object.assign(this.tableData[index], this.emptyProduct(), value);
+        this.tableData[index] = Object.assign(this.tableData[index], value);
       },
       // 删除商品
       delProduct() {

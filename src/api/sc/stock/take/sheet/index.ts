@@ -71,7 +71,7 @@ export function getDetail(id: string): Promise<TakeStockSheetFullBo> {
 export function searchProducts(planId: string, condition: string): Promise<TakeStockSheetProductBo[]> {
   return defHttp.get<TakeStockSheetProductBo[]>(
     {
-      url: baseUrl + '/products/search',
+      url: baseUrl + '/product/search',
       params: {
         planId,
         condition,

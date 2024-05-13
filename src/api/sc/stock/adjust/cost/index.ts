@@ -76,7 +76,7 @@ export function searchProducts(
 ): Promise<StockCostAdjustProductBo[]> {
   return defHttp.get<StockCostAdjustProductBo[]>(
     {
-      url: baseUrl + '/products/search',
+      url: baseUrl + '/product/search',
       params: {
         scId,
         condition,

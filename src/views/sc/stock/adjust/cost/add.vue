@@ -120,12 +120,12 @@
   </div>
 </template>
 <script>
-  import { h, defineComponent } from 'vue';
-  import BatchAddProduct from '@/views/sc/stock/adjust/cost/batch-add-product.vue';
-  import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
-  import * as api from '@/api/sc/stock/adjust/cost';
+import {defineComponent, h} from 'vue';
+import BatchAddProduct from '@/views/sc/stock/adjust/cost/batch-add-product.vue';
+import {DeleteOutlined, PlusOutlined} from '@ant-design/icons-vue';
+import * as api from '@/api/sc/stock/adjust/cost';
 
-  export default defineComponent({
+export default defineComponent({
     components: {
       BatchAddProduct,
     },
@@ -346,6 +346,7 @@
           oriPrice: '',
           price: '',
           description: '',
+          productOptions: [],
           products: [],
         };
       },
@@ -381,12 +382,18 @@
         for (let i = 0; i < this.tableData.length; i++) {
           const data = this.tableData[i];
           if (data.productId === value.productId) {
+            if (i === index) {
+              this.tableData[index] = Object.assign(this.tableData[index], value);
+              return;
+            }
             this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
-            this.tableData[index] = Object.assign(this.tableData[index], this.emptyProduct());
+            this.tableData = this.tableData.filter((t) => {
+              return t.id !== row.id;
+            });
             return;
           }
         }
-        this.tableData[index] = Object.assign(this.tableData[index], this.emptyProduct(), value);
+        this.tableData[index] = Object.assign(this.tableData[index], value);
         this.calcSum();
       },
       // 删除商品

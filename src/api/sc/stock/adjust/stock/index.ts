@@ -73,7 +73,7 @@ export function getDetail(id: string): Promise<StockAdjustSheetFullBo> {
 export function searchProducts(scId: string, condition: string): Promise<StockAdjustProductBo[]> {
   return defHttp.get<StockAdjustProductBo[]>(
     {
-      url: baseUrl + '/products/search',
+      url: baseUrl + '/product/search',
       params: {
         scId,
         condition,
