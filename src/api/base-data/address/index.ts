@@ -1,7 +1,7 @@
 import { defHttp } from '/@/utils/http/axios';
 import { PageResult } from '@/api/model/pageResult';
 import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
-import { QueryAddressSelectorVo } from '@/api/base-data/address/model/queryAddressSelectorVo';
+import { AddressSelectorVo } from '@/api/base-data/address/model/addressSelectorVo';
 import { AddressSelectorBo } from '@/api/base-data/address/model/addressSelectorBo';
 import { UpdateAddressVo } from '@/api/base-data/address/model/updateAddressVo';
 import { CreateAddressVo } from '@/api/base-data/address/model/createAddressVo';
@@ -13,7 +13,7 @@ const baseUrl = '/basedata/address';
 const selectorBaseUrl = '/selector';
 const region = 'cloud-api';
 
-export function selector(params: QueryAddressSelectorVo): Promise<PageResult<AddressSelectorBo>> {
+export function selector(params: AddressSelectorVo): Promise<PageResult<AddressSelectorBo>> {
   return defHttp.get<PageResult<AddressSelectorBo>>(
     {
       url: selectorBaseUrl + '/address',
