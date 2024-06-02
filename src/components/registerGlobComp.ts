@@ -27,6 +27,7 @@ import CustomList from '@/components/CustomList';
 import CustomSelector from '@/components/CustomSelector';
 import CustomPage from '@/components/CustomPage';
 import OrderTimeLine from '@/components/OrderTimeLine';
+import DataDicPicker from '@/components/DataDicPicker';
 
 export async function registerGlobComp(app: App) {
   app
@@ -47,7 +48,8 @@ export async function registerGlobComp(app: App) {
     .component('CustomList', CustomList)
     .component('CustomSelector', CustomSelector)
     .component('CustomPage', CustomPage)
-    .component('OrderTimeLine', OrderTimeLine);
+    .component('OrderTimeLine', OrderTimeLine)
+    .component('DataDicPicker', DataDicPicker);
 
   VXETable.use(VXETablePluginAntd);
   VXETable.setup(componentSetting.vxeTable);
