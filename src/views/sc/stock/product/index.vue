@@ -98,7 +98,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'scCode', title: '仓库编号', width: 100, sortable: true },
           { field: 'scName', title: '仓库名称', minWidth: 160 },
           { field: 'productCode', title: '商品编号', width: 120, sortable: true },

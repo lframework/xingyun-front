@@ -117,7 +117,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'pmKey', title: '键', width: 120, sortable: true },
           { field: 'pmValue', title: '值', width: 220 },
           { field: 'description', title: '备注', minWidth: 200 },

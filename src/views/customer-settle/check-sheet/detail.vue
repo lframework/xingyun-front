@@ -248,7 +248,7 @@
         formData: {},
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'bizCode', title: '单据号', width: 200, slots: { default: 'bizCode_default' } },
           {
             field: 'bizType',

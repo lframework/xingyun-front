@@ -190,7 +190,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           {
             field: 'bizCode',
             title: '业务单据号',

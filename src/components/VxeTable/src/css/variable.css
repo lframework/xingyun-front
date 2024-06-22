@@ -1,0 +1,9 @@
+[data-vxe-ui-theme=light]{
+  --vxe-ui-table-row-current-background-color: rgb(9 96 189 / 30%) !important;
+  --vxe-ui-table-row-hover-current-background-color: rgb(9 96 189 / 20%) !important;
+  --vxe-ui-table-column-hover-background-color: rgb(9 96 189 / 30%) !important;
+  --vxe-ui-table-column-current-background-color: rgb(9 96 189 / 20%) !important;
+  --vxe-ui-table-validate-error-color: #FF4D4F !important;
+  --vxe-ui-font-color: rgba(0, 0, 0, 0.88) !important;
+}
+

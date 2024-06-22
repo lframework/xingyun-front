@@ -133,7 +133,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'title', title: '标题', minWidth: 160 },
           {
             field: 'published',

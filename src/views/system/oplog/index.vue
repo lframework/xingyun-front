@@ -110,7 +110,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'name', title: '日志名称', minWidth: 220 },
           {
             field: 'logType',

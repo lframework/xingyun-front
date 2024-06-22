@@ -159,7 +159,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           {
             field: 'entityType',
             title: '实体类型',

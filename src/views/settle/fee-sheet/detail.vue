@@ -121,7 +121,7 @@
         formData: {},
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           {
             field: 'item',
             title: '项目',

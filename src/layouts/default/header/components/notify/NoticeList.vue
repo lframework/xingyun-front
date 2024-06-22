@@ -1,12 +1,11 @@
 <template>
   <a-list :class="prefixCls" bordered :pagination="getPagination">
     <template v-for="item in getData" :key="item.id">
-      <a-list-item class="list-item">
+      <a-list-item class="list-item" @click="handleTitleClick(item)">
         <a-list-item-meta>
           <template #title>
             <div class="title">
               <a-typography-paragraph
-                @click="handleTitleClick(item)"
                 style="width: 100%; margin-bottom: 0 !important"
                 :style="{ cursor: isTitleClickable ? 'pointer' : '' }"
                 :delete="!!item.titleDelete"
@@ -26,8 +25,7 @@
           </template>
 
           <template #avatar>
-            <a-avatar v-if="item.avatar" class="avatar" :src="item.avatar" />
-            <span v-else> {{ item.avatar }}</span>
+            <a-avatar class="avatar" :src="noticeImg" />
           </template>
 
           <template #description>
@@ -59,6 +57,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { List, Avatar, Tag, Typography } from 'ant-design-vue';
   import { isNumber } from '/@/utils/is';
+  import noticeImg from '/@/assets/images/notice.png';
 
   export default defineComponent({
     components: {
@@ -88,7 +87,7 @@
       },
       descRows: {
         type: Number,
-        default: 2,
+        default: 1,
       },
       onTitleClick: {
         type: Function as PropType<(Recordable) => void>,
@@ -137,7 +136,7 @@
         props.onTitleClick && props.onTitleClick(item);
       }
 
-      return { prefixCls, getPagination, getData, handleTitleClick, isTitleClickable };
+      return { prefixCls, getPagination, getData, handleTitleClick, isTitleClickable, noticeImg };
     },
   });
 </script>
@@ -153,8 +152,8 @@
       display: inline-block !important;
     }
 
-    &-item {
-      padding: 6px;
+    .list-item {
+      padding: 12px;
       overflow: hidden;
       transition: all 0.3s;
       cursor: pointer;

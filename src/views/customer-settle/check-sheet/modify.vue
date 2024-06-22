@@ -183,7 +183,7 @@
         // 列表数据配置
         tableColumn: [
           { type: 'checkbox', width: 45 },
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'bizCode', title: '单据号', width: 200 },
           {
             field: 'bizType',
