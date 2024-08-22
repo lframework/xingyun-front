@@ -190,7 +190,6 @@
             noticeList.value = (res.datas || []).map((item) => {
               return {
                 id: item.id,
-                avatar: 'https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png',
                 title: '系统通知',
                 description: item.title,
                 datetime: item.publishTime,

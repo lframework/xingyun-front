@@ -141,7 +141,7 @@
         detailId: '',
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'productCode', title: '商品编号', width: 120 },
           { field: 'productName', title: '商品名称', width: 260 },
           { field: 'skuCode', title: '商品SKU编号', width: 120 },

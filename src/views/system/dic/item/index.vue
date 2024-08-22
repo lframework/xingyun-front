@@ -111,7 +111,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'code', title: '编号', width: 120, sortable: true },
           { field: 'name', title: '名称', minWidth: 160, sortable: true },
           { field: 'orderNo', title: '排序', width: 80, align: 'right' },

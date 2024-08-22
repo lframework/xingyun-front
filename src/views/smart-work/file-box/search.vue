@@ -114,7 +114,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'name', title: '文件', minWidth: 100, slots: { default: 'name_default' } },
           { field: 'fileSize', title: '大小', width: 180 },
           { field: 'filePath', title: '路径', width: 180, slots: { default: 'filePath_default' } },

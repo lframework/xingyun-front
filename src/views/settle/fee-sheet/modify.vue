@@ -183,7 +183,7 @@
         // 列表数据配置
         tableColumn: [
           { type: 'checkbox', width: 45 },
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'item', title: '项目', width: 200, slots: { default: 'item_default' } },
           {
             field: 'amount',

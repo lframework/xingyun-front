@@ -62,7 +62,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'createBy', title: '收货人', minWidth: 120 },
           { field: 'createTime', title: '收货时间', width: 170 },
           { field: 'receiveNum', title: '收货数量', width: 120, align: 'right' },

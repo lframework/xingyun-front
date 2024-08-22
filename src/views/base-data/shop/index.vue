@@ -164,7 +164,7 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 45 },
+          { type: 'seq', width: 50 },
           { field: 'code', title: '编号', width: 100, sortable: true },
           { field: 'name', title: '名称', width: 180, sortable: true },
           { field: 'deptName', title: '所属部门', width: 180 },

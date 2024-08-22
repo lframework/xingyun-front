@@ -241,7 +241,7 @@
         }
       },
       _sumTableColumn() {
-        return [{ type: 'seq', width: 45 }, ...this.tableColumn];
+        return [{ type: 'seq', width: 50 }, ...this.tableColumn];
       },
       _radioConfig() {
         if (!this.multiple) {

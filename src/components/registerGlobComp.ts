@@ -2,6 +2,7 @@ import type { App } from 'vue';
 import { h } from 'vue';
 import Antd, { Empty } from 'ant-design-vue';
 import VXETable from 'vxe-table';
+import VxeUI from 'vxe-pc-ui';
 import VXETablePluginAntd from 'vxe-table-plugin-antd';
 import JForm from '@/components/JForm';
 import JFormItem from '@/components/JFormItem';
@@ -32,6 +33,7 @@ import DataDicPicker from '@/components/DataDicPicker';
 export async function registerGlobComp(app: App) {
   app
     .use(Antd)
+    .use(VxeUI)
     .use(VXETable)
     .component('RelativeTime', RelativeTime)
     .component('JForm', JForm)
