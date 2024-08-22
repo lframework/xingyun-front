@@ -26,6 +26,7 @@
         }"
         :pager-config="{}"
         :loading="loading"
+        @cell-dblclick="submit"
       >
         <!-- 工具栏 -->
         <template #toolbar_buttons>
