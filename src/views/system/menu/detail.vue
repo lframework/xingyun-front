@@ -49,7 +49,7 @@
           {{ formData.path }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
+          v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
           label="是否不缓存"
           :span="4"
         >
