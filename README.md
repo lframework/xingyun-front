@@ -1,6 +1,12 @@
 ### 项目介绍
 星云ERP是基于SpringBoot框架的中小企业完全开源的ERP。
 
+### 环境版本说明
+* nodejs v20.17.0
+* npm 10.8.2
+* pnpm 9.7.1
+> pnpm安装命令：npm install -g pnpm@9.7.1
+
 ### 主要技术框架
 * Vue 3.3.4
 * ant-design-vue 4.0.7
