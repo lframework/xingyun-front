@@ -3,7 +3,7 @@ import { h } from 'vue';
 import Antd, { Empty } from 'ant-design-vue';
 import VXETable from 'vxe-table';
 import VxeUI from 'vxe-pc-ui';
-import VXETablePluginAntd from 'vxe-table-plugin-antd';
+import VxeUIPluginRenderAntd from '@vxe-ui/plugin-render-antd';
 import JForm from '@/components/JForm';
 import JFormItem from '@/components/JFormItem';
 import DialogTable from '@/components/DialogTable';
@@ -53,7 +53,7 @@ export async function registerGlobComp(app: App) {
     .component('OrderTimeLine', OrderTimeLine)
     .component('DataDicPicker', DataDicPicker);
 
-  VXETable.use(VXETablePluginAntd);
+  VxeUI.use(VxeUIPluginRenderAntd)
   VXETable.setup(componentSetting.vxeTable);
   VXETable.renderer.add('NotData', {
     // 空内容模板

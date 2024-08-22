@@ -406,7 +406,7 @@
       },
       setReceiver(row) {
         this.$msg.createConfirm('选择地址后，会覆盖收件人信息，是否确认继续？').then(() => {
-          this.entityId = row.scId;
+          this.entityId = row.receiverId;
           if (this.$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.SALE_OUT_SHEET.equalsCode(row.bizType)) {
             this.entityType = this.$enums.ADDRESS_ENTITY_TYPE.CUSTOMER.code;
           } else if (
