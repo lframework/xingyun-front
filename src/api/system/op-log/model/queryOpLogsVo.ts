@@ -1,4 +1,4 @@
-import {PageVo} from "@/api/model/pageVo";
+import { PageVo } from '@/api/model/pageVo';
 
 export interface QueryOpLogsVo extends PageVo {
   /**

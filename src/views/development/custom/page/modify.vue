@@ -27,12 +27,12 @@
       <j-border>
         <a-tabs v-model:value="activeName" :tab-bar-style="{ margin: 0 }">
           <a-tab-pane key="page" tab="页面代码" :force-render="true">
-            <div style="height: 500px;">
+            <div style="height: 500px">
               <monaco-editor v-model:value="formData.pageCode" language="html" />
             </div>
           </a-tab-pane>
           <a-tab-pane key="script" tab="脚本代码" :force-render="true">
-            <div style="height: 500px;">
+            <div style="height: 500px">
               <monaco-editor v-model:value="formData.scriptCode" language="javascript" />
             </div>
           </a-tab-pane>

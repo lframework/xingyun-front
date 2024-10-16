@@ -324,7 +324,7 @@
         color-stop(0.6, #333),
         color-stop(1, #333)
       );
-      font-size: 12px;
+      font-size: 10px;
       user-select: none;
       text-size-adjust: none;
 

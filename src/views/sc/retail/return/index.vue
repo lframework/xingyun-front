@@ -104,7 +104,7 @@
                         v-for="item in $enums.SETTLE_STATUS.values()"
                         :key="item.code"
                         :value="item.code"
-                      >{{ item.desc }}</a-select-option
+                        >{{ item.desc }}</a-select-option
                       >
                     </a-select>
                   </j-form-item>

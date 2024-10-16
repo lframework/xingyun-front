@@ -105,21 +105,24 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then().then((valid) => {
-          if (valid) {
-            this.loading = true;
-            api
-              .update(this.formData)
-              .then(() => {
-                this.$msg.createSuccess('修改成功！');
-                this.$emit('confirm');
-                this.visible = false;
-              })
-              .finally(() => {
-                this.loading = false;
-              });
-          }
-        });
+        this.$refs.form
+          .validate()
+          .then()
+          .then((valid) => {
+            if (valid) {
+              this.loading = true;
+              api
+                .update(this.formData)
+                .then(() => {
+                  this.$msg.createSuccess('修改成功！');
+                  this.$emit('confirm');
+                  this.visible = false;
+                })
+                .finally(() => {
+                  this.loading = false;
+                });
+            }
+          });
       },
       // 页面显示时触发
       open() {

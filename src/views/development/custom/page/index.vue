@@ -42,10 +42,15 @@
               <template #toolbar_buttons>
                 <a-space>
                   <a-button type="primary" :icon="h(SearchOutlined)" @click="search">查询</a-button>
-                  <a-button type="primary" :icon="h(PlusOutlined)" @click="$refs.addDialog.openDialog()"
+                  <a-button
+                    type="primary"
+                    :icon="h(PlusOutlined)"
+                    @click="$refs.addDialog.openDialog()"
                     >新增</a-button
                   >
-                  <a-button danger :icon="h(DeleteOutlined)" @click="batchDelete">批量删除</a-button>
+                  <a-button danger :icon="h(DeleteOutlined)" @click="batchDelete"
+                    >批量删除</a-button
+                  >
                 </a-space>
               </template>
 
@@ -76,7 +81,7 @@
   import Modify from './modify.vue';
   import Detail from './detail.vue';
   import CategoryTree from './category-tree.vue';
-  import {SearchOutlined, PlusOutlined, DeleteOutlined} from "@ant-design/icons-vue";
+  import { SearchOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/development/custom/page';
 
   export default defineComponent({

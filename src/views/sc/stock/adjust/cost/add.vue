@@ -120,12 +120,12 @@
   </div>
 </template>
 <script>
-import {defineComponent, h} from 'vue';
-import BatchAddProduct from '@/views/sc/stock/adjust/cost/batch-add-product.vue';
-import {DeleteOutlined, PlusOutlined} from '@ant-design/icons-vue';
-import * as api from '@/api/sc/stock/adjust/cost';
+  import { defineComponent, h } from 'vue';
+  import BatchAddProduct from '@/views/sc/stock/adjust/cost/batch-add-product.vue';
+  import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import * as api from '@/api/sc/stock/adjust/cost';
 
-export default defineComponent({
+  export default defineComponent({
     components: {
       BatchAddProduct,
     },

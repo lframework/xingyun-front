@@ -68,7 +68,10 @@ export function getDetail(id: string): Promise<TakeStockSheetFullBo> {
 /**
  * 根据关键字查询商品列表
  */
-export function searchProducts(planId: string, condition: string): Promise<TakeStockSheetProductBo[]> {
+export function searchProducts(
+  planId: string,
+  condition: string,
+): Promise<TakeStockSheetProductBo[]> {
   return defHttp.get<TakeStockSheetProductBo[]>(
     {
       url: baseUrl + '/product/search',

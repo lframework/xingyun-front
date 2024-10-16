@@ -130,7 +130,7 @@
     padding: 0 0 0 10px;
     padding-right: 10px;
     overflow: hidden;
-    font-size: 12px;
+    font-size: 10px;
     cursor: pointer;
 
     &__header {
@@ -138,7 +138,7 @@
     }
 
     &__name {
-      font-size: 14px;
+      font-size: 12px;
     }
 
     &--dark {

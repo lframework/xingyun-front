@@ -166,7 +166,9 @@ export function approveRefuse(data: ApproveRefuseCustomerSettleCheckSheetVo): Pr
 /**
  * 批量审核拒绝
  */
-export function batchApproveRefuse(data: BatchApproveRefuseCustomerSettleCheckSheetVo): Promise<void> {
+export function batchApproveRefuse(
+  data: BatchApproveRefuseCustomerSettleCheckSheetVo,
+): Promise<void> {
   return defHttp.patch<void>(
     {
       url: baseUrl + '/approve/refuse/batch',
@@ -216,7 +218,9 @@ export function deleteByIds(ids: string[]): Promise<void> {
 /**
  * 查询未对账的业务单据
  */
-export function getUnCheckItems(params: QueryCustomerUnCheckBizItemVo): Promise<CustomerSettleCheckBizItemBo[]> {
+export function getUnCheckItems(
+  params: QueryCustomerUnCheckBizItemVo,
+): Promise<CustomerSettleCheckBizItemBo[]> {
   return defHttp.get<CustomerSettleCheckBizItemBo[]>(
     {
       url: baseUrl + '/uncheck-items',

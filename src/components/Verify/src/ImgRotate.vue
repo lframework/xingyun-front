@@ -196,7 +196,6 @@
       width: 100%;
       height: 30px;
       color: @white;
-      font-size: 12px;
       line-height: 30px;
       text-align: center;
 

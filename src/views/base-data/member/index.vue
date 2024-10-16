@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import {defineComponent, h} from 'vue';
+  import { defineComponent, h } from 'vue';
   import Add from './add.vue';
   import Modify from './modify.vue';
   import Detail from './detail.vue';

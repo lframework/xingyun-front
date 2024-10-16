@@ -88,7 +88,7 @@
   position: relative;
   top: -0.1em;
   display: inline-block;
-  font-size: 0.8em;
+  font-size: 10px;
   content: '>';
   opacity: 0.8;
   transform: rotate(90deg);

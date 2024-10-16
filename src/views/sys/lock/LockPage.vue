@@ -28,7 +28,7 @@
       <div :class="`${prefixCls}-entry`" v-show="!showDate">
         <div :class="`${prefixCls}-entry-content`">
           <div :class="`${prefixCls}-entry__header enter-x`">
-            <avatar :size="70" style="font-size: 36px" />
+            <avatar :size="70" style="font-size: 34px" />
             <p :class="`${prefixCls}-entry__header-name`">
               {{ userinfo.name }}
             </p>

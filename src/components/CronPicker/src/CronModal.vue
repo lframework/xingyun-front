@@ -552,7 +552,7 @@
                         v-for="(val, index) in Array(100)"
                         :key="index"
                         :value="2021 + index"
-                      >{{ 2021 + index }}</a-select-option
+                        >{{ 2021 + index }}</a-select-option
                       >
                     </a-select>
                   </a-space>

@@ -308,7 +308,7 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/info';
-  import * as propertyApi from '@/api/base-data/product/property'
+  import * as propertyApi from '@/api/base-data/product/property';
 
   export default defineComponent({
     // 使用组件

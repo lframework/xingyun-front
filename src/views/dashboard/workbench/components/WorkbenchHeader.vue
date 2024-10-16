@@ -1,6 +1,6 @@
 <template>
   <div class="lg:flex">
-    <Avatar :size="64" style="font-size: 32px" />
+    <Avatar :size="64" style="font-size: 30px" />
     <div class="md:ml-6 flex flex-col justify-center md:mt-0 mt-2">
       <h1 class="md:text-lg text-md">{{ welcomeMsg(userinfo.name) }}</h1>
       <span class="text-secondary"> 当前时间：{{ curTime }} </span>

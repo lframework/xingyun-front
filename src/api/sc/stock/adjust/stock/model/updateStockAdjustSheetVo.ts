@@ -1,42 +1,41 @@
 export interface UpdateStockAdjustSheetVo {
-/**
-* 
-*/
-serialVersionUID: long;
+  /**
+   *
+   */
+  serialVersionUID: long;
 
-/**
-* ID
-*/
-id: string;
+  /**
+   * ID
+   */
+  id: string;
 
-/**
-* 
-*/
-serialVersionUID: long;
+  /**
+   *
+   */
+  serialVersionUID: long;
 
-/**
-* 仓库ID
-*/
-scId: string;
+  /**
+   * 仓库ID
+   */
+  scId: string;
 
-/**
-* 业务类型
-*/
-bizType: number;
+  /**
+   * 业务类型
+   */
+  bizType: number;
 
-/**
-* 调整原因ID
-*/
-reasonId: string;
+  /**
+   * 调整原因ID
+   */
+  reasonId: string;
 
-/**
-* 备注
-*/
-description: string;
+  /**
+   * 备注
+   */
+  description: string;
 
-/**
-* 商品信息
-*/
-products: list;
-
+  /**
+   * 商品信息
+   */
+  products: list;
 }

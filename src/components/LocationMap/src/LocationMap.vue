@@ -20,9 +20,10 @@
 </template>
 
 <script>
-  let map, marker;
   import { defineComponent } from 'vue';
   import * as api from '@/api/components';
+
+  let map, marker;
 
   export default defineComponent({
     name: 'LocationMap',

@@ -243,7 +243,7 @@
   /* you can make up upload button and sample style by using stylesheets */
   .ant-upload-select-picture-card i {
     color: #999;
-    font-size: 32px;
+    font-size: 30px;
   }
 
   .ant-upload-select-picture-card .ant-upload-text {

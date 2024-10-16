@@ -187,7 +187,7 @@
       height: 48px;
       border-radius: 6px;
       color: #1c1e21;
-      font-size: 1.5em;
+      font-size: 18px;
 
       span[role='img'] {
         color: #999;
@@ -197,7 +197,7 @@
     &-cancel {
       display: none;
       color: #666;
-      font-size: 1em;
+      font-size: 12px;
     }
 
     &-not-data {
@@ -207,7 +207,7 @@
       width: 100%;
       height: 100px;
       color: rgb(150 159 175);
-      font-size: 0.9;
+      font-size: 12px;
     }
 
     &-list {
@@ -231,7 +231,7 @@
         background-color: @component-background;
         box-shadow: 0 1px 3px 0 #d4d9e1;
         color: @text-color-base;
-        font-size: 14px;
+        font-size: 12px;
         cursor: pointer;
 
         > div:first-child,

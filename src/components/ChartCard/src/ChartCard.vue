@@ -59,7 +59,6 @@
     overflow: hidden;
     width: 100%;
     color: @text-color-base;
-    font-size: 14px;
     line-height: 22px;
   }
   .chart-card-action {
@@ -75,7 +74,7 @@
     white-space: nowrap;
     margin-top: 4px;
     margin-bottom: 0;
-    font-size: 30px;
+    font-size: 28px;
     line-height: 38px;
     height: 38px;
   }

@@ -104,22 +104,25 @@
       },
       // 提交表单事件
       submitEvent() {
-        this.$refs.form.validate().then().then((valid) => {
-          if (valid) {
-            this.loading = true;
-            api
-              .update(this.formData)
-              .then(() => {
-                this.$msg.createSuccess('修改成功！');
-                // 初始化表单数据
-                this.initFormData();
-                this.$emit('confirm');
-              })
-              .finally(() => {
-                this.loading = false;
-              });
-          }
-        });
+        this.$refs.form
+          .validate()
+          .then()
+          .then((valid) => {
+            if (valid) {
+              this.loading = true;
+              api
+                .update(this.formData)
+                .then(() => {
+                  this.$msg.createSuccess('修改成功！');
+                  // 初始化表单数据
+                  this.initFormData();
+                  this.$emit('confirm');
+                })
+                .finally(() => {
+                  this.loading = false;
+                });
+            }
+          });
       },
       // 重置表单
       resetForm() {

@@ -87,8 +87,7 @@
       </template>
 
       <!-- 请求参数 列自定义内容 -->
-      <template #requestParam_default="{ row }">
-      </template>
+      <template #requestParam_default="{ row }"> </template>
     </vxe-grid>
   </div>
 </template>
@@ -96,7 +95,7 @@
   import { h, defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import CodeEditor from './code-editor.vue';
-  import {PlusOutlined, DeleteOutlined, DragOutlined} from "@ant-design/icons-vue";
+  import { PlusOutlined, DeleteOutlined, DragOutlined } from '@ant-design/icons-vue';
 
   export default defineComponent({
     // 使用组件

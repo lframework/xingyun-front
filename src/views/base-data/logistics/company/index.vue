@@ -92,7 +92,13 @@
   import Modify from './modify.vue';
   import Detail from './detail.vue';
   import * as api from '@/api/base-data/logistics/company';
-  import { CheckOutlined, SearchOutlined, StopOutlined, DownOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import {
+    CheckOutlined,
+    SearchOutlined,
+    StopOutlined,
+    DownOutlined,
+    PlusOutlined,
+  } from '@ant-design/icons-vue';
 
   export default defineComponent({
     name: 'LogisticsCompany',

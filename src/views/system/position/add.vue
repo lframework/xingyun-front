@@ -87,23 +87,26 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then().then((valid) => {
-          if (valid) {
-            this.loading = true;
-            api
-              .create(this.formData)
-              .then(() => {
-                this.$msg.createSuccess('新增成功！');
-                // 初始化表单数据
-                this.initFormData();
-                this.$emit('confirm');
-                this.visible = false;
-              })
-              .finally(() => {
-                this.loading = false;
-              });
-          }
-        });
+        this.$refs.form
+          .validate()
+          .then()
+          .then((valid) => {
+            if (valid) {
+              this.loading = true;
+              api
+                .create(this.formData)
+                .then(() => {
+                  this.$msg.createSuccess('新增成功！');
+                  // 初始化表单数据
+                  this.initFormData();
+                  this.$emit('confirm');
+                  this.visible = false;
+                })
+                .finally(() => {
+                  this.loading = false;
+                });
+            }
+          });
       },
       // 页面显示时触发
       open() {

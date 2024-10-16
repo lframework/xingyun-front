@@ -70,7 +70,7 @@
                       v-for="item in $enums.SETTLE_PRE_SHEET_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
-                    >{{ item.desc }}</a-select-option
+                      >{{ item.desc }}</a-select-option
                     >
                   </a-select>
                 </j-form-item>
@@ -84,7 +84,7 @@
                       v-for="item in $enums.SETTLE_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
-                    >{{ item.desc }}</a-select-option
+                      >{{ item.desc }}</a-select-option
                     >
                   </a-select>
                 </j-form-item>
@@ -100,32 +100,32 @@
                 type="primary"
                 :icon="h(PlusOutlined)"
                 @click="$router.push('/settle/supplier/pre-sheet/add')"
-              >新增</a-button
+                >新增</a-button
               >
               <a-button
                 v-permission="['settle:pre-sheet:approve']"
                 :icon="h(CheckOutlined)"
                 @click="batchApprovePass"
-              >审核通过</a-button
+                >审核通过</a-button
               >
               <a-button
                 v-permission="['settle:pre-sheet:approve']"
                 :icon="h(CloseOutlined)"
                 @click="batchApproveRefuse"
-              >审核拒绝</a-button
+                >审核拒绝</a-button
               >
               <a-button
                 v-permission="['settle:pre-sheet:delete']"
                 danger
                 :icon="h(DeleteOutlined)"
                 @click="batchDelete"
-              >批量删除</a-button
+                >批量删除</a-button
               >
               <a-button
                 v-permission="['settle:pre-sheet:export']"
                 :icon="h(DownloadOutlined)"
                 @click="exportList"
-              >导出</a-button
+                >导出</a-button
               >
             </a-space>
           </template>

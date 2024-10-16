@@ -6,7 +6,7 @@ import { PageEnum } from '/@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { CaptchaModel, GetUserInfoModel, LoginParams, RoleInfo } from '/@/api/sys/model/userModel';
-import { doLogout, getCaptchaApi, loginApi } from '/@/api/sys/user';
+import { doLogout, getCaptchaApi, getCaptchaRequireApi, loginApi } from '/@/api/sys/user';
 import { createConfirm } from '@/hooks/web/msg';
 import { router } from '/@/router';
 
@@ -138,6 +138,10 @@ export const useUserStore = defineStore({
      */
     getCaptcha(): Promise<CaptchaModel> {
       return getCaptchaApi();
+    },
+
+    getCaptchaRequire(username: string): Promise<Boolean> {
+      return getCaptchaRequireApi(username);
     },
   },
 });

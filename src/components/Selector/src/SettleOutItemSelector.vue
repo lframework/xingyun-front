@@ -19,7 +19,12 @@
             </j-form-item>
             <j-form-item v-if="$utils.isEmpty(requestParams.available)" label="状态">
               <a-select v-model:value="searchParams.available" placeholder="全部" allow-clear>
-                <a-select-option v-for="item in $enums.AVAILABLE.values()" :key="item.code" :value="item.code">{{ item.desc }}</a-select-option>
+                <a-select-option
+                  v-for="item in $enums.AVAILABLE.values()"
+                  :key="item.code"
+                  :value="item.code"
+                  >{{ item.desc }}</a-select-option
+                >
               </a-select>
             </j-form-item>
           </j-form>

@@ -47,14 +47,14 @@
     position: relative;
     padding-left: 7px;
     color: @text-color-base;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     line-height: 24px;
     cursor: pointer;
     user-select: none;
 
     &-normal {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
     }
 

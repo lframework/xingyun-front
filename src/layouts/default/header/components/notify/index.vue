@@ -247,7 +247,7 @@
     .ant-badge {
       display: flex;
       align-items: center;
-      font-size: 18px;
+      font-size: 16px;
 
       .ant-badge-multiple-words {
         padding: 0 4px;

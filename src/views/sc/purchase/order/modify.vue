@@ -86,9 +86,15 @@
           <a-space>
             <a-button type="primary" :icon="h(PlusOutlined)" @click="addProduct">新增</a-button>
             <a-button danger :icon="h(DeleteOutlined)" @click="delProduct">删除</a-button>
-            <a-button :icon="h(PlusOutlined)" @click="openBatchAddProductDialog">批量添加商品</a-button>
-            <a-button :icon="h(NumberOutlined)" @click="batchInputPurchaseNum">批量录入数量</a-button>
-            <a-button :icon="h(EditOutlined)" @click="batchInputPurchasePrice">批量调整采购价</a-button>
+            <a-button :icon="h(PlusOutlined)" @click="openBatchAddProductDialog"
+              >批量添加商品</a-button
+            >
+            <a-button :icon="h(NumberOutlined)" @click="batchInputPurchaseNum"
+              >批量录入数量</a-button
+            >
+            <a-button :icon="h(EditOutlined)" @click="batchInputPurchasePrice"
+              >批量调整采购价</a-button
+            >
             <a-button :icon="h(AlertOutlined)" @click="setGift">设置赠品</a-button>
           </a-space>
         </template>
@@ -103,8 +109,7 @@
             :options="row.productOptions"
             @search="(e) => queryProduct(e, row)"
             @select="(e) => handleSelectProduct(rowIndex, e, row)"
-          >
-          </a-auto-complete>
+          />
         </template>
 
         <!-- 采购价 列自定义内容 -->

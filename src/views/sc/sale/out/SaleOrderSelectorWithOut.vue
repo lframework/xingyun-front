@@ -110,7 +110,9 @@
           createStartTime: this.$utils.formatDateTime(
             this.$utils.getDateTimeWithMinTime(this.moment().subtract(1, 'M')),
           ),
-          createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(this.moment())),
+          createEndTime: this.$utils.formatDateTime(
+            this.$utils.getDateTimeWithMaxTime(this.moment()),
+          ),
         },
       };
     },

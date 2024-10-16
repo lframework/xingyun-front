@@ -12,7 +12,11 @@
         <a-descriptions-item label="文件名" :span="4">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item v-if="!$utils.isEmpty(formData.url) && showPreview" label="预览" :span="4">
+        <a-descriptions-item
+          v-if="!$utils.isEmpty(formData.url) && showPreview"
+          label="预览"
+          :span="4"
+        >
           <a-image :width="80" :src="formData.url" @error="() => (showPreview = false)" />
         </a-descriptions-item>
         <a-descriptions-item v-if="!$utils.isEmpty(formData.url)" label="下载链接" :span="4">

@@ -36,7 +36,7 @@
 <script>
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
-  import * as api from '@/api/development/data/obj-category'
+  import * as api from '@/api/development/data/obj-category';
 
   export default defineComponent({
     components: {},

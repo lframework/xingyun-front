@@ -1,5 +1,4 @@
-export interface UpdateSysRoleVo{
-
+export interface UpdateSysRoleVo {
   /**
    * ID
    */
@@ -29,5 +28,4 @@ export interface UpdateSysRoleVo{
    * 备注
    */
   description: string;
-
 }

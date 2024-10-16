@@ -18,9 +18,7 @@
               </div>
               <a-divider style="margin: 10px 0" />
               <div class="account-center-actions">
-                <router-link to="/settings">
-                  <a>个人设置</a>
-                </router-link>
+                <a @click="goSettings">个人设置</a>
                 <a @click="logout">退出登录</a>
               </div>
             </div>
@@ -104,6 +102,9 @@
         this.$msg.createConfirm('确定退出登录？').then(() => {
           this.userStore.logout(true);
         });
+      },
+      goSettings() {
+        this.$router.push('/settings');
       },
     },
   });

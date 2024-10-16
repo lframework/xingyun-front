@@ -13,7 +13,7 @@
       @change="handleChange"
     >
       <div v-if="fileList.length < 1">
-        <a-icon style="font-size: 32px; color: #999" :type="loading ? 'loading' : 'picture'" />
+        <a-icon style="font-size: 30px; color: #999" :type="loading ? 'loading' : 'picture'" />
         <div style="margin-top: 8px; color: #666"> 上传图片 </div>
       </div>
     </a-upload>

@@ -194,7 +194,7 @@
       transform: rotate(90deg);
 
       svg {
-        font-size: 1.1em;
+        font-size: 14px;
         font-weight: 700;
       }
     }

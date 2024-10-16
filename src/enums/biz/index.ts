@@ -2,6 +2,7 @@
 import { App } from 'vue';
 import { isEmpty, isFunction, keys } from '@/utils/utils';
 import { BaseEnum } from '@/enums/baseEnum';
+
 export async function install(app: App): Promise<void> {
   const modules = import.meta.glob('./*.ts');
   const enums = {};

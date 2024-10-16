@@ -122,8 +122,7 @@
             :options="row.productOptions"
             @search="(e) => queryProduct(e, row)"
             @select="(e) => handleSelectProduct(rowIndex, e, row)"
-          >
-          </a-auto-complete>
+          />
           <span v-else>{{ row.productName }}</span>
         </template>
 

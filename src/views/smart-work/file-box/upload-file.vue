@@ -65,7 +65,7 @@
       },
       // 初始化表单数据
       initFormData() {
-        this.fileList = []
+        this.fileList = [];
       },
       // 页面显示时触发
       open() {

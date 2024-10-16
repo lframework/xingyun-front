@@ -125,7 +125,10 @@
                 @click="$refs.importer2.openDialog()"
                 >批量设置约定支付</a-button
               >
-              <a-button v-permission="['purchase:order:export']" :icon="h(DownloadOutlined)" @click="exportList"
+              <a-button
+                v-permission="['purchase:order:export']"
+                :icon="h(DownloadOutlined)"
+                @click="exportList"
                 >导出</a-button
               >
             </a-space>

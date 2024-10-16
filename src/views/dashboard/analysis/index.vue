@@ -57,9 +57,9 @@
   };
 </script>
 <style lang="less" scoped>
-.chart-wrapper {
-  background: #fff;
-  padding: 16px 16px 0;
-  margin-top: 32px;
-}
+  .chart-wrapper {
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-top: 32px;
+  }
 </style>

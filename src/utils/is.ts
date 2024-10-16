@@ -1,4 +1,5 @@
 import { isNil } from 'lodash-es';
+
 const toString = Object.prototype.toString;
 
 export function is(val: unknown, type: string) {
@@ -44,8 +45,6 @@ export function isEmpty<T = unknown>(val: T): val is T {
 export function isDate(val: unknown): val is Date {
   return is(val, 'Date');
 }
-
-
 
 export function isNull(val: unknown): val is null {
   return val === null;

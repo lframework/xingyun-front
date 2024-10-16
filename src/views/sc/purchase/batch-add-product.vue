@@ -82,7 +82,7 @@
 </template>
 <script>
   import { h, defineComponent } from 'vue';
-  import {SearchOutlined} from "@ant-design/icons-vue";
+  import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/order';
 
   export default defineComponent({

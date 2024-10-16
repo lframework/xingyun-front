@@ -173,8 +173,8 @@
               <!-- 工具栏 -->
               <template #toolbar_buttons>
                 <a-space>
-                  <a-button type="primary" icon="plus" @click="addRow">新增</a-button>
-                  <a-button danger icon="delete" @click="delRow">删除</a-button>
+                  <a-button type="primary" :icon="h(PlusOutlined)" @click="addRow">新增</a-button>
+                  <a-button danger :icon="h(DeleteOutlined)" @click="delRow">删除</a-button>
                 </a-space>
               </template>
 
@@ -307,14 +307,22 @@
   </div>
 </template>
 <script>
-  import { defineComponent } from 'vue';
+  import { h, defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/info';
-  import * as propertyApi from '@/api/base-data/product/property'
+  import * as propertyApi from '@/api/base-data/product/property';
+  import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 
   export default defineComponent({
     name: 'AddProduct',
     components: {},
+    setup() {
+      return {
+        h,
+        PlusOutlined,
+        DeleteOutlined,
+      };
+    },
     data() {
       return {
         // 是否显示加载框

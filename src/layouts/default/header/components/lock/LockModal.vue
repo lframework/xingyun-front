@@ -8,7 +8,7 @@
   >
     <div :class="`${prefixCls}__entry`">
       <div :class="`${prefixCls}__header`">
-        <avatar :size="70" style="font-size: 36px" />
+        <avatar :size="70" style="font-size: 34px" />
         <p :class="`${prefixCls}__header-name`">
           {{ getRealName }}
         </p>

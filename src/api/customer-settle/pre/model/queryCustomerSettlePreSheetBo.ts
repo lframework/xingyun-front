@@ -63,5 +63,4 @@ export interface QueryCustomerSettlePreSheetBo {
    * 总金额
    */
   totalAmount: number;
-
 }

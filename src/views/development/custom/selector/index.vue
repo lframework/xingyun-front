@@ -4,7 +4,7 @@
       <a-row>
         <a-col :span="4">
           <page-wrapper content-full-height fixed-height content-class="!mr-0">
-            <category-tree style="height: 100%;" @change="(e) => doSearch(e)" />
+            <category-tree style="height: 100%" @change="(e) => doSearch(e)" />
           </page-wrapper>
         </a-col>
         <a-col :span="20">

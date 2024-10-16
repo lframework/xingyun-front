@@ -31,8 +31,7 @@
 
   export default defineComponent({
     // 使用组件
-    components: {
-    },
+    components: {},
 
     props: {
       id: {

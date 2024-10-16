@@ -126,7 +126,7 @@
 
       &__title {
         color: #fff;
-        font-size: 16px;
+        font-size: 14px;
       }
 
       img {
@@ -142,7 +142,7 @@
 
         &__title {
           color: #fff;
-          font-size: 24px;
+          font-size: 22px;
         }
 
         img {
@@ -154,7 +154,7 @@
     &-sign-in-way {
       .anticon {
         color: #888;
-        font-size: 22px;
+        font-size: 20px;
         cursor: pointer;
 
         &:hover {
@@ -189,7 +189,7 @@
 
     .ant-divider-inner-text {
       color: @text-color-secondary;
-      font-size: 12px;
+      font-size: 10px;
     }
   }
 </style>

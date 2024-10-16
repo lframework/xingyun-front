@@ -44,6 +44,7 @@ html[data-theme='light'] {
       .ant-tabs-tab {
         height: calc(@multiple-height - 2px);
         padding-right: 12px;
+        padding-left: 18px;
         transition: none;
         background-color: @component-background;
         color: @text-color-base;
@@ -63,7 +64,7 @@ html[data-theme='light'] {
           transition: none;
           opacity: 0;
           color: inherit;
-          font-size: 12px;
+          font-size: 10px;
 
           &:hover {
             svg {
@@ -91,7 +92,6 @@ html[data-theme='light'] {
 
       .ant-tabs-tab-active {
         position: relative;
-        padding-left: 18px;
         transition: none;
         border: 0;
         background: @primary-color;
@@ -115,14 +115,14 @@ html[data-theme='light'] {
       padding: 0 6px;
 
       .ant-tabs-tab {
-        margin-right: 3px !important;
+        margin-right: 1px !important;
       }
     }
   }
 
   .ant-tabs-tab:not(.ant-tabs-tab-active) {
     .anticon-close {
-      font-size: 12px;
+      font-size: 10px;
 
       svg {
         width: 0.6em;
@@ -174,7 +174,7 @@ html[data-theme='light'] {
       height: @multiple-height - 2;
       margin-left: -10px;
       padding-left: 0;
-      font-size: 12px;
+      font-size: 10px;
       cursor: pointer;
       user-select: none;
     }

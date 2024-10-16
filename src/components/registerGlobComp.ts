@@ -53,7 +53,7 @@ export async function registerGlobComp(app: App) {
     .component('OrderTimeLine', OrderTimeLine)
     .component('DataDicPicker', DataDicPicker);
 
-  VxeUI.use(VxeUIPluginRenderAntd)
+  VxeUI.use(VxeUIPluginRenderAntd);
   VXETable.setup(componentSetting.vxeTable);
   VXETable.renderer.add('NotData', {
     // 空内容模板

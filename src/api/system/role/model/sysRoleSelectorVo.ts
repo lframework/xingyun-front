@@ -1,5 +1,4 @@
 export interface SysRoleSelectorVo extends PageVo {
-
   /**
    * 编号
    */

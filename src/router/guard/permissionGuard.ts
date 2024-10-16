@@ -52,7 +52,7 @@ export function createPermissionGuard(router: Router) {
       };
       if (to.path) {
         redirectData.query = {
-          ...redirectData.query
+          ...redirectData.query,
         };
       }
       next(redirectData);

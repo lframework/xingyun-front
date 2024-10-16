@@ -175,7 +175,7 @@ export const buildProps = <
       : never;
   };
 
-export const definePropType = <T>(val: any) => ({ [wrapperKey]: val }) as PropWrapper<T>;
+export const definePropType = <T>(val: any) => ({ [wrapperKey]: val } as PropWrapper<T>);
 
 export const keyOf = <T extends object>(arr: T) => Object.keys(arr) as Array<keyof T>;
 

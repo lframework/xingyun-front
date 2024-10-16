@@ -98,7 +98,7 @@
     display: inline-block;
     margin-left: 6px;
     color: @text-color-help-dark;
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
 
     &:hover {

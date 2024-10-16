@@ -29,15 +29,8 @@
       margin-left: 20px;
       color: rgba(0, 0, 0, 0.85);
       font-weight: 700;
-      font-size: 16px;
+      font-size: 14px;
       line-height: 1.5;
     }
-
-    /*.j-border-title--default {
-    font-size: 12px;
-    padding: 0 20px;
-
-    transform: translateY(-80%);
-  }*/
   }
 </style>

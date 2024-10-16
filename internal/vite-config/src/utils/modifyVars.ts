@@ -6,7 +6,7 @@ import { generate } from '@ant-design/colors';
 import { theme } from 'ant-design-vue/lib';
 import convertLegacyToken from 'ant-design-vue/lib/theme/convertLegacyToken';
 
-const { defaultAlgorithm, defaultSeed } = theme;
+const { compactAlgorithm, defaultSeed } = theme;
 
 const primaryColor = '#0960bd';
 
@@ -30,7 +30,7 @@ export function generateModifyVars() {
   }
 
   // const modifyVars = getThemeVariables();
-  const mapToken = defaultAlgorithm(defaultSeed);
+  const mapToken = compactAlgorithm(defaultSeed);
   const v3Token = convertLegacyToken(mapToken);
 
   return {
@@ -41,10 +41,10 @@ export function generateModifyVars() {
     ...primaryColorObj,
     'info-color': primary,
     'processing-color': primary,
-    'success-color': '#55D187', //  Success color
-    'error-color': '#ED6F6F', //  False color
-    'warning-color': '#EFBD47', //   Warning color
-    'font-size-base': '14px', //  Main font size
+    'success-color': '#52C41A', //  Success color
+    'error-color': '#FF4D4F', //  False color
+    'warning-color': '#FAAD14', //   Warning color
+    'font-size-base': '12px', //  Main font size
     'border-radius-base': '2px', //  Component/float fillet
     'link-color': primary, //   Link color
     'app-content-background': '#fafafa', //   Link color

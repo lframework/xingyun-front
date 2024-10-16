@@ -54,7 +54,9 @@
 
       <!-- 路径 列自定义内容 -->
       <template #filePath_default="{ row }">
-        <a @click="() => changeFolder(row)">{{ row.filePath === '/' ? '根目录' : '根目录' + row.filePath }}</a>
+        <a @click="() => changeFolder(row)">{{
+          row.filePath === '/' ? '根目录' : '根目录' + row.filePath
+        }}</a>
       </template>
 
       <!-- 操作 列自定义内容 -->

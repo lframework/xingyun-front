@@ -131,7 +131,7 @@
     text-align: center;
 
     .order-timeline-footer-item {
-      font-size: 14px;
+      font-size: 12px;
     }
   }
 </style>

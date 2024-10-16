@@ -10,7 +10,7 @@ import { VAxios } from './Axios';
 import { checkStatus } from './checkStatus';
 import { useGlobSetting } from '/@/hooks/setting';
 import { ContentTypeEnum, RequestEnum, ResponseEnum } from '/@/enums/httpEnum';
-import { isString } from '/@/utils/is';
+import { isString, isArray } from '/@/utils/is';
 import { getToken } from '/@/utils/auth';
 import { deepMerge, setObjToUrlParams } from '/@/utils';
 import { formatRequestDate, joinTimestamp } from './helper';
@@ -99,6 +99,7 @@ const transform: AxiosTransform = {
     }
     const params = config.params || {};
     const data = config.data || false;
+    console.log(data);
     formatDate && data && !isString(data) && formatRequestDate(data);
     if (config.method?.toUpperCase() === RequestEnum.GET) {
       if (!isString(params)) {
@@ -115,7 +116,9 @@ const transform: AxiosTransform = {
         if (
           Reflect.has(config, 'data') &&
           config.data &&
-          (Object.keys(config.data).length > 0 || config.data instanceof FormData)
+          (Object.keys(config.data).length > 0 ||
+            config.data instanceof FormData ||
+            isArray(config.data))
         ) {
           config.data = data;
           config.params = params;

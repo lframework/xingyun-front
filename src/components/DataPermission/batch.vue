@@ -91,7 +91,8 @@
       },
       openDraggerDialog(permissionType) {
         this.$refs[
-          this.$enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.getDesc(permissionType.code) + 'DataPermission'
+          this.$enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.getDesc(permissionType.code) +
+            'DataPermission'
         ][0].openDialog();
       },
       submit() {

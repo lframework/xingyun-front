@@ -29,7 +29,10 @@
                 </a-form-item>
               </j-border>
               <j-border class="m-2" title="采购退货设置">
-                <a-form-item label="采购退货单是否关联采购收货单" name="purchaseReturnRequireReceive">
+                <a-form-item
+                  label="采购退货单是否关联采购收货单"
+                  name="purchaseReturnRequireReceive"
+                >
                   <a-select v-model:value="formData.purchaseReturnRequireReceive" placeholder="">
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>

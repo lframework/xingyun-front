@@ -1,17 +1,16 @@
 export interface ApproveRefuseRetailOutSheetVo {
-/**
-* 
-*/
-serialVersionUID: long;
+  /**
+   *
+   */
+  serialVersionUID: long;
 
-/**
-* 出库单ID
-*/
-id: string;
+  /**
+   * 出库单ID
+   */
+  id: string;
 
-/**
-* 拒绝理由
-*/
-refuseReason: string;
-
+  /**
+   * 拒绝理由
+   */
+  refuseReason: string;
 }

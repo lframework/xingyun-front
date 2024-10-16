@@ -107,7 +107,9 @@
           scId: '',
           supplierId: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createStartTime: this.$utils.formatDateTime(
+            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
+          ),
           createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
           status: undefined,
         },

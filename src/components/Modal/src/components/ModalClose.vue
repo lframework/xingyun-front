@@ -71,7 +71,7 @@
 
     > span {
       margin-left: 48px;
-      font-size: 16px;
+      font-size: 14px;
     }
 
     &--can-full {

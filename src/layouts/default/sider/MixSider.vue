@@ -493,13 +493,13 @@
       &__icon {
         margin-bottom: 8px;
         transition: all 0.2s;
-        font-size: 24px;
+        font-size: 22px;
       }
 
       &__name {
         margin-bottom: 0;
         transition: all 0.2s;
-        font-size: 12px;
+        font-size: 10px;
       }
     }
 
@@ -511,7 +511,7 @@
       height: 36px;
       background-color: @trigger-dark-bg-color;
       color: rgb(255 255 255 / 65%);
-      font-size: 14px;
+      font-size: 12px;
       line-height: 36px;
       text-align: center;
       cursor: pointer;
@@ -541,7 +541,7 @@
         opacity: 0;
         color: @primary-color;
         // margin-left: -6px;
-        font-size: 18px;
+        font-size: 16px;
 
         &.show {
           min-width: 130px;

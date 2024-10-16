@@ -32,7 +32,10 @@
                     <a-select-option :value="false">否</a-select-option>
                   </a-select>
                 </a-form-item>
-                <a-form-item label="零售退货单是否关联零售出库单" name="retailReturnRequireOutStock">
+                <a-form-item
+                  label="零售退货单是否关联零售出库单"
+                  name="retailReturnRequireOutStock"
+                >
                   <a-select v-model:value="formData.retailReturnRequireOutStock" placeholder="">
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>

@@ -103,7 +103,7 @@
 
   export default defineComponent({
     name: 'Tinymce',
-    components: { },
+    components: {},
     inheritAttrs: false,
     props: tinymceProps,
     emits: ['change', 'update:modelValue', 'inited', 'init-error'],

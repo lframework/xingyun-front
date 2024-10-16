@@ -6,6 +6,7 @@ enum Api {
   Login = '/auth/login',
   Logout = '/auth/logout',
   Captcha = '/auth/captcha',
+  CaptchaRequire = '/auth/captcha/require',
   CheckPassword = '/auth/check/password',
 }
 
@@ -33,6 +34,18 @@ export function doLogout(): Promise<void> {
 
 export function getCaptchaApi() {
   return defHttp.get<CaptchaModel>({ url: Api.Captcha }, { region });
+}
+
+export function getCaptchaRequireApi(username: string) {
+  return defHttp.post<Boolean>(
+    {
+      url: Api.CaptchaRequire,
+      params: {
+        username,
+      },
+    },
+    { region, contentType: ContentTypeEnum.FORM_URLENCODED },
+  );
 }
 
 export function checkPasswordApi(password: string) {

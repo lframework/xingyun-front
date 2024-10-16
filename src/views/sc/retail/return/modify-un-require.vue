@@ -111,8 +111,7 @@
             value-key="productName"
             @search="(e) => queryProduct(e, row)"
             @select="(e) => handleSelectProduct(rowIndex, e, row)"
-          >
-          </a-auto-complete>
+          />
         </template>
 
         <!-- 折扣 列自定义内容 -->

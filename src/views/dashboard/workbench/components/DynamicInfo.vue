@@ -6,14 +6,14 @@
           <ListItemMeta>
             <template #description>
               <div class="flex flex-col flex-nowrap">
-                <span class="font-size-3"><RelativeTime :value="item.createTime" /></span>
+                <span><RelativeTime :value="item.createTime" /></span>
               </div>
             </template>
             <!-- eslint-disable-next-line -->
             <template #title>
               <a-row>
                 <a-col :span="20">
-                  <span>{{ item.name }}</span>
+                  <span class="font-bold">{{ item.name }}</span>
                 </a-col>
                 <a-col :span="3" :offset="1">
                   <a-tag :bordered="false" color="processing">{{ item.ip }}</a-tag>

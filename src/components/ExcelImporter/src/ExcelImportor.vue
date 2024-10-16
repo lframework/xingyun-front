@@ -28,7 +28,7 @@
           <div style="padding: 0 5px">
             <span
               v-if="!$utils.isEmpty(tipMsg)"
-              style="font-size: 12px; color: #999999; white-space: pre-wrap"
+              style="font-size: 10px; color: #999999; white-space: pre-wrap"
               >{{ tipMsg }}</span
             >
           </div>

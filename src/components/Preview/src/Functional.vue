@@ -471,7 +471,7 @@
         position: absolute;
         top: 46px;
         left: 16px;
-        font-size: 16px;
+        font-size: 14px;
       }
 
       &:hover {
@@ -487,7 +487,7 @@
       transform: translateX(-50%);
       border-radius: 15px;
       background: rgb(109 109 109 / 60%);
-      font-size: 16px;
+      font-size: 14px;
     }
 
     &__controller {
@@ -508,7 +508,7 @@
         height: 100%;
         padding: 0 9px;
         transition: all 0.2s;
-        font-size: 24px;
+        font-size: 22px;
         cursor: pointer;
 
         &:hover {
@@ -532,7 +532,7 @@
       transition: all 0.2s;
       border-radius: 50%;
       background-color: rgb(0 0 0 / 50%);
-      font-size: 28px;
+      font-size: 26px;
       cursor: pointer;
 
       &:hover {
