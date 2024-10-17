@@ -7,8 +7,14 @@
     centered
     @ok="doConfirm"
   >
-    <a-row>
-      <a-col span="24">
+    <a-form
+      class="p-4 enter-x"
+      :model="formData"
+      :rules="getFormRules"
+      ref="formRef"
+      @keypress.enter="doConfirm"
+    >
+      <a-form-item class="enter-x">
         <a-tooltip class="captcha-box">
           <template #title>点此获取验证码</template>
           <span>
@@ -20,11 +26,8 @@
             />
           </span>
         </a-tooltip>
-      </a-col>
-    </a-row>
-    <div style="height: 10px"></div>
-    <a-row>
-      <a-col span="24">
+      </a-form-item>
+      <a-form-item name="captcha" class="enter-x">
         <a-input
           size="large"
           v-model:value="formData.captcha"
@@ -35,17 +38,18 @@
             <icon icon="captcha|svg" />
           </template>
         </a-input>
-      </a-col>
-    </a-row>
+      </a-form-item>
+    </a-form>
   </a-modal>
 </template>
 <script lang="ts" setup>
-  import { ref } from 'vue';
+  import { computed, ref, unref } from 'vue';
   import { useUserStore } from '/@/store/modules/user';
   import { CaptchaModel } from '@/api/sys/model/userModel';
   import Icon from '@/components/Icon/Icon.vue';
   import emptyCaptchaImg from '@/assets/images/empty-captcha.png';
-  import { onKeyStroke } from '@vueuse/core';
+  import type { Rule as ValidationRule } from 'ant-design-vue/lib/form/interface';
+  import { useFormValid } from '@/views/sys/login/useLogin';
 
   const emit = defineEmits(['confirm']);
 
@@ -60,9 +64,27 @@
     captcha: '',
   });
 
+  const formRef = ref();
+
+  const { validForm } = useFormValid(formRef);
+
   const visible = ref(false);
 
-  onKeyStroke('Enter', doConfirm);
+  const getCaptchaFormRule = computed(() => [
+    {
+      required: true,
+      message: '请输入验证码',
+      trigger: 'change',
+    },
+  ]);
+
+  const getFormRules = computed((): { [k: string]: ValidationRule | ValidationRule[] } => {
+    const captchaFormRule = unref(getCaptchaFormRule);
+
+    return {
+      captcha: captchaFormRule,
+    };
+  });
 
   // 获取登录验证码
   async function getCaptcha() {
@@ -93,7 +115,10 @@
     getCaptcha();
   }
 
-  function doConfirm() {
+  async function doConfirm() {
+    const data = await validForm();
+    if (!data) return;
+
     emit('confirm', {
       sn: captchaData.value.sn,
       captcha: formData.value.captcha,

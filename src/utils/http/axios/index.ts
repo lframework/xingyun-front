@@ -99,7 +99,6 @@ const transform: AxiosTransform = {
     }
     const params = config.params || {};
     const data = config.data || false;
-    console.log(data);
     formatDate && data && !isString(data) && formatRequestDate(data);
     if (config.method?.toUpperCase() === RequestEnum.GET) {
       if (!isString(params)) {
