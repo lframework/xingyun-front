@@ -80,7 +80,7 @@
           display: inline-block;
           margin: 0 0 3px 3px;
           fill: @white !important;
-          font-size: 10px;
+          font-size: 12px;
         }
       }
     }

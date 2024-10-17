@@ -499,7 +499,7 @@
       &__name {
         margin-bottom: 0;
         transition: all 0.2s;
-        font-size: 10px;
+        font-size: 12px;
       }
     }
 

@@ -89,7 +89,7 @@
     cursor: pointer;
     color: #ccc;
     transition: color 0.3s;
-    font-size: 10px;
+    font-size: 12px;
   }
   .cron-picker .anticon-close-circle:hover {
     color: #666;

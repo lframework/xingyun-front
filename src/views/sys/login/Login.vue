@@ -189,7 +189,7 @@
 
     .ant-divider-inner-text {
       color: @text-color-secondary;
-      font-size: 10px;
+      font-size: 12px;
     }
   }
 </style>

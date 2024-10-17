@@ -178,13 +178,13 @@
         }
 
         .description {
-          font-size: 10px;
+          font-size: 12px;
           line-height: 18px;
         }
 
         .datetime {
           margin-top: 4px;
-          font-size: 10px;
+          font-size: 12px;
           line-height: 18px;
         }
       }

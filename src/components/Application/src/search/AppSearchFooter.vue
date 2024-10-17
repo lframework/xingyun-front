@@ -32,7 +32,7 @@
     border-radius: 0 0 16px 16px;
     background-color: @component-background;
     color: #666;
-    font-size: 10px;
+    font-size: 12px;
 
     &-item {
       display: flex;

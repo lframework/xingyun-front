@@ -130,7 +130,7 @@
     padding: 0 0 0 10px;
     padding-right: 10px;
     overflow: hidden;
-    font-size: 10px;
+    font-size: 12px;
     cursor: pointer;
 
     &__header {
