@@ -39,8 +39,6 @@
     },
     data() {
       return {
-        map: null,
-        marker: null,
         address: undefined,
         loading: false,
       };
@@ -53,11 +51,25 @@
         set() {},
       },
     },
-    async mounted() {
+    watch: {
+      model: {
+        handler(val, oldVal) {
+          if (
+            val === undefined ||
+            oldVal === undefined ||
+            val.lat !== oldVal.lat ||
+            val.lng !== oldVal.lng
+          ) {
+            this.initLocation();
+          }
+        },
+        deep: true,
+      },
+    },
+    async created() {
       const key = await api.getMapKey();
       await this.loadMapScript(key);
       await this.initMap();
-      this.initLocation();
     },
     methods: {
       async loadMapScript(key) {
@@ -69,6 +81,7 @@
         });
       },
       async initMap() {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const _this = this;
         const lat = 39.908802;
         const lng = 116.397502;
@@ -88,6 +101,9 @@
         return Promise.resolve();
       },
       initLocation() {
+        if (!map) {
+          return;
+        }
         this.$nextTick(() => {
           if (!this.$utils.isEmpty(this.model.lng) && !this.$utils.isEmpty(this.model.lat)) {
             this.createMarker(this.model.lng, this.model.lat, true);
