@@ -21,10 +21,8 @@
                 :clone="onClone"
               >
                 <template #item="{ element }">
-                  <div style="width: 80px; height: 80px; padding: 5px; display: inline-block">
-                    <a-avatar shape="square" :size="70" class="panel-node">
-                      {{ element.name }}
-                    </a-avatar>
+                  <div class="panel-node">
+                    <a-button type="primary" block>{{ convertNodeName(element.name) }}</a-button>
                   </div>
                 </template>
               </draggable>
@@ -38,11 +36,11 @@
                 :clone="onClone"
               >
                 <template #item="{ element }">
-                  <div style="width: 80px; height: 80px; padding: 5px; display: inline-block">
+                  <div class="panel-node">
                     <a-tooltip :title="element.name">
-                      <a-avatar shape="square" :size="70" class="panel-node">
-                        {{ element.name }}
-                      </a-avatar>
+                      <a-button type="primary" block>{{
+                        convertNodeName(element.name)
+                      }}</a-button>
                     </a-tooltip>
                   </div>
                 </template>
@@ -286,6 +284,17 @@
           this.closeDialog();
         }
       },
+      convertNodeName(name) {
+        if (this.$utils.isEmpty(name)) {
+          return '';
+        }
+
+        if (name.length <= 4) {
+          return name;
+        }
+
+        return name.substring(0, 4) + '...';
+      },
     },
   });
 </script>
@@ -294,8 +303,8 @@
     padding: 10px;
   }
   .panel-node {
-    background-color: @primary-color;
-    vertical-align: middle;
-    cursor: pointer;
+    width: 33%;
+    padding: 2px 4px;
+    display: inline-block;
   }
 </style>
