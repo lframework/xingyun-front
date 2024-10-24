@@ -14,6 +14,7 @@
         highlight-hover-row
         keep-source
         row-id="id"
+        :max-height="$vh * 80"
         :tree-config="{}"
         :export-config="{}"
         :data="tableData"
