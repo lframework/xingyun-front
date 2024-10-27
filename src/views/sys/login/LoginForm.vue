@@ -12,6 +12,7 @@
       <a-form-item name="username" class="enter-x">
         <a-input
           size="large"
+          ref="usernameInput"
           v-model:value="formData.username"
           placeholder="请输入用户名"
           class="fix-auto-fill"
@@ -44,7 +45,7 @@
   </a-card>
 </template>
 <script lang="ts" setup>
-  import { computed, reactive, ref, unref } from 'vue';
+import {computed, onMounted, reactive, ref, unref} from 'vue';
   import { KeyOutlined, UserOutlined } from '@ant-design/icons-vue';
   import LoginFormTitle from './LoginFormTitle.vue';
   import LoginCaptchaModal from './LoginCaptchaModal.vue';
@@ -66,9 +67,16 @@
 
   const { validForm } = useFormValid(formRef);
 
-  const loginCaptchaDialog = ref(null);
+  const loginCaptchaDialog = ref();
+  const usernameInput = ref();
 
-  // onKeyStroke('Enter', handleLogin);
+  const focusUsername = () => {
+    usernameInput.value.focus();
+  };
+
+  onMounted(() => {
+    focusUsername();
+  });
 
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN);
 
@@ -84,6 +92,7 @@
     if (captchaRequire) {
       loginCaptchaDialog.value.openDialog();
     } else {
+      focusUsername();
       doLogin(data.username, data.password);
     }
   }
@@ -108,6 +117,7 @@
   async function doConfirmCaptcha({ sn, captcha }) {
     const data = await validForm();
     if (!data) return;
+    focusUsername();
     doLogin(data.username, data.password, sn, captcha);
   }
 </script>

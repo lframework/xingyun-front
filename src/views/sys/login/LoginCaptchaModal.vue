@@ -29,6 +29,7 @@
       </a-form-item>
       <a-form-item name="captcha" class="enter-x">
         <a-input
+          ref="captchaInput"
           size="large"
           v-model:value="formData.captcha"
           placeholder="请输入验证码"
@@ -65,6 +66,7 @@
   });
 
   const formRef = ref();
+  const captchaInput = ref();
 
   const { validForm } = useFormValid(formRef);
 
@@ -113,6 +115,8 @@
 
   function open() {
     getCaptcha();
+    formData.value.captcha = '';
+    captchaInput.value.focus();
   }
 
   async function doConfirm() {
