@@ -15,7 +15,7 @@
         <a-descriptions-item label="名称" :span="2">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item label="助记码" :span="2">
+        <a-descriptions-item label="简码" :span="2">
           {{ formData.mnemonicCode }}
         </a-descriptions-item>
         <a-descriptions-item label="联系人" :span="2">

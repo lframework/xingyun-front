@@ -25,7 +25,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label="助记码" name="mnemonicCode">
+            <a-form-item label="简码" name="mnemonicCode">
               <a-input v-model:value.trim="formData.mnemonicCode" allow-clear />
             </a-form-item>
           </a-col>
@@ -189,7 +189,7 @@
         rules: {
           code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入名称' }],
-          mnemonicCode: [{ required: true, message: '请输入助记码' }],
+          mnemonicCode: [{ required: true, message: '请输入简码' }],
           available: [{ required: true, message: '请选择状态' }],
           email: [
             {

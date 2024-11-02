@@ -15,7 +15,7 @@ export interface UpdateSupplierVo {
   name: string;
 
   /**
-   * 助记码
+   * 简码
    */
   mnemonicCode: string;
 
