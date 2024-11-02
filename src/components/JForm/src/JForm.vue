@@ -51,6 +51,10 @@
         type: Boolean,
         default: true,
       },
+      bordered: {
+        type: Boolean,
+        default: false,
+      },
     },
     setup() {
       const collapseStatus = ref(false);

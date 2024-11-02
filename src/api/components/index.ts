@@ -109,3 +109,21 @@ export function uploadVideo(file: Blob): Promise<string> {
     },
   );
 }
+
+/**
+ * 生成编号
+ * @param type
+ */
+export function generateCode(type: number): Promise<string> {
+  return defHttp.get<string>(
+    {
+      url: baseUrl + '/generate/code',
+      params: {
+        type,
+      },
+    },
+    {
+      region,
+    },
+  );
+}

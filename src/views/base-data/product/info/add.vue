@@ -49,7 +49,7 @@
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
-            <a-form-item label="外部编号" name="externalCode">
+            <a-form-item label="简码" name="externalCode">
               <a-input v-model:value="formData.externalCode" allow-clear />
             </a-form-item>
           </a-col>

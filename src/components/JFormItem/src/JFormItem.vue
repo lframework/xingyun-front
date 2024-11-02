@@ -3,6 +3,7 @@
     <div v-show="visible && itemShow" :class="'j-form-item'" :style="{ width: itemWidth }">
       <span
         v-if="!hiddenLabel"
+        :class="_bordered ? 'j-form-item-label-border' : ''"
         class="j-form-item-label"
         :style="{ width: form.labelWidth, minWidth: form.labelWidth }"
       >
@@ -11,7 +12,12 @@
         <span v-if="!$slots.label">{{ autoHiddenLabel && !$slots.default ? '' : label }}</span>
         <span>{{ autoHiddenLabel && !$slots.default ? '' : '：' }}</span>
       </span>
-      <div v-if="contentNest" class="j-form-item-content" :style="{ width: contentWidth }">
+      <div
+        v-if="contentNest"
+        class="j-form-item-content"
+        :class="_bordered ? 'j-form-item-content-border' : ''"
+        :style="{ width: contentWidth }"
+      >
         <slot></slot>
       </div>
       <slot v-else></slot>
@@ -94,6 +100,11 @@
         type: Boolean,
         default: false,
       },
+
+      bordered: {
+        type: Boolean,
+        default: false,
+      },
     },
     setup() {
       const visible = ref(true);
@@ -135,6 +146,9 @@
         }
 
         return validRules.some((item) => item.required);
+      },
+      _bordered() {
+        return this.bordered || this.form?.bordered;
       },
     },
   });

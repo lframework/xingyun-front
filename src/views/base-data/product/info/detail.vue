@@ -13,7 +13,7 @@
         <a-descriptions-item label="名称" :span="2">{{ formData.name }}</a-descriptions-item>
         <a-descriptions-item label="简称" :span="2">{{ formData.shortName }}</a-descriptions-item>
         <a-descriptions-item label="SKU编号" :span="2">{{ formData.skuCode }}</a-descriptions-item>
-        <a-descriptions-item label="外部编号" :span="2">{{
+        <a-descriptions-item label="简码" :span="2">{{
           formData.externalCode
         }}</a-descriptions-item>
         <a-descriptions-item label="分类" :span="2">{{

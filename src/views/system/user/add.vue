@@ -17,7 +17,14 @@
         :rules="rules"
       >
         <a-form-item label="编号" name="code">
-          <a-input v-model:value.trim="formData.code" allow-clear />
+          <a-input-group compact>
+            <a-input
+              v-model:value.trim="formData.code"
+              style="width: calc(100% - 75px)"
+              allow-clear
+            />
+            <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
+          </a-input-group>
         </a-form-item>
         <a-form-item label="用户名" name="username">
           <a-input v-model:value.trim="formData.username" allow-clear />
@@ -70,6 +77,7 @@
   import * as constants from './constants';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/system/user';
+  import { generateCode } from '@/api/components';
 
   export default defineComponent({
     components: {},
@@ -127,6 +135,8 @@
           telephone: '',
           description: '',
         };
+
+        this.onGenerateCode();
       },
       // 提交表单事件
       submit() {
@@ -161,6 +171,11 @@
       open() {
         // 初始化表单数据
         this.initFormData();
+      },
+      onGenerateCode() {
+        generateCode(this.$enums.GENERATE_CODE_TYPE.USER.code).then((res) => {
+          this.formData.code = res;
+        });
       },
     },
   });

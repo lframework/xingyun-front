@@ -30,7 +30,7 @@ export interface PreTakeStockProductBo {
   skuCode: string;
 
   /**
-   * 外部编号
+   * 简码
    */
   externalCode: string;
 

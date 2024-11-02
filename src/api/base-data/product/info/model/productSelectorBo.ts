@@ -20,7 +20,7 @@ export interface ProductSelectorBo {
   skuCode: string;
 
   /**
-   * 外部编号
+   * 简码
    */
   externalCode: string;
 

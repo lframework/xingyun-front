@@ -35,7 +35,7 @@ export interface RetailProductBo {
   skuCode: string;
 
   /**
-   * 外部编号
+   * 简码
    */
   externalCode: string;
 
