@@ -7,7 +7,7 @@
     :style="{ top: '20px' }"
     :footer="null"
   >
-    <div v-if="visible" v-permission="['system:parameter:manage']" v-loading="loading">
+    <div v-if="visible" v-permission="['system:generate-code:manage']" v-loading="loading">
       <a-row>
         <a-col :span="24">
           <div class="generate-code-wrapper">

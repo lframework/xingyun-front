@@ -7,7 +7,7 @@
     :style="{ top: '20px' }"
     :footer="null"
   >
-    <div v-if="visible" v-loading="loading" v-permission="['system:parameter:manage']">
+    <div v-if="visible" v-loading="loading" v-permission="['system:generate-code:manage']">
       <a-form
         ref="form"
         :label-col="{ span: 4 }"

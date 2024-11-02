@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-permission="['system:parameter:manage']">
+    <div v-permission="['system:generate-code:manage']">
       <page-wrapper content-full-height fixed-height>
         <!-- 数据列表 -->
         <vxe-grid
