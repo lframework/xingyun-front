@@ -28,7 +28,7 @@ export interface CreateProductVo {
   externalCode: string;
 
   /**
-   * 类目ID
+   * 分类ID
    */
   categoryId: string;
 

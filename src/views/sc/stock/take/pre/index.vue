@@ -270,7 +270,7 @@
           {
             permission: ['stock:take:pre:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             onClick: () => {
               this.deleteRow(row);
             },

@@ -21,7 +21,7 @@
         <a-form-item label="名称" name="name">
           <a-input v-model:value.trim="formData.name" allow-clear />
         </a-form-item>
-        <a-form-item label="上级类目">
+        <a-form-item label="上级分类">
           <a-input v-model:value="formData.parentName" disabled />
         </a-form-item>
         <a-form-item label="状态" name="available">
@@ -119,7 +119,7 @@
             ) {
               // 如果是停用，子节点全部停用
               this.$msg
-                .createConfirm('是否确认修改类目信息，以及停用当前类目以及该类目的所有子级类目？')
+                .createConfirm('是否确认修改分类信息，以及停用当前分类以及该分类的所有子级分类？')
                 .then(() => {
                   this.doSubmit();
                 });
@@ -129,7 +129,7 @@
             ) {
               // 如果是启用，父节点全部启用
               this.$msg
-                .createConfirm('是否确认修改类目信息，以及启用当前类目以及该类目的所有父级类目？')
+                .createConfirm('是否确认修改分类信息，以及启用当前分类以及该分类的所有父级分类？')
                 .then(() => {
                   this.doSubmit();
                 });

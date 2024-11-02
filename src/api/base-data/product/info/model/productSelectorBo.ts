@@ -25,12 +25,12 @@ export interface ProductSelectorBo {
   externalCode: string;
 
   /**
-   * 类目ID
+   * 分类ID
    */
   categoryId: string;
 
   /**
-   * 类目名称
+   * 分类名称
    */
   categoryName: string;
 

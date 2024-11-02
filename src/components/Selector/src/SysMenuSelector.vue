@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-tree-select
-      v-model="model"
+      v-model:value="model"
       :show-search="true"
       :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
       :field-names="{ label: 'title', key: 'id', value: 'id', children: 'children' }"

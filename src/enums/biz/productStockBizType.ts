@@ -9,10 +9,6 @@ PRODUCT_STOCK_BIZ_TYPE.set('RETAIL', new BaseEnumItem<number, string>(5, '零售
 PRODUCT_STOCK_BIZ_TYPE.set('RETAIL_RETURN', new BaseEnumItem<number, string>(6, '零售退货入库'));
 PRODUCT_STOCK_BIZ_TYPE.set('TAKE_STOCK_IN', new BaseEnumItem<number, string>(7, '盘点入库'));
 PRODUCT_STOCK_BIZ_TYPE.set('TAKE_STOCK_OUT', new BaseEnumItem<number, string>(8, '盘点出库'));
-PRODUCT_STOCK_BIZ_TYPE.set(
-  'STOCK_COST_ADJUST',
-  new BaseEnumItem<number, string>(9, '库存成本调整'),
-);
 PRODUCT_STOCK_BIZ_TYPE.set('STOCK_ADJUST', new BaseEnumItem<number, string>(10, '库存调整'));
 PRODUCT_STOCK_BIZ_TYPE.set('SC_TRANSFER', new BaseEnumItem<number, string>(11, '仓库调拨'));
 

@@ -7,7 +7,7 @@ export interface QueryTakeStockSheetProductVo extends PageVo {
   condition: string;
 
   /**
-   * 类目ID
+   * 分类ID
    */
   categoryId: string;
 

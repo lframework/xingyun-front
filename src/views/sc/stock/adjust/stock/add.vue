@@ -181,7 +181,7 @@
           { field: 'externalCode', title: '商品外部编号', width: 120 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
-          { field: 'categoryName', title: '商品类目', width: 120 },
+          { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           { field: 'curStockNum', title: '库存数量', width: 120, align: 'right' },
           {
@@ -257,42 +257,39 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form
-          .validate()
-          .then()
-          .then((valid) => {
-            if (valid) {
-              if (!this.validData()) {
-                return;
-              }
-
-              const params = {
-                scId: this.formData.scId,
-                bizType: this.formData.bizType,
-                reasonId: this.formData.reasonId,
-                description: this.formData.description,
-                products: this.tableData.map((item) => {
-                  return {
-                    productId: item.productId,
-                    stockNum: item.stockNum,
-                    description: item.description,
-                  };
-                }),
-              };
-              this.loading = true;
-              api
-                .create(params)
-                .then(() => {
-                  this.$msg.createSuccess('保存成功！');
-                  this.$emit('confirm');
-
-                  this.closeDialog();
-                })
-                .finally(() => {
-                  this.loading = false;
-                });
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            if (!this.validData()) {
+              return;
             }
-          });
+
+            const params = {
+              scId: this.formData.scId,
+              bizType: this.formData.bizType,
+              reasonId: this.formData.reasonId,
+              description: this.formData.description,
+              products: this.tableData.map((item) => {
+                return {
+                  productId: item.productId,
+                  stockNum: item.stockNum,
+                  description: item.description,
+                };
+              }),
+            };
+            this.loading = true;
+            api
+              .create(params)
+              .then(() => {
+                this.$msg.createSuccess('保存成功！');
+                this.$emit('confirm');
+
+                this.closeDialog();
+              })
+              .finally(() => {
+                this.loading = false;
+              });
+          }
+        });
       },
       // 直接审核通过
       directApprovePass() {

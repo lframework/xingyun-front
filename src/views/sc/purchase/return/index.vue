@@ -513,7 +513,7 @@
           {
             permission: ['purchase:return:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.PURCHASE_RETURN_STATUS.CREATED.equalsCode(row.status) ||

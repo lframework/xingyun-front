@@ -33,7 +33,7 @@ export interface UpdateProductVo {
   externalCode: string;
 
   /**
-   * 类目ID
+   * 分类ID
    */
   categoryId: string;
 

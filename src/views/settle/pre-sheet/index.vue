@@ -443,7 +443,7 @@
           {
             permission: ['settle:pre-sheet:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(row.status) ||

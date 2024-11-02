@@ -499,30 +499,6 @@ export const StockRoute: AppRouteRecordRaw = {
       component: () => import('/@/views/sc/stock/take/sheet/approve.vue'),
     },
     {
-      path: 'stock-adjust/cost/add',
-      name: 'AddStockCostAdjustSheet',
-      component: () => import('/@/views/sc/stock/adjust/cost/add.vue'),
-      meta: {
-        title: '新增库存成本调整单',
-      },
-    },
-    {
-      path: 'stock-adjust/cost/modify/:id',
-      name: 'ModifyStockCostAdjustSheet',
-      meta: {
-        title: '修改库存成本调整单',
-      },
-      component: () => import('/@/views/sc/stock/adjust/cost/modify.vue'),
-    },
-    {
-      path: 'stock-adjust/cost/approve/:id',
-      name: 'ApproveStockCostAdjustSheet',
-      meta: {
-        title: '审核库存成本调整单',
-      },
-      component: () => import('/@/views/sc/stock/adjust/cost/approve.vue'),
-    },
-    {
       path: 'stock-adjust/add',
       name: 'AddStockAdjustSheet',
       component: () => import('/@/views/sc/stock/adjust/stock/add.vue'),

@@ -1,6 +1,6 @@
 import { defHttp } from '/@/utils/http/axios';
 import { PageResult } from '@/api/model/pageResult';
-import { GetSysPositionBo } from '@/api/system/position/model/getSysPositionBo';
+import { GetOpLogBo } from '@/api/system/op-log/model/getOpLogBo';
 import { QueryOpLogsVo } from '@/api/system/op-log/model/queryOpLogsVo';
 import { QueryOpLogBo } from '@/api/system/op-log/model/queryOpLogBo';
 
@@ -26,8 +26,8 @@ export function query(params: QueryOpLogsVo): Promise<PageResult<QueryOpLogBo>> 
  * 根据ID查询
  * @param id
  */
-export function get(id: string): Promise<GetSysPositionBo> {
-  return defHttp.get<GetSysPositionBo>(
+export function get(id: string): Promise<GetOpLogBo> {
+  return defHttp.get<GetOpLogBo>(
     {
       url: baseUrl,
       params: {

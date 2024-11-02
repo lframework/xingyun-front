@@ -38,9 +38,7 @@
                 <template #item="{ element }">
                   <div class="panel-node">
                     <a-tooltip :title="element.name">
-                      <a-button type="primary" block>{{
-                        convertNodeName(element.name)
-                      }}</a-button>
+                      <a-button type="primary" block>{{ convertNodeName(element.name) }}</a-button>
                     </a-tooltip>
                   </div>
                 </template>

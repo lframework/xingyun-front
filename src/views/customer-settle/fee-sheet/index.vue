@@ -453,7 +453,7 @@
           {
             permission: ['customer-settle:fee-sheet:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.CUSTOMER_SETTLE_FEE_SHEET_STATUS.CREATED.equalsCode(row.status) ||

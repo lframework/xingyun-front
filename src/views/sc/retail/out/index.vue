@@ -461,7 +461,7 @@
           {
             permission: ['retail:out:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(row.status) ||

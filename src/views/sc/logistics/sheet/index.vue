@@ -353,7 +353,7 @@
           {
             permission: ['logistics:sheet:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return this.$enums.LOGISTICS_SHEET_STATUS.CREATED.equalsCode(row.status);
             },

@@ -30,7 +30,7 @@
         </a-form-item>
         <a-form-item
           v-if="$enums.TAKE_STOCK_PLAN_TYPE.CATEGORY.equalsCode(formData.takeType)"
-          label="类目"
+          label="分类"
           required
           name="category"
         >
@@ -89,7 +89,7 @@
                 }
 
                 if (this.$utils.isEmpty(value)) {
-                  return callback(new Error('请选择商品类目'));
+                  return callback(new Error('请选择商品分类'));
                 }
 
                 return callback();

@@ -35,7 +35,7 @@ export interface UpdateProductPropertyVo {
   propertyType: number;
 
   /**
-   * 类目ID
+   * 分类ID
    */
   categoryIds: string[];
 

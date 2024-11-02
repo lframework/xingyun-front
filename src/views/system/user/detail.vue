@@ -27,9 +27,6 @@
         <a-descriptions-item label="角色" :span="4">
           {{ formData.roleName }}
         </a-descriptions-item>
-        <a-descriptions-item label="岗位" :span="4">
-          {{ formData.positionName }}
-        </a-descriptions-item>
         <a-descriptions-item label="邮箱" :span="2">
           {{ formData.email }}
         </a-descriptions-item>

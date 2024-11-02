@@ -45,11 +45,6 @@ export interface CreateSysUserVo {
   roleIds: string[];
 
   /**
-   * 岗位ID
-   */
-  positionIds: string[];
-
-  /**
    * 备注
    */
   description: string;

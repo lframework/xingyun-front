@@ -30,9 +30,6 @@
               <j-form-item label="姓名">
                 <a-input v-model:value="searchFormData.name" allow-clear />
               </j-form-item>
-              <j-form-item label="岗位" prop="positionId">
-                <sys-position-selector v-model:value="searchFormData.positionId" />
-              </j-form-item>
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
@@ -174,7 +171,6 @@
         ids: [],
         // 查询列表的查询条件
         searchFormData: {
-          positionId: '',
           available: true,
         },
         // 工具栏配置
@@ -192,7 +188,6 @@
           { field: 'name', title: '姓名', minWidth: 150, sortable: true },
           { field: 'deptName', title: '部门', width: 160 },
           { field: 'roleName', title: '角色', width: 160 },
-          { field: 'positionName', title: '岗位', width: 160 },
           { field: 'email', title: '邮箱', width: 120 },
           { field: 'telephone', title: '联系电话', width: 120 },
           {

@@ -11,7 +11,7 @@
         { field: 'externalCode', title: '商品外部编号', width: 120 },
         { field: 'unit', title: '单位', width: 80 },
         { field: 'spec', title: '规格', width: 80 },
-        { field: 'categoryName', title: '商品类目', width: 120 },
+        { field: 'categoryName', title: '商品分类', width: 120 },
         { field: 'brandName', title: '商品品牌', width: 120 },
         { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
       ]"
@@ -34,7 +34,7 @@
             <j-form-item v-if="$utils.isEmpty(requestParams.skuCode)" label="SKU编号">
               <a-input v-model:value="searchParams.skuCode" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.categoryId)" label="类目">
+            <j-form-item v-if="$utils.isEmpty(requestParams.categoryId)" label="分类">
               <product-category-selector v-model:value="searchParams.categoryId" />
             </j-form-item>
             <j-form-item v-if="$utils.isEmpty(requestParams.brandId)" label="品牌">

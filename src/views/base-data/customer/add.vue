@@ -71,7 +71,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label="结账方式" name="settleType">
+            <a-form-item label="结算方式" name="settleType">
               <a-select v-model:value="formData.settleType" allow-clear>
                 <a-select-option
                   v-for="item in $enums.SETTLE_TYPE.values()"
@@ -162,7 +162,7 @@
               },
             },
           ],
-          settleType: [{ required: true, message: '请选择结账方式' }],
+          settleType: [{ required: true, message: '请选择结算方式' }],
         },
       };
     },
@@ -213,7 +213,7 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             this.$msg
-              .createConfirm('新增后结账方式不允许修改，请仔细核对结账方式是否正确')
+              .createConfirm('新增后结算方式不允许修改，请仔细核对结算方式是否正确')
               .then(() => {
                 this.loading = true;
                 const params = Object.assign({}, this.formData);

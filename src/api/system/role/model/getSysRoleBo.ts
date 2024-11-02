@@ -5,12 +5,12 @@ export interface GetSysRoleBo {
   id: string;
 
   /**
-   * 岗位编号
+   * 编号
    */
   code: string;
 
   /**
-   * 岗位名称
+   * 名称
    */
   name: string;
 

@@ -109,7 +109,7 @@
           { field: 'externalCode', title: '商品外部编号', width: 120 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
-          { field: 'categoryName', title: '商品类目', width: 120 },
+          { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           { field: 'firstNum', title: '初盘数量', width: 120, align: 'right' },
           { field: 'secondNum', title: '复盘数量', width: 120, align: 'right' },

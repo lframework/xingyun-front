@@ -323,7 +323,7 @@
           },
           {
             label: '删除',
-            color: 'error',
+            danger: true,
             onClick: () => {
               this.deleteRow(row);
             },

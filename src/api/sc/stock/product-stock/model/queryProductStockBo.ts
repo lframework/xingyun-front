@@ -35,7 +35,7 @@ export interface QueryProductStockBo {
   productName: string;
 
   /**
-   * 商品类目
+   * 商品分类
    */
   categoryName: string;
 

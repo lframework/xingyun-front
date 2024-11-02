@@ -317,7 +317,7 @@
           {
             permission: ['stock:take:plan:cancel'],
             label: '作废',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) ||
@@ -331,7 +331,7 @@
           {
             permission: ['stock:take:plan:delete'],
             label: '作废',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return this.$enums.TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus);
             },

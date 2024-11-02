@@ -15,7 +15,7 @@ export interface TakeStockSheetProductBo {
   productName: string;
 
   /**
-   * 类目名称
+   * 分类名称
    */
   categoryName: string;
 

@@ -70,7 +70,7 @@ export interface GetSupplierBo {
   manageType: number;
 
   /**
-   * 结账方式
+   * 结算方式
    */
   settleType: number;
 

@@ -31,9 +31,6 @@
         <a-form-item label="角色" name="role">
           <sys-role-selector v-model:value="formData.roles" :multiple="true" />
         </a-form-item>
-        <a-form-item label="岗位" name="position">
-          <sys-position-selector v-model:value="formData.positions" :multiple="true" />
-        </a-form-item>
         <a-form-item v-if="!formData.modifyPassword" label="更新密码">
           <a-checkbox v-model:checked="formData.modifyPassword" />
         </a-form-item>
@@ -139,7 +136,6 @@
           code: '',
           username: '',
           name: '',
-          positions: [],
           roles: [],
           depts: [],
           modifyPassword: false,
@@ -157,14 +153,12 @@
             this.loading = true;
             const params = Object.assign(
               {
-                positionIds: this.formData.positions,
                 deptIds: this.formData.depts,
                 roleIds: this.formData.roles,
               },
               this.formData,
             );
 
-            delete params.positions;
             delete params.depts;
             delete params.roles;
 

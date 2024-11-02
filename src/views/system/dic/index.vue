@@ -195,7 +195,7 @@
           },
           {
             permission: ['system:dic:delete'],
-            color: 'error',
+            danger: true,
             label: '删除',
             onClick: () => {
               this.deleteRow(row);

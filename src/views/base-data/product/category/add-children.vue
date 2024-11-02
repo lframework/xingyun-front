@@ -3,7 +3,7 @@
     v-model:open="visible"
     :mask-closable="false"
     width="40%"
-    title="新增子类目"
+    title="新增子分类"
     :style="{ top: '20px' }"
     :footer="null"
   >
@@ -21,7 +21,7 @@
         <a-form-item label="名称" name="name">
           <a-input v-model:value.trim="formData.name" allow-clear />
         </a-form-item>
-        <a-form-item label="上级类目">
+        <a-form-item label="上级分类">
           <a-input v-model:value="formData.parentName" disabled />
         </a-form-item>
         <a-form-item label="备注" name="description">

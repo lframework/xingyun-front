@@ -27,7 +27,7 @@ export interface QueryProductSelectorVo extends PageVo {
   brandId: string;
 
   /**
-   * 类目ID
+   * 分类ID
    */
   categoryId: string;
 

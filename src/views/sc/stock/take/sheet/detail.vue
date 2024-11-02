@@ -39,7 +39,7 @@
           <j-form-item label="盘点状态">
             {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
-          <j-form-item label="类目/品牌">
+          <j-form-item label="分类/品牌">
             {{ formData.bizName }}
           </j-form-item>
           <j-form-item label="备注" :span="24">
@@ -151,7 +151,7 @@
           { field: 'externalCode', title: '商品外部编号', width: 120 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
-          { field: 'categoryName', title: '商品类目', width: 120 },
+          { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           { field: 'stockNum', title: '系统库存数量', width: 120, align: 'right' },
           { field: 'takeNum', title: '盘点数量', width: 120, align: 'right' },

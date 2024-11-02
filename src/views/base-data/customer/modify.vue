@@ -71,7 +71,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-form-item label="结账方式" name="settleType">
+            <a-form-item label="结算方式" name="settleType">
               <a-select v-model:value="formData.settleType" disabled>
                 <a-select-option
                   v-for="item in $enums.SETTLE_TYPE.values()"
@@ -184,7 +184,7 @@
               },
             },
           ],
-          settleType: [{ required: true, message: '请选择结账方式' }],
+          settleType: [{ required: true, message: '请选择结算方式' }],
           available: [{ required: true, message: '请选择状态' }],
         },
       };

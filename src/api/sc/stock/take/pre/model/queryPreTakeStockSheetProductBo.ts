@@ -20,7 +20,7 @@ export interface QueryPreTakeStockSheetProductBo {
   productName: string;
 
   /**
-   * 类目名称
+   * 分类名称
    */
   categoryName: string;
 

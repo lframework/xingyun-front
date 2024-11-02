@@ -12,7 +12,7 @@ export interface QueryRetailProductVo extends PageVo {
   condition: string;
 
   /**
-   * 类目ID
+   * 分类ID
    */
   categoryId: string;
 

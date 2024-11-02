@@ -15,7 +15,7 @@ export interface ScTransferProductBo {
   productName: string;
 
   /**
-   * 类目名称
+   * 分类名称
    */
   categoryName: string;
 

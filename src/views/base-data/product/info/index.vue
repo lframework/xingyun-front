@@ -34,7 +34,7 @@
                 <j-form-item label="SKU编号">
                   <a-input v-model:value="searchFormData.skuCode" allow-clear />
                 </j-form-item>
-                <j-form-item label="类目">
+                <j-form-item label="分类">
                   <product-category-selector v-model:value="searchFormData.categoryId" />
                 </j-form-item>
                 <j-form-item label="品牌">
@@ -173,7 +173,7 @@
           { field: 'name', title: '名称', minWidth: 160, sortable: true },
           { field: 'shortName', title: '简称', width: 140 },
           { field: 'skuCode', title: 'SKU编号', width: 120 },
-          { field: 'categoryName', title: '类目', width: 120 },
+          { field: 'categoryName', title: '分类', width: 120 },
           { field: 'brandName', title: '品牌', width: 120 },
           {
             field: 'productType',

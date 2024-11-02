@@ -29,7 +29,7 @@
           </a-select>
         </a-form-item>
         <a-form-item name="content" :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }">
-          <tinymce v-model="formData.content" class="mb-1" />
+          <tinymce v-model:value="formData.content" class="mb-1" />
         </a-form-item>
         <div class="form-modal-footer">
           <a-space>

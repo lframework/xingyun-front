@@ -68,18 +68,16 @@
     methods: {
       toggleCollapse() {
         this.collapseStatus = !this.collapseStatus;
-        this.$emit('collapse')
+        this.$emit('collapse');
       },
       validate() {
         const model = toValue(this.model);
         const rules = toValue(this.rules);
-        const getItems = this.getItems;
         return new Promise((resolve) => {
           if (!model || !rules) {
             resolve(true);
           } else {
-            const itemProps = getItems().map((item) => item.props.prop);
-            const ruleKeys = keys(rules).filter((ruleKey) => itemProps.includes(ruleKey));
+            const ruleKeys = keys(rules);
             const newRules = {};
             ruleKeys.forEach((ruleKey) => {
               newRules[ruleKey] = rules[ruleKey];
@@ -99,12 +97,6 @@
                 resolve(false, errors, fields);
               });
           }
-        });
-      },
-      getItems() {
-        const { $slots } = this;
-        return $slots.default().filter((vnode) => {
-          return vnode.type?.componentName === 'JFormItem';
         });
       },
     },

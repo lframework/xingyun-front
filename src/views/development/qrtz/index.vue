@@ -248,7 +248,7 @@
           },
           {
             label: '暂停',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.TRIGGER_STATE.WAITING.equalsCode(row.state) ||
@@ -285,7 +285,7 @@
           },
           {
             label: '删除',
-            color: 'error',
+            danger: true,
             onClick: () => {
               this.deleteRow(row);
             },

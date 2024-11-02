@@ -63,7 +63,7 @@
         </a-form-item>
         <a-form-item
           v-if="$enums.PROPERTY_TYPE.APPOINT.equalsCode(formData.propertyType)"
-          label="商品类目"
+          label="商品分类"
           :required="true"
         >
           <product-category-selector
@@ -147,7 +147,7 @@
       submit() {
         if (this.$enums.PROPERTY_TYPE.APPOINT.equalsCode(this.formData.propertyType)) {
           if (this.$utils.isEmpty(this.formData.categories)) {
-            this.$msg.createError('请选择商品类目');
+            this.$msg.createError('请选择商品分类');
             return;
           }
         }

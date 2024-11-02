@@ -15,11 +15,6 @@ export interface QuerySysUserBo {
   name: string;
 
   /**
-   * 岗位名称
-   */
-  positionName: string;
-
-  /**
    * 部门名称
    */
   deptName: string;

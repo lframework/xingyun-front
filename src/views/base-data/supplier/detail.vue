@@ -45,7 +45,7 @@
         <a-descriptions-item label="经营方式" :span="2">
           {{ $enums.MANAGE_TYPE.getDesc(formData.manageType) }}
         </a-descriptions-item>
-        <a-descriptions-item label="结账方式" :span="2">
+        <a-descriptions-item label="结算方式" :span="2">
           {{ $enums.SETTLE_TYPE.getDesc(formData.settleType) }}
         </a-descriptions-item>
         <a-descriptions-item label="统一社会信用代码" :span="2">

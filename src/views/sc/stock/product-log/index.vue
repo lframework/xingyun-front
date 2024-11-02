@@ -30,7 +30,7 @@
               <j-form-item label="商品名称">
                 <a-input v-model:value="searchFormData.productName" allow-clear />
               </j-form-item>
-              <j-form-item label="商品类目">
+              <j-form-item label="商品分类">
                 <product-category-selector
                   v-model:value="searchFormData.categoryId"
                   :only-final="false"
@@ -174,19 +174,6 @@
             >
             <span v-no-permission="['stock:take:plan:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.STOCK_COST_ADJUST.equalsCode(row.bizType)">
-            <a
-              v-permission="['stock:adjust:cost:query']"
-              @click="
-                (e) => {
-                  currentRow = row;
-                  $nextTick(() => $refs.viewStockCostAdjustDetailDialog.openDialog());
-                }
-              "
-              >{{ row.bizCode }}</a
-            >
-            <span v-no-permission="['stock:adjust:cost:query']">{{ row.bizCode }}</span>
-          </div>
           <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.STOCK_ADJUST.equalsCode(row.bizType)">
             <a
               v-permission="['stock:adjust:query']"
@@ -242,7 +229,6 @@
     <retail-out-sheet-detail :id="currentRow.bizId" ref="viewRetailOutSheetDetailDialog" />
     <retail-return-detail :id="currentRow.bizId" ref="viewRetailReturnDetailDialog" />
     <take-stock-plan-detail :id="currentRow.bizId" ref="viewTakeStockPlanDetailDialog" />
-    <stock-cost-adjust-detail :id="currentRow.bizId" ref="viewStockCostAdjustDetailDialog" />
     <stock-adjust-detail :id="currentRow.bizId" ref="viewStockAdjustDetailDialog" />
     <sc-transfer-order-detail :id="currentRow.bizId" ref="viewScTransferOrderDetailDialog" />
   </div>
@@ -259,7 +245,6 @@
   import RetailOutSheetDetail from '@/views/sc/retail/out/detail.vue';
   import RetailReturnDetail from '@/views/sc/retail/return/detail.vue';
   import TakeStockPlanDetail from '@/views/sc/stock/take/plan/detail.vue';
-  import StockCostAdjustDetail from '@/views/sc/stock/adjust/cost/detail.vue';
   import StockAdjustDetail from '@/views/sc/stock/adjust/stock/detail.vue';
   import ScTransferOrderDetail from '@/views/sc/stock/transfer/detail.vue';
   import * as api from '@/api/sc/stock/product-stock-log';
@@ -274,7 +259,6 @@
       RetailOutSheetDetail,
       RetailReturnDetail,
       TakeStockPlanDetail,
-      StockCostAdjustDetail,
       StockAdjustDetail,
       ScTransferOrderDetail,
     },
@@ -317,7 +301,7 @@
           { field: 'scName', title: '仓库名称', minWidth: 160 },
           { field: 'productCode', title: '商品编号', width: 120, sortable: true },
           { field: 'productName', title: '商品名称', minWidth: 180 },
-          { field: 'categoryName', title: '商品类目', width: 120 },
+          { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           {
             field: 'oriStockNum',

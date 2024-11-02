@@ -10,7 +10,7 @@
       <a-popover
         placement="bottomLeft"
         trigger="click"
-        v-model="visible"
+        v-model:value="visible"
         :overlayClassName="`${prefixCls}-popover`"
       >
         <template #title>

@@ -35,16 +35,6 @@ export interface GetSysUserBo {
   gender: number;
 
   /**
-   * 岗位
-   */
-  positions: string[];
-
-  /**
-   * 岗位名称
-   */
-  positionName: string;
-
-  /**
    * 部门
    */
   depts: string[];

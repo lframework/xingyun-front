@@ -35,7 +35,7 @@ export interface GetProductPropertyBo {
   propertyType: number;
 
   /**
-   * 类目
+   * 分类
    */
   categories: string[];
 

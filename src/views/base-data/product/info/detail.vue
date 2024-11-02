@@ -16,7 +16,7 @@
         <a-descriptions-item label="外部编号" :span="2">{{
           formData.externalCode
         }}</a-descriptions-item>
-        <a-descriptions-item label="类目" :span="2">{{
+        <a-descriptions-item label="分类" :span="2">{{
           formData.categoryName
         }}</a-descriptions-item>
         <a-descriptions-item label="品牌" :span="2">{{ formData.brandName }}</a-descriptions-item>

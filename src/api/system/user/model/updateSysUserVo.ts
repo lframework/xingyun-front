@@ -40,11 +40,6 @@ export interface UpdateSysUserVo {
   gender: number;
 
   /**
-   * 岗位ID
-   */
-  positionIds: string[];
-
-  /**
    * 角色ID
    */
   roleIds: string[];

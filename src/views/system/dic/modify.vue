@@ -106,7 +106,7 @@
       submit() {
         if (this.$enums.PROPERTY_TYPE.APPOINT.equalsCode(this.formData.propertyType)) {
           if (this.$utils.isEmpty(this.formData.categories)) {
-            this.$msg.createError('请选择商品类目');
+            this.$msg.createError('请选择商品分类');
             return;
           }
         }

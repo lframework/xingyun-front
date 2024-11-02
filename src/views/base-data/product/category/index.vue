@@ -86,7 +86,7 @@
     <!-- 修改窗口 -->
     <modify :id="id" ref="updateDialog" @confirm="search" />
 
-    <!-- 新建子类目窗口 -->
+    <!-- 新建子分类窗口 -->
     <add-children :id="id" ref="addChildrenDialog" @confirm="search" />
 
     <product-category-importer ref="importer" @confirm="search" />
@@ -237,11 +237,11 @@
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的类目！');
+          this.$msg.createError('请选择要停用的分类！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定停用选择的类目？').then(() => {
+        this.$msg.createConfirm('是否确定停用选择的分类？').then(() => {
           this.loading = true;
           const ids = records.map((t) => t.id);
           api
@@ -262,11 +262,11 @@
         );
 
         if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的类目！');
+          this.$msg.createError('请选择要启用的分类！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定启用选择的类目？').then(() => {
+        this.$msg.createConfirm('是否确定启用选择的分类？').then(() => {
           this.loading = true;
           const ids = records.map((t) => t.id);
           api
@@ -284,7 +284,7 @@
         return [
           {
             permission: ['base-data:product:category:add'],
-            label: '新增子类目',
+            label: '新增子分类',
             onClick: () => {
               this.id = row.id;
               this.$nextTick(() => this.$refs.addChildrenDialog.openDialog());

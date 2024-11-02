@@ -444,7 +444,7 @@
           {
             permission: ['purchase:order:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) ||

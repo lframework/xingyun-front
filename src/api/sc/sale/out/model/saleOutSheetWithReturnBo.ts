@@ -82,7 +82,7 @@ export interface DetailBo {
   spec: string;
 
   /**
-   * 类目名称
+   * 分类名称
    */
   categoryName: string;
 

@@ -510,7 +510,7 @@
           {
             permission: ['sale:return:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.SALE_RETURN_STATUS.CREATED.equalsCode(row.status) ||

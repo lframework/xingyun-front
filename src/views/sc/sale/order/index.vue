@@ -427,7 +427,7 @@
           {
             permission: ['sale:order:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.SALE_ORDER_STATUS.CREATED.equalsCode(row.status) ||

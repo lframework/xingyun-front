@@ -7,23 +7,19 @@
     :style="{ top: '20px' }"
     :footer="null"
   >
-    <div v-if="visible" v-permission="['system:position:add']" v-loading="loading">
+    <div v-if="visible" v-loading="loading" v-permission="['system:parameter:manage']">
       <a-form
         ref="form"
-        v-loading="loading"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 16 }"
         :model="formData"
         :rules="rules"
       >
-        <a-form-item label="编号" name="code">
-          <a-input v-model:value.trim="formData.code" allow-clear />
+        <a-form-item label="规则ID" name="id">
+          <a-input v-model:value="formData.id" allow-clear />
         </a-form-item>
         <a-form-item label="名称" name="name">
-          <a-input v-model:value.trim="formData.name" allow-clear />
-        </a-form-item>
-        <a-form-item label="备注" name="description">
-          <a-textarea v-model:value.trim="formData.description" />
+          <a-input v-model:value="formData.name" allow-clear />
         </a-form-item>
         <div class="form-modal-footer">
           <a-space>
@@ -38,9 +34,8 @@
   </a-modal>
 </template>
 <script>
-  import { validCode } from '@/utils/validate';
   import { defineComponent } from 'vue';
-  import * as api from '@/api/system/position';
+  import * as api from '@/api/system/generate-code';
 
   export default defineComponent({
     components: {},
@@ -54,7 +49,20 @@
         formData: {},
         // 表单校验规则
         rules: {
-          code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
+          id: [
+            { required: true, message: '请输入规则ID' },
+            {
+              validator: (rule, value) => {
+                if (!this.$utils.isEmpty(value)) {
+                  if (!this.$utils.isIntegerGtZero(value)) {
+                    return Promise.reject('规则ID必须为整数');
+                  }
+                }
+
+                return Promise.resolve();
+              },
+            },
+          ],
           name: [{ required: true, message: '请输入名称' }],
         },
       };
@@ -79,34 +87,27 @@
       // 初始化表单数据
       initFormData() {
         this.formData = {
-          code: '',
-          description: '',
+          id: '',
           name: '',
-          shortName: '',
         };
       },
       // 提交表单事件
       submit() {
-        this.$refs.form
-          .validate()
-          .then()
-          .then((valid) => {
-            if (valid) {
-              this.loading = true;
-              api
-                .create(this.formData)
-                .then(() => {
-                  this.$msg.createSuccess('新增成功！');
-                  // 初始化表单数据
-                  this.initFormData();
-                  this.$emit('confirm');
-                  this.visible = false;
-                })
-                .finally(() => {
-                  this.loading = false;
-                });
-            }
-          });
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            this.loading = true;
+            api
+              .create(this.formData)
+              .then(() => {
+                this.$msg.createSuccess('新增成功！');
+                this.$emit('confirm');
+                this.visible = false;
+              })
+              .finally(() => {
+                this.loading = false;
+              });
+          }
+        });
       },
       // 页面显示时触发
       open() {

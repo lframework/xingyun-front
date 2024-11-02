@@ -23,18 +23,18 @@
             <j-border>
               <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
                 <j-form-item label="键">
-                  <a-input v-model="searchFormData.pmKey" allow-clear />
+                  <a-input v-model:value="searchFormData.pmKey" allow-clear />
                 </j-form-item>
                 <j-form-item label="创建时间" :content-nest="false">
                   <div class="date-range-container">
                     <a-date-picker
-                      v-model="searchFormData.createTimeStart"
+                      v-model:value="searchFormData.createTimeStart"
                       placeholder=""
                       value-format="YYYY-MM-DD 00:00:00"
                     />
                     <span class="date-split">至</span>
                     <a-date-picker
-                      v-model="searchFormData.createTimeEnd"
+                      v-model:value="searchFormData.createTimeEnd"
                       placeholder=""
                       value-format="YYYY-MM-DD 23:59:59"
                     />
@@ -198,7 +198,7 @@
           },
           {
             permission: ['system:parameter:delete'],
-            color: 'error',
+            danger: true,
             label: '删除',
             onClick: () => {
               this.deleteRow(row.id);

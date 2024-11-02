@@ -447,7 +447,7 @@
           {
             permission: ['settle:check-sheet:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(row.status) ||

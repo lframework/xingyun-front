@@ -30,7 +30,7 @@
               <j-form-item label="商品名称">
                 <a-input v-model:value="searchFormData.productName" allow-clear />
               </j-form-item>
-              <j-form-item label="商品类目">
+              <j-form-item label="商品分类">
                 <product-category-selector
                   v-model:value="searchFormData.categoryId"
                   :only-final="false"
@@ -103,7 +103,7 @@
           { field: 'scName', title: '仓库名称', minWidth: 160 },
           { field: 'productCode', title: '商品编号', width: 120, sortable: true },
           { field: 'productName', title: '商品名称', minWidth: 180 },
-          { field: 'categoryName', title: '商品类目', width: 120 },
+          { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           { field: 'stockNum', title: '库存数量', align: 'right', width: 100, sortable: true },
           { field: 'taxPrice', title: '含税价格', align: 'right', width: 100 },

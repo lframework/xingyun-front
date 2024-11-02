@@ -60,7 +60,7 @@ export interface GetCustomerBo {
   address: string;
 
   /**
-   * 结账方式
+   * 结算方式
    */
   settleType: number;
 

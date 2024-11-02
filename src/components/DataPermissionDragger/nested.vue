@@ -1,6 +1,6 @@
 <template>
   <div>
-    <draggable class="dragArea" tag="ul" :list="list" item-key="id" group="g1" @change="onChange">
+    <draggable class="drag-area" tag="ul" :list="list" item-key="id" group="g1" @change="onChange">
       <template #item="{ element }">
         <ul>
           <j-form
@@ -235,7 +235,7 @@
   });
 </script>
 <style lang="less" scoped>
-  .dragArea {
+  .drag-area {
     min-height: 50px;
     outline: 1px dashed @border-color-light;
     padding: 10px;

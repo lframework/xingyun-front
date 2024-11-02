@@ -54,7 +54,7 @@
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
-            <a-form-item label="商品类目" name="categoryId">
+            <a-form-item label="商品分类" name="categoryId">
               <product-category-selector
                 v-model:value="formData.categoryId"
                 :only-final="false"
@@ -341,7 +341,7 @@
           ],
           name: [{ required: true, message: '请输入名称' }],
           skuCode: [{ required: true, message: '请输入SKU编号' }],
-          categoryId: [{ required: true, message: '请选择类目' }],
+          categoryId: [{ required: true, message: '请选择分类' }],
           brandId: [{ required: true, message: '请选择品牌' }],
           weight: [
             {

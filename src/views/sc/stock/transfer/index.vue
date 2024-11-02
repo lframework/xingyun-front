@@ -431,7 +431,7 @@
           {
             permission: ['stock:sc-transfer:delete'],
             label: '删除',
-            color: 'error',
+            danger: true,
             ifShow: () => {
               return (
                 this.$enums.SC_TRANSFER_ORDER_STATUS.CREATED.equalsCode(row.status) ||

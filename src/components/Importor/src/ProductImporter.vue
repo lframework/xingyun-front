@@ -2,7 +2,7 @@
   <div>
     <excel-importer
       ref="importer"
-      :tip-msg="'导入只支持新增商品信息。\n注：\n1、如果商品类目发生变化，关联的商品属性会清空。\n2、只支持导入普通商品。'"
+      :tip-msg="'导入只支持新增商品信息。\n注：\n1、如果商品分类发生变化，关联的商品属性会清空。\n2、只支持导入普通商品。'"
       :download-template-url="downloadTemplate"
       :upload-url="upload"
       @confirm="(e) => $emit('confirm', e)"

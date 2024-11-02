@@ -17,11 +17,6 @@ export interface QuerySysUserVo extends PageVo {
   name: string;
 
   /**
-   * 岗位ID
-   */
-  positionId: string;
-
-  /**
    * 部门ID
    */
   deptId: string;
