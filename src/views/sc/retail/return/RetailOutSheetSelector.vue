@@ -124,6 +124,7 @@
     methods: {
       getList(params) {
         const reqParams = {
+          ...params,
           code: params.code,
           scId: params.scId || '',
           memberId: params.memberId || '',

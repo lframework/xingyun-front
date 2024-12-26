@@ -130,6 +130,7 @@
     methods: {
       getList(params) {
         const reqParams = {
+          ...params,
           code: params.code,
           scId: params.scId || '',
           customerId: params.customerId || '',
