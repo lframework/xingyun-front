@@ -106,7 +106,7 @@
     components: {},
     inheritAttrs: false,
     props: tinymceProps,
-    emits: ['change', 'update:modelValue', 'inited', 'init-error'],
+    emits: ['change', 'update:modelValue', 'update:value', 'inited', 'init-error'],
     setup(props, { emit, attrs }) {
       const editorRef = ref<Editor | null>(null);
       const fullscreen = ref(false);
@@ -278,6 +278,7 @@
         editor.on(normalizedEvents ? normalizedEvents : 'change keyup undo redo', () => {
           const content = editor.getContent({ format: attrs.outputFormat });
           emit('update:modelValue', content);
+          emit('update:value', content);
           emit('change', content);
         });
 
