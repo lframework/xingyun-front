@@ -70,12 +70,10 @@
                           ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                           : toolbar.viewType
                       "
-                      :class="
+                      :danger="
                         $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
                           toolbar.viewType,
                         )
-                          ? 'ant-btn-link-danger'
-                          : ''
                       "
                       ><icon v-if="!$utils.isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
                         toolbar.name
@@ -89,10 +87,8 @@
                         ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                         : toolbar.viewType
                     "
-                    :class="
+                    :danger="
                       $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
-                        ? 'ant-btn-link-danger'
-                        : ''
                     "
                     @click="onLoadExternal(toolbar)"
                     ><icon v-if="!$utils.isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
@@ -108,10 +104,8 @@
                         ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                         : toolbar.viewType
                     "
-                    :class="
+                    :danger="
                       $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
-                        ? 'ant-btn-link-danger'
-                        : ''
                     "
                     @click="onExcuteScript(toolbar)"
                     ><icon v-if="!$utils.isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
@@ -139,12 +133,10 @@
                         ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                         : handleColumn.viewType
                     "
-                    :class="
+                    :danger="
                       $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
                         handleColumn.viewType,
                       )
-                        ? 'ant-btn-link-danger'
-                        : ''
                     "
                     ><icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
                       handleColumn.name
@@ -162,12 +154,10 @@
                       ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                       : handleColumn.viewType
                   "
-                  :class="
+                  :danger="
                     $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
                       handleColumn.viewType,
                     )
-                      ? 'ant-btn-link-danger'
-                      : ''
                   "
                   @click="onLoadExternal(handleColumn)"
                   ><icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
@@ -185,12 +175,10 @@
                       ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                       : handleColumn.viewType
                   "
-                  :class="
+                  :danger="
                     $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
                       handleColumn.viewType,
                     )
-                      ? 'ant-btn-link-danger'
-                      : ''
                   "
                   @click="onExcuteScriptInHandleColumn(handleColumn)"
                   ><icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{

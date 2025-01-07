@@ -30,7 +30,7 @@
                   cancel-text="否"
                   @confirm="(e) => removeNodes(element.id)"
                 >
-                  <a-button type="link" class="ant-btn-link-danger">删除</a-button>
+                  <a-button type="link" danger>删除</a-button>
                 </a-popconfirm>
               </div>
             </j-form-item>
@@ -159,7 +159,7 @@
                   cancel-text="否"
                   @confirm="(e) => removeNodes(element.id)"
                 >
-                  <a-button type="link" class="ant-btn-link-danger">删除</a-button>
+                  <a-button type="link" danger>删除</a-button>
                 </a-popconfirm>
               </div>
             </j-form-item>

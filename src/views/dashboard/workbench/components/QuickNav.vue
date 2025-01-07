@@ -1,6 +1,8 @@
 <template>
   <a-card title="快捷导航" :loading="loading">
-    <template v-if="!canViewAll" #extra><a @click="viewAll">查看全部</a></template>
+    <template v-if="!canViewAll && menus.length > 6" #extra
+      ><a @click="viewAll">查看全部</a></template
+    >
     <template v-if="!$utils.isEmpty(_menus)">
       <a-card-grid v-for="item in _menus" :key="item.id">
         <router-link :to="item.path" :class="'router-link-color-' + item.color">
@@ -71,8 +73,10 @@
 <style lang="less" scoped>
   .router-link-color-0 {
     color: #000000;
+    text-decoration: none;
   }
   .router-link-color-1 {
     color: @primary-color;
+    text-decoration: none;
   }
 </style>

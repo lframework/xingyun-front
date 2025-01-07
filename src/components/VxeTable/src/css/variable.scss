@@ -287,9 +287,14 @@
   --vxe-ui-tree-node-hover-current-background-color: #d7effb;
 
   /*table*/
-  --vxe-ui-table-column-padding-default: 11px 0;
-  --vxe-ui-table-column-padding-medium: 9px 0;
-  --vxe-ui-table-column-padding-small: 7px 0;
-  --vxe-ui-table-column-padding-mini: 5px 0;
+  --vxe-ui-table-column-padding-default: 6px 0;
+  --vxe-ui-table-column-padding-medium: 5px 0;
+  --vxe-ui-table-column-padding-small: 4px 0;
+  --vxe-ui-table-column-padding-mini: 3px 0;
+
+  --vxe-ui-table-row-height-default:34px;
+  --vxe-ui-table-row-height-medium:30px;
+  --vxe-ui-table-row-height-small:26px;
+  --vxe-ui-table-row-height-mini:22px;
 }
 
