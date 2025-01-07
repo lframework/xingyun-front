@@ -36,7 +36,7 @@
 </template>
 <script lang="ts">
   import { h, computed, defineComponent, ref, Ref } from 'vue';
-  import { Popover, Tabs, Badge, notification } from 'ant-design-vue';
+  import { Badge, notification } from 'ant-design-vue';
   import { BellOutlined, LoginOutlined, LogoutOutlined } from '@ant-design/icons-vue';
   import { ListItem } from './data';
   import NoticeList from './NoticeList.vue';
@@ -51,10 +51,7 @@
 
   export default defineComponent({
     components: {
-      Popover,
       BellOutlined,
-      Tabs,
-      TabPane: Tabs.TabPane,
       Badge,
       NoticeList,
       NoticeDetail,
@@ -95,7 +92,7 @@
       const open = ref(false);
 
       const wsTimer: Ref<NodeJS.Timer | null> = ref(null);
-      const retryWs = ref(false);
+      const wsRetrying = ref(false);
       const socket: Ref<WebSocket | undefined> = ref(undefined);
       const wsUrl = import.meta.env.VITE_GLOB_APP_MESSAGE_BUS_WS_URL;
 
@@ -111,7 +108,7 @@
         const userStore = useUserStore();
         const token = userStore.getToken;
         if (isEmpty(token)) {
-          retryWs.value = false;
+          wsRetrying.value = false;
           return;
         }
         try {
@@ -120,20 +117,20 @@
 
           // 监听WebSocket连接打开事件
           socket.value.onopen = () => {
-            retryWs.value = false;
+            wsRetrying.value = false;
           };
 
           // 监听WebSocket接收到消息事件
           socket.value.onmessage = (event) => {
             const msg = event.data;
             const msgObj = JSON.parse(msg);
-            let pushObj = msgObj.data;
+            let pullObj = msgObj.data;
             try {
               // 这里尝试解析数据为json，如果解析不了那么直接推送字符串
-              pushObj = JSON.parse(pushObj);
+              pullObj = JSON.parse(pullObj);
               // eslint-disable-next-line no-empty
             } catch {}
-            eventBus.$emit(msgObj.bizType, pushObj);
+            eventBus.$emit(msgObj.bizType, pullObj);
           };
 
           // 监听WebSocket连接关闭事件
@@ -143,16 +140,24 @@
           };
         } catch {
           socket.value = undefined;
-          retryWs.value = false;
+          wsRetrying.value = false;
         }
       }
 
+      function disConnectWs() {
+        if (socket.value && socket.value.readyState === WebSocket.OPEN) {
+          socket.value.close();
+        }
+        socket.value = undefined;
+        wsRetrying.value = false;
+      }
+
       function wsConnectDaemon() {
-        if (retryWs.value) {
+        if (wsRetrying.value) {
           return;
         }
         if (socket.value === undefined) {
-          retryWs.value = true;
+          wsRetrying.value = true;
           connectWs();
         }
       }
@@ -199,9 +204,11 @@
           });
       }
 
-      eventBus.$on(eventBus.$pullEvent.CONNECT, onUserConnect);
-      eventBus.$on(eventBus.$pullEvent.DIS_CONNECT, onUserDisconnect);
-      eventBus.$on(eventBus.$pullEvent.SYS_NOTICE, onRefreshNotice);
+      const eventBusOff = ref([]);
+
+      eventBusOff.value.push(eventBus.$on(eventBus.$pullEvent.CONNECT, onUserConnect));
+      eventBusOff.value.push(eventBus.$on(eventBus.$pullEvent.DIS_CONNECT, onUserDisconnect));
+      eventBusOff.value.push(eventBus.$on(eventBus.$pullEvent.SYS_NOTICE, onRefreshNotice));
 
       return {
         prefixCls,
@@ -214,10 +221,18 @@
         wsTimer,
         wsConnectDaemon,
         noticeId,
+        disConnectWs,
+        eventBusOff,
       };
     },
     mounted() {
       this.wsTimer = setInterval(this.wsConnectDaemon, 3000);
+    },
+    unmounted() {
+      clearInterval(this.wsTimer);
+      this.disConnectWs();
+      this.eventBusOff.forEach((item) => item());
+      this.eventBusOff = [];
     },
     methods: {
       onNoticeClick(record: ListItem) {
