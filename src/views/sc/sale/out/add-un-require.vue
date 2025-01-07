@@ -188,7 +188,7 @@
   import * as saleApi from '@/api/sc/sale/order';
 
   export default defineComponent({
-    name: 'AddSaleOutUnRequire',
+    name: 'AddSaleOutSheetUnRequire',
     components: {
       SaleOrderSelectorWithOut,
       BatchAddProduct,

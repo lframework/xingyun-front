@@ -18,6 +18,7 @@
   import CustomSetting from './components/CustomSetting/index.vue';
 
   export default defineComponent({
+    name: 'SettingsIndex',
     // 使用组件
     components: {
       SecuritySetting,

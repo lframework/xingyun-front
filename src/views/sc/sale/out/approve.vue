@@ -164,6 +164,7 @@
   import * as api from '@/api/sc/sale/out';
 
   export default defineComponent({
+    name: 'ApproveSaleOutSheet',
     components: {
       ApproveRefuse,
       SaleOrderDetail,

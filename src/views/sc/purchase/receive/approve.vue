@@ -159,12 +159,13 @@
   </div>
 </template>
 <script>
-  import { h, defineComponent } from 'vue';
+  import { defineComponent } from 'vue';
   import ApproveRefuse from '@/components/ApproveRefuse';
   import PurchaseOrderDetail from '@/views/sc/purchase/order/detail.vue';
   import * as api from '@/api/sc/purchase/receive';
 
   export default defineComponent({
+    name: 'ApprovePurchaseReceiveSheet',
     components: {
       ApproveRefuse,
       PurchaseOrderDetail,

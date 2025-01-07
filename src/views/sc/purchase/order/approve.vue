@@ -150,6 +150,7 @@
   import * as api from '@/api/sc/purchase/order';
 
   export default defineComponent({
+    name: 'ApprovePurchaseOrder',
     components: {
       ApproveRefuse,
       PayType,

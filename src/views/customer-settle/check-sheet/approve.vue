@@ -258,6 +258,7 @@
   import * as api from '@/api/customer-settle/check';
 
   export default defineComponent({
+    name: 'ApproveCustomerSettleCheckSheet',
     components: {
       ApproveRefuse,
       SaleOutSheetDetail,

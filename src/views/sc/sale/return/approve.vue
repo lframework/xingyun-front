@@ -159,6 +159,7 @@
   import * as api from '@/api/sc/sale/return';
 
   export default defineComponent({
+    name: 'ApproveSaleReturnSheet',
     components: {
       ApproveRefuse,
       OutSheetDetail,

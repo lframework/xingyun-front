@@ -125,6 +125,7 @@
   import * as api from '@/api/sc/stock/adjust/stock';
 
   export default defineComponent({
+    name: 'ApproveStockAdjustSheet',
     components: {
       ApproveRefuse,
     },

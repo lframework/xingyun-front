@@ -172,6 +172,7 @@
   import * as api from '@/api/sc/stock/take/sheet';
 
   export default defineComponent({
+    name: 'ModifyStockTakeSheet',
     components: {
       BatchAddProduct,
       TakeStockPlanDetail,

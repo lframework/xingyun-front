@@ -180,7 +180,7 @@
   import * as saleApi from '@/api/sc/sale/order';
 
   export default defineComponent({
-    name: 'AddSaleOutRequire',
+    name: 'AddSaleOutSheetRequire',
     components: {
       SaleOrderSelectorWithOut,
       BatchAddProduct,

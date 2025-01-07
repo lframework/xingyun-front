@@ -221,6 +221,7 @@
   import * as api from '@/api/sc/logistics/sheet';
 
   export default defineComponent({
+    name: 'ModifyLogisticsSheet',
     components: {
       QueryBizOrder,
       DetailSaleOutSheet,

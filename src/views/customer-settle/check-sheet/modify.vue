@@ -158,7 +158,7 @@
   import * as api from '@/api/customer-settle/check';
 
   export default defineComponent({
-    name: 'ModifySettlePreSheet',
+    name: 'ModifyCustomerSettleCheckSheet',
     components: {},
     setup() {
       return {

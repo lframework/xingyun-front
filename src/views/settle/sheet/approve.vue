@@ -192,6 +192,7 @@
   import * as api from '@/api/settle/sheet';
 
   export default defineComponent({
+    name: 'ApproveSupplierSettleSheet',
     components: {
       ApproveRefuse,
       SettleCheckSheetDetail,

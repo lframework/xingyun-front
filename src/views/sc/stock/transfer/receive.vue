@@ -142,6 +142,7 @@
   import * as api from '@/api/sc/stock/transfer-sc';
 
   export default defineComponent({
+    name: 'ReceiveScTransferSheet',
     components: {},
     data() {
       return {

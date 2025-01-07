@@ -107,7 +107,7 @@
   import * as api from '@/api/customer-settle/fee';
 
   export default defineComponent({
-    name: 'AddSettleFeeSheet',
+    name: 'AddCustomerSettleFeeSheet',
     components: {},
     setup() {
       return {

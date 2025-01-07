@@ -148,7 +148,7 @@
   import * as api from '@/api/customer-settle/sheet';
 
   export default defineComponent({
-    name: 'AddSettleSheet',
+    name: 'AddCustomerSettleSheet',
     components: {},
     setup() {
       return {

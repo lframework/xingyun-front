@@ -239,7 +239,7 @@
   import * as purchaseApi from '@/api/sc/purchase/order';
 
   export default defineComponent({
-    name: 'ModifyPurchaseReceiveRequire',
+    name: 'ModifyPurchaseReceiveSheetRequire',
     components: {
       PurchaseOrderDetail,
       BatchAddProduct,

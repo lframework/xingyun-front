@@ -214,7 +214,7 @@
   import * as saleApi from '@/api/sc/sale/order';
 
   export default defineComponent({
-    name: 'ModifySaleOutRequire',
+    name: 'ModifySaleOutSheetRequire',
     components: {
       BatchAddProduct,
     },

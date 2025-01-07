@@ -155,6 +155,7 @@
   import * as api from '@/api/sc/stock/take/pre';
 
   export default defineComponent({
+    name: 'ModifyPreTakeStockSheet',
     components: {
       BatchAddProduct,
     },

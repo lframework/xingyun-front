@@ -114,7 +114,7 @@
   import * as api from '@/api/settle/check';
 
   export default defineComponent({
-    name: 'AddSettlePreSheet',
+    name: 'AddSupplierSettleCheckSheet',
     components: {},
     setup() {
       return {

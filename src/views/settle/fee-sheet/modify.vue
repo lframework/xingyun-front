@@ -155,7 +155,7 @@
   import * as api from '@/api/settle/fee';
 
   export default defineComponent({
-    name: 'ModifySettleFeeSheet',
+    name: 'ModifySupplierSettleFeeSheet',
     components: {},
     setup() {
       return { h, PlusOutlined, DeleteOutlined };

@@ -128,6 +128,7 @@
   import * as api from '@/api/sc/stock/take/sheet';
 
   export default defineComponent({
+    name: 'AddStockTakeSheet',
     components: {
       BatchAddProduct,
     },

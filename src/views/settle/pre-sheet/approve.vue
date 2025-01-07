@@ -123,6 +123,7 @@
   import * as api from '@/api/settle/pre';
 
   export default defineComponent({
+    name: 'ApproveSupplierSettlePreSheet',
     components: {
       ApproveRefuse,
     },

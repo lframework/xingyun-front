@@ -185,7 +185,7 @@
   import * as outApi from '@/api/sc/sale/out';
 
   export default defineComponent({
-    name: 'AddSaleReturnUnRequire',
+    name: 'AddSaleReturnSheetUnRequire',
     components: {
       SaleOutSheetSelectorWithReturn,
       BatchAddProduct,

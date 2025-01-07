@@ -228,7 +228,7 @@
   import * as api from '@/api/sc/retail/out';
 
   export default defineComponent({
-    name: 'ModifyRetailOut',
+    name: 'ModifyRetailOutSheet',
     components: {
       BatchAddProduct,
       PayType,

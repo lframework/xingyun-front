@@ -136,7 +136,7 @@
   import * as api from '@/api/settle/pre';
 
   export default defineComponent({
-    name: 'ModifySettlePreSheet',
+    name: 'ModifySupplierSettlePreSheet',
     components: {},
     setup() {
       return {

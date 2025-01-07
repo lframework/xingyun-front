@@ -109,7 +109,7 @@
   import * as api from '@/api/customer-settle/check';
 
   export default defineComponent({
-    name: 'AddSettlePreSheet',
+    name: 'AddCustomerSettleCheckSheet',
     components: {},
     setup() {
       return {

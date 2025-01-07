@@ -88,7 +88,7 @@
   import * as api from '@/api/customer-settle/pre';
 
   export default defineComponent({
-    name: 'AddSettlePreSheet',
+    name: 'AddCustomerSettlePreSheet',
     components: {},
     setup() {
       return {

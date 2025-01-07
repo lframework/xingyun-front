@@ -132,6 +132,7 @@
   import * as api from '@/api/customer-settle/fee';
 
   export default defineComponent({
+    name: 'ApproveCustomerSettleFeeSheet',
     components: {
       ApproveRefuse,
     },

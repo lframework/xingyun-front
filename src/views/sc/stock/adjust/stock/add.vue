@@ -138,6 +138,7 @@
   import * as api from '@/api/sc/stock/adjust/stock';
 
   export default defineComponent({
+    name: 'AddStockAdjustSheet',
     components: {
       BatchAddProduct,
     },

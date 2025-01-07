@@ -155,6 +155,7 @@
   import * as api from '@/api/sc/retail/out';
 
   export default defineComponent({
+    name: 'ApproveRetailOutSheet',
     components: {
       ApproveRefuse,
       PayType,

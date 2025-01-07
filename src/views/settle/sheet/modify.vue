@@ -197,7 +197,7 @@
   import * as api from '@/api/settle/sheet';
 
   export default defineComponent({
-    name: 'ModifySettleSheet',
+    name: 'ModifySupplierSettleSheet',
     components: {},
     setup() {
       return {

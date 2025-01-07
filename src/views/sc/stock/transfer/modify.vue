@@ -159,6 +159,7 @@
   import * as api from '@/api/sc/stock/transfer-sc';
 
   export default defineComponent({
+    name: 'ModifyScTransferSheet',
     components: {
       BatchAddProduct,
     },

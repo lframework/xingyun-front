@@ -169,7 +169,7 @@
   import * as outApi from '@/api/sc/sale/out';
 
   export default defineComponent({
-    name: 'AddSaleReturnRequire',
+    name: 'AddSaleReturnSheetRequire',
     components: {
       SaleOutSheetSelectorWithReturn,
       BatchAddProduct,

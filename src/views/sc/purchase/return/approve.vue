@@ -168,6 +168,7 @@
   import * as api from '@/api/sc/purchase/return';
 
   export default defineComponent({
+    name: 'ApprovePurchaseReturn',
     components: {
       ApproveRefuse,
       ReceiveSheetDetail,

@@ -219,7 +219,7 @@
   import * as outApi from '@/api/sc/sale/out';
 
   export default defineComponent({
-    name: 'ModifySaleReturnUnRequire',
+    name: 'ModifySaleReturnSheetUnRequire',
     components: {
       BatchAddProduct,
     },

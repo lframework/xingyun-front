@@ -246,6 +246,7 @@
   import * as api from '@/api/settle/check';
 
   export default defineComponent({
+    name: 'ApproveSupplierSettleCheckSheet',
     components: {
       ApproveRefuse,
       PurchaseReceiveSheetDetail,

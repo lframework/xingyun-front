@@ -93,7 +93,7 @@
   import * as api from '@/api/settle/pre';
 
   export default defineComponent({
-    name: 'AddSettlePreSheet',
+    name: 'AddSupplierSettlePreSheet',
     components: {},
     setup() {
       return { h, PlusOutlined, DeleteOutlined };

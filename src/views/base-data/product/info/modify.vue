@@ -311,6 +311,7 @@
   import * as propertyApi from '@/api/base-data/product/property';
 
   export default defineComponent({
+    name: 'ModifyProduct',
     // 使用组件
     components: {},
 

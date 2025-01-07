@@ -49,6 +49,7 @@
   } from '@ant-design/icons-vue';
 
   export default defineComponent({
+    name: 'ProfileIndex',
     components: {
       PageWrapper,
       Avatar,
