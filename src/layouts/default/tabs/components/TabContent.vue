@@ -14,12 +14,11 @@
   </Dropdown>
 </template>
 <script lang="ts">
-  import type { PropType } from 'vue';
   import type { RouteLocationNormalized } from 'vue-router';
 
-  import { defineComponent, computed, unref } from 'vue';
+  import { defineComponent, computed, unref, ref, PropType } from 'vue';
   import { useRouter } from 'vue-router';
-  import { Dropdown, DropMenu } from '/@/components/Dropdown/index';
+  import { Dropdown } from '/@/components/Dropdown/index';
   import Icon from '@/components/Icon/Icon.vue';
 
   import { MenuEventEnum, TabContentProps } from '../types';
@@ -60,7 +59,9 @@
       );
 
       const router = useRouter();
-      eventBus.$on(eventBus.$otherEvent.CLOSE_CURRENT_TAB, () => {
+
+      const closeCurrentTabCloseFn = ref(undefined);
+      closeCurrentTabCloseFn.value = eventBus.$on(eventBus.$otherEvent.CLOSE_CURRENT_TAB, () => {
         if (router.currentRoute.value.fullPath === props.tabItem.fullPath) {
           handleMenuEvent({
             text: '',
@@ -81,7 +82,12 @@
         getTrigger,
         getIsTabs,
         getTitle,
+        closeCurrentTabCloseFn,
       };
+    },
+    unmounted() {
+      this.closeCurrentTabCloseFn();
+      this.closeCurrentTabCloseFn = undefined;
     },
   });
 </script>

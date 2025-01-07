@@ -1,3 +1,6 @@
+/**
+ * 接收自后端推送的事件类型
+ */
 export default {
   // 用户连接
   CONNECT: 'connect',
