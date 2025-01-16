@@ -25,13 +25,19 @@
                 :page-size="8"
                 @title-click="onNoticeClick"
               />
-              <NoticeList :list="item.list" v-else :page-size="6" />
+              <SiteMessageList
+                v-else-if="item.key === '2'"
+                :list="item.list"
+                :page-size="8"
+                @title-click="onSiteMessageClick"
+              />
             </a-tab-pane>
           </template>
         </a-tabs>
       </a-card>
     </a-drawer>
     <notice-detail ref="noticeDetailDialog" :id="noticeId" />
+    <site-message-detail ref="siteMessageDetailDialog" :id="siteMessageId" />
   </div>
 </template>
 <script lang="ts">
@@ -40,6 +46,7 @@
   import { BellOutlined, LoginOutlined, LogoutOutlined } from '@ant-design/icons-vue';
   import { ListItem } from './data';
   import NoticeList from './NoticeList.vue';
+  import SiteMessageList from './SiteMessageList.vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '@/store/modules/user';
   import { isEmpty } from '@/utils/utils';
@@ -47,19 +54,25 @@
   import UserConnectTip from '@/components/UserConnectTip';
   import projectSetting from '@/settings/projectSetting';
   import * as noticeApi from '@/api/system/notice';
+  import * as siteMessageApi from '@/api/system/site-message';
   import NoticeDetail from '@/views/system/notice/detail.vue';
+  import SiteMessageDetail from '@/views/system/site-message/detail.vue';
 
   export default defineComponent({
     components: {
       BellOutlined,
       Badge,
       NoticeList,
+      SiteMessageList,
       NoticeDetail,
+      SiteMessageDetail,
     },
     setup() {
       const { prefixCls } = useDesign('header-notify');
       const noticeId = ref('');
+      const siteMessageId = ref('');
       const noticeList: Ref<ListItem[]> = ref([]);
+      const siteMessageList: Ref<ListItem[]> = ref([]);
       const listData = computed(() => {
         return [
           {
@@ -70,12 +83,7 @@
           {
             key: '2',
             name: '消息',
-            list: [],
-          },
-          {
-            key: '3',
-            name: '代办',
-            list: [],
+            list: [...siteMessageList.value],
           },
         ];
       });
@@ -92,7 +100,7 @@
       const open = ref(false);
 
       const wsTimer: Ref<NodeJS.Timer | null> = ref(null);
-      const wsRetrying = ref(false);
+      const wsDaemonFlag = ref(false);
       const socket: Ref<WebSocket | undefined> = ref(undefined);
       const wsUrl = import.meta.env.VITE_GLOB_APP_MESSAGE_BUS_WS_URL;
 
@@ -108,7 +116,7 @@
         const userStore = useUserStore();
         const token = userStore.getToken;
         if (isEmpty(token)) {
-          wsRetrying.value = false;
+          wsDaemonFlag.value = false;
           return;
         }
         try {
@@ -117,7 +125,7 @@
 
           // 监听WebSocket连接打开事件
           socket.value.onopen = () => {
-            wsRetrying.value = false;
+            wsDaemonFlag.value = false;
           };
 
           // 监听WebSocket接收到消息事件
@@ -140,7 +148,7 @@
           };
         } catch {
           socket.value = undefined;
-          wsRetrying.value = false;
+          wsDaemonFlag.value = false;
         }
       }
 
@@ -149,15 +157,18 @@
           socket.value.close();
         }
         socket.value = undefined;
-        wsRetrying.value = false;
+        wsDaemonFlag.value = false;
       }
 
       function wsConnectDaemon() {
-        if (wsRetrying.value) {
+        if (socket.value === undefined || socket.value.readyState !== WebSocket.OPEN) {
+          disConnectWs();
+        }
+        if (wsDaemonFlag.value) {
           return;
         }
         if (socket.value === undefined) {
-          wsRetrying.value = true;
+          wsDaemonFlag.value = true;
           connectWs();
         }
       }
@@ -204,11 +215,34 @@
           });
       }
 
+      function onRefreshSiteMessage() {
+        siteMessageApi
+          .queryMy({
+            pageIndex: 1,
+            pageSize: 10000,
+            readed: false,
+          })
+          .then((res) => {
+            siteMessageList.value = (res.datas || []).map((item) => {
+              return {
+                id: item.id,
+                title: '站内信',
+                description: item.title,
+                datetime: item.createTime,
+                type: '2',
+              } as ListItem;
+            });
+          });
+      }
+
       const eventBusOff = ref([]);
 
       eventBusOff.value.push(eventBus.$on(eventBus.$pullEvent.CONNECT, onUserConnect));
       eventBusOff.value.push(eventBus.$on(eventBus.$pullEvent.DIS_CONNECT, onUserDisconnect));
       eventBusOff.value.push(eventBus.$on(eventBus.$pullEvent.SYS_NOTICE, onRefreshNotice));
+      eventBusOff.value.push(
+        eventBus.$on(eventBus.$pullEvent.SYS_SITE_MESSAGE, onRefreshSiteMessage),
+      );
 
       return {
         prefixCls,
@@ -221,6 +255,7 @@
         wsTimer,
         wsConnectDaemon,
         noticeId,
+        siteMessageId,
         disConnectWs,
         eventBusOff,
       };
@@ -240,6 +275,13 @@
         this.noticeId = id;
 
         this.$refs.noticeDetailDialog.openDialog();
+      },
+
+      onSiteMessageClick(record: ListItem) {
+        const id = record.id;
+        this.siteMessageId = id;
+
+        this.$refs.siteMessageDetailDialog.openDialog();
       },
     },
   });

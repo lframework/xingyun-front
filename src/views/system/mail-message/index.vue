@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div>
+    <div v-permission="['system:mail-message:manage']">
       <page-wrapper content-full-height fixed-height>
         <!-- 数据列表 -->
         <vxe-grid
-          id="MySysNotice"
+          id="MailMessage"
           ref="grid"
           resizable
           show-overflow
@@ -25,7 +25,7 @@
                 <j-form-item label="标题">
                   <a-input v-model:value="searchFormData.title" allow-clear />
                 </j-form-item>
-                <j-form-item label="发布时间" :content-nest="false">
+                <j-form-item label="创建时间" :content-nest="false">
                   <div class="date-range-container">
                     <a-date-picker
                       v-model:value="searchFormData.createTimeStart"
@@ -40,10 +40,21 @@
                     />
                   </div>
                 </j-form-item>
-                <j-form-item label="是否已读">
-                  <a-select v-model:value="searchFormData.readed" placeholder="全部" allow-clear>
-                    <a-select-option :value="false">否</a-select-option>
-                    <a-select-option :value="true">是</a-select-option>
+                <j-form-item label="接收邮箱">
+                  <a-input v-model:value="searchFormData.mail" allow-clear />
+                </j-form-item>
+                <j-form-item label="发送状态">
+                  <a-select
+                    v-model:value="searchFormData.sendStatus"
+                    placeholder="全部"
+                    allow-clear
+                  >
+                    <a-select-option
+                      v-for="item in $enums.SYS_MAIL_MESSAGE_SEND_STATUS.values()"
+                      :key="item.code"
+                      :value="item.code"
+                      >{{ item.desc }}</a-select-option
+                    >
                   </a-select>
                 </j-form-item>
               </j-form>
@@ -64,18 +75,19 @@
       </page-wrapper>
     </div>
     <!-- 查看窗口 -->
-    <detail :id="id" ref="viewDialog" />
+    <detail :id="id" ref="viewDialog" :req="api.get" />
   </div>
 </template>
 
 <script>
   import { defineComponent, h } from 'vue';
   import Detail from './detail.vue';
-  import * as api from '@/api/system/notice';
+  import * as api from '@/api/system/mail-message';
   import { SearchOutlined } from '@ant-design/icons-vue';
+  import moment from 'moment/moment';
 
   export default defineComponent({
-    name: 'MySysNotice',
+    name: 'MailMessage',
     components: {
       Detail,
     },
@@ -83,6 +95,7 @@
       return {
         h,
         SearchOutlined,
+        api,
       };
     },
     data() {
@@ -93,9 +106,12 @@
         // 查询列表的查询条件
         searchFormData: {
           title: '',
-          createTimeStart: '',
-          createTimeEnd: '',
-          readed: undefined,
+          createTimeStart: this.$utils.formatDateTime(
+            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
+          ),
+          createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          mail: '',
+          sendStatus: undefined,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -108,15 +124,17 @@
         tableColumn: [
           { type: 'seq', width: 50 },
           { field: 'title', title: '标题', minWidth: 160 },
+          { field: 'mail', title: '接收邮箱', width: 100 },
+          { field: 'createBy', title: '创建人', width: 100 },
+          { field: 'createTime', title: '创建时间', width: 170 },
           {
-            field: 'readed',
-            title: '是否已读',
-            width: 100,
+            field: 'sendStatus',
+            title: '发送状态',
+            width: 80,
             formatter: ({ cellValue }) => {
-              return cellValue ? '是' : '否';
+              return this.$enums.SYS_MAIL_MESSAGE_SEND_STATUS.getDesc(cellValue);
             },
           },
-          { field: 'publishTime', title: '发布时间', width: 170 },
           { title: '操作', width: 70, fixed: 'right', slots: { default: 'action_default' } },
         ],
         // 请求接口配置
@@ -130,7 +148,7 @@
           ajax: {
             // 查询接口
             query: ({ page }) => {
-              return api.queryMyNotice(this.buildQueryParams(page));
+              return api.query(this.buildQueryParams(page));
             },
           },
         },

@@ -34,7 +34,6 @@
 
   import { useUserStore } from '/@/store/modules/user';
   import { useLockStore } from '/@/store/modules/lock';
-  import headerImg from '/@/assets/images/header.jpg';
   import Avatar from '../avatar/Avatar.vue';
 
   export default defineComponent({
@@ -66,7 +65,7 @@
 
       const avatar = computed(() => {
         const { avatar } = userStore.getUserInfo;
-        return avatar || headerImg;
+        return avatar;
       });
 
       return {

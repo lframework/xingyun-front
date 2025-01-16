@@ -4,7 +4,7 @@
       <page-wrapper content-full-height fixed-height>
         <!-- 数据列表 -->
         <vxe-grid
-          id="MySysNotice"
+          id="MySiteMessage"
           ref="grid"
           resizable
           show-overflow
@@ -25,7 +25,7 @@
                 <j-form-item label="标题">
                   <a-input v-model:value="searchFormData.title" allow-clear />
                 </j-form-item>
-                <j-form-item label="发布时间" :content-nest="false">
+                <j-form-item label="创建时间" :content-nest="false">
                   <div class="date-range-container">
                     <a-date-picker
                       v-model:value="searchFormData.createTimeStart"
@@ -71,11 +71,12 @@
 <script>
   import { defineComponent, h } from 'vue';
   import Detail from './detail.vue';
-  import * as api from '@/api/system/notice';
+  import * as api from '@/api/system/site-message';
   import { SearchOutlined } from '@ant-design/icons-vue';
+  import moment from 'moment/moment';
 
   export default defineComponent({
-    name: 'MySysNotice',
+    name: 'MySiteMessage',
     components: {
       Detail,
     },
@@ -93,9 +94,11 @@
         // 查询列表的查询条件
         searchFormData: {
           title: '',
-          createTimeStart: '',
-          createTimeEnd: '',
-          readed: undefined,
+          createTimeStart: this.$utils.formatDateTime(
+            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
+          ),
+          createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          readed: false,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -116,7 +119,7 @@
               return cellValue ? '是' : '否';
             },
           },
-          { field: 'publishTime', title: '发布时间', width: 170 },
+          { field: 'createTime', title: '创建时间', width: 170 },
           { title: '操作', width: 70, fixed: 'right', slots: { default: 'action_default' } },
         ],
         // 请求接口配置
@@ -130,7 +133,7 @@
           ajax: {
             // 查询接口
             query: ({ page }) => {
-              return api.queryMyNotice(this.buildQueryParams(page));
+              return api.queryMy(this.buildQueryParams(page));
             },
           },
         },

@@ -163,8 +163,9 @@ export class VAxios {
   }
 
   // support form-data
-  supportFormData(config: AxiosRequestConfig) {
-    const options = config.requestOptions || ({} as RequestOptions);
+  supportFormData(config: CreateAxiosOptions) {
+    const { requestOptions } = config;
+    const options = requestOptions || ({} as RequestOptions);
     const contentType = options.contentType || ContentTypeEnum.JSON;
     if (!config.headers) {
       config.headers = {} as AxiosHeaders;

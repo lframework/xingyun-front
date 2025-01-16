@@ -27,7 +27,7 @@
           <template #avatar>
             <a-avatar :size="24" shape="square" style="background-color: #ffffff">
               <template #icon>
-                <NotificationTwoTone style="font-size: 20px" two-tone-color="#eb2f96" />
+                <MailTwoTone style="font-size: 20px" />
               </template>
             </a-avatar>
           </template>
@@ -61,7 +61,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { List, Avatar, Tag, Typography } from 'ant-design-vue';
   import { isNumber } from '/@/utils/is';
-  import { NotificationTwoTone } from '@ant-design/icons-vue';
+  import { MailTwoTone } from '@ant-design/icons-vue';
 
   export default defineComponent({
     components: {
@@ -71,7 +71,7 @@
       AListItemMeta: List.Item.Meta,
       ATypographyParagraph: Typography.Paragraph,
       [Tag.name]: Tag,
-      NotificationTwoTone,
+      MailTwoTone,
     },
     props: {
       list: {

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div>
+    <div v-permission="['system:notify-group:query']">
       <page-wrapper content-full-height fixed-height>
         <!-- 数据列表 -->
         <vxe-grid
-          id="MySysNotice"
+          id="SysNotifyGroup"
           ref="grid"
           resizable
           show-overflow
@@ -13,37 +13,41 @@
           row-id="id"
           :proxy-config="proxyConfig"
           :columns="tableColumn"
-          :toolbar-config="toolbarConfig"
           :custom-config="{}"
+          :toolbar-config="toolbarConfig"
           :pager-config="{}"
           :loading="loading"
           height="auto"
         >
           <template #form>
             <j-border>
-              <j-form label-width="100px" @collapse="$refs.grid.refreshColumn()">
-                <j-form-item label="标题">
-                  <a-input v-model:value="searchFormData.title" allow-clear />
+              <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+                <j-form-item label="名称">
+                  <a-input v-model:value="searchFormData.name" allow-clear />
                 </j-form-item>
-                <j-form-item label="发布时间" :content-nest="false">
+                <j-form-item label="创建时间" :content-nest="false">
                   <div class="date-range-container">
                     <a-date-picker
-                      v-model:value="searchFormData.createTimeStart"
+                      v-model:value="searchFormData.createTimeTimeStart"
                       placeholder=""
                       value-format="YYYY-MM-DD 00:00:00"
                     />
                     <span class="date-split">至</span>
                     <a-date-picker
-                      v-model:value="searchFormData.createTimeEnd"
+                      v-model:value="searchFormData.createTimeTimeEnd"
                       placeholder=""
                       value-format="YYYY-MM-DD 23:59:59"
                     />
                   </div>
                 </j-form-item>
-                <j-form-item label="是否已读">
-                  <a-select v-model:value="searchFormData.readed" placeholder="全部" allow-clear>
-                    <a-select-option :value="false">否</a-select-option>
-                    <a-select-option :value="true">是</a-select-option>
+                <j-form-item label="状态">
+                  <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
+                    <a-select-option
+                      v-for="item in $enums.AVAILABLE.values()"
+                      :key="item.code"
+                      :value="item.code"
+                      >{{ item.desc }}</a-select-option
+                    >
                   </a-select>
                 </j-form-item>
               </j-form>
@@ -53,7 +57,15 @@
           <template #toolbar_buttons>
             <a-space>
               <a-button type="primary" :icon="h(SearchOutlined)" @click="search">查询</a-button>
+              <a-button type="primary" :icon="h(PlusOutlined)" @click="$refs.addDialog.openDialog()"
+                >新增</a-button
+              >
             </a-space>
+          </template>
+
+          <!-- 状态 列自定义内容 -->
+          <template #available_default="{ row }">
+            <available-tag :available="row.available" />
           </template>
 
           <!-- 操作 列自定义内容 -->
@@ -63,26 +75,32 @@
         </vxe-grid>
       </page-wrapper>
     </div>
-    <!-- 查看窗口 -->
-    <detail :id="id" ref="viewDialog" />
+    <!-- 新增窗口 -->
+    <add ref="addDialog" @confirm="search" />
+
+    <!-- 修改窗口 -->
+    <modify :id="id" ref="updateDialog" @confirm="search" />
   </div>
 </template>
 
 <script>
-  import { defineComponent, h } from 'vue';
-  import Detail from './detail.vue';
-  import * as api from '@/api/system/notice';
-  import { SearchOutlined } from '@ant-design/icons-vue';
+  import { h, defineComponent } from 'vue';
+  import Add from './add.vue';
+  import Modify from './modify.vue';
+  import * as api from '@/api/system/notify-group';
+  import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
 
   export default defineComponent({
-    name: 'MySysNotice',
+    name: 'SysNotifyGroup',
     components: {
-      Detail,
+      Add,
+      Modify,
     },
     setup() {
       return {
         h,
         SearchOutlined,
+        PlusOutlined,
       };
     },
     data() {
@@ -92,10 +110,10 @@
         id: '',
         // 查询列表的查询条件
         searchFormData: {
-          title: '',
+          name: '',
           createTimeStart: '',
           createTimeEnd: '',
-          readed: undefined,
+          available: this.$enums.AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -107,17 +125,14 @@
         // 列表数据配置
         tableColumn: [
           { type: 'seq', width: 50 },
-          { field: 'title', title: '标题', minWidth: 160 },
-          {
-            field: 'readed',
-            title: '是否已读',
-            width: 100,
-            formatter: ({ cellValue }) => {
-              return cellValue ? '是' : '否';
-            },
-          },
-          { field: 'publishTime', title: '发布时间', width: 170 },
-          { title: '操作', width: 70, fixed: 'right', slots: { default: 'action_default' } },
+          { field: 'name', title: '名称', minWidth: 140, sortable: true },
+          { field: 'receiverType', title: '接收者类型', width: 100 },
+          { field: 'messageType', title: '消息类型', width: 140 },
+          { field: 'description', title: '备注', minWidth: 200 },
+          { field: 'createTime', title: '创建时间', width: 170, sortable: true },
+          { field: 'createBy', title: '创建人', width: 100 },
+          { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
+          { title: '操作', width: 60, fixed: 'right', slots: { default: 'action_default' } },
         ],
         // 请求接口配置
         proxyConfig: {
@@ -129,8 +144,8 @@
           },
           ajax: {
             // 查询接口
-            query: ({ page }) => {
-              return api.queryMyNotice(this.buildQueryParams(page));
+            query: ({ page, sorts }) => {
+              return api.query(this.buildQueryParams(page, sorts));
             },
           },
         },
@@ -143,10 +158,9 @@
         this.$refs.grid.commitProxy('reload');
       },
       // 查询前构建查询参数结构
-      buildQueryParams(page) {
+      buildQueryParams(page, sorts) {
         return {
-          pageIndex: page.currentPage,
-          pageSize: page.pageSize,
+          ...this.$utils.buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -159,10 +173,10 @@
       createActions(row) {
         return [
           {
-            label: '查看',
+            label: '修改',
             onClick: () => {
               this.id = row.id;
-              this.$nextTick(() => this.$refs.viewDialog.openDialog());
+              this.$nextTick(() => this.$refs.updateDialog.openDialog());
             },
           },
         ];

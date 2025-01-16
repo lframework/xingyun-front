@@ -8,4 +8,6 @@ export default {
   DIS_CONNECT: 'disconnect',
   // 系统通知
   SYS_NOTICE: 'sysNotice',
+  // 站内信
+  SYS_SITE_MESSAGE: 'siteMessage',
 };

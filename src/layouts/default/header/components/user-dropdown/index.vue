@@ -44,7 +44,6 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useModal } from '/@/components/Modal';
 
-  import headerImg from '/@/assets/images/header.jpg';
   import { propTypes } from '/@/utils/propTypes';
 
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
@@ -76,7 +75,7 @@
 
       const getUserInfo = computed(() => {
         const { name = '', avatar, desc } = userStore.getUserInfo || {};
-        return { name, avatar: avatar || headerImg, desc };
+        return { name, avatar: avatar, desc };
       });
 
       const [register, { openModal }] = useModal();

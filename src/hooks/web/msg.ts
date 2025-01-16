@@ -27,6 +27,17 @@ export const createErrorDialog = function (message: string, title: string = '错
   });
 };
 
+export const createWarning = function (message: string): void {
+  Message.warning(message);
+};
+
+export const createWarningDialog = function (message: string, title: string = '提示信息'): void {
+  Modal.warning({
+    title: title,
+    content: message,
+  });
+};
+
 export type ConfirmOptions = {
   okText?: string;
   cancelText?: string;

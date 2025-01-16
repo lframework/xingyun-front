@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div>
+    <div v-permission="['system:site-message:manage']">
       <page-wrapper content-full-height fixed-height>
         <!-- 数据列表 -->
         <vxe-grid
-          id="MySysNotice"
+          id="SiteMessage"
           ref="grid"
           resizable
           show-overflow
@@ -25,7 +25,7 @@
                 <j-form-item label="标题">
                   <a-input v-model:value="searchFormData.title" allow-clear />
                 </j-form-item>
-                <j-form-item label="发布时间" :content-nest="false">
+                <j-form-item label="创建时间" :content-nest="false">
                   <div class="date-range-container">
                     <a-date-picker
                       v-model:value="searchFormData.createTimeStart"
@@ -64,18 +64,19 @@
       </page-wrapper>
     </div>
     <!-- 查看窗口 -->
-    <detail :id="id" ref="viewDialog" />
+    <detail :id="id" ref="viewDialog" :req="api.get" />
   </div>
 </template>
 
 <script>
   import { defineComponent, h } from 'vue';
   import Detail from './detail.vue';
-  import * as api from '@/api/system/notice';
+  import * as api from '@/api/system/site-message';
   import { SearchOutlined } from '@ant-design/icons-vue';
+  import moment from 'moment/moment';
 
   export default defineComponent({
-    name: 'MySysNotice',
+    name: 'SiteMessage',
     components: {
       Detail,
     },
@@ -83,6 +84,7 @@
       return {
         h,
         SearchOutlined,
+        api,
       };
     },
     data() {
@@ -93,8 +95,10 @@
         // 查询列表的查询条件
         searchFormData: {
           title: '',
-          createTimeStart: '',
-          createTimeEnd: '',
+          createTimeStart: this.$utils.formatDateTime(
+            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
+          ),
+          createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
           readed: undefined,
         },
         // 工具栏配置
@@ -108,6 +112,7 @@
         tableColumn: [
           { type: 'seq', width: 50 },
           { field: 'title', title: '标题', minWidth: 160 },
+          { field: 'receiverName', title: '接收人', width: 100 },
           {
             field: 'readed',
             title: '是否已读',
@@ -116,7 +121,9 @@
               return cellValue ? '是' : '否';
             },
           },
-          { field: 'publishTime', title: '发布时间', width: 170 },
+          { field: 'readTime', title: '已读时间', width: 170 },
+          { field: 'createBy', title: '创建人', width: 100 },
+          { field: 'createTime', title: '创建时间', width: 170 },
           { title: '操作', width: 70, fixed: 'right', slots: { default: 'action_default' } },
         ],
         // 请求接口配置
@@ -130,7 +137,7 @@
           ajax: {
             // 查询接口
             query: ({ page }) => {
-              return api.queryMyNotice(this.buildQueryParams(page));
+              return api.query(this.buildQueryParams(page));
             },
           },
         },
