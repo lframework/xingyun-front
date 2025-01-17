@@ -7,7 +7,7 @@ enum Api {
   Logout = '/auth/logout',
   Captcha = '/auth/captcha',
   CaptchaRequire = '/auth/captcha/require',
-  TenantRequire = 'auth/tenant/require',
+  TenantRequire = '/auth/tenant/require',
   CheckPassword = '/auth/check/password',
 }
 
