@@ -7,6 +7,7 @@ enum Api {
   Logout = '/auth/logout',
   Captcha = '/auth/captcha',
   CaptchaRequire = '/auth/captcha/require',
+  TenantRequire = 'auth/tenant/require',
   CheckPassword = '/auth/check/password',
 }
 
@@ -36,15 +37,25 @@ export function getCaptchaApi() {
   return defHttp.get<CaptchaModel>({ url: Api.Captcha }, { region });
 }
 
-export function getCaptchaRequireApi(username: string) {
-  return defHttp.post<Boolean>(
+export function getCaptchaRequireApi(tenantName: string, username: string) {
+  return defHttp.post<boolean>(
     {
       url: Api.CaptchaRequire,
       params: {
+        tenantName,
         username,
       },
     },
     { region, contentType: ContentTypeEnum.FORM_URLENCODED },
+  );
+}
+
+export function getTenantRequireApi() {
+  return defHttp.get<boolean>(
+    {
+      url: Api.TenantRequire,
+    },
+    { region },
   );
 }
 

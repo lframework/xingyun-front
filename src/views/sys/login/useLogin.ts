@@ -46,16 +46,19 @@ export function useFormValid<T extends Object = any>(formRef: Ref<FormInstance>)
 }
 
 export function useFormRules() {
+  const getTenantNameFormRule = computed(() => createRule('请输入租户名称'));
   const getUsernameFormRule = computed(() => createRule('请输入用户名'));
   const getPasswordFormRule = computed(() => createRule('请输入密码'));
   const getCaptchaFormRule = computed(() => createRule('请输入验证码'));
 
   const getFormRules = computed((): { [k: string]: ValidationRule | ValidationRule[] } => {
+    const tenantNameFormRule = unref(getTenantNameFormRule);
     const usernameFormRule = unref(getUsernameFormRule);
     const passwordFormRule = unref(getPasswordFormRule);
     const captchaFormRule = unref(getCaptchaFormRule);
 
     return {
+      tenantName: tenantNameFormRule,
       username: usernameFormRule,
       password: passwordFormRule,
       captcha: captchaFormRule,
