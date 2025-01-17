@@ -141,20 +141,6 @@
             this.loading = false;
           });
       },
-      // 提交数据
-      submit() {
-        this.loading = true;
-        api
-          .saveSetting(this.tableData.map((item) => item.id))
-          .then(() => {
-            this.$msg.createSuccess('保存成功！');
-            this.$emit('confirm');
-            this.visible = false;
-          })
-          .finally(() => {
-            this.loading = false;
-          });
-      },
       createActions(row) {
         return [
           {

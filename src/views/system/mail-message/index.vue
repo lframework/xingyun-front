@@ -75,7 +75,7 @@
       </page-wrapper>
     </div>
     <!-- 查看窗口 -->
-    <detail :id="id" ref="viewDialog" :req="api.get" />
+    <detail :id="id" ref="viewDialog" />
   </div>
 </template>
 

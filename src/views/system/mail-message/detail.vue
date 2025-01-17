@@ -25,10 +25,6 @@
         type: String,
         required: true,
       },
-      req: {
-        type: Function,
-        default: api.getContent,
-      },
     },
     data() {
       return {
@@ -74,7 +70,8 @@
       // 查询数据
       loadFormData() {
         this.loading = true;
-        this.req(this.id)
+        api
+          .get(this.id)
           .then((data) => {
             this.formData = data;
           })
