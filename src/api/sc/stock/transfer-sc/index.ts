@@ -8,9 +8,7 @@ import { ScTransferProductBo } from '@/api/sc/stock/transfer-sc/model/scTransfer
 import { CreateScTransferOrderVo } from '@/api/sc/stock/transfer-sc/model/createScTransferOrderVo';
 import { UpdateScTransferOrderVo } from '@/api/sc/stock/transfer-sc/model/updateScTransferOrderVo';
 import { ApprovePassScTransferOrderVo } from '@/api/sc/stock/transfer-sc/model/approvePassScTransferOrderVo';
-import { BatchApprovePassScTransferOrderVo } from '@/api/sc/stock/transfer-sc/model/batchApprovePassScTransferOrderVo';
 import { ApproveRefuseScTransferOrderVo } from '@/api/sc/stock/transfer-sc/model/approveRefuseScTransferOrderVo';
-import { BatchApproveRefuseScTransferOrderVo } from '@/api/sc/stock/transfer-sc/model/batchApproveRefuseScTransferOrderVo';
 import { QueryScTransferProductVo } from '@/api/sc/stock/transfer-sc/model/queryScTransferProductVo';
 import { ReceiveScTransferOrderVo } from '@/api/sc/stock/transfer-sc/model/receiveScTransferOrderVo';
 import { QueryScTransferOrderDetailReceiveBo } from '@/api/sc/stock/transfer-sc/model/queryScTransferOrderDetailReceiveBo';
@@ -119,13 +117,14 @@ export function approvePass(data: ApprovePassScTransferOrderVo): Promise<void> {
 /**
  * 批量审核通过
  */
-export function batchApprovePass(data: BatchApprovePassScTransferOrderVo): Promise<void> {
+export function batchApprovePass(data: ApprovePassScTransferOrderVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/pass/batch',
+      url: baseUrl + '/approve/pass',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -167,13 +166,14 @@ export function approveRefuse(data: ApproveRefuseScTransferOrderVo): Promise<voi
 /**
  * 批量审核拒绝
  */
-export function batchApproveRefuse(data: BatchApproveRefuseScTransferOrderVo): Promise<void> {
+export function batchApproveRefuse(data: ApproveRefuseScTransferOrderVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/refuse/batch',
+      url: baseUrl + '/approve/refuse',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -201,15 +201,18 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function deleteByIds(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }

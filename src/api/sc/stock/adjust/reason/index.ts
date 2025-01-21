@@ -75,33 +75,41 @@ export function get(id: string): Promise<GetStockAdjustReasonBo> {
 }
 
 /**
- * 批量停用
+ * 停用
+ * @param id
  */
-export function batchUnable(ids: string[]): Promise<void> {
+export function unable(id: string): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/unable/batch',
-      data: ids,
+      url: baseUrl + '/unable',
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
-      contentType: ContentTypeEnum.JSON,
     },
   );
 }
 
 /**
- * 批量启用
+ * 启用
+ * @param id
  */
-export function batchEnable(ids: string[]): Promise<void> {
+export function enable(id: string): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/enable/batch',
-      data: ids,
+      url: baseUrl + '/enable',
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
-      contentType: ContentTypeEnum.JSON,
     },
   );
 }

@@ -14,7 +14,7 @@ import { isString, isArray } from '/@/utils/is';
 import { getToken } from '/@/utils/auth';
 import { deepMerge, setObjToUrlParams } from '/@/utils';
 import { formatRequestDate, joinTimestamp } from './helper';
-import { createError } from '@/hooks/web/msg';
+import {createError, createErrorDialog} from '@/hooks/web/msg';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
@@ -181,7 +181,11 @@ const transform: AxiosTransform = {
         try {
           errMessage = errMessage || '网络请求错误，请稍后重试！';
           if (errorMessageMode !== 'none') {
-            createError(errMessage);
+            if (errorMessageMode === 'message') {
+              createErrorDialog(errMessage);
+            } else {
+              createError(errMessage);
+            }
           }
           return Promise.reject(error);
         } catch (error) {
@@ -247,7 +251,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 格式化提交参数时间
           formatDate: true,
           // 消息提示类型
-          errorMessageMode: 'modal',
+          errorMessageMode: 'message',
           // 接口地址
           apiUrl: globSetting.apiUrl,
           // 接口拼接地址

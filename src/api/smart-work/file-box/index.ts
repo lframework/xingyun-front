@@ -61,14 +61,17 @@ export function upload(data: UploadFileBoxVo): Promise<void> {
 /**
  * 批量删除
  */
-export function batchDelete(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
-      contentType: ContentTypeEnum.JSON,
+      errorMessageMode: 'none',
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
   );

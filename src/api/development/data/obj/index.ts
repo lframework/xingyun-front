@@ -143,48 +143,57 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function batchDelete(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
-      contentType: ContentTypeEnum.JSON,
+      errorMessageMode: 'none',
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
   );
 }
 
 /**
- * 批量停用
- * @param ids
+ * 停用
+ * @param id
  */
-export function batchUnable(ids: string[]): Promise<void> {
+export function unable(id: string): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/unable/batch',
-      data: ids,
+      url: baseUrl + '/unable',
+      data: {
+        id,
+      },
     },
     {
-      contentType: ContentTypeEnum.JSON,
+      errorMessageMode: 'none',
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
   );
 }
 
 /**
- * 批量启用
- * @param ids
+ * 启用
+ * @param id
  */
-export function batchEnable(ids: string[]): Promise<void> {
+export function enable(id: string): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/enable/batch',
-      data: ids,
+      url: baseUrl + '/enable',
+      data: {
+        id,
+      },
     },
     {
-      contentType: ContentTypeEnum.JSON,
+      errorMessageMode: 'none',
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
   );

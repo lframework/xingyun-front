@@ -91,6 +91,30 @@
     <detail :id="id" ref="viewDialog" />
 
     <member-importer ref="importer" @confirm="search" />
+
+    <!-- 批量操作 -->
+    <batch-handler
+      ref="batchUnableHandlerDialog"
+      :table-column="[
+        { field: 'code', title: '编号', width: 100 },
+        { field: 'name', title: '名称', minWidth: 180 },
+      ]"
+      title="批量停用"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchUnable"
+      @confirm="search"
+    />
+    <batch-handler
+      ref="batchEnableHandlerDialog"
+      :table-column="[
+        { field: 'code', title: '编号', width: 100 },
+        { field: 'name', title: '名称', minWidth: 180 },
+      ]"
+      title="批量启用"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchEnable"
+      @confirm="search"
+    />
   </div>
 </template>
 
@@ -171,11 +195,12 @@
           },
           ajax: {
             // 查询接口
-            query: ({ page, sorts, filters }) => {
+            query: ({ page, sorts }) => {
               return api.query(this.buildQueryParams(page, sorts));
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     created() {},
@@ -204,6 +229,9 @@
           this.batchUnable();
         }
       },
+      doBatchUnable(row) {
+        return api.unable(row.id);
+      },
       // 批量停用
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
@@ -213,19 +241,12 @@
           return;
         }
 
-        this.$msg.createConfirm('是否确定停用选择的会员？').then(() => {
-          this.loading = true;
-          const ids = records.map((t) => t.id);
-          api
-            .batchUnable(ids)
-            .then((data) => {
-              this.$msg.createSuccess('停用成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchUnableHandlerDialog.openDialog();
+      },
+      doBatchEnable(row) {
+        return api.enable(row.id);
       },
       // 批量启用
       batchEnable() {
@@ -236,19 +257,9 @@
           return;
         }
 
-        this.$msg.createConfirm('是否确定启用选择的会员？').then(() => {
-          this.loading = true;
-          const ids = records.map((t) => t.id);
-          api
-            .batchEnable(ids)
-            .then((data) => {
-              this.$msg.createSuccess('启用成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchEnableHandlerDialog.openDialog();
       },
       createActions(row) {
         return [

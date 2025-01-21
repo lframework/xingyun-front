@@ -8,9 +8,7 @@ import { GetPurchaseReturnBo } from '@/api/sc/purchase/return/model/getPurchaseR
 import { CreatePurchaseReturnVo } from '@/api/sc/purchase/return/model/createPurchaseReturnVo';
 import { UpdatePurchaseReturnVo } from '@/api/sc/purchase/return/model/updatePurchaseReturnVo';
 import { ApprovePassPurchaseReturnVo } from '@/api/sc/purchase/return/model/approvePassPurchaseReturnVo';
-import { BatchApprovePassPurchaseReturnVo } from '@/api/sc/purchase/return/model/batchApprovePassPurchaseReturnVo';
 import { ApproveRefusePurchaseReturnVo } from '@/api/sc/purchase/return/model/approveRefusePurchaseReturnVo';
-import { BatchApproveRefusePurchaseReturnVo } from '@/api/sc/purchase/return/model/batchApproveRefusePurchaseReturnVo';
 
 const baseUrl = '/purchase/return';
 const region = 'cloud-api';
@@ -132,13 +130,14 @@ export function approvePass(data: ApprovePassPurchaseReturnVo): Promise<void> {
 /**
  * 批量审核通过
  */
-export function batchApprovePass(data: BatchApprovePassPurchaseReturnVo): Promise<void> {
+export function batchApprovePass(data: ApprovePassPurchaseReturnVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/pass/batch',
+      url: baseUrl + '/approve/pass',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -180,13 +179,14 @@ export function approveRefuse(data: ApproveRefusePurchaseReturnVo): Promise<void
 /**
  * 批量审核拒绝
  */
-export function batchApproveRefuse(data: BatchApproveRefusePurchaseReturnVo): Promise<void> {
+export function batchApproveRefuse(data: ApproveRefusePurchaseReturnVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/refuse/batch',
+      url: baseUrl + '/approve/refuse',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -214,15 +214,18 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function deleteByIds(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }

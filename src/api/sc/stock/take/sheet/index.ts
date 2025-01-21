@@ -9,9 +9,7 @@ import { QueryTakeStockSheetProductVo } from '@/api/sc/stock/take/sheet/model/qu
 import { CreateTakeStockSheetVo } from '@/api/sc/stock/take/sheet/model/createTakeStockSheetVo';
 import { UpdateTakeStockSheetVo } from '@/api/sc/stock/take/sheet/model/updateTakeStockSheetVo';
 import { ApprovePassTakeStockSheetVo } from '@/api/sc/stock/take/sheet/model/approvePassTakeStockSheetVo';
-import { BatchApprovePassTakeStockSheetVo } from '@/api/sc/stock/take/sheet/model/batchApprovePassTakeStockSheetVo';
 import { ApproveRefuseTakeStockSheetVo } from '@/api/sc/stock/take/sheet/model/approveRefuseTakeStockSheetVo';
-import { BatchApproveRefuseTakeStockSheetVo } from '@/api/sc/stock/take/sheet/model/batchApproveRefuseTakeStockSheetVo';
 
 const baseUrl = '/stock/take/sheet';
 const region = 'cloud-api';
@@ -170,15 +168,16 @@ export function approvePass(data: ApprovePassTakeStockSheetVo): Promise<void> {
 /**
  * 批量审核通过
  */
-export function batchApprovePass(data: BatchApprovePassTakeStockSheetVo): Promise<void> {
+export function batchApprovePass(data: ApprovePassTakeStockSheetVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/pass/batch',
+      url: baseUrl + '/approve/pass',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }
@@ -202,15 +201,16 @@ export function approveRefuse(data: ApproveRefuseTakeStockSheetVo): Promise<void
 /**
  * 批量审核拒绝
  */
-export function batchApproveRefuse(data: BatchApproveRefuseTakeStockSheetVo): Promise<void> {
+export function batchApproveRefuse(data: ApproveRefuseTakeStockSheetVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/refuse/batch',
+      url: baseUrl + '/approve/refuse',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }
@@ -254,15 +254,18 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function deleteByIds(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }

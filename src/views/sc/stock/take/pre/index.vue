@@ -100,6 +100,20 @@
 
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
+
+    <!-- 批量操作 -->
+    <batch-handler
+      ref="batchDeleteHandlerDialog"
+      :table-column="[
+        { field: 'code', title: '单据号', width: 180 },
+        { field: 'scCode', title: '仓库编号', width: 100 },
+        { field: 'scName', title: '仓库名称', width: 120 },
+      ]"
+      title="批量删除"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchDelete"
+      @confirm="search"
+    />
   </div>
 </template>
 
@@ -186,6 +200,7 @@
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     created() {},
@@ -230,6 +245,9 @@
             });
         });
       },
+      doBatchDelete(row) {
+        return api.batchDelete(row.id);
+      },
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
@@ -238,18 +256,9 @@
           return;
         }
 
-        this.$msg.createConfirm('对选中的预先盘点单执行批量删除操作？').then(() => {
-          this.loading = true;
-          api
-            .deleteByIds(records.map((item) => item.id))
-            .then(() => {
-              this.$msg.createSuccess('删除成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
       createActions(row) {
         return [

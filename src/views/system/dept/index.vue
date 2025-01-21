@@ -119,6 +119,26 @@
         :biz-ids="ids"
         :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.DEPT.code"
       />
+
+      <!-- 批量操作 -->
+      <batch-handler
+        ref="batchUnableHandlerDialog"
+        :table-column="[{ field: 'name', title: '部门', minWidth: 160 }]"
+        title="批量停用"
+        tip="停用部门时，会将该部门及其子部门同时停用。"
+        :tableData="batchHandleDatas"
+        :handle-fn="doBatchUnable"
+        @confirm="getDeptTrees"
+      />
+      <batch-handler
+        ref="batchEnableHandlerDialog"
+        :table-column="[{ field: 'name', title: '部门', minWidth: 160 }]"
+        title="批量启用"
+        tip="启用部门时，会将该部门及其父级部门同时启用。"
+        :tableData="batchHandleDatas"
+        :handle-fn="doBatchEnable"
+        @confirm="getDeptTrees"
+      />
     </div>
   </page-wrapper>
 </template>
@@ -178,6 +198,7 @@
           halfChecked: [],
         },
         ids: [],
+        batchHandleDatas: [],
       };
     },
     created() {
@@ -286,6 +307,9 @@
           };
         }
       },
+      doBatchUnable(row) {
+        return api.unable(row.id);
+      },
       batchUnable() {
         const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked];
 
@@ -294,41 +318,39 @@
           return;
         }
 
-        this.$msg.createConfirm('是否确定停用选择的部门及其下级部门？').then(() => {
-          this.loading = true;
-          const ids = records;
-          api
-            .batchUnable(ids)
-            .then((data) => {
-              this.$msg.createSuccess('停用成功！');
-              this.getDeptTrees();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
+        let treeData = this.$utils.toTreeArray(this.treeData, {
+          key: 'id',
+          parentKey: 'parentId',
+          children: 'children',
+          strict: true,
         });
+
+        treeData = treeData.filter((item) => records.includes(item.id));
+        this.batchHandleDatas = treeData;
+
+        this.$refs.batchUnableHandlerDialog.openDialog();
+      },
+      doBatchEnable(row) {
+        return api.enable(row.id);
       },
       batchEnable() {
         const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked];
-
         if (this.$utils.isEmpty(records)) {
           this.$msg.createError('请选择要启用的部门！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定启用选择的部门及其上级部门？').then(() => {
-          this.loading = true;
-          const ids = records;
-          api
-            .batchEnable(ids)
-            .then((data) => {
-              this.$msg.createSuccess('启用成功！');
-              this.getDeptTrees();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
+        let treeData = this.$utils.toTreeArray(this.treeData, {
+          key: 'id',
+          parentKey: 'parentId',
+          children: 'children',
+          strict: true,
         });
+
+        treeData = treeData.filter((item) => records.includes(item.id));
+        this.batchHandleDatas = treeData;
+
+        this.$refs.batchEnableHandlerDialog.openDialog();
       },
       showChange(val) {
         let treeData = this.depts;

@@ -67,6 +67,7 @@
             style="width: 100%"
             placeholder=""
             value-key="productName"
+            :options="row.productOptions"
             @search="(e) => queryProduct(e, row)"
             @select="(e) => handleSelectProduct(rowIndex, e, row)"
           />
@@ -366,6 +367,12 @@
 
         outApi.searchRetailProducts(this.formData.scId, queryString, true).then((res) => {
           row.products = res;
+          row.productOptions = res.map((item) => {
+            return {
+              value: item.productId,
+              label: item.productCode + ' ' + item.productName,
+            };
+          });
         });
       },
       // 选择商品

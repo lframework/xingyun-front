@@ -1,4 +1,4 @@
-import {ContentTypeEnum, ResponseEnum} from "@/enums/httpEnum";
+import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
 
 export type ErrorMessageMode = 'none' | 'modal' | 'message' | undefined;
 export type SuccessMessageMode = ErrorMessageMode;

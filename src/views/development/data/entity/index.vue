@@ -103,6 +103,32 @@
     </div>
     <generate :id="id" ref="generateDialog" @confirm="search" @close="visible = true" />
     <preview :id="id" ref="previewDialog" @close="visible = true" />
+
+    <!-- 批量操作 -->
+    <batch-handler
+      ref="batchUnableHandlerDialog"
+      :table-column="[{ field: 'name', title: '名称', minWidth: 180 }]"
+      title="批量停用"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchUnable"
+      @confirm="search"
+    />
+    <batch-handler
+      ref="batchEnableHandlerDialog"
+      :table-column="[{ field: 'name', title: '名称', minWidth: 180 }]"
+      title="批量启用"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchEnable"
+      @confirm="search"
+    />
+    <batch-handler
+      ref="batchDeleteHandlerDialog"
+      :table-column="[{ field: 'name', title: '名称', minWidth: 180 }]"
+      title="批量删除"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchDelete"
+      @confirm="search"
+    />
   </div>
 </template>
 
@@ -185,11 +211,12 @@
           },
           ajax: {
             // 查询接口
-            query: ({ page, sorts, filters }) => {
+            query: ({ page }) => {
               return api.query(this.buildQueryParams(page));
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     created() {},
@@ -232,6 +259,9 @@
           this.batchUnable();
         }
       },
+      doBatchUnable(row) {
+        return api.unable(row.id);
+      },
       // 批量停用
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
@@ -241,19 +271,12 @@
           return;
         }
 
-        this.$msg.createConfirm('是否确定停用选择的数据实体？').then(() => {
-          this.loading = true;
-          const ids = records.map((t) => t.id);
-          api
-            .batchUnable(ids)
-            .then((data) => {
-              this.$msg.createSuccess('停用成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchUnableHandlerDialog.openDialog();
+      },
+      doBatchEnable(row) {
+        return api.enable(row.id);
       },
       // 批量启用
       batchEnable() {
@@ -264,19 +287,9 @@
           return;
         }
 
-        this.$msg.createConfirm('是否确定启用选择的数据实体？').then(() => {
-          this.loading = true;
-          const ids = records.map((t) => t.id);
-          api
-            .batchEnable(ids)
-            .then((data) => {
-              this.$msg.createSuccess('启用成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchEnableHandlerDialog.openDialog();
       },
       // 删除
       deleteRow(row) {
@@ -293,6 +306,9 @@
             });
         });
       },
+      doBatchDelete(row) {
+        return api.batchDelete(row.id);
+      },
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
@@ -302,19 +318,9 @@
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选择的数据实体？').then(() => {
-          this.loading = true;
-          const ids = records.map((t) => t.id);
-          api
-            .batchDelete(ids)
-            .then((data) => {
-              this.$msg.createSuccess('删除成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
       download(id) {
         this.loading = true;

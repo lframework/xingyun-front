@@ -109,6 +109,7 @@
             style="width: 100%"
             placeholder=""
             value-key="productName"
+            :options="row.productOptions"
             @search="(e) => queryProduct(e, row)"
             @select="(e) => handleSelectProduct(rowIndex, e, row)"
           />
@@ -461,7 +462,7 @@
       handleSelectProduct(index, value, row) {
         value = row ? row.products.filter((item) => item.productId === value)[0] : value;
         this.tableData[index] = Object.assign(this.tableData[index], value, {
-          isGift: true,
+          isGift: false,
           taxPrice: value.retailPrice,
         });
 

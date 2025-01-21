@@ -90,6 +90,15 @@
 
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
+
+    <batch-handler
+      ref="batchDeleteHandlerDialog"
+      :table-column="[{ field: 'name', title: '文件', minWidth: 100 }]"
+      title="批量删除"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchDelete"
+      @confirm="search"
+    />
   </div>
 </template>
 
@@ -171,6 +180,7 @@
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     computed: {
@@ -220,6 +230,9 @@
           this.batchDelete();
         }
       },
+      doBatchDelete(row) {
+        return api.batchDelete(row.id);
+      },
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
@@ -229,19 +242,9 @@
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选择的文件？').then(() => {
-          this.loading = true;
-          const ids = records.map((t) => t.id);
-          api
-            .batchDelete(ids)
-            .then((data) => {
-              this.$msg.createSuccess('删除成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
       createActions(row) {
         return [

@@ -127,48 +127,17 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function batchDelete(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
-      contentType: ContentTypeEnum.JSON,
-      region,
-    },
-  );
-}
-
-/**
- * 批量停用
- * @param ids
- */
-export function batchUnable(ids: string[]): Promise<void> {
-  return defHttp.patch<void>(
-    {
-      url: baseUrl + '/unable/batch',
-      data: ids,
-    },
-    {
-      contentType: ContentTypeEnum.JSON,
-      region,
-    },
-  );
-}
-
-/**
- * 批量启用
- * @param ids
- */
-export function batchEnable(ids: string[]): Promise<void> {
-  return defHttp.patch<void>(
-    {
-      url: baseUrl + '/enable/batch',
-      data: ids,
-    },
-    {
-      contentType: ContentTypeEnum.JSON,
+      errorMessageMode: 'none',
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
   );

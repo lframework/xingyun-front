@@ -7,9 +7,7 @@ import { GetCustomerSettleSheetBo } from '@/api/customer-settle/sheet/model/getC
 import { CreateCustomerSettleSheetVo } from '@/api/customer-settle/sheet/model/createCustomerSettleSheetVo';
 import { UpdateCustomerSettleSheetVo } from '@/api/customer-settle/sheet/model/updateCustomerSettleSheetVo';
 import { ApprovePassCustomerSettleSheetVo } from '@/api/customer-settle/sheet/model/approvePassCustomerSettleSheetVo';
-import { BatchApprovePassCustomerSettleSheetVo } from '@/api/customer-settle/sheet/model/batchApprovePassCustomerSettleSheetVo';
 import { ApproveRefuseCustomerSettleSheetVo } from '@/api/customer-settle/sheet/model/approveRefuseCustomerSettleSheetVo';
-import { BatchApproveRefuseCustomerSettleSheetVo } from '@/api/customer-settle/sheet/model/batchApproveRefuseCustomerSettleSheetVo';
 import { CustomerSettleBizItemBo } from '@/api/customer-settle/sheet/model/customerSettleBizItemBo';
 import { QueryCustomerUnSettleBizItemVo } from '@/api/customer-settle/sheet/model/queryCustomerUnSettleBizItemVo';
 
@@ -118,13 +116,14 @@ export function approvePass(data: ApprovePassCustomerSettleSheetVo): Promise<voi
 /**
  * 批量审核通过
  */
-export function batchApprovePass(data: BatchApprovePassCustomerSettleSheetVo): Promise<void> {
+export function batchApprovePass(data: ApprovePassCustomerSettleSheetVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/pass/batch',
+      url: baseUrl + '/approve/pass',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -166,13 +165,14 @@ export function approveRefuse(data: ApproveRefuseCustomerSettleSheetVo): Promise
 /**
  * 批量审核拒绝
  */
-export function batchApproveRefuse(data: BatchApproveRefuseCustomerSettleSheetVo): Promise<void> {
+export function batchApproveRefuse(data: ApproveRefuseCustomerSettleSheetVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/refuse/batch',
+      url: baseUrl + '/approve/refuse',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -200,15 +200,18 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function deleteByIds(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }

@@ -92,6 +92,32 @@
 
     <!-- 详情窗口 -->
     <detail :id="id" ref="viewDialog" />
+
+    <!-- 批量操作 -->
+    <batch-handler
+      ref="batchUnableHandlerDialog"
+      :table-column="[
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'title', title: '标题', minWidth: 160 },
+      ]"
+      title="批量停用"
+      tip="停用菜单时，会将该菜单及其子菜单同时停用。停用内置菜单可能会导致系统功能异常，请谨慎操作。"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchUnable"
+      @confirm="search"
+    />
+    <batch-handler
+      ref="batchEnableHandlerDialog"
+      :table-column="[
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'title', title: '标题', minWidth: 160 },
+      ]"
+      title="批量启用"
+      tip="启用菜单时，会将该菜单及其父级菜单同时启用。"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchEnable"
+      @confirm="search"
+    />
   </div>
 </template>
 
@@ -185,6 +211,7 @@
             fixed: 'right',
           },
         ],
+        batchHandleDatas: [],
       };
     },
     created() {},
@@ -232,6 +259,9 @@
           this.batchUnable();
         }
       },
+      doBatchUnable(row) {
+        return api.unable(row.id);
+      },
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
@@ -239,26 +269,12 @@
           this.$msg.createError('请选择要停用的菜单！');
           return;
         }
+        this.batchHandleDatas = records;
 
-        this.$msg
-          .createConfirm(
-            records.filter((item) => item.isSpecial).length > 0
-              ? '选择的菜单包含内置菜单，是否确定停用？注：停用内置菜单可能会导致系统功能异常，请谨慎操作'
-              : '是否确定停用选择的菜单？',
-          )
-          .then(() => {
-            this.loading = true;
-            const ids = records.map((t) => t.id);
-            api
-              .batchUnable(ids)
-              .then(() => {
-                this.$msg.createSuccess('停用成功！');
-                this.search();
-              })
-              .finally(() => {
-                this.loading = false;
-              });
-          });
+        this.$refs.batchUnableHandlerDialog.openDialog();
+      },
+      doBatchEnable(row) {
+        return api.enable(row.id);
       },
       batchEnable() {
         const records = this.$utils.union(
@@ -271,19 +287,9 @@
           return;
         }
 
-        this.$msg.createConfirm('是否确定启用选择的菜单？').then(() => {
-          this.loading = true;
-          const ids = records.map((t) => t.id);
-          api
-            .batchEnable(ids)
-            .then(() => {
-              this.$msg.createSuccess('启用成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchEnableHandlerDialog.openDialog();
       },
       // 删除
       deleteRow(row) {

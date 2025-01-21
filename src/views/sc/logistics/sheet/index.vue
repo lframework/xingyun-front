@@ -136,6 +136,20 @@
       <logistics-sheet-importer ref="importer" @confirm="search" />
 
       <logistics-sheet-delivery-importer ref="deliveryImporter" @confirm="search" />
+
+      <!-- 批量操作 -->
+      <batch-handler
+        ref="batchDeleteHandlerDialog"
+        :table-column="[
+          { field: 'code', title: '单据号', width: 180 },
+          { field: 'logisticsNo', title: '物流单号', width: 150 },
+          { field: 'logisticsCompanyName', title: '物流公司名称', width: 120 },
+        ]"
+        title="批量删除"
+        :tableData="batchHandleDatas"
+        :handle-fn="doBatchDelete"
+        @confirm="search"
+      />
     </div>
   </div>
 </template>
@@ -239,6 +253,7 @@
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     created() {},
@@ -281,6 +296,9 @@
             });
         });
       },
+      doBatchDelete(row) {
+        return api.batchDelete(row.id);
+      },
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
@@ -296,18 +314,9 @@
           }
         }
 
-        this.$msg.createConfirm('对选中的物流单执行批量删除操作？').then(() => {
-          this.loading = true;
-          api
-            .deleteByIds(records.map((item) => item.id))
-            .then(() => {
-              this.$msg.createSuccess('删除成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
       exportList() {
         this.loading = true;

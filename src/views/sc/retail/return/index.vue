@@ -176,6 +176,53 @@
 
       <!-- 采购收货查看窗口 -->
       <out-sheet-detail :id="outSheetId" ref="viewOutSheetDetailDialog" />
+
+      <!-- 批量操作 -->
+      <batch-handler
+        ref="batchApprovePassHandlerDialog"
+        :table-column="[
+          { field: 'code', title: '单据号', width: 180 },
+          { field: 'scCode', title: '仓库编号', width: 100 },
+          { field: 'scName', title: '仓库名称', width: 120 },
+          { field: 'memberCode', title: '会员编号', width: 100 },
+          { field: 'memberName', title: '会员名称', width: 120 },
+          { field: 'salerName', title: '销售员', width: 100 },
+        ]"
+        title="审核通过"
+        :tableData="batchHandleDatas"
+        :handle-fn="doBatchApprovePass"
+        @confirm="search"
+      />
+      <batch-handler
+        ref="batchApproveRefuseHandlerDialog"
+        :table-column="[
+          { field: 'code', title: '单据号', width: 180 },
+          { field: 'scCode', title: '仓库编号', width: 100 },
+          { field: 'scName', title: '仓库名称', width: 120 },
+          { field: 'memberCode', title: '会员编号', width: 100 },
+          { field: 'memberName', title: '会员名称', width: 120 },
+          { field: 'salerName', title: '销售员', width: 100 },
+        ]"
+        title="审核拒绝"
+        :tableData="batchHandleDatas"
+        :handle-fn="doBatchApproveRefuse"
+        @confirm="search"
+      />
+      <batch-handler
+        ref="batchDeleteHandlerDialog"
+        :table-column="[
+          { field: 'code', title: '单据号', width: 180 },
+          { field: 'scCode', title: '仓库编号', width: 100 },
+          { field: 'scName', title: '仓库名称', width: 120 },
+          { field: 'memberCode', title: '会员编号', width: 100 },
+          { field: 'memberName', title: '会员名称', width: 120 },
+          { field: 'salerName', title: '销售员', width: 100 },
+        ]"
+        title="批量删除"
+        :tableData="batchHandleDatas"
+        :handle-fn="doBatchDelete"
+        @confirm="search"
+      />
     </div>
   </div>
 </template>
@@ -302,6 +349,8 @@
             },
           },
         },
+        batchHandleDatas: [],
+        batchRefuseReason: '',
       };
     },
     created() {},
@@ -360,6 +409,9 @@
             });
         });
       },
+      doBatchDelete(row) {
+        return api.batchDelete(row.id);
+      },
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
@@ -375,17 +427,13 @@
           }
         }
 
-        this.$msg.createConfirm('对选中的零售退货单执行批量删除操作？').then(() => {
-          this.loading = true;
-          api
-            .deleteByIds(records.map((item) => item.id))
-            .then(() => {
-              this.$msg.createSuccess('删除成功！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
+      },
+      doBatchApprovePass(row) {
+        return api.batchApprovePass({
+          id: row.id,
         });
       },
       // 批量审核通过
@@ -403,20 +451,9 @@
           }
         }
 
-        this.$msg.createConfirm('对选中的零售退货单执行审核通过操作？').then(() => {
-          this.loading = true;
-          api
-            .batchApprovePass({
-              ids: records.map((item) => item.id),
-            })
-            .then(() => {
-              this.$msg.createSuccess('审核通过！');
-              this.search();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+        this.batchHandleDatas = records;
+
+        this.$refs.batchApprovePassHandlerDialog.openDialog();
       },
       // 批量审核拒绝
       batchApproveRefuse() {
@@ -440,22 +477,17 @@
 
         this.$refs.approveRefuseDialog.openDialog();
       },
+      doBatchApproveRefuse(row) {
+        return api.batchApproveRefuse({
+          id: row.id,
+          refuseReason: this.batchRefuseReason,
+        });
+      },
       doApproveRefuse(reason) {
-        const records = this.$refs.grid.getCheckboxRecords();
+        this.batchHandleDatas = this.$refs.grid.getCheckboxRecords();
+        this.batchRefuseReason = reason;
 
-        this.loading = true;
-        api
-          .batchApproveRefuse({
-            ids: records.map((item) => item.id),
-            refuseReason: reason,
-          })
-          .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
-            this.search();
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+        this.$refs.batchApproveRefuseHandlerDialog.openDialog();
       },
       exportList() {
         this.loading = true;

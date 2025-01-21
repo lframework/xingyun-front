@@ -12,9 +12,7 @@ import { QuerySaleOutSheetWithReturnBo } from '@/api/sc/sale/out/model/querySale
 import { CreateSaleOutSheetVo } from '@/api/sc/sale/out/model/createSaleOutSheetVo';
 import { UpdateSaleOutSheetVo } from '@/api/sc/sale/out/model/updateSaleOutSheetVo';
 import { ApprovePassSaleOutSheetVo } from '@/api/sc/sale/out/model/approvePassSaleOutSheetVo';
-import { BatchApprovePassSaleOutSheetVo } from '@/api/sc/sale/out/model/batchApprovePassSaleOutSheetVo';
 import { ApproveRefuseSaleOutSheetVo } from '@/api/sc/sale/out/model/approveRefuseSaleOutSheetVo';
-import { BatchApproveRefuseSaleOutSheetVo } from '@/api/sc/sale/out/model/batchApproveRefuseSaleOutSheetVo';
 
 const baseUrl = '/sale/out/sheet';
 const region = 'cloud-api';
@@ -203,13 +201,14 @@ export function approvePass(data: ApprovePassSaleOutSheetVo): Promise<void> {
 /**
  * 批量审核通过
  */
-export function batchApprovePass(data: BatchApprovePassSaleOutSheetVo): Promise<void> {
+export function batchApprovePass(data: ApprovePassSaleOutSheetVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/pass/batch',
+      url: baseUrl + '/approve/pass',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -251,13 +250,14 @@ export function approveRefuse(data: ApproveRefuseSaleOutSheetVo): Promise<void> 
 /**
  * 批量审核拒绝
  */
-export function batchApproveRefuse(data: BatchApproveRefuseSaleOutSheetVo): Promise<void> {
+export function batchApproveRefuse(data: ApproveRefuseSaleOutSheetVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/refuse/batch',
+      url: baseUrl + '/approve/refuse',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -285,15 +285,18 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function deleteByIds(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }

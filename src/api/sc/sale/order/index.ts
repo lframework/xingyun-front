@@ -8,9 +8,7 @@ import { GetSaleOrderBo } from '@/api/sc/sale/order/model/getSaleOrderBo';
 import { CreateSaleOrderVo } from '@/api/sc/sale/order/model/createSaleOrderVo';
 import { UpdateSaleOrderVo } from '@/api/sc/sale/order/model/updateSaleOrderVo';
 import { ApprovePassSaleOrderVo } from '@/api/sc/sale/order/model/approvePassSaleOrderVo';
-import { BatchApprovePassSaleOrderVo } from '@/api/sc/sale/order/model/batchApprovePassSaleOrderVo';
 import { ApproveRefuseSaleOrderVo } from '@/api/sc/sale/order/model/approveRefuseSaleOrderVo';
-import { BatchApproveRefuseSaleOrderVo } from '@/api/sc/sale/order/model/batchApproveRefuseSaleOrderVo';
 import { SaleProductBo } from '@/api/sc/sale/order/model/saleProductBo';
 import { SaleOrderWithOutBo } from '@/api/sc/sale/order/model/saleOrderWithOutBo';
 import { QuerySaleOrderWithOutBo } from '@/api/sc/sale/order/model/querySaleOrderWithOutBo';
@@ -187,13 +185,14 @@ export function approvePass(data: ApprovePassSaleOrderVo): Promise<void> {
 /**
  * 批量审核通过
  */
-export function batchApprovePass(data: BatchApprovePassSaleOrderVo): Promise<void> {
+export function batchApprovePass(data: ApprovePassSaleOrderVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/pass/batch',
+      url: baseUrl + '/approve/pass',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -235,13 +234,14 @@ export function approveRefuse(data: ApproveRefuseSaleOrderVo): Promise<void> {
 /**
  * 批量审核拒绝
  */
-export function batchApproveRefuse(data: BatchApproveRefuseSaleOrderVo): Promise<void> {
+export function batchApproveRefuse(data: ApproveRefuseSaleOrderVo): Promise<void> {
   return defHttp.patch<void>(
     {
-      url: baseUrl + '/approve/refuse/batch',
+      url: baseUrl + '/approve/refuse',
       data,
     },
     {
+      errorMessageMode: 'none',
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -269,15 +269,18 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function deleteByIds(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }
