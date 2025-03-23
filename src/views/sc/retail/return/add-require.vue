@@ -179,6 +179,7 @@
   import * as configApi from '@/api/sc/retail/config';
   import * as outApi from '@/api/sc/retail/out';
   import * as api from '@/api/sc/retail/return';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'AddRetailReturnRequire',
@@ -187,6 +188,7 @@
       BatchAddProduct,
       PayType,
     },
+    mixins: [multiplePageMix],
     setup() {
       const moment = Moment;
       return {
@@ -290,7 +292,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       async initFormData() {

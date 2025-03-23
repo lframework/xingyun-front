@@ -102,7 +102,7 @@
                 v-permission="['stock:take:sheet:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/stock/take/sheet/add')"
+                @click="openChildPage('/stock/take/sheet/add')"
                 >新增</a-button
               >
               <a-button
@@ -203,6 +203,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/sheet';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'TakeStockSheet',
@@ -210,6 +211,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -488,7 +490,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/stock/take/sheet/modify/' + row.id);
+              this.openChildPage('/stock/take/sheet/modify/' + row.id);
             },
           },
           {
@@ -502,7 +504,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/stock/take/sheet/approve/' + row.id);
+              this.openChildPage('/stock/take/sheet/approve/' + row.id);
             },
           },
           {
@@ -533,6 +535,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

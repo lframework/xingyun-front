@@ -99,7 +99,7 @@
                 v-permission="['settle:fee-sheet:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/settle/supplier/fee-sheet/add')"
+                @click="openChildPage('/settle/supplier/fee-sheet/add')"
                 >新增</a-button
               >
               <a-button
@@ -197,6 +197,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/settle/fee';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'SettleFeeSheet',
@@ -204,6 +205,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -444,7 +446,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/settle/supplier/fee-sheet/approve/' + row.id);
+              this.openChildPage('/settle/supplier/fee-sheet/approve/' + row.id);
             },
           },
           {
@@ -457,7 +459,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/settle/supplier/fee-sheet/modify/' + row.id);
+              this.openChildPage('/settle/supplier/fee-sheet/modify/' + row.id);
             },
           },
           {
@@ -475,6 +477,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

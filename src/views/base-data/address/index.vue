@@ -183,7 +183,7 @@
             field: 'areaName',
             title: '地区',
             width: 200,
-            formatter: ({ cellValue, row }) => {
+            formatter: ({ row }) => {
               return row.provinceName + ' / ' + row.cityName + ' / ' + row.districtName;
             },
           },

@@ -309,12 +309,13 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/info';
   import * as propertyApi from '@/api/base-data/product/property';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ModifyProduct',
     // 使用组件
     components: {},
-
+    mixins: [multiplePageMix],
     props: {},
     data() {
       return {
@@ -481,7 +482,7 @@
     methods: {
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

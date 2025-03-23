@@ -204,6 +204,7 @@
     AlertOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/sale/order';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ModifySaleOrder',
@@ -211,6 +212,7 @@
       BatchAddProduct,
       PayType,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -319,7 +321,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

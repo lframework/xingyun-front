@@ -162,6 +162,7 @@
   import ApproveRefuse from '@/components/ApproveRefuse';
   import SaleOrderDetail from '@/views/sc/sale/order/detail.vue';
   import * as api from '@/api/sc/sale/out';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ApproveSaleOutSheet',
@@ -169,6 +170,7 @@
       ApproveRefuse,
       SaleOrderDetail,
     },
+    mixins: [multiplePageMix],
     data() {
       return {
         id: this.$route.params.id,
@@ -251,7 +253,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

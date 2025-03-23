@@ -90,7 +90,7 @@
                 v-permission="['base-data:product:info:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/product/info/add')"
+                @click="openChildPage('/product/info/add')"
                 >新增</a-button
               >
               <a-button
@@ -127,12 +127,14 @@
   import Detail from './detail.vue';
   import * as api from '@/api/base-data/product/info';
   import { CloudUploadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons-vue';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ProductInfo',
     components: {
       Detail,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -237,10 +239,13 @@
             permission: ['base-data:product:info:modify'],
             label: '修改',
             onClick: () => {
-              this.$router.push('/product/info/modify/' + row.id);
+              this.openChildPage('/product/info/modify/' + row.id);
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

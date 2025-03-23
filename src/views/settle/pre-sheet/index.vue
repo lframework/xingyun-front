@@ -99,7 +99,7 @@
                 v-permission="['settle:pre-sheet:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/settle/supplier/pre-sheet/add')"
+                @click="openChildPage('/settle/supplier/pre-sheet/add')"
                 >新增</a-button
               >
               <a-button
@@ -197,6 +197,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/settle/pre';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'SettlePreSheet',
@@ -204,6 +205,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -444,7 +446,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/settle/supplier/pre-sheet/approve/' + row.id);
+              this.openChildPage('/settle/supplier/pre-sheet/approve/' + row.id);
             },
           },
           {
@@ -457,7 +459,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/settle/supplier/pre-sheet/modify/' + row.id);
+              this.openChildPage('/settle/supplier/pre-sheet/modify/' + row.id);
             },
           },
           {
@@ -475,6 +477,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

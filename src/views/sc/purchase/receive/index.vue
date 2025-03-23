@@ -259,6 +259,7 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/receive';
   import * as configApi from '@/api/sc/purchase/config';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ReceiveSheet',
@@ -267,6 +268,7 @@
       ApproveRefuse,
       PurchaseOrderDetail,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -399,17 +401,17 @@
       openAddDialog() {
         configApi.get().then((res) => {
           if (res.receiveRequirePurchase) {
-            this.$router.push('/purchase/receive/add/require');
+            this.openChildPage('/purchase/receive/add/require');
           } else {
-            this.$router.push('/purchase/receive/add/un-require');
+            this.openChildPage('/purchase/receive/add/un-require');
           }
         });
       },
       openModifyDialog(row) {
         if (!this.$utils.isEmpty(row.purchaseOrderId)) {
-          this.$router.push('/purchase/receive/modify/require/' + row.id);
+          this.openChildPage('/purchase/receive/modify/require/' + row.id);
         } else {
-          this.$router.push('/purchase/receive/modify/un-require/' + row.id);
+          this.openChildPage('/purchase/receive/modify/un-require/' + row.id);
         }
       },
       // 删除订单
@@ -542,7 +544,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/purchase/receive/approve/' + row.id);
+              this.openChildPage('/purchase/receive/approve/' + row.id);
             },
           },
           {
@@ -573,6 +575,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

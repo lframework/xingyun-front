@@ -124,12 +124,14 @@
   import { defineComponent } from 'vue';
   import ApproveRefuse from '@/components/ApproveRefuse';
   import * as api from '@/api/settle/fee';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ApproveSupplierSettleFeeSheet',
     components: {
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     data() {
       return {
         id: this.$route.params.id,
@@ -166,7 +168,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

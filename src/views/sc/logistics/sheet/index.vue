@@ -88,7 +88,7 @@
                 v-permission="['logistics:sheet:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/logistics/sheet/add')"
+                @click="openChildPage('/logistics/sheet/add')"
                 >新增</a-button
               >
               <a-button
@@ -168,6 +168,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/logistics/sheet';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'LogisticsSheet',
@@ -176,6 +177,7 @@
       ApproveRefuse,
       Delivery,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -345,7 +347,7 @@
               return this.$enums.LOGISTICS_SHEET_STATUS.CREATED.equalsCode(row.status);
             },
             onClick: () => {
-              this.$router.push('/logistics/sheet/modify/' + row.id);
+              this.openChildPage('/logistics/sheet/modify/' + row.id);
             },
           },
           {
@@ -371,6 +373,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

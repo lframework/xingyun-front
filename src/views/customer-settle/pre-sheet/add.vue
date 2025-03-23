@@ -86,10 +86,12 @@
   import { h, defineComponent } from 'vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/customer-settle/pre';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'AddCustomerSettlePreSheet',
     components: {},
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -144,7 +146,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

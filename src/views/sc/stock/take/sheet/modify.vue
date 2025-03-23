@@ -170,6 +170,7 @@
   import PreTakeStockSheetDetail from '@/views/sc/stock/take/pre/detail.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/sheet';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ModifyStockTakeSheet',
@@ -178,6 +179,7 @@
       TakeStockPlanDetail,
       PreTakeStockSheetDetail,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -254,7 +256,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

@@ -88,7 +88,7 @@
                 v-permission="['stock:sc-transfer:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/stock/stock-transfer/add')"
+                @click="openChildPage('/stock/stock-transfer/add')"
                 >新增</a-button
               >
               <a-button
@@ -192,6 +192,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/transfer-sc';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ScTransferOrder',
@@ -199,6 +200,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -441,7 +443,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/stock/stock-transfer/approve/' + row.id);
+              this.openChildPage('/stock/stock-transfer/approve/' + row.id);
             },
           },
           {
@@ -454,7 +456,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/stock/stock-transfer/modify/' + row.id);
+              this.openChildPage('/stock/stock-transfer/modify/' + row.id);
             },
           },
           {
@@ -481,10 +483,13 @@
               );
             },
             onClick: () => {
-              this.$router.push('/stock/stock-transfer/receive/' + row.id);
+              this.openChildPage('/stock/stock-transfer/receive/' + row.id);
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

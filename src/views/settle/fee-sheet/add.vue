@@ -110,10 +110,12 @@
   import { h, defineComponent } from 'vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/settle/fee';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'AddSupplierSettleFeeSheet',
     components: {},
+    mixins: [multiplePageMix],
     setup() {
       return { h, PlusOutlined, DeleteOutlined };
     },
@@ -164,7 +166,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

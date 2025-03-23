@@ -91,7 +91,7 @@
                 v-permission="['purchase:order:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/purchase/order/add')"
+                @click="openChildPage('/purchase/order/add')"
                 >新增</a-button
               >
               <a-button
@@ -214,6 +214,7 @@
     SearchOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/order';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'PurchaseOrder',
@@ -221,6 +222,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -458,7 +460,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/purchase/order/approve/' + row.id);
+              this.openChildPage('/purchase/order/approve/' + row.id);
             },
           },
           {
@@ -471,7 +473,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/purchase/order/modify/' + row.id);
+              this.openChildPage('/purchase/order/modify/' + row.id);
             },
           },
           {
@@ -489,6 +491,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

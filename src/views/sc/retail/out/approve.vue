@@ -153,6 +153,7 @@
   import ApproveRefuse from '@/components/ApproveRefuse';
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/retail/out';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ApproveRetailOutSheet',
@@ -160,6 +161,7 @@
       ApproveRefuse,
       PayType,
     },
+    mixins: [multiplePageMix],
     data() {
       return {
         id: this.$route.params.id,
@@ -232,7 +234,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

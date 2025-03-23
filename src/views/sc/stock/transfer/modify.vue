@@ -157,12 +157,14 @@
   import BatchAddProduct from './batch-add-product.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/transfer-sc';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ModifyScTransferSheet',
     components: {
       BatchAddProduct,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -254,7 +256,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

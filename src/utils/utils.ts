@@ -4,7 +4,6 @@ import Moment from 'moment';
 import CryptoJS from 'crypto-js';
 import * as math from 'mathjs';
 import { SortPageVo } from '@/api/model/sortPageVo';
-import eventBus from '@/events/eventBus';
 
 /**
  * 是否 整数
@@ -776,14 +775,6 @@ export const swapArrayItem = function (arr, index, toIndex) {
     }
   }
   return newArr;
-};
-
-/**
- * 关闭当前页签
- * @param el
- */
-export const closeCurrentPage = function () {
-  eventBus.$emit(eventBus.$otherEvent.CLOSE_CURRENT_TAB);
 };
 
 /**

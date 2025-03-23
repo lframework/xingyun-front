@@ -256,6 +256,7 @@
   import SettleFeeSheetDetail from '@/views/customer-settle/fee-sheet/detail.vue';
   import SettlePreSheetDetail from '@/views/customer-settle/pre-sheet/detail.vue';
   import * as api from '@/api/customer-settle/check';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ApproveCustomerSettleCheckSheet',
@@ -266,6 +267,7 @@
       SettleFeeSheetDetail,
       SettlePreSheetDetail,
     },
+    mixins: [multiplePageMix],
     data() {
       return {
         id: this.$route.params.id,
@@ -306,7 +308,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

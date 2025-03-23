@@ -85,7 +85,7 @@
                 v-permission="['stock:adjust:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/stock/stock-adjust/add')"
+                @click="openChildPage('/stock/stock-adjust/add')"
                 >新增</a-button
               >
               <a-button
@@ -186,6 +186,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/adjust/stock';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'StockAdjustSheet',
@@ -193,6 +194,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -420,7 +422,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/stock/stock-adjust/approve/' + row.id);
+              this.openChildPage('/stock/stock-adjust/approve/' + row.id);
             },
           },
           {
@@ -433,7 +435,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/stock/stock-adjust/modify/' + row.id);
+              this.openChildPage('/stock/stock-adjust/modify/' + row.id);
             },
           },
           {
@@ -451,6 +453,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

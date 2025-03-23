@@ -167,6 +167,7 @@
   import * as api from '@/api/sc/sale/return';
   import * as saleApi from '@/api/sc/sale/order';
   import * as outApi from '@/api/sc/sale/out';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'AddSaleReturnSheetRequire',
@@ -174,6 +175,7 @@
       SaleOutSheetSelectorWithReturn,
       BatchAddProduct,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -282,7 +284,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       async initFormData() {

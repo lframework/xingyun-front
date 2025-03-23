@@ -70,11 +70,13 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/sale/config';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'SaleConfig',
     // 使用组件
     components: {},
+    mixins: [multiplePageMix],
 
     props: {},
     data() {
@@ -145,7 +147,7 @@
         });
       },
       close() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
     },
   });

@@ -116,7 +116,7 @@
                 v-permission="['retail:out:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/retail/out/add')"
+                @click="openChildPage('/retail/out/add')"
                 >新增</a-button
               >
               <a-button
@@ -223,6 +223,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/retail/out';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'RetailOutSheet',
@@ -230,6 +231,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -474,7 +476,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/retail/out/approve/' + row.id);
+              this.openChildPage('/retail/out/approve/' + row.id);
             },
           },
           {
@@ -487,7 +489,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/retail/out/modify/' + row.id);
+              this.openChildPage('/retail/out/modify/' + row.id);
             },
           },
           {
@@ -505,6 +507,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

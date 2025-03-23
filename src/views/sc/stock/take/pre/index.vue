@@ -71,7 +71,7 @@
                 v-permission="['stock:take:pre:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/stock/take/pre/add')"
+                @click="openChildPage('/stock/take/pre/add')"
                 >新增</a-button
               >
               <a-button
@@ -128,12 +128,14 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/pre';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'PreTakeStockSheet',
     components: {
       Detail,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -273,7 +275,7 @@
             permission: ['stock:take:pre:modify'],
             label: '修改',
             onClick: () => {
-              this.$router.push('/stock/take/pre/modify/' + row.id);
+              this.openChildPage('/stock/take/pre/modify/' + row.id);
             },
           },
           {
@@ -285,6 +287,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

@@ -85,7 +85,7 @@
                 v-permission="['customer-settle:sheet:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/settle/customer/sheet/add')"
+                @click="openChildPage('/settle/customer/sheet/add')"
                 >新增</a-button
               >
               <a-button
@@ -183,6 +183,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/customer-settle/sheet';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'CustomerSettleSheet',
@@ -190,6 +191,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -424,7 +426,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/settle/customer/sheet/approve/' + row.id);
+              this.openChildPage('/settle/customer/sheet/approve/' + row.id);
             },
           },
           {
@@ -437,7 +439,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/settle/customer/sheet/modify/' + row.id);
+              this.openChildPage('/settle/customer/sheet/modify/' + row.id);
             },
           },
           {
@@ -455,6 +457,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

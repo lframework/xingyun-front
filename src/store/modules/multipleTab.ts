@@ -362,3 +362,37 @@ export const useMultipleTabStore = defineStore({
 export function useMultipleTabWithOutStore() {
   return useMultipleTabStore(store);
 }
+
+export const useRefreshStore = defineStore('refresh', {
+  state: () => ({
+    // 记录需要刷新的页签标识
+    refreshMap: new Map(),
+    // 记录子页签的来源
+    cacheMap: new Map(),
+  }),
+  actions: {
+    setCacheFlag(to: string, from: string): void {
+      this.cacheMap.set(to, from);
+    },
+    getCacheFlag(path: string) {
+      const from = this.cacheMap.get(path);
+      this.cacheMap.delete(from);
+      return from;
+    },
+    // 设置需要刷新的页签
+    setRefreshFlag(path: string): void {
+      if (!path) {
+        return;
+      }
+      this.refreshMap.set(path, true);
+    },
+    // 检查并清除刷新标记
+    checkAndClear(path: string): boolean {
+      if (this.refreshMap.get(path)) {
+        this.refreshMap.set(path, false);
+        return true;
+      }
+      return false;
+    },
+  },
+});

@@ -99,7 +99,7 @@
                 v-permission="['settle:check-sheet:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/settle/supplier/check-sheet/add')"
+                @click="openChildPage('/settle/supplier/check-sheet/add')"
                 >新增</a-button
               >
               <a-button
@@ -197,6 +197,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/settle/check';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'SettleCheckSheet',
@@ -204,6 +205,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -448,7 +450,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/settle/supplier/check-sheet/approve/' + row.id);
+              this.openChildPage('/settle/supplier/check-sheet/approve/' + row.id);
             },
           },
           {
@@ -461,7 +463,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/settle/supplier/check-sheet/modify/' + row.id);
+              this.openChildPage('/settle/supplier/check-sheet/modify/' + row.id);
             },
           },
           {
@@ -479,6 +481,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

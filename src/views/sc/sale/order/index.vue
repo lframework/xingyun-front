@@ -91,7 +91,7 @@
                 v-permission="['sale:order:add']"
                 type="primary"
                 :icon="h(PlusOutlined)"
-                @click="$router.push('/sale/order/add')"
+                @click="openChildPage('/sale/order/add')"
                 >新增</a-button
               >
               <a-button
@@ -198,6 +198,7 @@
     DownloadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/sale/order';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'SaleOrder',
@@ -205,6 +206,7 @@
       Detail,
       ApproveRefuse,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -440,7 +442,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/sale/order/approve/' + row.id);
+              this.openChildPage('/sale/order/approve/' + row.id);
             },
           },
           {
@@ -453,7 +455,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/sale/order/modify/' + row.id);
+              this.openChildPage('/sale/order/modify/' + row.id);
             },
           },
           {
@@ -471,6 +473,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

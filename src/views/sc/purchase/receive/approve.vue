@@ -163,6 +163,7 @@
   import ApproveRefuse from '@/components/ApproveRefuse';
   import PurchaseOrderDetail from '@/views/sc/purchase/order/detail.vue';
   import * as api from '@/api/sc/purchase/receive';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ApprovePurchaseReceiveSheet',
@@ -170,6 +171,7 @@
       ApproveRefuse,
       PurchaseOrderDetail,
     },
+    mixins: [multiplePageMix],
     data() {
       return {
         id: this.$route.params.id,
@@ -244,7 +246,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

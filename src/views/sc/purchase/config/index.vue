@@ -67,12 +67,13 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/purchase/config';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'PurchaseConfig',
     // 使用组件
     components: {},
-
+    mixins: [multiplePageMix],
     props: {},
     data() {
       return {
@@ -140,7 +141,7 @@
         });
       },
       close() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
     },
   });

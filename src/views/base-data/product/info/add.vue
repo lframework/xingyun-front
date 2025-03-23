@@ -312,10 +312,12 @@
   import * as api from '@/api/base-data/product/info';
   import * as propertyApi from '@/api/base-data/product/property';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'AddProduct',
     components: {},
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -486,8 +488,7 @@
     methods: {
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
-        this.$router.go(-1);
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

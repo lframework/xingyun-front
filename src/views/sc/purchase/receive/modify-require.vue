@@ -237,6 +237,7 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'ModifyPurchaseReceiveSheetRequire',
@@ -244,6 +245,7 @@
       PurchaseOrderDetail,
       BatchAddProduct,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -366,7 +368,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {

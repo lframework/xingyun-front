@@ -181,6 +181,7 @@
   import * as api from '@/api/sc/purchase/return';
   import * as purchaseApi from '@/api/sc/purchase/order';
   import * as receiveApi from '@/api/sc/purchase/receive';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'AddPurchaseReturnRequire',
@@ -188,6 +189,7 @@
       ReceiveSheetSelectorWithReturn,
       BatchAddProduct,
     },
+    mixins: [multiplePageMix],
     setup() {
       return { h, PlusOutlined, DeleteOutlined, NumberOutlined };
     },
@@ -306,7 +308,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       async initFormData() {

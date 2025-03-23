@@ -243,6 +243,7 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/sale/return';
   import * as configApi from '@/api/sc/sale/config';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'SaleReturn',
@@ -251,6 +252,7 @@
       ApproveRefuse,
       OutSheetDetail,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -381,17 +383,17 @@
       openAddDialog() {
         configApi.get().then((res) => {
           if (res.saleReturnRequireOutStock) {
-            this.$router.push('/sale/return/add/require');
+            this.openChildPage('/sale/return/add/require');
           } else {
-            this.$router.push('/sale/return/add/un-require');
+            this.openChildPage('/sale/return/add/un-require');
           }
         });
       },
       openModifyDialog(row) {
         if (!this.$utils.isEmpty(row.outSheetId)) {
-          this.$router.push('/sale/return/modify/require/' + row.id);
+          this.openChildPage('/sale/return/modify/require/' + row.id);
         } else {
-          this.$router.push('/sale/return/modify/un-require/' + row.id);
+          this.openChildPage('/sale/return/modify/un-require/' + row.id);
         }
       },
       // 删除订单
@@ -523,7 +525,7 @@
               );
             },
             onClick: () => {
-              this.$router.push('/sale/return/approve/' + row.id);
+              this.openChildPage('/sale/return/approve/' + row.id);
             },
           },
           {
@@ -554,6 +556,9 @@
             },
           },
         ];
+      },
+      onRefreshPage() {
+        this.search();
       },
     },
   });

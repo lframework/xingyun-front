@@ -126,12 +126,14 @@
   import * as planApi from '@/api/sc/stock/take/plan';
   import * as preApi from '@/api/sc/stock/take/pre';
   import * as api from '@/api/sc/stock/take/sheet';
+  import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
     name: 'AddStockTakeSheet',
     components: {
       BatchAddProduct,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         h,
@@ -206,7 +208,7 @@
       },
       // 关闭对话框
       closeDialog() {
-        this.$utils.closeCurrentPage();
+        this.closeCurrentPage();
       },
       // 初始化表单数据
       initFormData() {
