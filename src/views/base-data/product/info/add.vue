@@ -30,7 +30,14 @@
         >
           <a-col :md="8" :sm="24">
             <a-form-item label="编号" name="code">
-              <a-input v-model:value="formData.code" allow-clear />
+              <a-input-group compact>
+                <a-input
+                  v-model:value.trim="formData.code"
+                  style="width: calc(100% - 75px)"
+                  allow-clear
+                />
+                <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
+              </a-input-group>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -313,6 +320,7 @@
   import * as propertyApi from '@/api/base-data/product/property';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { generateCode } from '@/api/components';
 
   export default defineComponent({
     name: 'AddProduct',
@@ -495,6 +503,8 @@
         this.formData = {};
 
         this.modelorList = [];
+
+        this.onGenerateCode();
       },
       // 提交表单事件
       async submit() {
@@ -677,6 +687,11 @@
             const tmp = records.filter((item) => item.id === t.id);
             return this.$utils.isEmpty(tmp);
           });
+        });
+      },
+      onGenerateCode() {
+        generateCode(this.$enums.GENERATE_CODE_TYPE.PRODUCT.code).then((res) => {
+          this.formData.code = res;
         });
       },
     },

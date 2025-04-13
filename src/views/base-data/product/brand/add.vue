@@ -16,7 +16,14 @@
         :rules="rules"
       >
         <a-form-item label="编号" name="code">
-          <a-input v-model:value.trim="formData.code" allow-clear />
+          <a-input-group compact>
+            <a-input
+              v-model:value.trim="formData.code"
+              style="width: calc(100% - 75px)"
+              allow-clear
+            />
+            <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
+          </a-input-group>
         </a-form-item>
         <a-form-item label="名称" name="name">
           <a-input v-model:value.trim="formData.name" allow-clear />
@@ -49,6 +56,7 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/brand';
+  import { generateCode } from '@/api/components';
 
   export default defineComponent({
     components: {},
@@ -119,6 +127,13 @@
       open() {
         // 初始化表单数据
         this.initFormData();
+
+        this.onGenerateCode();
+      },
+      onGenerateCode() {
+        generateCode(this.$enums.GENERATE_CODE_TYPE.BRAND.code).then((res) => {
+          this.formData.code = res;
+        });
       },
     },
   });

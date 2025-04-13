@@ -2,6 +2,15 @@ import { BaseEnum, BaseEnumItem } from '@/enums/baseEnum';
 
 const GENERATE_CODE_TYPE: BaseEnum<number, string> = new BaseEnum<number, string>();
 GENERATE_CODE_TYPE.set('USER', new BaseEnumItem<number, sring>(1, '用户编号'));
+GENERATE_CODE_TYPE.set('DEPT', new BaseEnumItem<number, sring>(2, '部门编号'));
+GENERATE_CODE_TYPE.set('ROLE', new BaseEnumItem<number, sring>(3, '角色编号'));
+GENERATE_CODE_TYPE.set('SC', new BaseEnumItem<number, sring>(4, '仓库编号'));
+GENERATE_CODE_TYPE.set('CUSTOMER', new BaseEnumItem<number, sring>(5, '客户编号'));
+GENERATE_CODE_TYPE.set('SUPPLIER', new BaseEnumItem<number, sring>(6, '供应商编号'));
+GENERATE_CODE_TYPE.set('MEMBER', new BaseEnumItem<number, sring>(7, '会员编号'));
+GENERATE_CODE_TYPE.set('SHOP', new BaseEnumItem<number, sring>(8, '门店编号'));
+GENERATE_CODE_TYPE.set('BRAND', new BaseEnumItem<number, sring>(9, '品牌编号'));
+GENERATE_CODE_TYPE.set('PRODUCT', new BaseEnumItem<number, sring>(10, '商品编号'));
 GENERATE_CODE_TYPE.set('PURCHASE_ORDER', new BaseEnumItem<number, sring>(200, '采购订单号'));
 GENERATE_CODE_TYPE.set('RECEIVE_SHEET', new BaseEnumItem<number, sring>(201, '采购收货单号'));
 GENERATE_CODE_TYPE.set('PURCHASE_RETURN', new BaseEnumItem<number, sring>(202, '采购退单号'));

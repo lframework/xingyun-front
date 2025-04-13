@@ -12,7 +12,14 @@
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="编号" name="code">
-              <a-input v-model:value.trim="formData.code" allow-clear />
+              <a-input-group compact>
+                <a-input
+                  v-model:value.trim="formData.code"
+                  style="width: calc(100% - 75px)"
+                  allow-clear
+                />
+                <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
+              </a-input-group>
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -109,6 +116,7 @@
   import moment from 'moment';
   import { validCode, isEmail } from '@/utils/validate';
   import * as api from '@/api/base-data/member';
+  import { generateCode } from '@/api/components';
 
   export default defineComponent({
     components: {},
@@ -202,6 +210,13 @@
       open() {
         // 初始化表单数据
         this.initFormData();
+
+        this.onGenerateCode();
+      },
+      onGenerateCode() {
+        generateCode(this.$enums.GENERATE_CODE_TYPE.MEMBER.code).then((res) => {
+          this.formData.code = res;
+        });
       },
     },
   });

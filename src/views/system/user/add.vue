@@ -135,8 +135,6 @@
           telephone: '',
           description: '',
         };
-
-        this.onGenerateCode();
       },
       // 提交表单事件
       submit() {
@@ -171,6 +169,8 @@
       open() {
         // 初始化表单数据
         this.initFormData();
+
+        this.onGenerateCode();
       },
       onGenerateCode() {
         generateCode(this.$enums.GENERATE_CODE_TYPE.USER.code).then((res) => {
