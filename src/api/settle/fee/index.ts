@@ -1,5 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
+import { ContentTypeEnum } from '@/enums/httpEnum';
 import { PageResult } from '@/api/model/pageResult';
 import { QuerySettleFeeSheetVo } from '@/api/settle/fee/model/querySettleFeeSheetVo';
 import { QuerySettleFeeSheetBo } from '@/api/settle/fee/model/querySettleFeeSheetBo';
@@ -38,7 +38,6 @@ export function exportList(data: QuerySettleFeeSheetVo): Promise<void> {
     },
     {
       region,
-      responseType: ResponseEnum.BLOB,
       contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );

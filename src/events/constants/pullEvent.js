@@ -10,4 +10,6 @@ export default {
   SYS_NOTICE: 'sysNotice',
   // 站内信
   SYS_SITE_MESSAGE: 'siteMessage',
+  // 导出任务
+  EXPORT_TASK: 'exportTask',
 };

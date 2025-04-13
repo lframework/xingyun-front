@@ -1,5 +1,4 @@
 import { defHttp } from '/@/utils/http/axios';
-import { ResponseEnum } from '@/enums/httpEnum';
 import { PageResult } from '@/api/model/pageResult';
 import { QueryProductStockLogVo } from '@/api/sc/stock/product-stock-log/model/queryProductStockLogVo';
 import { QueryProductStockLogBo } from '@/api/sc/stock/product-stock-log/model/queryProductStockLogBo';
@@ -33,7 +32,6 @@ export function exportList(params: QueryProductStockLogVo): Promise<void> {
     },
     {
       region,
-      responseType: ResponseEnum.BLOB,
     },
   );
 }

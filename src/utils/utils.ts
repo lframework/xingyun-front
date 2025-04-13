@@ -729,6 +729,18 @@ export const eq = function (n1, n2) {
 };
 
 /**
+ * 获取{decimal}位小数
+ * @param number
+ * @param decimal 小数位数
+ */
+export const getNumber = function (number, decimal) {
+  return math.format(math.bignumber(number), {
+    notation: 'fixed',
+    precision: decimal,
+  });
+};
+
+/**
  * 获取当前月有多少天
  * @returns {number}
  */

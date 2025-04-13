@@ -12,15 +12,8 @@
         <a-descriptions-item label="文件名" :span="4">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item
-          v-if="!$utils.isEmpty(formData.url) && showPreview"
-          label="预览"
-          :span="4"
-        >
-          <a-image :width="80" :src="formData.url" @error="() => (showPreview = false)" />
-        </a-descriptions-item>
-        <a-descriptions-item v-if="!$utils.isEmpty(formData.url)" label="下载链接" :span="4">
-          <a :href="formData.url" target="_blank">点此下载</a>
+        <a-descriptions-item v-if="!$utils.isEmpty(formData.recordId)" label="下载链接" :span="4">
+          <a @click="download">点此下载</a>
         </a-descriptions-item>
         <a-descriptions-item label="文件大小" :span="2">
           {{ $utils.isEmpty(formData.fileSize) ? '-' : formData.fileSize }}
@@ -44,6 +37,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/smart-work/file-box';
+  import * as securityDownloadApi from '@/api/security-download';
 
   export default defineComponent({
     // 使用组件
@@ -59,8 +53,6 @@
       return {
         // 是否可见
         visible: false,
-        // 是否显示预览
-        showPreview: true,
         // 是否显示加载框
         loading: false,
         // 表单数据
@@ -84,11 +76,10 @@
       },
       // 初始化表单数据
       initFormData() {
-        this.showPreview = true;
         this.formData = {
           id: '',
           name: '',
-          url: '',
+          recordId: '',
           fileSize: '',
           contentType: '',
           description: '',
@@ -111,6 +102,17 @@
           .get(this.id)
           .then((data) => {
             this.formData = data;
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      },
+      download() {
+        this.loading = true;
+        securityDownloadApi
+          .getSecurityDownloadUrl(this.formData.recordId)
+          .then((res) => {
+            window.open(res);
           })
           .finally(() => {
             this.loading = false;

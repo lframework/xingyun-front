@@ -16,7 +16,10 @@
             <a-tab-pane>
               <template #tab>
                 {{ item.name }}
-                <span v-if="item.list.length !== 0">({{ item.list.length }})</span>
+                <span v-if="item.list.length !== 0 && item.list.length < 100"
+                  >({{ item.list.length }})</span
+                >
+                <span v-if="item.list.length !== 0 && item.list.length >= 100">(99+)</span>
               </template>
               <!-- 绑定title-click事件的通知列表中标题是“可点击”的-->
               <NoticeList

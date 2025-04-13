@@ -35,6 +35,8 @@
     <div :class="`${prefixCls}-action`">
       <AppSearch v-if="getShowSearch" :class="`${prefixCls}-action__item `" />
 
+      <ExportCenter :class="`${prefixCls}-action__item export-center-item`" />
+
       <Notify v-if="getShowNotice" :class="`${prefixCls}-action__item notify-item`" />
 
       <FullScreen v-if="getShowFullScreen" :class="`${prefixCls}-action__item fullscreen-item`" />
@@ -58,7 +60,7 @@
 
   import LayoutMenu from '../menu/index.vue';
   import LayoutTrigger from '../trigger/index.vue';
-  import { FullScreen, LayoutBreadcrumb, Notify, UserDropDown } from './components';
+  import { FullScreen, LayoutBreadcrumb, Notify, UserDropDown, ExportCenter } from './components';
 
   defineOptions({ name: 'LayoutHeader' });
 

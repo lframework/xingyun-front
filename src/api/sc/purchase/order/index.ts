@@ -91,7 +91,6 @@ export function exportList(data: QueryPurchaseOrderVo): Promise<void> {
     },
     {
       region,
-      responseType: ResponseEnum.BLOB,
       contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );

@@ -1,6 +1,6 @@
 import { defHttp } from '/@/utils/http/axios';
 import { PageResult } from '@/api/model/pageResult';
-import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
+import { ContentTypeEnum } from '@/enums/httpEnum';
 import { SettleOutItemSelectorVo } from '@/api/settle/out-item/model/settleOutItemSelectorVo';
 import { SettleOutItemSelectorBo } from '@/api/settle/out-item/model/settleOutItemSelectorBo';
 import { QuerySettleOutItemBo } from '@/api/settle/out-item/model/querySettleOutItemBo';
@@ -157,7 +157,6 @@ export function exportList(data: QuerySettleOutItemVo): Promise<void> {
       data,
     },
     {
-      responseType: ResponseEnum.BLOB,
       contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },

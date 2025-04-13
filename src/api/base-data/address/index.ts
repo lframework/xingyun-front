@@ -180,7 +180,6 @@ export function exportList(data: QueryAddressVo): Promise<void> {
       data,
     },
     {
-      responseType: ResponseEnum.BLOB,
       contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },

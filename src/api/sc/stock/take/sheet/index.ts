@@ -1,5 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
+import { ContentTypeEnum } from '@/enums/httpEnum';
 import { PageResult } from '@/api/model/pageResult';
 import { QueryTakeStockSheetBo } from '@/api/sc/stock/take/sheet/model/queryTakeStockSheetBo';
 import { QueryTakeStockSheetVo } from '@/api/sc/stock/take/sheet/model/queryTakeStockSheetVo';
@@ -40,7 +40,6 @@ export function exportList(data: QueryTakeStockSheetVo): Promise<void> {
     },
     {
       region,
-      responseType: ResponseEnum.BLOB,
       contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );

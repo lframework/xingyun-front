@@ -9,4 +9,6 @@ export const LayoutBreadcrumb = createAsyncComponent(() => import('./Breadcrumb.
 
 export const Notify = createAsyncComponent(() => import('./notify/index.vue'));
 
+export const ExportCenter = createAsyncComponent(() => import('./export-center/index.vue'));
+
 export { FullScreen };

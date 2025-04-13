@@ -397,7 +397,7 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccessTip('导出成功！');
+            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;

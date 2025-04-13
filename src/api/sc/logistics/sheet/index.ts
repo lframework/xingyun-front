@@ -209,7 +209,6 @@ export function exportList(data: QueryLogisticsSheetVo): Promise<void> {
     },
     {
       region,
-      responseType: ResponseEnum.BLOB,
       contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
