@@ -15,10 +15,18 @@
         keep-source
         row-id="id"
         :max-height="$vh * 80"
-        :tree-config="{}"
+        :tree-config="{
+          expandAll: true,
+        }"
         :export-config="{}"
         :data="tableData"
-        :checkbox-config="{ trigger: 'row', checkRowKeys: selectedRows }"
+        :checkbox-config="{
+          trigger: 'row',
+          checkRowKeys: selectedRows,
+          checkStrictly: true,
+          range: true,
+          highlight: true,
+        }"
         :columns="tableColumn"
       >
         <!-- 类型 列自定义内容 -->
@@ -120,11 +128,7 @@
             const selectedMenus = [];
             this.$utils.eachTree(res, (item) => {
               if (item.selected) {
-                if (this.$utils.isEmpty(item.children)) {
-                  selectedMenus.push(item.id);
-                }
-
-                item.selected = false;
+                selectedMenus.push(item.id);
               }
             });
 
