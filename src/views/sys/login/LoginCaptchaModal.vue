@@ -19,6 +19,7 @@
           <template #title>点此获取验证码</template>
           <span>
             <a-image
+              class="cursor-pointer"
               :src="captchaData.image"
               @click="getCaptcha"
               :preview="false"
