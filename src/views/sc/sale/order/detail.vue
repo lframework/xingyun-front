@@ -127,14 +127,15 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
-  import { getLodop } from '@/utils/lodop';
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/sale/order';
+  import { printMix } from '@/mixins/print';
 
   export default defineComponent({
     components: {
       PayType,
     },
+    mixins: [printMix],
     props: {
       id: {
         type: String,
@@ -284,8 +285,7 @@
         api
           .print(this.id)
           .then((res) => {
-            const LODOP = getLodop(res, '打印销售订单');
-            LODOP.PREVIEW();
+            this.lodopPreview(this.$enums.PRINT_TYPE.SALE_ORDER.code, res);
           })
           .finally(() => {
             this.loading = false;

@@ -30,12 +30,15 @@ import CustomPage from '@/components/CustomPage';
 import OrderTimeLine from '@/components/OrderTimeLine';
 import DataDicPicker from '@/components/DataDicPicker';
 import BatchHandler from '@/components/BatchHandler';
+import PrintDesigner, { lodop } from '@/components/PrintDesigner';
+import printDesignerInstall from '@/components/PrintDesigner/install.js';
 
 export async function registerGlobComp(app: App) {
   app
     .use(Antd)
     .use(VxeUI)
     .use(VXETable)
+    .use(printDesignerInstall)
     .component('RelativeTime', RelativeTime)
     .component('JForm', JForm)
     .component('JFormItem', JFormItem)
@@ -53,7 +56,8 @@ export async function registerGlobComp(app: App) {
     .component('CustomPage', CustomPage)
     .component('OrderTimeLine', OrderTimeLine)
     .component('DataDicPicker', DataDicPicker)
-    .component('BatchHandler', BatchHandler);
+    .component('BatchHandler', BatchHandler)
+    .component('PrintDesigner', PrintDesigner);
 
   VxeUI.use(VxeUIPluginRenderAntd);
   VXETable.setup(componentSetting.vxeTable);
@@ -75,6 +79,7 @@ export async function registerGlobComp(app: App) {
   app.config.globalProperties.$defHttp = defHttp;
   app.config.globalProperties.$vh =
     (document.documentElement.clientHeight || document.body.clientHeight) / 100;
+  app.config.globalProperties.$lodop = lodop;
 
   await enumsInstall(app);
   await tagInstall(app);

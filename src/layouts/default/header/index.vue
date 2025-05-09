@@ -46,6 +46,7 @@
   </Layout.Header>
 </template>
 <script lang="ts" setup>
+  import { Layout } from 'ant-design-vue';
   import { computed, unref } from 'vue';
 
   import { AppLogo, AppSearch } from '@/components/Application';

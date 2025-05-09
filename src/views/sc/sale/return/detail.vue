@@ -140,13 +140,14 @@
 <script>
   import { defineComponent } from 'vue';
   import OutSheetDetail from '@/views/sc/sale/out/detail.vue';
-  import { getLodop } from '@/utils/lodop';
   import * as api from '@/api/sc/sale/return';
+  import { printMix } from '@/mixins/print';
 
   export default defineComponent({
     components: {
       OutSheetDetail,
     },
+    mixins: [printMix],
     props: {
       id: {
         type: String,
@@ -320,8 +321,7 @@
         api
           .print(this.id)
           .then((res) => {
-            const LODOP = getLodop(res, '打印销售退货单');
-            LODOP.PREVIEW();
+            this.lodopPreview(this.$enums.PRINT_TYPE.SALE_RETURN.code, res);
           })
           .finally(() => {
             this.loading = false;

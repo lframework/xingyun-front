@@ -149,15 +149,16 @@
 <script>
   import { defineComponent } from 'vue';
   import OutSheetDetail from '@/views/sc/retail/out/detail.vue';
-  import { getLodop } from '@/utils/lodop';
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/retail/return';
+  import { printMix } from '@/mixins/print';
 
   export default defineComponent({
     components: {
       OutSheetDetail,
       PayType,
     },
+    mixins: [printMix],
     props: {
       id: {
         type: String,
@@ -325,8 +326,7 @@
         api
           .print(this.id)
           .then((res) => {
-            const LODOP = getLodop(res, '打印零售退货单');
-            LODOP.PREVIEW();
+            this.lodopPreview(this.$enums.PRINT_TYPE.RETAIL_RETURN.code, res);
           })
           .finally(() => {
             this.loading = false;

@@ -1,6 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ContentTypeEnum } from '@/enums/httpEnum';
-import { A4ExcelPortraitPrintBo } from '@/api/model/a4ExcelPortraitPrintBo';
 import { PageResult } from '@/api/model/pageResult';
 import { QueryPurchaseReturnVo } from '@/api/sc/purchase/return/model/queryPurchaseReturnVo';
 import { QueryPurchaseReturnBo } from '@/api/sc/purchase/return/model/queryPurchaseReturnBo';
@@ -9,6 +8,7 @@ import { CreatePurchaseReturnVo } from '@/api/sc/purchase/return/model/createPur
 import { UpdatePurchaseReturnVo } from '@/api/sc/purchase/return/model/updatePurchaseReturnVo';
 import { ApprovePassPurchaseReturnVo } from '@/api/sc/purchase/return/model/approvePassPurchaseReturnVo';
 import { ApproveRefusePurchaseReturnVo } from '@/api/sc/purchase/return/model/approveRefusePurchaseReturnVo';
+import { PrintPurchaseReturnBo } from '@/api/sc/purchase/return/model/printPurchaseReturnBo';
 
 const baseUrl = '/purchase/return';
 const region = 'cloud-api';
@@ -16,8 +16,8 @@ const region = 'cloud-api';
 /**
  * 打印
  */
-export function print(id: string): Promise<A4ExcelPortraitPrintBo> {
-  return defHttp.get<A4ExcelPortraitPrintBo>(
+export function print(id: string): Promise<PrintPurchaseReturnBo> {
+  return defHttp.get<PrintPurchaseReturnBo>(
     {
       url: baseUrl + '/print',
       params: {

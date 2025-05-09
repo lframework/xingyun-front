@@ -146,13 +146,14 @@
 <script>
   import { defineComponent } from 'vue';
   import ReceiveSheetDetail from '@/views/sc/purchase/receive/detail.vue';
-  import { getLodop } from '@/utils/lodop';
   import * as api from '@/api/sc/purchase/return';
+  import { printMix } from '@/mixins/print';
 
   export default defineComponent({
     components: {
       ReceiveSheetDetail,
     },
+    mixins: [printMix],
     props: {
       id: {
         type: String,
@@ -324,8 +325,7 @@
         api
           .print(this.id)
           .then((res) => {
-            const LODOP = getLodop(res, '打印采购退货单');
-            LODOP.PREVIEW();
+            this.lodopPreview(this.$enums.PRINT_TYPE.PURCHASE_RETURN.code, res)
           })
           .finally(() => {
             this.loading = false;

@@ -1,6 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ContentTypeEnum } from '@/enums/httpEnum';
-import { A4ExcelPortraitPrintBo } from '@/api/model/a4ExcelPortraitPrintBo';
 import { PageResult } from '@/api/model/pageResult';
 import { GetPaymentDateBo } from '@/api/sc/purchase/receive/model/getPaymentDateBo';
 import { QuerySaleOutSheetBo } from '@/api/sc/sale/out/model/querySaleOutSheetBo';
@@ -13,6 +12,7 @@ import { CreateSaleOutSheetVo } from '@/api/sc/sale/out/model/createSaleOutSheet
 import { UpdateSaleOutSheetVo } from '@/api/sc/sale/out/model/updateSaleOutSheetVo';
 import { ApprovePassSaleOutSheetVo } from '@/api/sc/sale/out/model/approvePassSaleOutSheetVo';
 import { ApproveRefuseSaleOutSheetVo } from '@/api/sc/sale/out/model/approveRefuseSaleOutSheetVo';
+import { PrintSaleOutSheetBo } from '@/api/sc/sale/out/model/printSaleOutSheetBo';
 
 const baseUrl = '/sale/out/sheet';
 const region = 'cloud-api';
@@ -20,8 +20,8 @@ const region = 'cloud-api';
 /**
  * 打印
  */
-export function print(id: string): Promise<A4ExcelPortraitPrintBo> {
-  return defHttp.get<A4ExcelPortraitPrintBo>(
+export function print(id: string): Promise<PrintSaleOutSheetBo> {
+  return defHttp.get<PrintSaleOutSheetBo>(
     {
       url: baseUrl + '/print',
       params: {

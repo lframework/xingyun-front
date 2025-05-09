@@ -1,6 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
-import { A4ExcelPortraitPrintBo } from '@/api/model/a4ExcelPortraitPrintBo';
 import { PageResult } from '@/api/model/pageResult';
 import { ReceiveSheetSelectorVo } from '@/api/sc/purchase/receive/model/receiveSheetSelectorVo';
 import { ReceiveSheetSelectorBo } from '@/api/sc/purchase/receive/model/receiveSheetSelectorBo';
@@ -15,6 +14,7 @@ import { CreateReceiveSheetVo } from '@/api/sc/purchase/receive/model/createRece
 import { UpdateReceiveSheetVo } from '@/api/sc/purchase/receive/model/updateReceiveSheetVo';
 import { ApprovePassReceiveSheetVo } from '@/api/sc/purchase/receive/model/approvePassReceiveSheetVo';
 import { ApproveRefuseReceiveSheetVo } from '@/api/sc/purchase/receive/model/approveRefuseReceiveSheetVo';
+import { PrintReceiveSheetBo } from '@/api/sc/purchase/receive/model/printReceiveSheetBo';
 
 const baseUrl = '/purchase/receive/sheet';
 const selectorBaseUrl = '/selector';
@@ -50,8 +50,8 @@ export function loadReceiveSheet(ids: string[]): Promise<ReceiveSheetSelectorBo[
 /**
  * 打印
  */
-export function print(id: string): Promise<A4ExcelPortraitPrintBo> {
-  return defHttp.get<A4ExcelPortraitPrintBo>(
+export function print(id: string): Promise<PrintReceiveSheetBo> {
+  return defHttp.get<PrintReceiveSheetBo>(
     {
       url: baseUrl + '/print',
       params: {

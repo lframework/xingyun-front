@@ -1,6 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
-import { A4ExcelPortraitPrintBo } from '@/api/model/a4ExcelPortraitPrintBo';
 import { QueryPurchaseOrderVo } from '@/api/sc/purchase/order/model/queryPurchaseOrderVo';
 import { PageResult } from '@/api/model/pageResult';
 import { QueryPurchaseOrderBo } from '@/api/sc/purchase/order/model/queryPurchaseOrderBo';
@@ -16,6 +15,7 @@ import { PurchaseProductBo } from '@/api/sc/purchase/order/model/purchaseProduct
 import { QueryPurchaseProductVo } from '@/api/sc/purchase/order/model/queryPurchaseProductVo';
 import { PurchaseOrderSelectorVo } from '@/api/sc/purchase/order/model/purchaseOrderSelectorVo';
 import { PurchaseOrderSelectorBo } from '@/api/sc/purchase/order/model/purchaseOrderSelectorBo';
+import { PrintPurchaseOrderBo } from '@/api/sc/purchase/order/model/printPurchaseOrderBo';
 
 const baseUrl = '/purchase/order';
 const selectorBaseUrl = '/selector';
@@ -51,8 +51,8 @@ export function loadPurchaseOrder(ids: string[]): Promise<PurchaseOrderSelectorB
 /**
  * 打印
  */
-export function print(id: string): Promise<A4ExcelPortraitPrintBo> {
-  return defHttp.get<A4ExcelPortraitPrintBo>(
+export function print(id: string): Promise<PrintPurchaseOrderBo> {
+  return defHttp.get<PrintPurchaseOrderBo>(
     {
       url: baseUrl + '/print',
       params: {
