@@ -2,7 +2,7 @@
   <div class="simple-app-container">
     <div v-permission="['stock:take:sheet:add']" v-loading="loading">
       <j-border>
-        <j-form label-width="120px">
+        <j-form bordered label-width="120px">
           <j-form-item label="关联盘点任务" required>
             <take-stock-plan-selector
               v-model:value="formData.takeStockPlanId"

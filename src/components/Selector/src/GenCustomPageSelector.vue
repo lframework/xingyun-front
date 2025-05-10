@@ -15,7 +15,7 @@
       <template #form>
         <!-- 查询条件 -->
         <j-border>
-          <j-form>
+          <j-form bordered>
             <j-form-item v-if="$utils.isEmpty(requestParams.id)" label="页面ID">
               <a-input v-model:value="searchParams.id" />
             </j-form-item>

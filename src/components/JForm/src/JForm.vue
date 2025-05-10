@@ -55,6 +55,10 @@
         type: Boolean,
         default: false,
       },
+      contentNest: {
+        type: Boolean,
+        default: true,
+      },
     },
     setup() {
       const collapseStatus = ref(false);

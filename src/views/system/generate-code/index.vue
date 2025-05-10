@@ -21,7 +21,7 @@
         >
           <template #form>
             <j-border>
-              <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+              <j-form bordered label-width="80px" @collapse="$refs.grid.refreshColumn()">
                 <j-form-item label="规则ID">
                   <a-input v-model:value="searchFormData.id" allow-clear />
                 </j-form-item>

@@ -49,7 +49,7 @@
 
         <template #form>
           <j-border>
-            <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
+            <j-form bordered label-width="60px" @collapse="$refs.grid.refreshColumn()">
               <j-form-item label="标题" :span="6">
                 <a-input v-model:value="searchFormData.searchMenuName" allow-clear />
               </j-form-item>

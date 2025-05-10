@@ -9,7 +9,7 @@
   >
     <div v-if="visible" v-permission="['stock:take:plan:query']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form bordered>
           <j-form-item label="仓库">
             {{ formData.scName }}
           </j-form-item>

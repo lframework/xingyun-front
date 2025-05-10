@@ -9,7 +9,7 @@
   >
     <div v-if="visible" v-permission="['stock:adjust:query']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form bordered>
           <j-form-item label="仓库" required>
             {{ formData.scName }}
           </j-form-item>
@@ -90,7 +90,7 @@
       <order-time-line :id="id" />
 
       <j-border title="合计">
-        <j-form label-width="140px">
+        <j-form bordered label-width="140px">
           <j-form-item label="调整品种数" :span="6">
             <a-input v-model:value="formData.productNum" class="number-input" readonly />
           </j-form-item>

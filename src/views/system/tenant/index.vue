@@ -20,7 +20,7 @@
       >
         <template #form>
           <j-border>
-            <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+            <j-form bordered label-width="80px" @collapse="$refs.grid.refreshColumn()">
               <j-form-item label="租户ID">
                 <a-input v-model:value="searchFormData.tenantId" allow-clear />
               </j-form-item>

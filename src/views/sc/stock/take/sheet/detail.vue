@@ -9,7 +9,7 @@
   >
     <div v-if="visible" v-permission="['stock:take:sheet:query']" v-loading="loading">
       <j-border>
-        <j-form label-width="120px">
+        <j-form bordered label-width="120px">
           <j-form-item label="关联盘点任务">
             <div>
               <a

@@ -2,7 +2,7 @@
   <div class="simple-app-container">
     <div v-permission="['logistics:sheet:modify']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form bordered>
           <j-form-item label="单据号">
             <span>{{ formData.code }}</span>
           </j-form-item>

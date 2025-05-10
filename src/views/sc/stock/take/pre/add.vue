@@ -2,7 +2,7 @@
   <div class="simple-app-container">
     <div v-permission="['stock:take:pre:add']" v-loading="loading">
       <j-border>
-        <j-form label-width="120px">
+        <j-form bordered label-width="120px">
           <j-form-item label="仓库" required>
             <store-center-selector
               v-model:value="formData.scId"

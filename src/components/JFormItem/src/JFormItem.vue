@@ -1,26 +1,30 @@
 <template>
   <transition enter-active-class="animated fadeIn">
-    <div v-show="visible && itemShow" :class="'j-form-item'" :style="{ width: itemWidth }">
-      <span
-        v-if="!hiddenLabel"
+    <div
+      v-show="visible && itemShow"
+      :class="'j-form-item'"
+      :style="{ width: itemWidth }"
+    >
+      <div
+        v-if="!hiddenLabel && !(autoHiddenLabel && !$slots.default)"
         :class="_bordered ? 'j-form-item-label-border' : ''"
         class="j-form-item-label"
         :style="{ width: form.labelWidth, minWidth: form.labelWidth }"
       >
-        <span v-if="_required" class="j-form-item-required"></span>
-        <slot v-if="!(autoHiddenLabel && !$slots.default)" name="label"></slot>
-        <span v-if="!$slots.label">{{ autoHiddenLabel && !$slots.default ? '' : label }}</span>
-        <span>{{ autoHiddenLabel && !$slots.default ? '' : '：' }}</span>
-      </span>
-      <div
-        v-if="contentNest"
-        class="j-form-item-content"
-        :class="_bordered ? 'j-form-item-content-border' : ''"
-        :style="{ width: contentWidth }"
-      >
-        <slot></slot>
+        <div class="j-form-item-label-wrapper">
+          <span v-if="_required" class="j-form-item-required"></span>
+          <slot name="label"></slot>
+          <span v-if="!$slots.label">{{ label }}</span>
+          <span>{{ '：' }}</span>
+        </div>
       </div>
-      <slot v-else></slot>
+      <div class="j-form-item-content" :class="_bordered ? 'j-form-item-content-border' : ''">
+        <div
+          class="j-form-item-content-wrapper"
+          :style="{ width: _contentNest ? contentWidth : '100%' }"
+          ><slot></slot
+        ></div>
+      </div>
     </div>
   </transition>
 </template>
@@ -149,6 +153,9 @@
       },
       _bordered() {
         return this.bordered || this.form?.bordered;
+      },
+      _contentNest() {
+        return this.contentNest && (this.form?.contentNest ?? this.contentNest);
       },
     },
   });

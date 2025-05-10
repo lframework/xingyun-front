@@ -9,7 +9,7 @@
   >
     <div v-if="visible" v-loading="loading">
       <j-border>
-        <j-form :enable-collapse="false" label-width="80px">
+        <j-form bordered :enable-collapse="false" label-width="80px">
           <j-form-item :span="12" label="名称" :required="true">
             <a-input v-model:value="formData.name" allow-clear />
           </j-form-item>
@@ -35,7 +35,7 @@
       <div style="height: 10px"></div>
 
       <j-border>
-        <j-form :enable-collapse="false" label-width="80px">
+        <j-form bordered :enable-collapse="false" label-width="80px">
           <j-form-item :span="12" label="主表" :required="true">
             <span>{{ formData.mainTableName }}</span>
           </j-form-item>

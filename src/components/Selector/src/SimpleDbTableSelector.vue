@@ -19,7 +19,7 @@
       <template #form>
         <!-- 查询条件 -->
         <j-border>
-          <j-form>
+          <j-form bordered>
             <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="表名">
               <a-input v-model:value="searchParams.name" />
             </j-form-item>

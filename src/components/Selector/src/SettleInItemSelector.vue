@@ -10,7 +10,7 @@
       <template #form>
         <!-- 查询条件 -->
         <j-border>
-          <j-form>
+          <j-form bordered>
             <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="编号">
               <a-input v-model:value="searchParams.code" />
             </j-form-item>

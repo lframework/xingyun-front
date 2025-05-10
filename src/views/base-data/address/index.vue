@@ -20,7 +20,7 @@
       >
         <template #form>
           <j-border>
-            <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+            <j-form bordered label-width="80px" @collapse="$refs.grid.refreshColumn()">
               <j-form-item label="实体类型">
                 <a-select v-model:value="searchFormData.entityType" allow-clear>
                   <a-select-option

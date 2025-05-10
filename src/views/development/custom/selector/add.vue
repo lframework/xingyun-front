@@ -9,7 +9,7 @@
   >
     <div v-if="visible" v-loading="loading">
       <j-border>
-        <j-form :enable-collapse="false" label-width="80px">
+        <j-form bordered :enable-collapse="false" label-width="80px">
           <j-form-item :span="12" label="名称" :required="true">
             <a-input v-model:value="formData.name" allow-clear />
           </j-form-item>
@@ -25,7 +25,7 @@
       <div style="height: 10px"></div>
 
       <j-border>
-        <j-form :enable-collapse="false" label-width="100px">
+        <j-form bordered :enable-collapse="false" label-width="100px">
           <j-form-item :span="8" label="自定义列表" :required="true">
             <gen-custom-list-selector
               v-model:value="formData.customListId"
@@ -39,7 +39,7 @@
       <div style="height: 10px"></div>
 
       <j-border title="基础配置">
-        <j-form :enable-collapse="false" label-width="160px">
+        <j-form bordered :enable-collapse="false" label-width="160px">
           <j-form-item :span="8" label="对话框标题">
             <a-input v-model:value="formData.dialogTittle" />
           </j-form-item>
@@ -55,7 +55,7 @@
       <div style="height: 10px"></div>
 
       <j-border title="数据配置">
-        <j-form :enable-collapse="false" label-width="160px">
+        <j-form bordered :enable-collapse="false" label-width="160px">
           <j-form-item :span="8" label="ID字段" :required="true">
             <a-tree-select
               v-model:value="formData.idColumn"

@@ -22,7 +22,7 @@
       <template #form>
         <!-- 查询条件 -->
         <j-border>
-          <j-form>
+          <j-form bordered>
             <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="销售单号" :span="6">
               <a-input v-model:value="searchParams.code" allow-clear />
             </j-form-item>

@@ -21,7 +21,7 @@
         >
           <template #form>
             <j-border>
-              <j-form label-width="80px" @collapse="$refs.grid.refreshColumn()">
+              <j-form bordered label-width="80px" @collapse="$refs.grid.refreshColumn()">
                 <j-form-item label="仓库">
                   <store-center-selector v-model:value="searchFormData.scId" />
                 </j-form-item>

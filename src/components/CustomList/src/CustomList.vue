@@ -26,7 +26,7 @@
         >
           <template v-if="!$utils.isEmpty(queryParams)" #form>
             <j-border>
-              <j-form :label-width="listConfig.labelWidth + 'px'">
+              <j-form bordered :label-width="listConfig.labelWidth + 'px'">
                 <j-form-item
                   v-for="queryParam in queryParams"
                   :key="queryParam.tableAlias + '_' + queryParam.columnName"

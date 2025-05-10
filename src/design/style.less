@@ -17,7 +17,7 @@
     flex-wrap: nowrap;
     flex-flow: row nowrap;
     justify-content: flex-start;
-    align-items: center;
+    align-items: stretch;
 
     line-height: 40px;
     font-size: 12px;
@@ -42,8 +42,25 @@
       background-color: rgba(0, 0, 0, 0.02);
     }
 
+    .j-form-item-content:after {
+      content: "";
+      display: inline-block;
+      height: 0;
+      overflow: hidden;
+    }
     .j-form-item-content {
       padding: 0 3px 0 3px;
+      width: 100%;
+    }
+
+    .j-form-item-label-wrapper {
+      display: inline-block;
+      width: 100%;
+    }
+
+    .j-form-item-content-wrapper {
+      display: inline-block;
+      width: 100%;
     }
 
     .j-form-item-content-border {

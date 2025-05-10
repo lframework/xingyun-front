@@ -39,7 +39,7 @@
       >
         <template #form>
           <j-border>
-            <j-form>
+            <j-form bordered>
               <j-form-item label="商品">
                 <a-input v-model:value="searchFormData.condition" allow-clear />
               </j-form-item>

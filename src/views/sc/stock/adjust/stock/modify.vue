@@ -144,7 +144,7 @@
       <order-time-line :id="id" />
 
       <j-border title="合计">
-        <j-form label-width="140px">
+        <j-form bordered label-width="140px">
           <j-form-item label="调整品种数" :span="6">
             <a-input v-model:value="formData.productNum" class="number-input" readonly />
           </j-form-item>

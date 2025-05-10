@@ -7,7 +7,7 @@
     :style="{ top: '20px' }"
     :footer="null"
   >
-    <j-form :enable-collapse="false">
+    <j-form bordered :enable-collapse="false">
       <j-form-item
         v-for="item in $enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE.values()"
         :key="item.code"

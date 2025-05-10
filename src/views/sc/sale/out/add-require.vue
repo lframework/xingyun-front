@@ -2,7 +2,7 @@
   <div class="simple-app-container">
     <div v-permission="['sale:out:add']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form bordered>
           <j-form-item label="仓库" required>
             <store-center-selector v-model:value="formData.scId" :before-open="beforeSelectSc" />
           </j-form-item>
@@ -117,7 +117,7 @@
       </vxe-grid>
 
       <j-border title="合计">
-        <j-form label-width="140px">
+        <j-form bordered label-width="140px">
           <j-form-item label="出库数量" :span="6">
             <a-input v-model:value="formData.totalNum" class="number-input" readonly />
           </j-form-item>
@@ -131,7 +131,7 @@
       </j-border>
 
       <j-border>
-        <j-form label-width="140px">
+        <j-form bordered label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
             <a-textarea v-model:value.trim="formData.description" maxlength="200" />
           </j-form-item>

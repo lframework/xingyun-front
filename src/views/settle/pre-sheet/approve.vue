@@ -2,7 +2,7 @@
   <div class="simple-app-container">
     <div v-permission="['settle:pre-sheet:approve']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form bordered>
           <j-form-item label="供应商">
             {{ formData.supplierName }}
           </j-form-item>
@@ -72,7 +72,7 @@
       <order-time-line :id="id" />
 
       <j-border title="合计">
-        <j-form label-width="140px">
+        <j-form bordered label-width="140px">
           <j-form-item label="总金额" :span="6">
             <a-input v-model:value="formData.totalAmount" class="number-input" readonly />
           </j-form-item>
@@ -80,7 +80,7 @@
       </j-border>
 
       <j-border>
-        <j-form label-width="140px">
+        <j-form bordered label-width="140px">
           <j-form-item label="备注" :span="24" :content-nest="false">
             <a-textarea v-model:value.trim="formData.description" maxlength="200" />
           </j-form-item>

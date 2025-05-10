@@ -2,7 +2,7 @@
   <div class="simple-app-container">
     <div v-permission="['stock:sc-transfer:receive']" v-loading="loading">
       <j-border>
-        <j-form ref="form">
+        <j-form bordered ref="form">
           <j-form-item label="转出仓库" required>
             <store-center-selector v-model:value="formData.sourceScId" :disabled="true" />
           </j-form-item>
@@ -115,7 +115,7 @@
       <order-time-line :id="id" />
 
       <j-border title="合计">
-        <j-form label-width="140px">
+        <j-form bordered label-width="140px">
           <j-form-item label="本次收货数量" :span="6">
             <a-input v-model:value="formData.totalNum" class="number-input" readonly />
           </j-form-item>

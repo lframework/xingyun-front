@@ -21,7 +21,7 @@
     >
       <template #form>
         <j-border>
-          <j-form>
+          <j-form bordered>
             <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="销售出库单号" :span="6">
               <a-input v-model:value="searchParams.code" allow-clear />
             </j-form-item>

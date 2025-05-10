@@ -21,7 +21,7 @@
         >
           <template #form>
             <j-border>
-              <j-form label-width="80px">
+              <j-form bordered label-width="80px">
                 <j-form-item label="标题">
                   <a-input v-model:value="searchFormData.title" allow-clear />
                 </j-form-item>

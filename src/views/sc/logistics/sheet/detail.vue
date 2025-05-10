@@ -9,7 +9,7 @@
   >
     <div v-permission="['logistics:sheet:query']" v-loading="loading">
       <j-border>
-        <j-form>
+        <j-form bordered>
           <j-form-item label="单据号">
             <span>{{ formData.code }}</span>
           </j-form-item>
@@ -96,7 +96,7 @@
         </vxe-grid>
       </j-border>
       <j-border title="寄件人信息">
-        <j-form label-width="140px" :enable-collapse="false">
+        <j-form bordered label-width="140px" :enable-collapse="false">
           <j-form-item label="姓名" :required="true">
             <a-input v-model:value="formData.senderName" readonly />
           </j-form-item>
@@ -112,7 +112,7 @@
         </j-form>
       </j-border>
       <j-border title="收件人信息">
-        <j-form label-width="140px" :enable-collapse="false">
+        <j-form bordered label-width="140px" :enable-collapse="false">
           <j-form-item label="姓名" :required="true">
             <a-input v-model:value="formData.receiverName" readonly />
           </j-form-item>
@@ -128,7 +128,7 @@
         </j-form>
       </j-border>
       <j-border title="物流单信息">
-        <j-form label-width="140px" :enable-collapse="false">
+        <j-form bordered label-width="140px" :enable-collapse="false">
           <j-form-item label="物流公司" :required="true">
             <logistics-company-selector v-model:value="formData.logisticsCompanyId" disabled />
           </j-form-item>
