@@ -118,7 +118,7 @@
           <span v-else>{{ row.productName }}</span>
         </template>
 
-        <!-- 采购价 列自定义内容 -->
+        <!-- 退货价 列自定义内容 -->
         <template #purchasePrice_default="{ row }">
           <span>{{ row.purchasePrice }}</span>
         </template>
@@ -275,7 +275,7 @@
           },
           {
             field: 'purchasePrice',
-            title: '采购价（元）',
+            title: '退货价（元）',
             align: 'right',
             width: 120,
             slots: { default: 'purchasePrice_default' },
@@ -626,29 +626,29 @@
           }
 
           if (this.$utils.isEmpty(product.purchasePrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价不允许为空！');
+            this.$msg.createError('第' + (i + 1) + '行商品退货价不允许为空！');
             return false;
           }
 
           if (!this.$utils.isFloat(product.purchasePrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价必须为数字！');
+            this.$msg.createError('第' + (i + 1) + '行商品退货价必须为数字！');
             return false;
           }
 
           if (product.isGift) {
             if (parseFloat(product.purchasePrice) !== 0) {
-              this.$msg.createError('第' + (i + 1) + '行商品采购价必须等于0！');
+              this.$msg.createError('第' + (i + 1) + '行商品退货价必须等于0！');
               return false;
             }
           } else {
             if (!this.$utils.isFloatGtZero(product.purchasePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行商品采购价必须大于0！');
+              this.$msg.createError('第' + (i + 1) + '行商品退货价必须大于0！');
               return false;
             }
           }
 
           if (!this.$utils.isNumberPrecision(product.purchasePrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许2位小数！');
+            this.$msg.createError('第' + (i + 1) + '行商品退货价最多允许2位小数！');
             return false;
           }
 

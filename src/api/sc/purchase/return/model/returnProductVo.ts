@@ -5,7 +5,7 @@ export interface ReturnProductVo {
   productId: string;
 
   /**
-   * 采购价
+   * 退货价
    */
   purchasePrice: number;
 

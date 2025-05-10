@@ -201,7 +201,7 @@
               return cellValue ? '是' : '否';
             },
           },
-          { field: 'purchasePrice', title: '采购价（元）', align: 'right', width: 120 },
+          { field: 'purchasePrice', title: '退货价（元）', align: 'right', width: 120 },
           { field: 'taxCostPrice', title: '含税成本价（元）', align: 'right', width: 140 },
           {
             field: 'stockNum',

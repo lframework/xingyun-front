@@ -1,3 +1,5 @@
+import { OrderPayTypeBo } from '@/api/sc/pay-type/model/orderPayTypeBo';
+
 export interface GetPurchaseReturnBo {
   /**
    * ID
@@ -187,7 +189,7 @@ export interface ReturnDetailBo {
   returnNum: number;
 
   /**
-   * 采购价
+   * 退货价
    */
   purchasePrice: number;
 

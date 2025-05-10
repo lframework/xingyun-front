@@ -187,7 +187,7 @@
               return cellValue ? '是' : '否';
             },
           },
-          { field: 'purchasePrice', title: '采购价（元）', align: 'right', width: 120 },
+          { field: 'purchasePrice', title: '退货价（元）', align: 'right', width: 120 },
           {
             field: 'receiveNum',
             title: '收货数量',

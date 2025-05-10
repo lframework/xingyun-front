@@ -87,7 +87,7 @@ export interface ReturnDetailBo {
    */
   returnNum: number;
   /**
-   * 采购价
+   * 退货价
    */
   purchasePrice: number;
   /**
