@@ -396,11 +396,14 @@
             {
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isInteger(value)) {
-                    return Promise.reject('销项税率（%）必须为整数');
+                  if (!this.$utils.isFloat(value)) {
+                    return Promise.reject('进项税率（%）必须为数字');
                   }
-                  if (!this.$utils.isIntegerGeZero(value)) {
-                    return Promise.reject('销项税率（%）不允许小于0');
+                  if (!this.$utils.isFloatGeZero(value)) {
+                    return Promise.reject('进项税率（%）不允许小于0');
+                  }
+                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                    return Promise.reject('进项税率（%）最多允许2位小数');
                   }
                 }
 
@@ -413,11 +416,14 @@
             {
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isInteger(value)) {
-                    return Promise.reject('销项税率（%）必须为整数');
+                  if (!this.$utils.isFloat(value)) {
+                    return Promise.reject('销项税率（%）必须为数字');
                   }
-                  if (!this.$utils.isIntegerGeZero(value)) {
+                  if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('销项税率（%）不允许小于0');
+                  }
+                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                    return Promise.reject('销项税率（%）最多允许2位小数');
                   }
                 }
 
