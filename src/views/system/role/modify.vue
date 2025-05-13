@@ -21,6 +21,9 @@
         <a-form-item label="名称" name="name">
           <a-input v-model:value.trim="formData.name" allow-clear />
         </a-form-item>
+        <a-form-item label="分类" name="categoryId">
+          <sys-role-category-selector v-model:value="formData.categoryId" />
+        </a-form-item>
         <a-form-item label="权限" name="permission">
           <a-input v-model:value.trim="formData.permission" allow-clear />
         </a-form-item>
@@ -76,6 +79,7 @@
         rules: {
           code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入名称' }],
+          categoryId: [{ required: true, message: '请选择分类' }],
           available: [{ required: true, message: '请选择状态' }],
         },
       };
@@ -104,6 +108,7 @@
           permission: '',
           available: '',
           description: '',
+          categoryId: '',
         };
       },
       // 提交表单事件

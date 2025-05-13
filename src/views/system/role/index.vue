@@ -1,115 +1,130 @@
 <template>
   <div v-permission="['system:role:query']">
-    <page-wrapper content-full-height fixed-height>
-      <!-- 数据列表 -->
-      <vxe-grid
-        id="Role"
-        ref="grid"
-        resizable
-        show-overflow
-        highlight-hover-row
-        keep-source
-        row-id="id"
-        :custom-config="{}"
-        :proxy-config="proxyConfig"
-        :columns="tableColumn"
-        :toolbar-config="toolbarConfig"
-        :pager-config="{}"
-        :loading="loading"
-        height="auto"
-      >
-        <template #form>
-          <j-border>
-            <j-form bordered label-width="80px" @collapse="$refs.grid.refreshColumn()">
-              <j-form-item label="编号">
-                <a-input v-model:value="searchFormData.code" allow-clear />
-              </j-form-item>
-              <j-form-item label="名称">
-                <a-input v-model:value="searchFormData.name" allow-clear />
-              </j-form-item>
-              <j-form-item label="状态">
-                <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
-                    :key="item.code"
-                    :value="item.code"
-                    >{{ item.desc }}</a-select-option
-                  >
-                </a-select>
-              </j-form-item>
-            </j-form>
-          </j-border>
-        </template>
-        <!-- 工具栏 -->
-        <template #toolbar_buttons>
-          <a-space>
-            <a-button type="primary" :icon="h(SearchOutlined)" @click="search">查询</a-button>
-            <a-button
-              v-permission="['system:role:add']"
-              type="primary"
-              :icon="h(PlusOutlined)"
-              @click="$refs.addDialog.openDialog()"
-              >新增</a-button
-            >
-            <a-button
-              v-permission="['system:role:permission']"
-              :icon="h(ThunderboltOutlined)"
-              @click="batchSetting"
-              >批量授权</a-button
-            >
-            <a-button
-              v-permission="['system:role:permission']"
-              :icon="h(SettingOutlined)"
-              @click="batchDataPermmission"
-              >批量数据权限</a-button
-            >
-            <a-dropdown v-permission="['system:role:modify']">
-              <template #overlay>
-                <a-menu @click="handleCommand">
-                  <a-menu-item key="batchEnable" :icon="h(CheckOutlined)">批量启用 </a-menu-item>
-                  <a-menu-item key="batchUnable" :icon="h(StopOutlined)">批量停用 </a-menu-item>
-                </a-menu>
-              </template>
-              <a-button>更多<DownOutlined /></a-button>
-            </a-dropdown>
-          </a-space>
-        </template>
+    <a-row>
+      <a-col :span="4">
+        <page-wrapper content-full-height fixed-height content-class="!mr-0">
+          <category-tree style="height: 100%" @change="(e) => doSearch(e)" />
+        </page-wrapper>
+      </a-col>
+      <a-col :span="20">
+        <page-wrapper content-full-height fixed-height>
+          <!-- 数据列表 -->
+          <vxe-grid
+            id="Role"
+            ref="grid"
+            resizable
+            show-overflow
+            highlight-hover-row
+            keep-source
+            row-id="id"
+            :custom-config="{}"
+            :proxy-config="proxyConfig"
+            :columns="tableColumn"
+            :toolbar-config="toolbarConfig"
+            :pager-config="{}"
+            :loading="loading"
+            height="auto"
+          >
+            <template #form>
+              <j-border>
+                <j-form bordered label-width="80px" @collapse="$refs.grid.refreshColumn()">
+                  <j-form-item label="编号">
+                    <a-input v-model:value="searchFormData.code" allow-clear />
+                  </j-form-item>
+                  <j-form-item label="名称">
+                    <a-input v-model:value="searchFormData.name" allow-clear />
+                  </j-form-item>
+                  <j-form-item label="状态">
+                    <a-select
+                      v-model:value="searchFormData.available"
+                      placeholder="全部"
+                      allow-clear
+                    >
+                      <a-select-option
+                        v-for="item in $enums.AVAILABLE.values()"
+                        :key="item.code"
+                        :value="item.code"
+                        >{{ item.desc }}</a-select-option
+                      >
+                    </a-select>
+                  </j-form-item>
+                </j-form>
+              </j-border>
+            </template>
+            <!-- 工具栏 -->
+            <template #toolbar_buttons>
+              <a-space>
+                <a-button type="primary" :icon="h(SearchOutlined)" @click="search">查询</a-button>
+                <a-button
+                  v-permission="['system:role:add']"
+                  type="primary"
+                  :icon="h(PlusOutlined)"
+                  @click="$refs.addDialog.openDialog()"
+                  >新增</a-button
+                >
+                <a-button
+                  v-permission="['system:role:permission']"
+                  :icon="h(ThunderboltOutlined)"
+                  @click="batchSetting"
+                  >批量授权</a-button
+                >
+                <a-button
+                  v-permission="['system:role:permission']"
+                  :icon="h(SettingOutlined)"
+                  @click="batchDataPermmission"
+                  >批量数据权限</a-button
+                >
+                <a-dropdown v-permission="['system:role:modify']">
+                  <template #overlay>
+                    <a-menu @click="handleCommand">
+                      <a-menu-item key="batchEnable" :icon="h(CheckOutlined)"
+                        >批量启用
+                      </a-menu-item>
+                      <a-menu-item key="batchUnable" :icon="h(StopOutlined)">批量停用 </a-menu-item>
+                    </a-menu>
+                  </template>
+                  <a-button>更多<DownOutlined /></a-button>
+                </a-dropdown>
+              </a-space>
+            </template>
 
-        <!-- 状态 列自定义内容 -->
-        <template #available_default="{ row }">
-          <available-tag :available="row.available" />
-        </template>
+            <!-- 状态 列自定义内容 -->
+            <template #available_default="{ row }">
+              <available-tag :available="row.available" />
+            </template>
 
-        <!-- 操作 列自定义内容 -->
-        <template #action_default="{ row }">
-          <table-action outside :actions="createActions(row)" />
-        </template>
-      </vxe-grid>
+            <!-- 操作 列自定义内容 -->
+            <template #action_default="{ row }">
+              <table-action outside :actions="createActions(row)" />
+            </template>
+          </vxe-grid>
 
-      <!-- 新增窗口 -->
-      <add ref="addDialog" @confirm="search" />
+          <!-- 新增窗口 -->
+          <add ref="addDialog" @confirm="search" />
 
-      <!-- 修改窗口 -->
-      <modify :id="id" ref="updateDialog" @confirm="search" />
+          <!-- 修改窗口 -->
+          <modify :id="id" ref="updateDialog" @confirm="search" />
 
-      <!-- 查看窗口 -->
-      <detail :id="id" ref="viewDialog" />
+          <!-- 查看窗口 -->
+          <detail :id="id" ref="viewDialog" />
 
-      <!-- 授权窗口 -->
-      <permission ref="permissionDialog" :ids="ids" @confirm="search" />
+          <!-- 授权窗口 -->
+          <permission ref="permissionDialog" :ids="ids" @confirm="search" />
 
-      <!-- 数据权限窗口 -->
-      <data-permission
-        ref="dataPermissionDialog"
-        :biz-id="id"
-        :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
-      />
-      <batch-data-permission
-        ref="batchDataPermissionDialog"
-        :biz-ids="ids"
-        :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
-      />
-    </page-wrapper>
+          <!-- 数据权限窗口 -->
+          <data-permission
+            ref="dataPermissionDialog"
+            :biz-id="id"
+            :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
+          />
+          <batch-data-permission
+            ref="batchDataPermissionDialog"
+            :biz-ids="ids"
+            :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
+          />
+        </page-wrapper>
+      </a-col>
+    </a-row>
 
     <!-- 批量操作 -->
     <batch-handler
@@ -155,10 +170,12 @@
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/system/role';
+  import CategoryTree from './category-tree.vue';
 
   export default defineComponent({
     name: 'Role',
     components: {
+      CategoryTree,
       Add,
       Modify,
       Detail,
@@ -187,6 +204,7 @@
         // 查询列表的查询条件
         searchFormData: {
           available: true,
+          categoryId: '',
         },
         // 工具栏配置
         toolbarConfig: {
@@ -355,6 +373,19 @@
 
         this.ids = records.map((item) => item.id);
         this.$nextTick(() => this.$refs.batchDataPermissionDialog.openDialog());
+      },
+      doSearch(categoryId) {
+        if (!this.$utils.isEmpty(categoryId)) {
+          if (this.$utils.isEqualWithStr(0, categoryId)) {
+            this.searchFormData.categoryId = '';
+          } else {
+            this.searchFormData.categoryId = categoryId;
+          }
+        } else {
+          this.searchFormData.categoryId = '';
+        }
+
+        this.search();
       },
     },
   });

@@ -7,7 +7,7 @@
     :style="{ top: '20px' }"
     :footer="null"
   >
-    <div v-if="visible" v-permission="['system:role:add']" v-loading="loading">
+    <div v-if="visible" v-loading="loading">
       <a-form
         ref="form"
         :label-col="{ span: 4 }"
@@ -16,26 +16,10 @@
         :rules="rules"
       >
         <a-form-item label="编号" name="code">
-          <a-input-group compact>
-            <a-input
-              v-model:value.trim="formData.code"
-              style="width: calc(100% - 75px)"
-              allow-clear
-            />
-            <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
-          </a-input-group>
+          <a-input v-model:value.trim="formData.code" allow-clear />
         </a-form-item>
         <a-form-item label="名称" name="name">
           <a-input v-model:value.trim="formData.name" allow-clear />
-        </a-form-item>
-        <a-form-item label="分类" name="categoryId">
-          <sys-role-category-selector v-model:value="formData.categoryId" />
-        </a-form-item>
-        <a-form-item label="权限" name="permission">
-          <a-input v-model:value.trim="formData.permission" allow-clear />
-        </a-form-item>
-        <a-form-item label="备注" name="description">
-          <a-textarea v-model:value.trim="formData.description" />
         </a-form-item>
         <div class="form-modal-footer">
           <a-space>
@@ -52,8 +36,7 @@
 <script>
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
-  import * as api from '@/api/system/role';
-  import { generateCode } from '@/api/components';
+  import * as api from '@/api/system/role-category';
 
   export default defineComponent({
     components: {},
@@ -69,7 +52,6 @@
         rules: {
           code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入名称' }],
-          categoryId: [{ required: true, message: '请选择分类' }],
         },
       };
     },
@@ -94,11 +76,7 @@
       initFormData() {
         this.formData = {
           code: '',
-          permission: '',
-          description: '',
           name: '',
-          shortName: '',
-          categoryId: '',
         };
       },
       // 提交表单事件
@@ -110,8 +88,6 @@
               .create(this.formData)
               .then(() => {
                 this.$msg.createSuccess('新增成功！');
-                // 初始化表单数据
-                this.initFormData();
                 this.$emit('confirm');
                 this.visible = false;
               })
@@ -125,13 +101,6 @@
       open() {
         // 初始化表单数据
         this.initFormData();
-
-        this.onGenerateCode();
-      },
-      onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.ROLE.code).then((res) => {
-          this.formData.code = res;
-        });
       },
     },
   });
