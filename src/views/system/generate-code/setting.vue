@@ -67,7 +67,7 @@
               <a-form
                 :label-col="{ span: 4 }"
                 :wrapper-col="{ span: 16 }"
-                v-if="formData.type === 1"
+                v-if="formData.type === '1'"
               >
                 <a-form-item label="时间格式">
                   <a-input v-model:value="formData.pattern" allow-clear />
@@ -76,7 +76,7 @@
               <a-form
                 :label-col="{ span: 4 }"
                 :wrapper-col="{ span: 16 }"
-                v-if="formData.type === 2"
+                v-if="formData.type === '2'"
               >
                 <a-form-item label="可选字符">
                   <a-input v-model:value="formData.pool" allow-clear />
@@ -88,7 +88,7 @@
               <a-form
                 :label-col="{ span: 4 }"
                 :wrapper-col="{ span: 16 }"
-                v-if="formData.type === 3"
+                v-if="formData.type === '3'"
               >
                 <a-form-item label="唯一标识">
                   <a-input v-model:value="formData.key" allow-clear />
@@ -99,14 +99,20 @@
                 <a-form-item label="步长">
                   <a-input v-model:value="formData.step" allow-clear />
                 </a-form-item>
-                <a-form-item label="过期秒数">
+                <a-form-item label="滚动方式">
+                  <a-select v-model:value="formData.expireType">
+                    <a-select-option :value="0">按日期滚动</a-select-option>
+                    <a-select-option :value="1">按过期秒数滚动</a-select-option>
+                  </a-select>
+                </a-form-item>
+                <a-form-item label="过期秒数" v-if="formData.expireType === 1">
                   <a-input v-model:value="formData.expireSeconds" allow-clear />
                 </a-form-item>
               </a-form>
               <a-form
                 :label-col="{ span: 4 }"
                 :wrapper-col="{ span: 16 }"
-                v-if="formData.type === 4"
+                v-if="formData.type === '4'"
               >
                 <a-form-item label="随机个数">
                   <a-input v-model:value="formData.len" allow-clear />
@@ -115,7 +121,7 @@
               <a-form
                 :label-col="{ span: 4 }"
                 :wrapper-col="{ span: 16 }"
-                v-if="formData.type === 6"
+                v-if="formData.type === '6'"
               >
                 <a-form-item label="字符">
                   <a-input v-model:value="formData.val" allow-clear />
@@ -211,7 +217,9 @@
             this.list = configArr.map((item) => {
               return Object.assign({}, item, {
                 id: this.$utils.uuid(),
-                name: this.ruleList.filter((r) => r.type === item.type)[0].name,
+                name: this.ruleList.filter((r) => {
+                  return r.type === item.type;
+                })[0].name,
               });
             });
           })
@@ -226,23 +234,24 @@
         let initConfig = {
           id: this.$utils.uuid(),
         };
-        if (e.type === 1) {
+        if (e.type === '1') {
           initConfig.pattern = 'yyyyMMddHHmmss';
         }
-        if (e.type === 2) {
+        if (e.type === '2') {
           initConfig.pool = 'abcdefghijklmnopqrstuvwxyz';
           initConfig.len = 1;
         }
-        if (e.type === 3) {
+        if (e.type === '3') {
           initConfig.key = this.$utils.uuid();
           initConfig.len = 10;
           initConfig.step = 1;
+          initConfig.expireType = 0;
           initConfig.expireSeconds = 24 * 60 * 60;
         }
-        if (e.type === 4) {
+        if (e.type === '4') {
           initConfig.len = 1;
         }
-        if (e.type === 6) {
+        if (e.type === '6') {
           initConfig.val = 'A';
         }
         return Object.assign({}, e, initConfig);
@@ -290,7 +299,7 @@
 
         for (let i = 0; i < this.list.length; i++) {
           const node = this.list[i];
-          if (node.type === 2) {
+          if (node.type === '2') {
             if (this.$utils.isEmpty(node.pool)) {
               this.$msg.createError('【' + node.name + '】' + '可选字符不能为空！');
               return false;
@@ -305,7 +314,7 @@
               this.$msg.createError('【' + node.name + '】' + '随机个数必须是数字类型并且大于0！');
               return false;
             }
-          } else if (node.type === 3) {
+          } else if (node.type === '3') {
             if (this.$utils.isEmpty(node.key)) {
               this.$msg.createError('【' + node.name + '】' + '唯一标识不能为空！');
               return false;
@@ -331,16 +340,25 @@
               return false;
             }
 
-            if (this.$utils.isEmpty(node.expireSeconds)) {
-              this.$msg.createError('【' + node.name + '】' + '过期秒数不能为空！');
+            if (this.$utils.isEmpty(node.expireType)) {
+              this.$msg.createError('【' + node.name + '】' + '滚动方式不能为空！');
               return false;
             }
 
-            if (!this.$utils.isIntegerGtZero(node.expireSeconds)) {
-              this.$msg.createError('【' + node.name + '】' + '过期秒数必须是数字类型并且大于0！');
-              return false;
+            if (node.expireType === 1) {
+              if (this.$utils.isEmpty(node.expireSeconds)) {
+                this.$msg.createError('【' + node.name + '】' + '过期秒数不能为空！');
+                return false;
+              }
+
+              if (!this.$utils.isIntegerGtZero(node.expireSeconds)) {
+                this.$msg.createError(
+                  '【' + node.name + '】' + '过期秒数必须是数字类型并且大于0！',
+                );
+                return false;
+              }
             }
-          } else if (node.type === 4) {
+          } else if (node.type === '4') {
             if (this.$utils.isEmpty(node.len)) {
               this.$msg.createError('【' + node.name + '】' + '随机个数不能为空！');
               return false;
@@ -350,7 +368,7 @@
               this.$msg.createError('【' + node.name + '】' + '随机个数必须是数字类型并且大于0！');
               return false;
             }
-          } else if (node.type === 6) {
+          } else if (node.type === '6') {
             if (this.$utils.isEmpty(node.val)) {
               this.$msg.createError('【' + node.name + '】' + '字符不能为空！');
               return false;
