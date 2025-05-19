@@ -53,6 +53,13 @@
         >
           <user-selector v-model:value="formData.userIds" :multiple="true" />
         </a-form-item>
+        <a-form-item
+          v-if="$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(formData.receiverType)"
+          label="用户组"
+          name="userGroupIds"
+        >
+          <user-group-selector v-model:value="formData.userGroupIds" :multiple="true" />
+        </a-form-item>
         <a-form-item label="消息类型" name="messageType">
           <a-checkbox-group v-model:value="formData.messageType" :options="messageTypeOptions" />
         </a-form-item>
@@ -93,6 +100,7 @@
           deptIds: [{ required: true, message: '请选择部门' }],
           roleIds: [{ required: true, message: '请选择角色' }],
           userIds: [{ required: true, message: '请选择用户' }],
+          userGroupIds: [{ required: true, message: '请选择用户组' }],
         },
       };
     },
@@ -133,6 +141,7 @@
           deptIds: [],
           roleIds: [],
           userIds: [],
+          userGroupIds: [],
         };
       },
       // 提交表单事件
@@ -159,6 +168,12 @@
               this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(this.formData.receiverType)
             ) {
               params.receiverIds = this.formData.deptIds;
+            } else if (
+              this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(
+                this.formData.receiverType,
+              )
+            ) {
+              params.receiverIds = this.formData.userGroupIds;
             }
             api
               .create(params)

@@ -53,6 +53,13 @@
         >
           <user-selector v-model:value="formData.userIds" :multiple="true" />
         </a-form-item>
+        <a-form-item
+          v-if="$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(formData.receiverType)"
+          label="用户组"
+          name="userGroupIds"
+        >
+          <user-group-selector v-model:value="formData.userGroupIds" :multiple="true" />
+        </a-form-item>
         <a-form-item label="消息类型" name="messageType">
           <a-checkbox-group v-model:value="formData.messageType" :options="messageTypeOptions" />
         </a-form-item>
@@ -62,7 +69,7 @@
               v-for="item in $enums.AVAILABLE.values()"
               :key="item.code"
               :value="item.code"
-            >{{ item.desc }}</a-select-option
+              >{{ item.desc }}</a-select-option
             >
           </a-select>
         </a-form-item>
@@ -88,16 +95,6 @@
   export default defineComponent({
     // 使用组件
     components: {},
-    computed: {
-      messageTypeOptions() {
-        return this.$enums.SYS_NOTIFY_GROUP_MESSAGE_TYPE.values().map((item) => {
-          return {
-            label: item.desc,
-            value: item.code,
-          };
-        });
-      },
-    },
     props: {
       id: {
         type: String,
@@ -120,9 +117,20 @@
           deptIds: [{ required: true, message: '请选择部门' }],
           roleIds: [{ required: true, message: '请选择角色' }],
           userIds: [{ required: true, message: '请选择用户' }],
+          userGroupIds: [{ required: true, message: '请选择用户组' }],
           available: [{ required: true, message: '请选择状态' }],
         },
       };
+    },
+    computed: {
+      messageTypeOptions() {
+        return this.$enums.SYS_NOTIFY_GROUP_MESSAGE_TYPE.values().map((item) => {
+          return {
+            label: item.desc,
+            value: item.code,
+          };
+        });
+      },
     },
     created() {
       this.initFormData();
@@ -150,6 +158,7 @@
           deptIds: [],
           roleIds: [],
           userIds: [],
+          userGroupIds: [],
           available: '',
         };
       },
@@ -158,14 +167,7 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             this.loading = true;
-            const params = {
-              id: this.id,
-              name: this.formData.name,
-              receiverType: this.formData.receiverType,
-              messageType: this.formData.messageType,
-              description: this.formData.description,
-              available: this.formData.available,
-            };
+            const params = this.formData;
 
             if (
               this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER.equalsCode(this.formData.receiverType)
@@ -179,6 +181,12 @@
               this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(this.formData.receiverType)
             ) {
               params.receiverIds = this.formData.deptIds;
+            } else if (
+              this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(
+                this.formData.receiverType,
+              )
+            ) {
+              params.receiverIds = this.formData.userGroupIds;
             }
             api
               .update(params)
@@ -217,8 +225,13 @@
               this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(data.receiverType)
             ) {
               data.deptIds = data.receiverIds;
+            } else if (
+              this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(data.receiverType)
+            ) {
+              data.userGroupIds = data.receiverIds;
             }
             this.formData = data;
+            console.log(this.formData);
           })
           .finally(() => {
             this.loading = false;

@@ -4,15 +4,6 @@
       ref="selector"
       :request="getList"
       :load="getLoad"
-      :table-column="[
-        { field: 'name', title: '名称', minWidth: 160 },
-        {
-          field: 'available',
-          title: '状态',
-          width: 80,
-          slots: { default: 'available_default' },
-        },
-      ]"
       :request-params="_requestParams"
       v-bind="$attrs"
     >
@@ -20,6 +11,9 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
+            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="编号">
+              <a-input v-model:value="searchParams.code" />
+            </j-form-item>
             <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="名称">
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
@@ -54,10 +48,10 @@
 <script>
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-  import * as api from '@/api/system/notify-group';
+  import * as api from '@/api/system/user-group';
 
   export default defineComponent({
-    name: 'SysNotifyGroupSelector',
+    name: 'UserGroupSelector',
     components: { SearchOutlined },
     props: {
       requestParams: {
@@ -70,6 +64,7 @@
     data() {
       return {
         searchParams: {
+          code: '',
           name: '',
           available: this.$enums.AVAILABLE.ENABLE.code,
         },
@@ -90,7 +85,7 @@
         });
       },
       getLoad(ids) {
-        return api.loadNotifyGroup(ids);
+        return api.loadUserGroup(ids);
       },
     },
   });
