@@ -143,6 +143,7 @@
           >
           <a-button
             v-permission="['purchase:order:approve']"
+            v-if="!requireBpm"
             type="primary"
             :loading="loading"
             @click="directApprovePassOrder"
@@ -167,6 +168,7 @@
     AlertOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/order';
+  import * as configApi from '@/api/sc/purchase/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
 
   export default defineComponent({
@@ -261,6 +263,7 @@
           },
         ],
         tableData: [],
+        requireBpm: false,
       };
     },
     computed: {},
@@ -291,6 +294,10 @@
         };
 
         this.tableData = [];
+
+        configApi.get().then((res) => {
+          this.requireBpm = res.purchaseRequireBpm;
+        });
       },
       emptyProduct() {
         return {

@@ -147,12 +147,6 @@
       multiple: { type: Boolean, default: false },
       placeholder: { type: String, default: '' },
       title: { type: String, default: '选择' },
-      option: {
-        type: Object,
-        default: () => {
-          return { label: 'name', value: 'id' };
-        },
-      },
       columnOption: {
         type: Object,
         default: () => {

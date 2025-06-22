@@ -25,12 +25,6 @@
   export default defineComponent({
     name: 'PrintDesigner',
     components: { Viewport, Panel },
-    setup() {
-      const printDesignerStore = usePrintDesignerStore();
-      return {
-        printDesignerStore,
-      };
-    },
     props: {
       widgetOptions: {
         type: Array,
@@ -51,6 +45,12 @@
         type: Object,
         default: () => ({}),
       },
+    },
+    setup() {
+      const printDesignerStore = usePrintDesignerStore();
+      return {
+        printDesignerStore,
+      };
     },
     created() {
       this.initTemp(this.tempValue, this.widgetOptions);

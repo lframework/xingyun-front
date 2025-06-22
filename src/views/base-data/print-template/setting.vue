@@ -13,7 +13,13 @@
       v-permission="['base-data:print-template:modify']"
       v-loading="loading"
     >
-      <print-designer ref="designer" :temp-value="value" :widget-options="widgets" :demo-data="demoData" @save="submit" />
+      <print-designer
+        ref="designer"
+        :temp-value="value"
+        :widget-options="widgets"
+        :demo-data="demoData"
+        @save="submit"
+      />
     </div>
   </a-modal>
 </template>

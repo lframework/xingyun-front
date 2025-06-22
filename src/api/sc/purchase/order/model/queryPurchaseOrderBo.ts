@@ -55,6 +55,11 @@ export interface QueryPurchaseOrderBo {
   totalAmount: number;
 
   /**
+   * 关联的审批流程ID
+   */
+  flowInstanceId: string;
+
+  /**
    * 备注
    */
   description: string;

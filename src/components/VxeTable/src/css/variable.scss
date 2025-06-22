@@ -1,6 +1,7 @@
-[data-vxe-ui-theme=light]{
+[data-vxe-ui-theme='light'] {
   /*font*/
-  --vxe-ui-font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  --vxe-ui-font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,
+    Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 
   /*font size*/
   --vxe-ui-font-size-large: 16px;
@@ -45,12 +46,16 @@
   --vxe-ui-input-number-disabled-color: #e4e7ed;
   --vxe-ui-input-date-festival-color: #999999;
   --vxe-ui-input-date-festival-important-color: var(--vxe-ui-font-primary-color);
-  --vxe-ui-input-date-notice-background-color: #FF0000;
+  --vxe-ui-input-date-notice-background-color: #ff0000;
   --vxe-ui-input-date-picker-hover-background-color: #f2f6fc;
   --vxe-ui-input-date-picker-selected-color: #fff;
   --vxe-ui-input-date-time-confirm-button-color: #fff;
-  --vxe-ui-input-date-picker-festival-selected-color: var(--vxe-ui-input-date-picker-selected-color);
-  --vxe-ui-input-date-picker-notice-selected-background-color: var(--vxe-ui-input-date-picker-selected-color);
+  --vxe-ui-input-date-picker-festival-selected-color: var(
+    --vxe-ui-input-date-picker-selected-color
+  );
+  --vxe-ui-input-date-picker-notice-selected-background-color: var(
+    --vxe-ui-input-date-picker-selected-color
+  );
   --vxe-ui-input-date-extra-color: #67c23a;
   --vxe-ui-input-date-extra-important-color: #fd2222;
   --vxe-ui-input-date-title-height-default: 30px;
@@ -132,7 +137,7 @@
   --vxe-ui-select-option-height-medium: 28px;
   --vxe-ui-select-option-height-small: 26px;
   --vxe-ui-select-option-height-mini: 24px;
-  --vxe-ui-select-empty-color: #C0C4CC;
+  --vxe-ui-select-empty-color: #c0c4cc;
   --vxe-ui-select-title-color: #909399;
 
   /*pulldown*/
@@ -145,7 +150,7 @@
   --vxe-ui-switch-font-color: #fff;
   --vxe-ui-switch-icon-background-color: #fff;
   --vxe-ui-switch-open-background-color: var(--vxe-ui-font-primary-color);
-  --vxe-ui-switch-disabled-background-color: rgba(0,0,0,0.15) ;
+  --vxe-ui-switch-disabled-background-color: rgba(0, 0, 0, 0.15);
 
   /*upload*/
   --vxe-ui-upload-file-button-border-style: dashed;
@@ -160,7 +165,7 @@
 
   /*tree*/
   --vxe-ui-tree-node-height: 2em;
-  --vxe-ui-tree-node-line-color:#909399;
+  --vxe-ui-tree-node-line-color: #909399;
   --vxe-ui-tree-node-line-style: dotted;
   --vxe-ui-tree-node-line-width: 1px;
 
@@ -189,7 +194,7 @@
   --vxe-ui-font-tinge-color: #d4d5d7;
   --vxe-ui-font-lighten-color: #797b80;
   --vxe-ui-font-darken-color: #47494c;
-  --vxe-ui-font-disabled-color: #BFBFBF;
+  --vxe-ui-font-disabled-color: #bfbfbf;
 
   /*font status color*/
   --vxe-ui-font-primary-color: #0960bd;
@@ -230,7 +235,7 @@
   --vxe-ui-status-error-disabled-color: #f5a8a8;
 
   /*base*/
-  --vxe-ui-base-popup-border-color: #DADCE0;
+  --vxe-ui-base-popup-border-color: #dadce0;
   --vxe-ui-base-popup-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.16);
   --vxe-ui-base-drag-background-color: #dde9fd;
   --vxe-ui-base-active-background-color: #e6f4ff;
@@ -241,11 +246,11 @@
 
   /*input*/
   --vxe-ui-input-border-color: #dcdfe6;
-  --vxe-ui-input-placeholder-color: #C0C4CC;
+  --vxe-ui-input-placeholder-color: #c0c4cc;
   --vxe-ui-input-disabled-background-color: #f3f3f3;
 
   /*modal*/
-  --vxe-ui-modal-header-background-color: #F8F8F8;
+  --vxe-ui-modal-header-background-color: #f8f8f8;
 
   /*tabs*/
   --vxe-ui-tabs-card-header-background-color: #f5f7fa;
@@ -272,10 +277,10 @@
   --vxe-ui-list-design-table-header-background-color: #f8f8f9;
 
   /*switch*/
-  --vxe-ui-switch-close-background-color: rgba(0,0,0,0.35);
+  --vxe-ui-switch-close-background-color: rgba(0, 0, 0, 0.35);
 
   /*upload*/
-  --vxe-ui-upload-drag-over-background-color:rgba(255,255,200,0.8);
+  --vxe-ui-upload-drag-over-background-color: rgba(255, 255, 200, 0.8);
 
   /*tree*/
   --vxe-ui-tree-node-hover-background-color: #f5f7fa;
@@ -292,9 +297,8 @@
   --vxe-ui-table-column-padding-small: 4px 0;
   --vxe-ui-table-column-padding-mini: 3px 0;
 
-  --vxe-ui-table-row-height-default:34px;
-  --vxe-ui-table-row-height-medium:30px;
-  --vxe-ui-table-row-height-small:26px;
-  --vxe-ui-table-row-height-mini:22px;
+  --vxe-ui-table-row-height-default: 34px;
+  --vxe-ui-table-row-height-medium: 30px;
+  --vxe-ui-table-row-height-small: 26px;
+  --vxe-ui-table-row-height-mini: 22px;
 }
-

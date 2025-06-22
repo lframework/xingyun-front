@@ -14,7 +14,7 @@ import { isString, isArray } from '/@/utils/is';
 import { getToken } from '/@/utils/auth';
 import { deepMerge, setObjToUrlParams } from '/@/utils';
 import { formatRequestDate, joinTimestamp } from './helper';
-import {createError, createErrorDialog} from '@/hooks/web/msg';
+import { createError, createErrorDialog } from '@/hooks/web/msg';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;

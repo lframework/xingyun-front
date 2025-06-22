@@ -50,17 +50,17 @@
   import { usePrintDesignerStore } from '../../store/printDesigner';
 
   export default defineComponent({
-    setup() {
-      const printDesignerStore = usePrintDesignerStore();
-      return {
-        printDesignerStore,
-      };
-    },
     props: {
       activeElement: {
         type: Object,
         required: true,
       },
+    },
+    setup() {
+      const printDesignerStore = usePrintDesignerStore();
+      return {
+        printDesignerStore,
+      };
     },
     data() {
       return {

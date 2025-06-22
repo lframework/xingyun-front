@@ -1,10 +1,6 @@
 <template>
   <transition enter-active-class="animated fadeIn">
-    <div
-      v-show="visible && itemShow"
-      :class="'j-form-item'"
-      :style="{ width: itemWidth }"
-    >
+    <div v-show="visible && itemShow" :class="'j-form-item'" :style="{ width: itemWidth }">
       <div
         v-if="!hiddenLabel && !(autoHiddenLabel && !$slots.default)"
         :class="_bordered ? 'j-form-item-label-border' : ''"

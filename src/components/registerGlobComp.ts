@@ -32,6 +32,7 @@ import DataDicPicker from '@/components/DataDicPicker';
 import BatchHandler from '@/components/BatchHandler';
 import PrintDesigner, { lodop } from '@/components/PrintDesigner';
 import printDesignerInstall from '@/components/PrintDesigner/install.js';
+import bpmApproveInstall from '@/components/BpmApprove';
 
 export async function registerGlobComp(app: App) {
   app
@@ -57,7 +58,8 @@ export async function registerGlobComp(app: App) {
     .component('OrderTimeLine', OrderTimeLine)
     .component('DataDicPicker', DataDicPicker)
     .component('BatchHandler', BatchHandler)
-    .component('PrintDesigner', PrintDesigner);
+    .component('PrintDesigner', PrintDesigner)
+    .use(bpmApproveInstall);
 
   VxeUI.use(VxeUIPluginRenderAntd);
   VXETable.setup(componentSetting.vxeTable);

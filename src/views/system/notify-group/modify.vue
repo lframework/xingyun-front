@@ -231,7 +231,6 @@
               data.userGroupIds = data.receiverIds;
             }
             this.formData = data;
-            console.log(this.formData);
           })
           .finally(() => {
             this.loading = false;

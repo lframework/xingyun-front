@@ -5,7 +5,7 @@ import { QuerySysSiteMessageVo } from '@/api/system/site-message/model/querySysS
 import { QuerySysSiteMessageByUserVo } from '@/api/system/site-message/model/querySysSiteMessageByUserVo';
 import { QueryMySysSiteMessageBo } from '@/api/system/site-message/model/queryMySysSiteMessageBo';
 import { SiteMessageDto } from '@/api/system/site-message/model/siteMessageDto';
-import {GetSysSiteMessageBo} from "@/api/system/site-message/model/getSysSiteMessageBo";
+import { GetSysSiteMessageBo } from '@/api/system/site-message/model/getSysSiteMessageBo';
 
 const baseUrl = '/system/message/site';
 const region = 'cloud-api';

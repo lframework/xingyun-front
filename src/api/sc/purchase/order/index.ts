@@ -99,12 +99,13 @@ export function exportList(data: QueryPurchaseOrderVo): Promise<void> {
 /**
  * 查询详情
  */
-export function get(id: string): Promise<GetPurchaseOrderBo> {
+export function get(id: string, isForm: boolean): Promise<GetPurchaseOrderBo> {
   return defHttp.get<GetPurchaseOrderBo>(
     {
       url: baseUrl,
       params: {
         id,
+        isForm,
       },
     },
     {

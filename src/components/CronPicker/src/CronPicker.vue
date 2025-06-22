@@ -68,7 +68,6 @@
         this.$emit('change', this.cron);
       },
       handleOK(val, a) {
-        console.log(val);
         this.cron = val;
         this.$emit('update:value', this.cron);
         // this.$emit("change", Object.assign({},  this.cron));

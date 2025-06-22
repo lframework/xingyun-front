@@ -1,7 +1,7 @@
 import { CommonSettings } from '../CommonSettings';
 import { defaultStyle, LodopStyle } from '@/components/PrintDesigner/src/constants/LodopStyle';
 import { px2mm, px2pt } from '../../utils/calc';
-import {isEmpty} from "@/utils/utils";
+import { isEmpty } from '@/utils/utils';
 
 export const widgetName: string = 'braid-table';
 

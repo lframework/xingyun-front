@@ -11,6 +11,21 @@
               :model="formData"
               :rules="rules"
             >
+              <j-border class="m-2" title="采购订单设置">
+                <a-form-item label="采购订单是否开启审批流程" name="purchaseRequireBpm">
+                  <a-select v-model:value="formData.purchaseRequireBpm" placeholder="">
+                    <a-select-option :value="true">是</a-select-option>
+                    <a-select-option :value="false">否</a-select-option>
+                  </a-select>
+                </a-form-item>
+                <a-form-item
+                  v-if="formData.purchaseRequireBpm"
+                  label="审批流程"
+                  name="purchaseBpmProcessId"
+                >
+                  <flow-definition-selector v-model:value="formData.purchaseBpmProcessId" />
+                </a-form-item>
+              </j-border>
               <j-border class="m-2" title="采购收货设置">
                 <a-form-item label="采购收货单是否关联采购订单" name="receiveRequirePurchase">
                   <a-select v-model:value="formData.receiveRequirePurchase" placeholder="">
@@ -93,6 +108,8 @@
           purchaseReturnMultipleRelateReceive: [
             { required: true, message: '请选择采购退货单是否多次关联采购收货单' },
           ],
+          purchaseRequireBpm: [{ required: true, message: '请选择采购订单是否开启审批流程' }],
+          purchaseBpmProcessId: [{ required: true, message: '请选择审批流程' }],
         },
       };
     },

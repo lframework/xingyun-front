@@ -8,12 +8,8 @@ import { QueryPrintTemplateVo } from '@/api/base-data/print-template/model/query
 import { QueryPrintTemplateBo } from '@/api/base-data/print-template/model/queryPrintTemplateBo';
 import { GetPrintTemplateSettingBo } from '@/api/base-data/print-template/model/getPrintTemplateSettingBo';
 import { UpdatePrintTemplateSettingVo } from '@/api/base-data/print-template/model/updatePrintTemplateSettingVo';
-import {
-  UpdatePrintTemplateDemoDataVo
-} from "@/api/base-data/print-template/model/updatePrintTemplateDemoDataVo";
-import {
-  GetPrintTemplateCompSettingBo
-} from "@/api/base-data/print-template/model/getPrintTemplateCompSettingBo";
+import { UpdatePrintTemplateDemoDataVo } from '@/api/base-data/print-template/model/updatePrintTemplateDemoDataVo';
+import { GetPrintTemplateCompSettingBo } from '@/api/base-data/print-template/model/getPrintTemplateCompSettingBo';
 
 const baseUrl = '/basedata/print/template';
 const region = 'cloud-api';

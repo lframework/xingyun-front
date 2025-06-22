@@ -60,6 +60,7 @@
         rules: {
           name: [{ required: true, message: '请输入名称' }],
           apiSecret: [{ required: true, message: '请输入Api密钥' }],
+          tenantId: [{ required: true, message: '请选择租户' }],
         },
       };
     },

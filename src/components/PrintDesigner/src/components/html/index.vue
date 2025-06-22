@@ -24,17 +24,17 @@
 
   export default defineComponent({
     name: widgetName,
-    setup() {
-      const printDesignerStore = usePrintDesignerStore();
-      return {
-        printDesignerStore,
-      };
-    },
     props: {
       val: {
         type: Object,
         required: true,
       },
+    },
+    setup() {
+      const printDesignerStore = usePrintDesignerStore();
+      return {
+        printDesignerStore,
+      };
     },
     methods: {
       updateText(e, uuid) {

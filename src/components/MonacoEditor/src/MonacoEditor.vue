@@ -143,7 +143,6 @@
       watch(
         () => props.readOnly,
         () => {
-          console.log('props.readOnly', props.readOnly);
           editor.updateOptions({ readOnly: props.readOnly });
         },
         { deep: true },

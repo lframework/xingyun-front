@@ -16,7 +16,7 @@ export const multiplePageMix = {
   methods: {
     openChildPage(path: string) {
       const refreshStore = useRefreshStore();
-      refreshStore.setCacheFlag(path, this.$route.path);
+      refreshStore.setCacheFlag(path.split('?')[0], this.$route.path);
       this.$router.push(path);
     },
     closeCurrentPage(refreshParent: boolean = true): void {

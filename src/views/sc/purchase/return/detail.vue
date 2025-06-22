@@ -325,7 +325,7 @@
         api
           .print(this.id)
           .then((res) => {
-            this.lodopPreview(this.$enums.PRINT_TYPE.PURCHASE_RETURN.code, res)
+            this.lodopPreview(this.$enums.PRINT_TYPE.PURCHASE_RETURN.code, res);
           })
           .finally(() => {
             this.loading = false;

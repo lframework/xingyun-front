@@ -77,6 +77,7 @@
         // 表单校验规则
         rules: {
           name: [{ required: true, message: '请输入名称' }],
+          tenantId: [{ required: true, message: '请选择租户' }],
           available: [{ required: true, message: '请选择状态' }],
         },
       };

@@ -146,8 +146,6 @@
         </template>
       </vxe-grid>
 
-      <order-time-line :id="id" />
-
       <j-border title="合计">
         <j-form bordered label-width="140px">
           <j-form-item label="采购数量" :span="6">
@@ -228,6 +226,7 @@
     data() {
       return {
         id: this.$route.params.id,
+        isForm: this.$route.query.isForm || false,
         // 是否显示加载框
         loading: false,
         // 表单数据
@@ -337,7 +336,7 @@
       loadData() {
         this.loading = true;
         api
-          .get(this.id)
+          .get(this.id, this.isForm)
           .then((res) => {
             if (
               !this.$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(res.status) &&
@@ -683,6 +682,7 @@
               description: t.description,
             };
           }),
+          isForm: this.isForm,
         };
 
         this.loading = true;

@@ -91,4 +91,3 @@ export interface OrderDetailBo {
    */
   receiveAmount: number;
 }
-
