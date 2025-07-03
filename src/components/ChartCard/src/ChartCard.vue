@@ -8,7 +8,7 @@
         </span>
       </div>
       <div class="total"
-        ><span><count-to prefix="￥" :startVal="0" :endVal="total" /></span
+        ><span><count-to prefix="￥" :startVal="0" :endVal="total" :decimals="2" /></span
       ></div>
     </div>
     <div class="chart-card-content">
