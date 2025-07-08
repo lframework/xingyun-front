@@ -29,16 +29,16 @@
               <template #form>
                 <j-border>
                   <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
-                    <j-form-item label="流程编号" :span="6">
+                    <j-form-item label="流程编号">
                       <a-input v-model:value="searchFormData.code" allow-clear />
                     </j-form-item>
-                    <j-form-item label="流程名称" :span="6">
+                    <j-form-item label="流程名称">
                       <a-input v-model:value="searchFormData.name" allow-clear />
                     </j-form-item>
-                    <j-form-item label="版本号" :span="6">
+                    <j-form-item label="版本号">
                       <a-input v-model:value="searchFormData.version" allow-clear />
                     </j-form-item>
-                    <j-form-item label="是否发布" :span="6">
+                    <j-form-item label="是否发布">
                       <a-select
                         placeholder="全部"
                         v-model:value="searchFormData.isPublish"
@@ -52,7 +52,7 @@
                         >
                       </a-select>
                     </j-form-item>
-                    <j-form-item label="激活状态" :span="6">
+                    <j-form-item label="激活状态">
                       <a-select
                         placeholder="全部"
                         v-model:value="searchFormData.activityStatus"
@@ -66,7 +66,7 @@
                         >
                       </a-select>
                     </j-form-item>
-                    <j-form-item label="版本号" :span="6">
+                    <j-form-item label="版本号">
                       <a-input v-model:value="searchFormData.version" allow-clear />
                     </j-form-item>
                   </j-form>

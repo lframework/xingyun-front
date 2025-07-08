@@ -1,5 +1,5 @@
 <template>
-  <page-wrapper content-full-height fixed-height>
+  <div class="app-simple-container">
     <div v-permission="['system:dept:query']">
       <a-row :gutter="20">
         <a-col :span="14">
@@ -10,14 +10,14 @@
                 type="primary"
                 :icon="h(PlusOutlined)"
                 @click="$refs.addDialog.openDialog()"
-                >新增</a-button
+              >新增</a-button
               >
               <a-button :icon="h(ReloadOutlined)" @click="getDeptTrees"> 刷新</a-button>
               <a-button
                 v-permission="['system:dept:permission']"
                 :icon="h(SettingOutlined)"
                 @click="batchDataPermmission"
-                >批量数据权限</a-button
+              >批量数据权限</a-button
               >
               <a-dropdown>
                 <template #overlay>
@@ -140,7 +140,7 @@
         @confirm="getDeptTrees"
       />
     </div>
-  </page-wrapper>
+  </div>
 </template>
 
 <script>

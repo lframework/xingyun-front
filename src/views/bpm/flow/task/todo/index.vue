@@ -22,13 +22,13 @@
           <template #form>
             <j-border>
               <j-form label-width="60px" @collapse="$refs.grid.refreshColumn()">
-                <j-form-item label="流程编号" :span="6">
+                <j-form-item label="流程编号">
                   <a-input v-model:value="searchFormData.flowCode" allow-clear />
                 </j-form-item>
-                <j-form-item label="流程名称" :span="6">
+                <j-form-item label="流程名称">
                   <a-input v-model:value="searchFormData.flowName" allow-clear />
                 </j-form-item>
-                <j-form-item label="标题" :span="6">
+                <j-form-item label="标题">
                   <a-input v-model:value="searchFormData.title" allow-clear />
                 </j-form-item>
               </j-form>

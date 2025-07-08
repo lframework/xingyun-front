@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-app-container">
+  <div class="app-card-container">
     <div v-loading="loading" v-permission="['base-data:product:info:add']">
       <a-form
         ref="form"

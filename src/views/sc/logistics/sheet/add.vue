@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-app-container">
+  <div class="app-card-container">
     <div v-permission="['logistics:sheet:add']" v-loading="loading">
       <j-border title="业务单据">
         <!-- 数据列表 -->

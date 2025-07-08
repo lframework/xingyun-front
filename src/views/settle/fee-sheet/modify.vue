@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-app-container">
+  <div class="app-card-container">
     <div v-permission="['settle:fee-sheet:modify']" v-loading="loading">
       <j-border>
         <j-form bordered>

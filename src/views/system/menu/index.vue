@@ -50,10 +50,10 @@
         <template #form>
           <j-border>
             <j-form bordered label-width="60px" @collapse="$refs.grid.refreshColumn()">
-              <j-form-item label="标题" :span="6">
+              <j-form-item label="标题">
                 <a-input v-model:value="searchFormData.searchMenuName" allow-clear />
               </j-form-item>
-              <j-form-item label="状态" :span="6">
+              <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option :value="$enums.AVAILABLE.ENABLE.code">{{
                     '仅显示' + $enums.AVAILABLE.ENABLE.desc

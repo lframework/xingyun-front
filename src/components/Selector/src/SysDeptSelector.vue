@@ -70,7 +70,7 @@
         set() {},
       },
       _requestParams() {
-        return Object.assign({}, this.requestParams);
+        return Object.assign({ available: true }, this.requestParams);
       },
     },
     created() {
@@ -78,6 +78,7 @@
     },
     methods: {
       getList(params) {
+        console.log(params);
         return api.selector(params);
       },
       loadOptions() {

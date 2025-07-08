@@ -29,10 +29,10 @@
               <template #form>
                 <j-border>
                   <j-form bordered label-width="60px" @collapse="$refs.grid.refreshColumn()">
-                    <j-form-item label="名称" :span="6">
+                    <j-form-item label="名称">
                       <a-input v-model:value="searchFormData.name" allow-clear />
                     </j-form-item>
-                    <j-form-item label="状态" :span="6">
+                    <j-form-item label="状态">
                       <a-select
                         v-model:value="searchFormData.available"
                         placeholder="全部"

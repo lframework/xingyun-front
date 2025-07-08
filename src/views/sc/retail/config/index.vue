@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-app-container">
+  <div class="app-card-container">
     <div v-permission="['retail:config:modify']">
       <a-row>
         <a-col :md="16" :sm="24">

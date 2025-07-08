@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-app-container">
+  <div class="app-card-container">
     <div v-permission="['purchase:order:add']" v-loading="loading">
       <!-- 数据列表 -->
       <vxe-grid

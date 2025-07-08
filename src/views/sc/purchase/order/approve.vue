@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-app-container">
+  <div class="app-card-container">
     <div v-permission="['purchase:order:approve']" v-loading="loading">
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="detail" tab="详情"

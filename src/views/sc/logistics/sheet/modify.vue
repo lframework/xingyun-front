@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-app-container">
+  <div class="app-card-container">
     <div v-permission="['logistics:sheet:modify']" v-loading="loading">
       <j-border>
         <j-form bordered>

@@ -17,7 +17,12 @@
         <a-input v-model:value.trim="formData.shortName" allow-clear />
       </a-form-item>
       <a-form-item label="上级部门" name="parentId">
-        <sys-dept-selector v-model:value="formData.parentId" :only-final="false" />
+        <sys-dept-selector
+          v-if="inited"
+          v-model:value="formData.parentId"
+          :request-params="{ available: formData.available ? true : undefined }"
+          :only-final="false"
+        />
       </a-form-item>
       <a-form-item label="状态" name="available">
         <a-select v-model:value="formData.available" allow-clear>
@@ -72,6 +77,7 @@
       return {
         // 是否显示加载框
         loading: false,
+        inited: false,
         // 表单数据
         formData: {},
         // 表单校验规则
@@ -141,6 +147,7 @@
           .get(this.id)
           .then((data) => {
             this.formData = data;
+            this.inited = true;
           })
           .finally(() => {
             this.loading = false;

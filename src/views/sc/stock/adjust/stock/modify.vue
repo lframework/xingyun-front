@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-app-container">
+  <div class="app-card-container">
     <div v-permission="['stock:adjust:modify']" v-loading="loading">
       <j-border>
         <j-form
