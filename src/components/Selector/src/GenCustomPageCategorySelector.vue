@@ -5,11 +5,10 @@
       :request="getList"
       :load="getLoad"
       :table-column="[
-        { field: 'code', title: '编号', width: 100 },
-        { field: 'name', title: '名称', minWidth: 160, treeNode: true },
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'name', title: '名称', minWidth: 160 },
       ]"
       :request-params="_requestParams"
-      :handle-search="handleSearch"
       v-bind="$attrs"
     >
       <template #form>
@@ -43,7 +42,7 @@
 <script>
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-  import * as api from '@/api/development/custom/list-category';
+  import * as api from '@/api/development/custom/page-category';
 
   export default defineComponent({
     name: 'GenCustomPageCategorySelector',
@@ -76,40 +75,7 @@
         });
       },
       getLoad(ids) {
-        return api.loadCustomListCategory(ids);
-      },
-      handleSearch(datas) {
-        const filterCode = this.$utils.toString(this.searchParams.code).trim();
-        const filterName = this.$utils.toString(this.searchParams.name).trim();
-        const isFilterCode = !this.$utils.isEmpty(filterCode);
-        const isFilterName = !this.$utils.isEmpty(filterName);
-        if (isFilterCode || isFilterName) {
-          const options = { key: 'id', parentKey: 'parentId', children: 'children', strict: true };
-          const tableData = this.$utils.searchTree(
-            datas,
-            (item) => {
-              let filterResult = true;
-
-              if (isFilterCode) {
-                filterResult &= this.$utils.isEqualWithStr(
-                  this.$utils.toString(item['code']),
-                  filterName,
-                );
-              }
-
-              if (isFilterName) {
-                filterResult &= this.$utils.toString(item['name']).indexOf(filterName) > -1;
-              }
-
-              return filterResult;
-            },
-            options,
-          );
-
-          return tableData;
-        } else {
-          return datas;
-        }
+        return api.loadCustomPageCategory(ids);
       },
     },
   });

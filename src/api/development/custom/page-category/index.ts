@@ -5,15 +5,20 @@ import { QueryGenCustomPageCategoryBo } from '@/api/development/custom/page-cate
 import { GetGenCustomPageCategoryBo } from '@/api/development/custom/page-category/model/getGenCustomPageCategoryBo';
 import { UpdateGenCustomPageCategoryVo } from '@/api/development/custom/page-category/model/updateGenCustomPageCategoryVo';
 import { CreateGenCustomPageCategoryVo } from '@/api/development/custom/page-category/model/createGenCustomPageCategoryVo';
+import { PageResult } from '@/api/model/pageResult';
+import { GenCustomPageCategorySelectorVo } from '@/api/development/custom/page-category/model/genCustomPageCategorySelectorVo';
 
 const baseUrl = '/gen/custom/page/category';
 const selectorBaseUrl = '/selector/gen';
 const region = 'cloud-api';
 
-export function selector(): Promise<GenCustomPageCategorySelectorBo[]> {
-  return defHttp.get<GenCustomPageCategorySelectorBo[]>(
+export function selector(
+  params: GenCustomPageCategorySelectorVo,
+): Promise<PageResult<GenCustomPageCategorySelectorBo>> {
+  return defHttp.get<PageResult<GenCustomPageCategorySelectorBo>>(
     {
       url: selectorBaseUrl + '/custom/page/category',
+      params,
     },
     {
       region,

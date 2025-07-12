@@ -14,10 +14,7 @@
             <a-input v-model:value="formData.name" allow-clear />
           </j-form-item>
           <j-form-item :span="12" label="分类">
-            <gen-custom-page-category-selector
-              v-model:value="formData.categoryId"
-              :only-final="false"
-            />
+            <gen-custom-page-category-selector v-model:value="formData.categoryId" />
           </j-form-item>
           <j-form-item :span="24" label="备注" :content-nest="false">
             <a-textarea v-model:value="formData.description" />

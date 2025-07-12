@@ -13,9 +13,4 @@ export interface GenCustomPageCategorySelectorBo {
    * 名称
    */
   name: string;
-
-  /**
-   * 父级ID
-   */
-  parentId: string;
 }
