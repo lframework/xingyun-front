@@ -27,7 +27,7 @@
         this.$refs.importer.openDialog();
       },
       downloadTemplate() {
-        return api.downloadImportPayTypeTemplate();
+        return api.downloadImportTemplate();
       },
       upload(params) {
         return api.importExcel(params);
