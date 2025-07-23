@@ -74,6 +74,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
+            v-if="$utils.isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
@@ -82,6 +83,7 @@
             @search="(e) => queryProduct(e, row)"
             @select="(e) => handleSelectProduct(rowIndex, e, row)"
           />
+          <span v-else>{{ row.productName }}</span>
         </template>
 
         <!-- 采购价 列自定义内容 -->

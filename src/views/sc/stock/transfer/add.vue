@@ -46,7 +46,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="!row.isFixed"
+            v-if="!row.isFixed && $utils.isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
