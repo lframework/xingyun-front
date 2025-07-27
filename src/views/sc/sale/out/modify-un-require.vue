@@ -565,7 +565,6 @@
             });
           });
       },
-      // 批量录入采购价
       batchInputTaxPrice() {
         const records = this.$refs.grid.getCheckboxRecords();
         if (this.$utils.isEmpty(records)) {

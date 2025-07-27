@@ -550,7 +550,7 @@
 
         for (let i = 0; i < records.length; i++) {
           if (records[i].isGift) {
-            this.$msg.createError('第' + (i + 1) + '行商品为赠品，不允许录入采购价！');
+            this.$msg.createError('第' + (i + 1) + '行商品为赠品，不允许录入销售价！');
             return;
           }
         }

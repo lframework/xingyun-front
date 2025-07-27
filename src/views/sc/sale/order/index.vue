@@ -319,7 +319,7 @@
       },
       // 删除订单
       deleteOrder(row) {
-        this.$msg.createConfirm('对选中的采购单据执行删除操作？').then(() => {
+        this.$msg.createConfirm('对选中的销售单据执行删除操作？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
@@ -339,13 +339,13 @@
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
         if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的采购单据！');
+          this.$msg.createError('请选择要执行操作的销售单据！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (this.$enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个采购单据已审核通过，不允许执行删除操作！');
+            this.$msg.createError('第' + (i + 1) + '个销售单据已审核通过，不允许执行删除操作！');
             return;
           }
         }
@@ -363,13 +363,13 @@
       batchApprovePass() {
         const records = this.$refs.grid.getCheckboxRecords();
         if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的采购单据！');
+          this.$msg.createError('请选择要执行操作的销售单据！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (this.$enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个采购单已审核通过，不允许继续执行审核！');
+            this.$msg.createError('第' + (i + 1) + '个销售单已审核通过，不允许继续执行审核！');
             return;
           }
         }
@@ -382,18 +382,18 @@
       batchApproveRefuse() {
         const records = this.$refs.grid.getCheckboxRecords();
         if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的采购单据！');
+          this.$msg.createError('请选择要执行操作的销售单据！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (this.$enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个采购单据已审核通过，不允许继续执行审核！');
+            this.$msg.createError('第' + (i + 1) + '个销售单据已审核通过，不允许继续执行审核！');
             return;
           }
 
           if (this.$enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个采购单据已审核拒绝，不允许继续执行审核！');
+            this.$msg.createError('第' + (i + 1) + '个销售单据已审核拒绝，不允许继续执行审核！');
             return;
           }
         }

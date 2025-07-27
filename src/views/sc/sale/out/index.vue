@@ -450,7 +450,7 @@
 
         for (let i = 0; i < records.length; i++) {
           if (this.$enums.SALE_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个采购单已审核通过，不允许继续执行审核！');
+            this.$msg.createError('第' + (i + 1) + '个销售出库单已审核通过，不允许继续执行审核！');
             return;
           }
         }

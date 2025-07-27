@@ -174,7 +174,7 @@
 
       <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
 
-      <!-- 采购收货查看窗口 -->
+      <!-- 销售出库单查看窗口 -->
       <out-sheet-detail :id="outSheetId" ref="viewOutSheetDetailDialog" />
 
       <!-- 批量操作 -->
@@ -448,7 +448,7 @@
 
         for (let i = 0; i < records.length; i++) {
           if (this.$enums.SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个采购单已审核通过，不允许继续执行审核！');
+            this.$msg.createError('第' + (i + 1) + '个销售退货单已审核通过，不允许继续执行审核！');
             return;
           }
         }
