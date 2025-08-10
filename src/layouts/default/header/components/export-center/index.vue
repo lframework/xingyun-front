@@ -88,7 +88,7 @@
   import { useDesign } from '@/hooks/web/useDesign';
   import eventBus from '@/events/eventBus';
   import * as api from '@/api/export-task';
-  import { uuid } from '@/utils/utils';
+  import { uuid, isEmpty } from '@/utils/utils';
   import { ExportingExportTaskBo } from '@/api/export-task/model/exportingExportTaskBo';
   import projectSetting from '@/settings/projectSetting';
   import SuccessList from './SuccessList.vue';
@@ -137,6 +137,13 @@
       eventBusOff.value.push(eventBus.$on(eventBus.$pullEvent.EXPORT_TASK, onExportTaskSummary));
 
       function onExportTaskSummary(e) {
+        if (isEmpty(e)) {
+          e = {
+            unFinishedCount: 0,
+            successCount: 0,
+            failCount: 0,
+          };
+        }
         const { unFinishedCount, successCount, failCount } = e;
         unFinishedSummary.value = unFinishedCount;
         successSummary.value = successCount;
