@@ -13,7 +13,8 @@
       @change="handleChange"
     >
       <div v-if="fileList.length < 1">
-        <a-icon style="font-size: 30px; color: #999" :type="loading ? 'loading' : 'picture'" />
+        <LoadingOutlined :style="{ fontSize: '30px' }" v-if="loading" />
+        <PictureOutlined :style="{ fontSize: '30px' }" v-else />
         <div style="margin-top: 8px; color: #666"> 上传图片 </div>
       </div>
     </a-upload>
@@ -27,12 +28,15 @@
   import { defHttp } from '@/utils/http/axios';
   import * as api from '@/api/components';
   import { ContentTypeEnum } from '@/enums/httpEnum';
+  import { LoadingOutlined, PictureOutlined } from '@ant-design/icons-vue';
 
   export default defineComponent({
     name: 'JImgUpload',
-
     componentName: 'JImgUpload',
-
+    components: {
+      LoadingOutlined,
+      PictureOutlined,
+    },
     props: {
       value: {
         type: String,
