@@ -624,7 +624,7 @@
             .filter((item) => item.isRequired)
             .every((item) => {
               if (that.$utils.isEmpty(item.text)) {
-                that.$msg.error(item.name + '不能为空！');
+                that.$msg.createError(item.name + '不能为空！');
                 valid = false;
                 return false;
               }
