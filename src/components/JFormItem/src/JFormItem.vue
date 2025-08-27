@@ -11,7 +11,7 @@
           <span v-if="_required" class="j-form-item-required"></span>
           <slot name="label"></slot>
           <span v-if="!$slots.label">{{ label }}</span>
-          <span>{{ '：' }}</span>
+          <span v-if="_colon">{{ '：' }}</span>
         </div>
       </div>
       <div class="j-form-item-content" :class="_bordered ? 'j-form-item-content-border' : ''">
@@ -152,6 +152,9 @@
       },
       _contentNest() {
         return this.contentNest && (this.form?.contentNest ?? this.contentNest);
+      },
+      _colon() {
+        return this.colon && (this.form?.colon ?? this.colon);
       },
     },
   });

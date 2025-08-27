@@ -59,6 +59,10 @@
         type: Boolean,
         default: true,
       },
+      colon: {
+        type: Boolean,
+        default: true,
+      },
     },
     setup() {
       const collapseStatus = ref(false);
