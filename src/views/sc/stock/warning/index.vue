@@ -73,6 +73,19 @@
                 v-permission="['stock:warning:notify']"
                 >设置消息通知组</a-button
               >
+              <a-button
+                v-permission="['stock:warning:import']"
+                :icon="h(CloudUploadOutlined)"
+                @click="$refs.importer.openDialog()"
+                >导入Excel</a-button
+              >
+              <a-button
+                v-permission="['stock:warning:delete']"
+                danger
+                :icon="h(DeleteOutlined)"
+                @click="batchDelete"
+                >批量删除</a-button
+              >
             </a-space>
           </template>
 
@@ -95,6 +108,24 @@
     <modify :id="id" ref="updateDialog" @confirm="search" />
 
     <notify ref="notifyDialog" />
+
+    <stock-warning-importer ref="importer" @confirm="search" />
+
+    <batch-handler
+      ref="batchDeleteHandlerDialog"
+      :table-column="[
+        { field: 'scCode', title: '仓库编号', width: 100, sortable: true },
+        { field: 'scName', title: '仓库名称', width: 140 },
+        { field: 'productCode', title: '商品编号', width: 100, sortable: true },
+        { field: 'productName', title: '商品名称', width: 140 },
+        { field: 'maxLimit', title: '预警上限', width: 100, sortable: true, align: 'right' },
+        { field: 'minLimit', title: '预警下限', width: 100, sortable: true, align: 'right' },
+      ]"
+      title="批量删除"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchDelete"
+      @confirm="search"
+    />
   </div>
 </template>
 
@@ -104,7 +135,13 @@
   import Modify from './modify.vue';
   import Notify from './notify.vue';
   import * as api from '@/api/sc/stock/warning';
-  import { SearchOutlined, PlusOutlined, SettingOutlined } from '@ant-design/icons-vue';
+  import {
+    SearchOutlined,
+    PlusOutlined,
+    SettingOutlined,
+    CloudUploadOutlined,
+    DeleteOutlined,
+  } from '@ant-design/icons-vue';
   import StoreCenterSelector from '@/components/Selector/src/StoreCenterSelector.vue';
 
   export default defineComponent({
@@ -121,6 +158,8 @@
         SearchOutlined,
         PlusOutlined,
         SettingOutlined,
+        CloudUploadOutlined,
+        DeleteOutlined,
       };
     },
     data() {
@@ -172,6 +211,7 @@
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     created() {},
@@ -226,6 +266,21 @@
             },
           },
         ];
+      },
+      // 批量删除
+      batchDelete() {
+        const records = this.$refs.grid.getCheckboxRecords();
+        if (this.$utils.isEmpty(records)) {
+          this.$msg.createError('请选择要删除的库存预警信息！');
+          return;
+        }
+
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
+      },
+      doBatchDelete(row) {
+        return api.batchDelete(row.id);
       },
     },
   });

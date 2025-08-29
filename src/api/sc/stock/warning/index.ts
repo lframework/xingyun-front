@@ -1,5 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import { ContentTypeEnum } from '@/enums/httpEnum';
+import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
 import { PageResult } from '@/api/model/pageResult';
 import { QueryProductStockWarningBo } from '@/api/sc/stock/warning/model/queryProductStockWarningBo';
 import { QueryProductStockWarningVo } from '@/api/sc/stock/warning/model/queryProductStockWarningVo';
@@ -98,15 +98,18 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function deleteByIds(ids: string[]): Promise<void> {
+export function batchDelete(id: string): Promise<void> {
   return defHttp.delete<void>(
     {
-      url: baseUrl + '/batch',
-      data: ids,
+      url: baseUrl,
+      data: {
+        id,
+      },
     },
     {
+      errorMessageMode: 'none',
       region,
-      contentType: ContentTypeEnum.JSON,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
     },
   );
 }
@@ -159,6 +162,37 @@ export function deleteSetting(id: string): Promise<void> {
     {
       region,
       contentType: ContentTypeEnum.FORM_URLENCODED,
+    },
+  );
+}
+
+/**
+ * 下载导入模板
+ */
+export function downloadImportTemplate(): Promise<void> {
+  return defHttp.get<void>(
+    {
+      url: baseUrl + '/import/template',
+    },
+    {
+      responseType: ResponseEnum.BLOB,
+      region,
+    },
+  );
+}
+
+/**
+ * 导入
+ */
+export function importExcel(data: { id: string; file: Blob }): Promise<void> {
+  return defHttp.post<void>(
+    {
+      url: baseUrl + '/import',
+      data,
+    },
+    {
+      contentType: ContentTypeEnum.BLOB,
+      region,
     },
   );
 }
