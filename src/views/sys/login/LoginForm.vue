@@ -9,7 +9,11 @@
       v-show="getShow"
       @keypress.enter="handleLogin"
     >
-      <a-form-item name="tenantName" class="enter-x" v-if="requireTenant">
+      <a-form-item
+        name="tenantName"
+        class="enter-x"
+        v-if="requireTenant.enable && $utils.isEmpty(requireTenant.tenantId)"
+      >
         <a-input
           size="large"
           ref="tenantInput"
@@ -66,13 +70,14 @@
   import { LoginStateEnum, useFormRules, useFormValid, useLoginState } from './useLogin';
   import { createSuccessTip } from '@/hooks/web/msg';
   import { welcomeMsg } from '@/utils/utils';
+  import { TenantRequireBo } from '@/api/sys/model/tenantRequireBo';
 
   const userStore = useUserStore();
   const { getLoginState } = useLoginState();
   const { getFormRules } = useFormRules();
   const formRef = ref();
   const loading = ref(false);
-  const requireTenant = ref(false);
+  const requireTenant = ref({} as TenantRequireBo);
 
   const formData = reactive({
     tenantName: '测试租户',
@@ -106,7 +111,11 @@
     const data = await validForm();
     if (!data) return;
 
-    const captchaRequire = await userStore.getCaptchaRequire(data.tenantName, data.username);
+    const captchaRequire = await userStore.getCaptchaRequire(
+      data.tenantName,
+      data.username,
+      requireTenant.value.tenantId,
+    );
     if (captchaRequire) {
       loginCaptchaDialog.value.openDialog();
     } else {
@@ -119,6 +128,7 @@
     try {
       loading.value = true;
       const userInfo = await userStore.login({
+        tenantId: requireTenant.value.tenantId,
         tenantName: tenantName,
         password: password,
         username: username,

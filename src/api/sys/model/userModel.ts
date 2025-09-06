@@ -2,6 +2,7 @@
  * @description: Login interface parameters
  */
 export interface LoginParams {
+  tenantId: number;
   tenantName: string;
   username: string;
   password: string;

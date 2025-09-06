@@ -1,6 +1,7 @@
 import { defHttp } from '/@/utils/http/axios';
 import { CaptchaModel, LoginParams, LoginResultModel } from './model/userModel';
 import { ContentTypeEnum } from '@/enums/httpEnum';
+import { TenantRequireBo } from '@/api/sys/model/tenantRequireBo';
 
 enum Api {
   Login = '/auth/login',
@@ -37,11 +38,12 @@ export function getCaptchaApi() {
   return defHttp.get<CaptchaModel>({ url: Api.Captcha }, { region });
 }
 
-export function getCaptchaRequireApi(tenantName: string, username: string) {
+export function getCaptchaRequireApi(tenantName: string, username: string, tenantId?: number) {
   return defHttp.post<boolean>(
     {
       url: Api.CaptchaRequire,
       params: {
+        tenantId,
         tenantName,
         username,
       },
@@ -51,7 +53,7 @@ export function getCaptchaRequireApi(tenantName: string, username: string) {
 }
 
 export function getTenantRequireApi() {
-  return defHttp.get<boolean>(
+  return defHttp.get<TenantRequireBo>(
     {
       url: Api.TenantRequire,
     },

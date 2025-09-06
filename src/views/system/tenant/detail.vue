@@ -15,7 +15,10 @@
         <a-descriptions-item label="名称" :span="2">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item label="Jdbc Url" :span="4">
+        <a-descriptions-item label="绑定域名" :span="2">
+          {{ formData.serverName }}
+        </a-descriptions-item>
+        <a-descriptions-item label="Jdbc Url" :span="2">
           {{ formData.jdbcUrl }}
         </a-descriptions-item>
         <a-descriptions-item label="Jdbc用户名" :span="2">

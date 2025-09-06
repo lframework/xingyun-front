@@ -15,6 +15,7 @@ import {
 } from '/@/api/sys/user';
 import { createConfirm } from '@/hooks/web/msg';
 import { router } from '/@/router';
+import { TenantRequireBo } from '@/api/sys/model/tenantRequireBo';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -150,15 +151,16 @@ export const useUserStore = defineStore({
      * 是否需要验证码
      * @param tenantName
      * @param username
+     * @param tenantId
      */
-    getCaptchaRequire(tenantName: string, username: string): Promise<boolean> {
-      return getCaptchaRequireApi(tenantName, username);
+    getCaptchaRequire(tenantName: string, username: string, tenantId?: number): Promise<boolean> {
+      return getCaptchaRequireApi(tenantName, username, tenantId);
     },
 
     /**
      * 是否需要租户
      */
-    getTenantRequire(): Promise<boolean> {
+    getTenantRequire(): Promise<TenantRequireBo> {
       return getTenantRequireApi();
     },
   },
