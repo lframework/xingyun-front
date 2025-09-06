@@ -83,11 +83,15 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/purchase/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { createSuccess } from '@/hooks/web/msg';
+  import FlowDefinitionSelector from '@/components/Selector/FlowDefinitionSelector.vue';
 
   export default defineComponent({
     name: 'PurchaseConfig',
     // 使用组件
-    components: {},
+    components: {
+      FlowDefinitionSelector,
+    },
     mixins: [multiplePageMix],
     props: {},
     data() {
@@ -149,7 +153,7 @@
             api
               .update(this.formData)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
               })
               .finally(() => {
                 this.loading = false;

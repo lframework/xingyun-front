@@ -43,12 +43,9 @@
         </a-form-item>
         <a-form-item label="性别" name="gender">
           <a-select v-model:value="formData.gender">
-            <a-select-option
-              v-for="item in $enums.GENDER.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-select-option
-            >
+            <a-select-option v-for="item in GENDER.values()" :key="item.code" :value="item.code">{{
+              item.desc
+            }}</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="邮箱" name="email">
@@ -78,9 +75,22 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/system/user';
   import { generateCode } from '@/api/components';
+  import { createSuccess } from '@/hooks/web/msg';
+  import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
+  import SysRoleSelector from '@/components/Selector/SysRoleSelector.vue';
+  import { GENDER } from '@/enums/biz/gender';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      SysDeptSelector,
+      SysRoleSelector,
+    },
+    setup() {
+      return {
+        GENDER,
+      };
+    },
     data() {
       return {
         // 是否可见
@@ -130,7 +140,7 @@
           depts: [],
           roles: [],
           password: '',
-          gender: this.$enums.GENDER.UNKNOWN.code,
+          gender: GENDER.UNKNOWN.code,
           email: '',
           telephone: '',
           description: '',
@@ -153,7 +163,7 @@
             api
               .create(params)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');
@@ -173,7 +183,7 @@
         this.onGenerateCode();
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.USER.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.USER.code).then((res) => {
           this.formData.code = res;
         });
       },

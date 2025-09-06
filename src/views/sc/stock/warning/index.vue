@@ -46,7 +46,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.AVAILABLE.values()"
+                      v-for="item in AVAILABLE.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -142,15 +142,26 @@
     CloudUploadOutlined,
     DeleteOutlined,
   } from '@ant-design/icons-vue';
-  import StoreCenterSelector from '@/components/Selector/src/StoreCenterSelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import ProductSelector from '@/components/Selector/ProductSelector.vue';
+  import { isEmpty, buildSortPageVo } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import StockWarningImporter from '@/components/Importor/StockWarningImporter.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'SysGenerateCode',
     components: {
       StoreCenterSelector,
+      ProductSelector,
       Add,
       Modify,
       Notify,
+      StockWarningImporter,
+      AvailableTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -160,6 +171,8 @@
         SettingOutlined,
         CloudUploadOutlined,
         DeleteOutlined,
+        isEmpty,
+        AVAILABLE,
       };
     },
     data() {
@@ -173,7 +186,7 @@
           productId: '',
           updateTimeStart: '',
           updateTimeEnd: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -221,12 +234,12 @@
         this.$refs.grid.commitProxy('reload');
       },
       deleteRow(id) {
-        this.$msg.createConfirm('是否确定删除该库存预警？').then(() => {
+        createConfirm('是否确定删除该库存预警？').then(() => {
           this.loading = true;
           api
             .deleteById(id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -237,7 +250,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -270,8 +283,8 @@
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的库存预警信息！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的库存预警信息！');
           return;
         }
 

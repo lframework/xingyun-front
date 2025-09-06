@@ -35,7 +35,7 @@
                     allow-clear
                   >
                     <a-select-option
-                      v-for="item in $enums.TAKE_STOCK_PLAN_STATUS.values()"
+                      v-for="item in TAKE_STOCK_PLAN_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -133,8 +133,19 @@
   import Handle from './handle.vue';
   import Detail from './detail.vue';
   import moment from 'moment';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import { SearchOutlined, PlusOutlined, DownloadOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/plan';
+  import {
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    buildSortPageVo,
+  } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
 
   export default defineComponent({
     name: 'TakeStockPlan',
@@ -143,6 +154,8 @@
       Diff,
       Handle,
       Detail,
+      StoreCenterSelector,
+      UserSelector,
     },
     setup() {
       return {
@@ -150,6 +163,7 @@
         SearchOutlined,
         PlusOutlined,
         DownloadOutlined,
+        TAKE_STOCK_PLAN_STATUS,
       };
     },
     data() {
@@ -163,10 +177,8 @@
           scId: '',
           takeStatus: undefined,
           createBy: '',
-          createTimeStart: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createTimeStart: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createTimeEnd: formatDateTime(getDateTimeWithMaxTime(moment())),
           updateBy: '',
           updateTimeStart: '',
           updateTimeEnd: '',
@@ -189,7 +201,7 @@
             title: '盘点类别',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.TAKE_STOCK_PLAN_TYPE.getDesc(cellValue);
+              return TAKE_STOCK_PLAN_TYPE.getDesc(cellValue);
             },
           },
           { field: 'bizName', title: '盘点内容', width: 120 },
@@ -198,7 +210,7 @@
             title: '盘点状态',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.getDesc(cellValue);
+              return TAKE_STOCK_PLAN_STATUS.getDesc(cellValue);
             },
           },
           { field: 'createTime', title: '创建时间', width: 170, sortable: true },
@@ -234,7 +246,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -243,12 +255,14 @@
         return Object.assign({}, this.searchFormData);
       },
       cancelRow(row) {
-        this.$msg.createConfirm('对选中的盘点任务执行作废操作？').then(() => {
+        createConfirm('对选中的盘点任务执行作废操作？').then(() => {
           this.loading = true;
           api
-            .cancel(row.id)
+            .cancel({
+              id: row.id,
+            })
             .then((res) => {
-              this.$msg.createSuccess('作废成功！');
+              createSuccess('作废成功！');
               this.search();
             })
             .finally(() => {
@@ -257,27 +271,27 @@
         });
       },
       deleteRow(row) {
-        this.$msg
-          .createConfirm('对选中的预先盘点单执行删除操作？注：关联此盘点任务的库存盘点单均会删除。')
-          .then(() => {
-            this.loading = true;
-            api
-              .deleteById(row.id)
-              .then((res) => {
-                this.$msg.createSuccess('删除成功！');
-                this.search();
-              })
-              .finally(() => {
-                this.loading = false;
-              });
-          });
+        createConfirm(
+          '对选中的盘点任务执行删除操作？注：关联此盘点任务的库存盘点单均会删除。',
+        ).then(() => {
+          this.loading = true;
+          api
+            .deleteById(row.id)
+            .then((res) => {
+              createSuccess('删除成功！');
+              this.search();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        });
       },
       exportList() {
         this.loading = true;
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;
@@ -296,7 +310,7 @@
             permission: ['stock:take:plan:create-diff'],
             label: '差异生成',
             ifShow: () => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus);
+              return TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus);
             },
             onClick: () => {
               this.id = row.id;
@@ -307,7 +321,7 @@
             permission: ['stock:take:plan:handle-diff'],
             label: '差异处理',
             ifShow: () => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus);
+              return TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus);
             },
             onClick: () => {
               this.id = row.id;
@@ -320,8 +334,8 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) ||
-                this.$enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)
+                TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) ||
+                TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)
               );
             },
             onClick: () => {
@@ -330,10 +344,10 @@
           },
           {
             permission: ['stock:take:plan:delete'],
-            label: '作废',
+            label: '删除',
             danger: true,
             ifShow: () => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus);
+              return TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus);
             },
             onClick: () => {
               this.deleteRow(row);

@@ -36,6 +36,8 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/generate-code';
+  import { isEmpty, isIntegerGtZero } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -53,8 +55,8 @@
             { required: true, message: '请输入规则ID' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isIntegerGtZero(value)) {
+                if (!isEmpty(value)) {
+                  if (!isIntegerGtZero(value)) {
                     return Promise.reject('规则ID必须为整数');
                   }
                 }
@@ -99,7 +101,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

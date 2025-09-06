@@ -29,6 +29,8 @@
   import clipboard from '@/utils/clipboard';
   import * as api from '@/api/development/data/entity';
   import { CopyOutlined } from '@ant-design/icons-vue';
+  import { keys } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -84,7 +86,7 @@
           .preview(this.id)
           .then((data) => {
             this.formData = data;
-            this.activeName = this.$utils.keys(this.formData)[0];
+            this.activeName = keys(this.formData)[0];
           })
           .finally(() => {
             this.loading = false;
@@ -95,7 +97,7 @@
         api
           .download(this.id)
           .then(() => {
-            this.$msg.createSuccess('下载成功！');
+            createSuccess('下载成功！');
           })
           .finally(() => {
             this.loading = false;

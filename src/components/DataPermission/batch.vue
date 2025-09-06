@@ -9,7 +9,7 @@
   >
     <j-form bordered :enable-collapse="false">
       <j-form-item
-        v-for="item in $enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE.values()"
+        v-for="item in SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE.values()"
         :key="item.code"
         :label="item.desc + '数据权限'"
         :span="24"
@@ -26,7 +26,7 @@
       </a-space>
     </div>
     <data-permission-dragger
-      v-for="item in $enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values()"
+      v-for="item in SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values()"
       :key="item.code"
       :ref="item.desc + 'DataPermission'"
       :model-id="item.code"
@@ -37,11 +37,22 @@
   import { defineComponent } from 'vue';
   import DataPermissionDragger from '@/components/DataPermissionDragger/index.vue';
   import * as api from '@/api/system/data-permission';
+  import { createSuccess } from '@/hooks/web/msg';
+  import {
+    SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE,
+    SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME,
+  } from '@/enums/biz/sysDataPermissionDataPermissionType';
 
   export default defineComponent({
     name: 'BatchDataPermission',
     components: {
       DataPermissionDragger,
+    },
+    setup() {
+      return {
+        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE,
+        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME,
+      };
     },
     props: {
       bizIds: {
@@ -77,7 +88,7 @@
       },
       initFormData() {},
       loadData() {
-        const permissionTypes = this.$enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values();
+        const permissionTypes = SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values();
         for (let i = 0; i < permissionTypes.length; i++) {
           const permissionType = permissionTypes[i];
           this.$refs[permissionType.desc + 'DataPermission'][0].setModel([]);
@@ -91,12 +102,12 @@
       },
       openDraggerDialog(permissionType) {
         this.$refs[
-          this.$enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.getDesc(permissionType.code) +
+          SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.getDesc(permissionType.code) +
             'DataPermission'
         ][0].openDialog();
       },
       submit() {
-        const permissionTypes = this.$enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values();
+        const permissionTypes = SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values();
         const datas = [];
         for (let i = 0; i < permissionTypes.length; i++) {
           const permissionType = permissionTypes[i];
@@ -118,7 +129,7 @@
         api
           .save(datas)
           .then(() => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
             this.closeDialog();
           })
           .finally(() => {

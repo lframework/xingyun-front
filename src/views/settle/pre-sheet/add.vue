@@ -7,7 +7,7 @@
             <supplier-selector
               v-model:value="formData.supplierId"
               :request-params="{
-                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code,
+                manageType: MANAGE_TYPE.DISTRIBUTION.code,
               }"
             />
           </j-form-item>
@@ -92,13 +92,29 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/settle/pre';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    uuid,
+    isEmpty,
+    isFloatGeZero,
+    add,
+    isFloat,
+    isFloatGtZero,
+    isNumberPrecision,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import SettleOutItemSelector from '@/components/Selector/SettleOutItemSelector.vue';
+  import { MANAGE_TYPE } from '@/enums/biz/manageType';
 
   export default defineComponent({
     name: 'AddSupplierSettlePreSheet',
-    components: {},
+    components: {
+      SettleOutItemSelector,
+      SupplierSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
-      return { h, PlusOutlined, DeleteOutlined };
+      return { h, PlusOutlined, DeleteOutlined, MANAGE_TYPE };
     },
     data() {
       return {
@@ -163,15 +179,15 @@
       },
       emptyLine() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           item: '',
           amount: '',
         };
       },
       // 新增项目
       addItem() {
-        if (this.$utils.isEmpty(this.formData.supplierId)) {
-          this.$msg.createError('请先选择供应商！');
+        if (isEmpty(this.formData.supplierId)) {
+          createError('请先选择供应商！');
           return;
         }
         this.tableData.push(this.emptyLine());
@@ -179,14 +195,14 @@
       // 删除项目
       delItem() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的数据！');
           return;
         }
-        this.$msg.createConfirm('是否确定删除选中的数据？').then(() => {
+        createConfirm('是否确定删除选中的数据？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -206,64 +222,59 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.amount) && !this.$utils.isEmpty(t.item);
+            return isFloatGeZero(t.amount) && !isEmpty(t.item);
           })
           .forEach((t) => {
-            totalAmount = this.$utils.add(totalAmount, t.amount);
+            totalAmount = add(totalAmount, t.amount);
           });
 
         this.formData.totalAmount = totalAmount;
       },
       // 校验数据
       validData() {
-        if (this.$utils.isEmpty(this.formData.supplierId)) {
-          this.$msg.createError('供应商不允许为空！');
+        if (isEmpty(this.formData.supplierId)) {
+          createError('供应商不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入项目！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入项目！');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const item = this.tableData[i];
 
-          if (this.$utils.isEmpty(item.id)) {
-            this.$msg.createError('第' + (i + 1) + '行项目不允许为空！');
+          if (isEmpty(item.id)) {
+            createError('第' + (i + 1) + '行项目不允许为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(item.amount)) {
-            this.$msg.createError('第' + (i + 1) + '行金额不允许为空！');
+          if (isEmpty(item.amount)) {
+            createError('第' + (i + 1) + '行金额不允许为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(item.amount)) {
-            this.$msg.createError('第' + (i + 1) + '行金额必须为数字！');
+          if (!isFloat(item.amount)) {
+            createError('第' + (i + 1) + '行金额必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isFloatGtZero(item.amount)) {
-            this.$msg.createError('第' + (i + 1) + '行金额必须大于0！');
+          if (!isFloatGtZero(item.amount)) {
+            createError('第' + (i + 1) + '行金额必须大于0！');
             return false;
           }
 
-          if (!this.$utils.isNumberPrecision(item.amount, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行金额最多允许2位小数！');
+          if (!isNumberPrecision(item.amount, 2)) {
+            createError('第' + (i + 1) + '行金额最多允许2位小数！');
             return false;
           }
         }
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
-        const params = {
+      buildParams() {
+        return {
           supplierId: this.formData.supplierId,
           description: this.formData.description,
           items: this.tableData.map((t) => {
@@ -273,12 +284,20 @@
             };
           }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
           .create(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -293,23 +312,14 @@
           return;
         }
 
-        const params = {
-          supplierId: this.formData.supplierId,
-          description: this.formData.description,
-          items: this.tableData.map((t) => {
-            return {
-              id: t.item,
-              amount: t.amount,
-            };
-          }),
-        };
+        const params = this.buildParams();
 
-        this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
+        createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .directApprovePass(params)
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();

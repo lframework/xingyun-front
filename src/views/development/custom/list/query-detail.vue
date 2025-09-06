@@ -35,7 +35,7 @@
           <template #widthType_default="{ row }">
             <a-select v-model:value="row.widthType" placeholder="">
               <a-select-option
-                v-for="item in $enums.GEN_QUERY_WIDTH_TYPE.values()"
+                v-for="item in GEN_QUERY_WIDTH_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -81,6 +81,9 @@
   import Sortable from 'sortablejs';
   import CodeEditor from './code-editor.vue';
   import { DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, isIntegerGtZero } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import { GEN_QUERY_WIDTH_TYPE } from '@/enums/biz/genQueryWidthType';
 
   export default defineComponent({
     // 使用组件
@@ -88,7 +91,11 @@
       CodeEditor,
       DragOutlined,
     },
-
+    setup() {
+      return {
+        GEN_QUERY_WIDTH_TYPE,
+      };
+    },
     props: {
       columns: {
         type: Array,
@@ -146,7 +153,7 @@
       _columns() {
         const columns = [];
         this.columns
-          .map((item) => (this.$utils.isEmpty(item.columns) ? [] : item.columns))
+          .map((item) => (isEmpty(item.columns) ? [] : item.columns))
           .forEach((item) => {
             columns.push(...item);
           });
@@ -164,30 +171,30 @@
     },
     methods: {
       validDate() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('列表配置不能为空');
+        if (isEmpty(this.tableData)) {
+          createError('列表配置不能为空');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
-          if (this.$utils.isEmpty(column.widthType)) {
-            this.$msg.createError('字段【' + column.name + '】宽度类型不能为空');
+          if (isEmpty(column.widthType)) {
+            createError('字段【' + column.name + '】宽度类型不能为空');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.width)) {
-            this.$msg.createError('字段【' + column.name + '】宽度不能为空');
+          if (isEmpty(column.width)) {
+            createError('字段【' + column.name + '】宽度不能为空');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.sortable)) {
-            this.$msg.createError('字段【' + column.name + '】是否页面排序不能为空');
+          if (isEmpty(column.sortable)) {
+            createError('字段【' + column.name + '】是否页面排序不能为空');
             return false;
           }
 
-          if (!this.$utils.isIntegerGtZero(column.width)) {
-            this.$msg.createError('字段【' + column.name + '】宽度必须是整数并且大于0');
+          if (!isIntegerGtZero(column.width)) {
+            createError('字段【' + column.name + '】宽度必须是整数并且大于0');
             return false;
           }
         }
@@ -196,7 +203,7 @@
       emptyLine() {
         return {
           id: '',
-          widthType: this.$enums.GEN_QUERY_WIDTH_TYPE.FIX.code,
+          widthType: GEN_QUERY_WIDTH_TYPE.FIX.code,
           width: 100,
           sortable: false,
           orderNo: '',

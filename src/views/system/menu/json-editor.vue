@@ -9,7 +9,7 @@
     :footer="null"
   >
     <div v-if="visible" v-loading="loading">
-      <div v-if="!$utils.isEmpty(description)" style="padding: 10px 10px 5px 10px">
+      <div v-if="!isEmpty(description)" style="padding: 10px 10px 5px 10px">
         <a-alert message="注意事项" :description="description" type="warning" show-icon />
       </div>
 
@@ -31,9 +31,16 @@
   import 'codemirror/lib/codemirror.css';
   import CodeMirror from 'codemirror/lib/codemirror';
   import 'codemirror/mode/javascript/javascript';
+  import { isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     props: {
       value: {
         type: String,
@@ -93,11 +100,11 @@
       },
       submit() {
         const value = this.editor.getValue();
-        if (!this.$utils.isEmpty(value)) {
+        if (!isEmpty(value)) {
           try {
             JSON.parse(value);
           } catch (e) {
-            this.$msg.createError('参数应为对象的json字符串，如：{"name": "名称"}');
+            createError('参数应为对象的json字符串，如：{"name": "名称"}');
             return;
           }
         }

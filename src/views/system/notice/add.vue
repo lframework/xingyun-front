@@ -50,6 +50,7 @@
   import { defineComponent } from 'vue';
   import { Tinymce } from '@/components/Tinymce';
   import * as api from '@/api/system/notice';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -99,7 +100,7 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             if (published) {
-              this.$msg.createConfirm('是否确认执行发布操作？').then(() => {
+              createConfirm('是否确认执行发布操作？').then(() => {
                 this.onPublish(published);
               });
             } else {
@@ -113,7 +114,7 @@
         api
           .create(Object.assign({ published: published }, this.formData))
           .then(() => {
-            this.$msg.createSuccess(
+            createSuccess(
               published ? '发布成功，发布状态更新稍有延迟，请耐心等待！' : '新增成功！',
             );
             this.$emit('confirm');

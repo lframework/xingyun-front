@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -123,6 +123,13 @@
     StopOutlined,
     DownOutlined,
   } from '@ant-design/icons-vue';
+  import { isEmpty, buildSortPageVo } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import BatchHandler from '@/components/BatchHandler';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import { COLUMN_TYPE } from '@/enums/biz/columnType';
+  import { PROPERTY_TYPE } from '@/enums/biz/propertyType';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'ProductProperty',
@@ -131,6 +138,8 @@
       Modify,
       Item,
       DownOutlined,
+      BatchHandler,
+      AvailableTag,
     },
     setup() {
       return {
@@ -139,6 +148,7 @@
         PlusOutlined,
         SearchOutlined,
         StopOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -151,7 +161,7 @@
         searchFormData: {
           code: '',
           name: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -178,7 +188,7 @@
             title: '字段类型',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.COLUMN_TYPE.getDesc(cellValue);
+              return COLUMN_TYPE.getDesc(cellValue);
             },
           },
           {
@@ -186,7 +196,7 @@
             title: '类别',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.PROPERTY_TYPE.getDesc(cellValue);
+              return PROPERTY_TYPE.getDesc(cellValue);
             },
           },
           { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
@@ -220,7 +230,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -244,8 +254,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的属性！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的属性！');
           return;
         }
 
@@ -260,8 +270,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的属性！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的属性！');
           return;
         }
 
@@ -275,7 +285,7 @@
             permission: ['base-data:product:property-item:query'],
             label: '属性值管理',
             ifShow: () => {
-              return !this.$enums.COLUMN_TYPE.CUSTOM.equalsCode(row.columnType);
+              return !COLUMN_TYPE.CUSTOM.equalsCode(row.columnType);
             },
             onClick: () => {
               this.id = row.id;

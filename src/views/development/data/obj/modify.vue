@@ -19,7 +19,7 @@
           <j-form-item :span="12" label="状态" :required="true">
             <a-select v-model:value="formData.available" allow-clear>
               <a-select-option
-                v-for="item in $enums.AVAILABLE.values()"
+                v-for="item in AVAILABLE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -75,11 +75,21 @@
   import RelaTable from './rela-table.vue';
   import CustomQuery from './custom-query.vue';
   import * as api from '@/api/development/data/obj';
+  import { isEmpty, clearAll } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenDataObjCategorySelector from '@/components/Selector/GenDataObjCategorySelector.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     components: {
       RelaTable,
       CustomQuery,
+      GenDataObjCategorySelector,
+    },
+    setup() {
+      return {
+        AVAILABLE,
+      };
     },
     props: {
       id: {
@@ -148,7 +158,7 @@
             columns = columns.map((item) => {
               return Object.assign({ subTableId: item.subTableId }, item);
             });
-            this.$utils.clearAll(this.columns);
+            clearAll(this.columns);
             this.columns.push(...columns);
             delete data.columns;
 
@@ -163,12 +173,12 @@
           });
       },
       submit() {
-        if (this.$utils.isEmpty(this.formData.name)) {
-          this.$msg.createError('请输入名称');
+        if (isEmpty(this.formData.name)) {
+          createError('请输入名称');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.mainTableAlias)) {
-          this.$msg.createError('请输入主表别名');
+        if (isEmpty(this.formData.mainTableAlias)) {
+          createError('请输入主表别名');
           return;
         }
         if (!this.$refs.relaTable.validDate()) {
@@ -190,7 +200,7 @@
         api
           .update(params)
           .then(() => {
-            this.$msg.createSuccess('修改成功！');
+            createSuccess('修改成功！');
             this.$emit('confirm');
             this.closeDialog();
           })

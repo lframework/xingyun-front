@@ -26,6 +26,7 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/smart-work/file-box';
   import { InboxOutlined } from '@ant-design/icons-vue';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -82,7 +83,7 @@
           .upload(params)
           .then(() => {
             e.onSuccess({ status: 'success' }, e.file);
-            this.$msg.createSuccess('上传成功！');
+            createSuccess('上传成功！');
             this.$emit('confirm');
             this.visible = false;
           })

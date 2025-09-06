@@ -70,7 +70,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.status" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.LOGISTICS_SHEET_STATUS.values()"
+                      v-for="item in LOGISTICS_SHEET_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -169,6 +169,20 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/logistics/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    buildSortPageVo,
+    isEmpty,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import LogisticsSheetDeliveryImporter from '@/components/Importor/LogisticsSheetDeliveryImporter.vue';
+  import LogisticsSheetImporter from '@/components/Importor/LogisticsSheetImporter.vue';
+  import LogisticsCompanySelector from '@/components/Selector/LogisticsCompanySelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { LOGISTICS_SHEET_STATUS } from '@/enums/biz/logisticsSheetStatus';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'LogisticsSheet',
@@ -176,6 +190,11 @@
       Detail,
       ApproveRefuse,
       Delivery,
+      LogisticsSheetDeliveryImporter,
+      LogisticsSheetImporter,
+      LogisticsCompanySelector,
+      UserSelector,
+      BatchHandler,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -186,6 +205,7 @@
         CloudUploadOutlined,
         DeleteOutlined,
         DownloadOutlined,
+        LOGISTICS_SHEET_STATUS,
       };
     },
     data() {
@@ -199,10 +219,8 @@
           scId: '',
           customerId: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createStartTime: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createEndTime: formatDateTime(getDateTimeWithMaxTime(moment())),
           approveBy: '',
           approveStartTime: '',
           approveEndTime: '',
@@ -232,7 +250,7 @@
             title: '状态',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.LOGISTICS_SHEET_STATUS.getDesc(cellValue);
+              return LOGISTICS_SHEET_STATUS.getDesc(cellValue);
             },
           },
           { field: 'deliveryTime', title: '发货时间', width: 170, sortable: true },
@@ -267,7 +285,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -285,12 +303,12 @@
       },
       // 删除订单
       deleteOrder(row) {
-        this.$msg.createConfirm('对选中的物流单执行删除操作？').then(() => {
+        createConfirm('对选中的物流单执行删除操作？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -304,14 +322,14 @@
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的物流单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的物流单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (!this.$enums.LOGISTICS_SHEET_STATUS.CREATED.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个物流单已发货，不允许执行删除操作！');
+          if (!LOGISTICS_SHEET_STATUS.CREATED.equalsCode(records[i].status)) {
+            createError('第' + (i + 1) + '个物流单已发货，不允许执行删除操作！');
             return;
           }
         }
@@ -325,7 +343,7 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;
@@ -344,7 +362,7 @@
             permission: ['logistics:sheet:modify'],
             label: '修改',
             ifShow: () => {
-              return this.$enums.LOGISTICS_SHEET_STATUS.CREATED.equalsCode(row.status);
+              return LOGISTICS_SHEET_STATUS.CREATED.equalsCode(row.status);
             },
             onClick: () => {
               this.openChildPage('/logistics/sheet/modify/' + row.id);
@@ -354,7 +372,7 @@
             permission: ['logistics:sheet:delivery'],
             label: '发货',
             ifShow: () => {
-              return this.$enums.LOGISTICS_SHEET_STATUS.CREATED.equalsCode(row.status);
+              return LOGISTICS_SHEET_STATUS.CREATED.equalsCode(row.status);
             },
             onClick: () => {
               this.id = row.id;
@@ -366,7 +384,7 @@
             label: '删除',
             danger: true,
             ifShow: () => {
-              return this.$enums.LOGISTICS_SHEET_STATUS.CREATED.equalsCode(row.status);
+              return LOGISTICS_SHEET_STATUS.CREATED.equalsCode(row.status);
             },
             onClick: () => {
               this.deleteOrder(row);

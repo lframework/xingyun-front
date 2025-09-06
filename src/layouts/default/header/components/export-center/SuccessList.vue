@@ -48,6 +48,7 @@
   import * as api from '@/api/export-task';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as securityDownloadApi from '@/api/security-download';
+  import { buildSortPageVo } from '@/utils/utils';
 
   export default defineComponent({
     name: 'Address',
@@ -108,7 +109,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },

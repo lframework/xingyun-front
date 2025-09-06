@@ -19,13 +19,11 @@
           <span>{{ name }}</span>
           <template #overlay>
             <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
-              <a-menu-item
-                v-if="$utils.isEqualWithStr(0, treeKey) || $utils.isEmpty(parentId)"
-                key="1"
+              <a-menu-item v-if="isEqualWithStr(0, treeKey) || isEmpty(parentId)" key="1"
                 >新增子项</a-menu-item
               >
-              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="2">编辑</a-menu-item>
-              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="3">删除</a-menu-item>
+              <a-menu-item v-if="!isEqualWithStr(0, treeKey)" key="2">编辑</a-menu-item>
+              <a-menu-item v-if="!isEqualWithStr(0, treeKey)" key="3">删除</a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -45,6 +43,8 @@
   import AddCategory from './category/add.vue';
   import ModifyCategory from './category/modify.vue';
   import * as api from '@/api/bpm/flow/flow-category';
+  import { isEqualWithStr, isEmpty, toTreeArray, toArrayTree } from '@/utils/utils';
+  import { createConfirm, createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -56,6 +56,12 @@
         type: Number,
         default: 100,
       },
+    },
+    setup() {
+      return {
+        isEqualWithStr,
+        isEmpty,
+      };
     },
     data() {
       return {
@@ -80,7 +86,7 @@
     methods: {
       onContextMenuClick(treeKey, menuKey) {
         if (menuKey === '1') {
-          const allList = this.$utils.toTreeArray(this.treeData);
+          const allList = toTreeArray(this.treeData);
           const treeNode = allList.filter((item) => item.id === treeKey)[0];
           this.parentId = treeNode.id;
           this.parentName = treeNode.name;
@@ -90,9 +96,9 @@
           this.id = treeKey;
           this.$refs.updateCategoryDialog.openDialog();
         } else if (menuKey === '3') {
-          this.$msg.createConfirm('是否确认删除此分类？').then(() => {
+          createConfirm('是否确认删除此分类？').then(() => {
             api.deleteById(treeKey).then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.doSearch();
             });
           });
@@ -103,7 +109,7 @@
         api
           .query()
           .then((res) => {
-            const flowCategoryTree = this.$utils.toArrayTree(res || []);
+            const flowCategoryTree = toArrayTree(res || []);
             this.treeData[0].children = [
               ...flowCategoryTree.map((item) => Object.assign({ parentId: '' }, item)),
             ];

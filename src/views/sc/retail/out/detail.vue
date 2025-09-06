@@ -23,22 +23,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status)
+              RETAIL_OUT_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
             <a-input
-              v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -51,8 +51,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -60,8 +60,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -84,8 +84,8 @@
       >
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.outNum)">{{
-            $utils.mul(row.taxPrice, row.outNum)
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.outNum)">{{
+            getNumber(mul(row.taxPrice, row.outNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -133,12 +133,26 @@
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/retail/out';
   import { printMix } from '@/mixins/print';
+  import { isEmpty, isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
+  import { RETAIL_OUT_SHEET_STATUS } from '@/enums/biz/retailOutSheetStatus';
+  import { PRINT_TYPE } from '@/enums/biz/printType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
       PayType,
+      OrderTimeLine,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        RETAIL_OUT_SHEET_STATUS,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -182,7 +196,7 @@
             align: 'right',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           { field: 'outNum', title: '出库数量', align: 'right', width: 100 },
@@ -277,17 +291,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.outNum);
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.outNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.outNum);
+            const num = parseFloat(t.outNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -299,7 +313,7 @@
         api
           .print(this.id)
           .then((res) => {
-            this.lodopPreview(this.$enums.PRINT_TYPE.RETAIL_OUT.code, res);
+            this.lodopPreview(PRINT_TYPE.RETAIL_OUT.code, res);
           })
           .finally(() => {
             this.loading = false;

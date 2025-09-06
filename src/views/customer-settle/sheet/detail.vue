@@ -33,24 +33,22 @@
           <j-form-item />
           <j-form-item label="状态">
             <span
-              v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="
-                $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
-              "
+              v-else-if="CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status)
+              CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -63,8 +61,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -72,8 +70,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -102,7 +100,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSettleCheckSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSettleCheckSheetDetailDialog.openDialog());
               }
             "
@@ -137,17 +135,26 @@
       </j-border>
     </div>
     <!-- 客户对账单详情 -->
-    <settle-check-sheet-detail :id="''" ref="viewSettleCheckSheetDetailDialog" />
+    <settle-check-sheet-detail :id="bizId" ref="viewSettleCheckSheetDetailDialog" />
   </a-modal>
 </template>
 <script>
   import { defineComponent } from 'vue';
   import SettleCheckSheetDetail from '@/views/customer-settle/check-sheet/detail.vue';
   import * as api from '@/api/customer-settle/sheet';
+  import { add } from '@/utils/utils';
+  import { CUSTOMER_SETTLE_SHEET_STATUS } from '@/enums/biz/customerSettleSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
       SettleCheckSheetDetail,
+      OrderTimeLine,
+    },
+    setup() {
+      return {
+        CUSTOMER_SETTLE_SHEET_STATUS,
+      };
     },
     props: {
       id: {
@@ -186,6 +193,7 @@
           { field: 'description', title: '备注', width: 260 },
         ],
         tableData: [],
+        bizId: '',
       };
     },
     computed: {},
@@ -273,9 +281,9 @@
         let totalDiscountAmount = 0;
 
         this.tableData.forEach((item) => {
-          totalAmount = this.$utils.add(totalAmount, item.payAmount);
-          totalDiscountAmount = this.$utils.add(totalDiscountAmount, item.totalDiscountAmount);
-          totalUnPayAmount = this.$utils.add(totalUnPayAmount, item.totalUnPayAmount);
+          totalAmount = add(totalAmount, item.payAmount);
+          totalDiscountAmount = add(totalDiscountAmount, item.totalDiscountAmount);
+          totalUnPayAmount = add(totalUnPayAmount, item.totalUnPayAmount);
         });
 
         this.formData.totalAmount = totalAmount;

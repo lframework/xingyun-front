@@ -34,7 +34,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -83,11 +83,14 @@
   import Modify from './modify.vue';
   import * as api from '@/api/base-data/product/property-item';
   import { PlusOutlined, SearchOutlined } from '@ant-design/icons-vue';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     components: {
       Modify,
       Add,
+      AvailableTag,
     },
     props: {
       propertyId: {
@@ -100,6 +103,7 @@
         h,
         PlusOutlined,
         SearchOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -113,7 +117,7 @@
         searchFormData: {
           code: '',
           name: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {

@@ -84,14 +84,25 @@
   import { h, defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/order';
+  import { isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      ProductBrandSelector,
+      ProductCategorySelector,
+    },
     props: {
       scId: {
         type: String,
         default: '',
+      },
+      isReturn: {
+        type: Boolean,
+        default: false,
       },
     },
     setup() {
@@ -171,6 +182,7 @@
       // 查询前构建具体的查询参数
       buildSearchFormData() {
         return {
+          isReturn: this.isReturn,
           scId: this.scId,
           condition: this.searchFormData.condition,
           categoryId: this.searchFormData.categoryId || '',
@@ -193,8 +205,8 @@
       // 选择商品
       doSelect() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择商品数据！');
           return;
         }
 

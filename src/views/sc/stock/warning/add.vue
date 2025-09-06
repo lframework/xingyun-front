@@ -42,9 +42,16 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/warning';
+  import { isEmpty, isFloat, isFloatGtZero, isNumberPrecision } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
+  import ProductSelector from '@/components/Selector/ProductSelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      ProductSelector,
+      StoreCenterSelector,
+    },
     data() {
       return {
         // 是否可见
@@ -61,14 +68,17 @@
             { required: true, message: '请输入预警下限' },
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value)) {
+                if (isEmpty(value)) {
                   return Promise.resolve();
                 }
-                if (!this.$utils.isInteger(value)) {
-                  return Promise.reject('预警下限必须为整数');
+                if (!isFloat(value)) {
+                  return Promise.reject('预警下限必须是数字');
                 }
-                if (!this.$utils.isIntegerGtZero(value)) {
+                if (!isFloatGtZero(value)) {
                   return Promise.reject('预警下限必须大于0');
+                }
+                if (!isNumberPrecision(value, 8)) {
+                  return Promise.reject('预警下限最多允许8位小数');
                 }
                 return Promise.resolve();
               },
@@ -78,19 +88,19 @@
             { required: true, message: '请输入预警上限' },
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value)) {
+                if (isEmpty(value)) {
                   return Promise.resolve();
                 }
-                if (!this.$utils.isInteger(value)) {
-                  return Promise.reject('预警上限必须为整数');
+                if (!isFloat(value)) {
+                  return Promise.reject('预警上限必须是数字');
                 }
-                if (!this.$utils.isIntegerGtZero(value)) {
+                if (!isFloatGtZero(value)) {
                   return Promise.reject('预警上限必须大于0');
                 }
-                if (
-                  this.$utils.isIntegerGtZero(value) &&
-                  this.$utils.isIntegerGtZero(this.formData.minLimit)
-                ) {
+                if (!isNumberPrecision(value, 8)) {
+                  return Promise.reject('预警上限最多允许8位小数');
+                }
+                if (isFloatGtZero(value) && isFloatGtZero(this.formData.minLimit)) {
                   if (Number(value) < Number(this.formData.minLimit)) {
                     return Promise.reject('预警上限必须大于预警下限');
                   }
@@ -136,7 +146,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

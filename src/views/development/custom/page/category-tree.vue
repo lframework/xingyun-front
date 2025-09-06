@@ -19,8 +19,8 @@
           <template #overlay>
             <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
               <a-menu-item key="1">新增子项</a-menu-item>
-              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="2">编辑</a-menu-item>
-              <a-menu-item v-if="!$utils.isEqualWithStr(0, treeKey)" key="3">删除</a-menu-item>
+              <a-menu-item v-if="!isEqualWithStr(0, treeKey)" key="2">编辑</a-menu-item>
+              <a-menu-item v-if="!isEqualWithStr(0, treeKey)" key="3">删除</a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -35,11 +35,18 @@
   import AddCategory from './category/add.vue';
   import ModifyCategory from './category/modify.vue';
   import * as api from '@/api/development/custom/page-category';
+  import { isEqualWithStr, toArrayTree } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
       AddCategory,
       ModifyCategory,
+    },
+    setup() {
+      return {
+        isEqualWithStr,
+      };
     },
     props: {
       height: {
@@ -67,15 +74,15 @@
     methods: {
       onContextMenuClick(treeKey, menuKey) {
         if (menuKey === '1') {
-          this.id = !this.$utils.isEqualWithStr(0, treeKey) ? treeKey : '';
+          this.id = !isEqualWithStr(0, treeKey) ? treeKey : '';
           this.$refs.addCategoryDialog.openDialog();
         } else if (menuKey === '2') {
           this.id = treeKey;
           this.$refs.updateCategoryDialog.openDialog();
         } else if (menuKey === '3') {
-          this.$msg.createConfirm('是否确认删除此分类？').then(() => {
+          createConfirm('是否确认删除此分类？').then(() => {
             api.deleteById(treeKey).then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.doSearch();
             });
           });
@@ -84,7 +91,7 @@
       doSearch() {
         api.query().then((res) => {
           this.expandedKeys = [0, ...res.map((item) => item.id)];
-          res = this.$utils.toArrayTree(res, {
+          res = toArrayTree(res, {
             key: 'id',
             parentKey: 'parentId',
             children: 'children',

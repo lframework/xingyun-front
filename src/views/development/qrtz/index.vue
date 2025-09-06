@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.state" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.TRIGGER_STATE.values()"
+                    v-for="item in TRIGGER_STATE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -75,6 +75,8 @@
   import Detail from './detail.vue';
   import * as api from '@/api/development/qrtz';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { TRIGGER_STATE } from '@/enums/biz/triggerState';
 
   export default defineComponent({
     name: 'Qrtz',
@@ -88,6 +90,7 @@
         h,
         SearchOutlined,
         PlusOutlined,
+        TRIGGER_STATE,
       };
     },
     data() {
@@ -118,7 +121,7 @@
             title: '状态',
             width: 80,
             formatter: ({ cellValue }) => {
-              return this.$enums.TRIGGER_STATE.getDesc(cellValue);
+              return TRIGGER_STATE.getDesc(cellValue);
             },
           },
           { title: '操作', width: 280, fixed: 'right', slots: { default: 'action_default' } },
@@ -161,7 +164,7 @@
         return Object.assign({}, this.searchFormData);
       },
       deleteRow(row) {
-        this.$msg.createConfirm('是否确认删除此定时任务？').then(() => {
+        createConfirm('是否确认删除此定时任务？').then(() => {
           this.loading = true;
           api
             .deleteJob({
@@ -169,7 +172,7 @@
               group: row.group,
             })
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -178,7 +181,7 @@
         });
       },
       resumeRow(row) {
-        this.$msg.createConfirm('是否确认恢复此定时任务？').then(() => {
+        createConfirm('是否确认恢复此定时任务？').then(() => {
           this.loading = true;
           api
             .resume({
@@ -186,7 +189,7 @@
               group: row.group,
             })
             .then(() => {
-              this.$msg.createSuccess('恢复成功！');
+              createSuccess('恢复成功！');
               this.search();
             })
             .finally(() => {
@@ -195,7 +198,7 @@
         });
       },
       pauseRow(row) {
-        this.$msg.createConfirm('是否确认暂停此定时任务？').then(() => {
+        createConfirm('是否确认暂停此定时任务？').then(() => {
           this.loading = true;
           api
             .pause({
@@ -203,7 +206,7 @@
               group: row.group,
             })
             .then(() => {
-              this.$msg.createSuccess('暂停成功！');
+              createSuccess('暂停成功！');
               this.search();
             })
             .finally(() => {
@@ -212,7 +215,7 @@
         });
       },
       triggerRow(row) {
-        this.$msg.createConfirm('是否确认触发此定时任务？').then(() => {
+        createConfirm('是否确认触发此定时任务？').then(() => {
           this.loading = true;
           api
             .trigger({
@@ -220,7 +223,7 @@
               group: row.group,
             })
             .then(() => {
-              this.$msg.createSuccess('触发成功！');
+              createSuccess('触发成功！');
               this.search();
             })
             .finally(() => {
@@ -251,10 +254,10 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.TRIGGER_STATE.WAITING.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.ACQUIRED.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.ERROR.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.COMPLETE.equalsCode(row.state)
+                TRIGGER_STATE.WAITING.equalsCode(row.state) ||
+                TRIGGER_STATE.ACQUIRED.equalsCode(row.state) ||
+                TRIGGER_STATE.ERROR.equalsCode(row.state) ||
+                TRIGGER_STATE.COMPLETE.equalsCode(row.state)
               );
             },
             onClick: () => {
@@ -264,7 +267,7 @@
           {
             label: '恢复',
             ifShow: () => {
-              return this.$enums.TRIGGER_STATE.PAUSED.equalsCode(row.state);
+              return TRIGGER_STATE.PAUSED.equalsCode(row.state);
             },
             onClick: () => {
               this.resumeRow(row);
@@ -274,9 +277,9 @@
             label: '触发',
             ifShow: () => {
               return (
-                this.$enums.TRIGGER_STATE.WAITING.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.PAUSED.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.COMPLETE.equalsCode(row.state)
+                TRIGGER_STATE.WAITING.equalsCode(row.state) ||
+                TRIGGER_STATE.PAUSED.equalsCode(row.state) ||
+                TRIGGER_STATE.COMPLETE.equalsCode(row.state)
               );
             },
             onClick: () => {

@@ -10,6 +10,11 @@ export interface QueryTenantBo {
   name: string;
 
   /**
+   * 绑定域名
+   */
+  serverName: string;
+
+  /**
    * JdbcUrl
    */
   jdbcUrl: string;

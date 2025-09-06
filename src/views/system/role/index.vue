@@ -41,7 +41,7 @@
                       allow-clear
                     >
                       <a-select-option
-                        v-for="item in $enums.AVAILABLE.values()"
+                        v-for="item in AVAILABLE.values()"
                         :key="item.code"
                         :value="item.code"
                         >{{ item.desc }}</a-select-option
@@ -115,12 +115,12 @@
           <data-permission
             ref="dataPermissionDialog"
             :biz-id="id"
-            :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
+            :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
           />
           <batch-data-permission
             ref="batchDataPermissionDialog"
             :biz-ids="ids"
-            :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
+            :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
           />
         </page-wrapper>
       </a-col>
@@ -171,6 +171,12 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/system/role';
   import CategoryTree from './category-tree.vue';
+  import { isEmpty, isEqualWithStr, buildSortPageVo } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import { SYS_DATA_PERMISSION_DATA_BIZ_TYPE } from '@/enums/biz/sysDataPermissionDataBizType';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'Role',
@@ -183,6 +189,8 @@
       DataPermission,
       BatchDataPermission,
       DownOutlined,
+      AvailableTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -193,6 +201,10 @@
         SettingOutlined,
         CheckOutlined,
         StopOutlined,
+        isEmpty,
+        isEqualWithStr,
+        AVAILABLE,
+        SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
       };
     },
     data() {
@@ -254,7 +266,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -321,8 +333,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的角色！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的角色！');
           return;
         }
 
@@ -337,8 +349,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的角色！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的角色！');
           return;
         }
 
@@ -355,8 +367,8 @@
       batchSetting() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要授权的角色！');
+        if (isEmpty(records)) {
+          createError('请选择要授权的角色！');
           return;
         }
 
@@ -366,8 +378,8 @@
       batchDataPermmission() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要设置数据权限的角色！');
+        if (isEmpty(records)) {
+          createError('请选择要设置数据权限的角色！');
           return;
         }
 
@@ -375,8 +387,8 @@
         this.$nextTick(() => this.$refs.batchDataPermissionDialog.openDialog());
       },
       doSearch(categoryId) {
-        if (!this.$utils.isEmpty(categoryId)) {
-          if (this.$utils.isEqualWithStr(0, categoryId)) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
             this.searchFormData.categoryId = '';
           } else {
             this.searchFormData.categoryId = categoryId;

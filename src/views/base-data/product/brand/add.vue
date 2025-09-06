@@ -57,9 +57,12 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/brand';
   import { generateCode } from '@/api/components';
+  import { createSuccess } from '@/hooks/web/msg';
+  import JImgUpload from '@/components/JImgUpload';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: { JImgUpload },
     data() {
       return {
         // 是否可见
@@ -111,7 +114,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');
@@ -131,7 +134,7 @@
         this.onGenerateCode();
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.BRAND.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.BRAND.code).then((res) => {
           this.formData.code = res;
         });
       },

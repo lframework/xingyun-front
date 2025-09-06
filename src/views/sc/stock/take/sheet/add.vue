@@ -27,10 +27,10 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
+            {{ TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
+            {{ TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="分类/品牌">
             {{ formData.bizName }}
@@ -68,7 +68,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="!row.isFixed && $utils.isEmpty(row.productId)"
+            v-if="!row.isFixed && isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
@@ -127,11 +127,19 @@
   import * as preApi from '@/api/sc/stock/take/pre';
   import * as api from '@/api/sc/stock/take/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloat, isFloatGeZero, isNumberPrecision, uuid } from '@/utils/utils';
+  import { createSuccess, createConfirm, createError } from '@/hooks/web/msg';
+  import PreTakeStockSheetSelector from '@/components/Selector/PreTakeStockSheetSelector.vue';
+  import TakeStockPlanSelector from '@/components/Selector/TakeStockPlanSelector.vue';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
 
   export default defineComponent({
     name: 'AddStockTakeSheet',
     components: {
       BatchAddProduct,
+      PreTakeStockSheetSelector,
+      TakeStockPlanSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -139,6 +147,9 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        isEmpty,
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
       };
     },
     data() {
@@ -225,96 +236,137 @@
 
         this.tableData = [];
       },
-      validParams() {
-        if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          this.$msg.createError('请选择关联盘点任务！');
+      validParams(validNum) {
+        if (isEmpty(this.formData.takeStockPlanId)) {
+          createError('请选择关联盘点任务！');
           return false;
         }
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
-          if (this.$utils.isEmpty(column.productId)) {
-            this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
-            return false;
-          }
-          if (this.$utils.isEmpty(column.takeNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
+          if (isEmpty(column.productId)) {
+            createError('第' + (i + 1) + '行商品不允许为空！');
             return false;
           }
 
-          if (!this.$utils.isIntegerGeZero(column.takeNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
-            return false;
+          if (validNum) {
+            if (isEmpty(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
+              return false;
+            }
+          }
+
+          if (!isEmpty(column.takeNum)) {
+            if (!isFloat(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
+              return false;
+            }
+
+            if (!isFloatGeZero(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
+              return false;
+            }
+
+            if (!isNumberPrecision(column.takeNum, 8)) {
+              createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
+              return false;
+            }
           }
         }
 
         return true;
+      },
+      buildParams() {
+        return {
+          planId: this.formData.takeStockPlanId,
+          preSheetId: this.formData.preTakeStockSheetId || '',
+          description: this.formData.description,
+          products: this.tableData.map((item) => {
+            return {
+              productId: item.productId,
+              takeNum: item.takeNum,
+              description: item.description,
+            };
+          }),
+        };
       },
       // 提交表单事件
       submit() {
         if (!this.validParams()) {
           return;
         }
-        const params = {
-          planId: this.formData.takeStockPlanId,
-          preSheetId: this.formData.preTakeStockSheetId || '',
-          description: this.formData.description,
-          products: this.tableData.map((item) => {
-            return {
-              productId: item.productId,
-              takeNum: item.takeNum,
-              description: item.description,
-            };
-          }),
+        const reqApiFn = () => {
+          const params = this.buildParams();
+
+          this.loading = true;
+          api
+            .create(params)
+            .then(() => {
+              createSuccess('保存成功！');
+              this.$emit('confirm');
+
+              this.closeDialog();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
         };
-
-        this.loading = true;
-        api
-          .create(params)
-          .then(() => {
-            this.$msg.createSuccess('保存成功！');
-            this.$emit('confirm');
-
-            this.closeDialog();
-          })
-          .finally(() => {
-            this.loading = false;
+        if (this.tableData.some((item) => isEmpty(item.takeNum))) {
+          createConfirm('存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(() => {
+            this.tableData.forEach((item) => {
+              if (isEmpty(item.takeNum)) {
+                item.takeNum = 0;
+              }
+            });
+            if (this.validParams(true)) {
+              reqApiFn();
+            }
           });
+        } else {
+          reqApiFn();
+        }
       },
       // 直接审核通过
       directApprovePass() {
         if (!this.validParams()) {
           return;
         }
-        const params = {
-          planId: this.formData.takeStockPlanId,
-          preSheetId: this.formData.preTakeStockSheetId || '',
-          description: this.formData.description,
-          products: this.tableData.map((item) => {
-            return {
-              productId: item.productId,
-              takeNum: item.takeNum,
-              description: item.description,
-            };
-          }),
+
+        const reqApiFn = () => {
+          const params = this.buildParams();
+
+          this.loading = true;
+          api
+            .directApprovePass(params)
+            .then(() => {
+              createSuccess('审核通过！');
+              this.$emit('confirm');
+
+              this.closeDialog();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
         };
 
-        this.loading = true;
-        api
-          .directApprovePass(params)
-          .then(() => {
-            this.$msg.createSuccess('审核通过！');
-            this.$emit('confirm');
-
-            this.closeDialog();
-          })
-          .finally(() => {
-            this.loading = false;
+        if (this.tableData.some((item) => isEmpty(item.takeNum))) {
+          createConfirm('存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(() => {
+            this.tableData.forEach((item) => {
+              if (isEmpty(item.takeNum)) {
+                item.takeNum = 0;
+              }
+            });
+            if (this.validParams(true)) {
+              reqApiFn();
+            }
           });
+        } else {
+          reqApiFn();
+        }
       },
       // 页面显示时触发
       open() {
@@ -323,7 +375,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -341,8 +393,8 @@
       },
       // 新增商品
       addProduct() {
-        if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          this.$msg.createError('请先选择关联盘点任务！');
+        if (isEmpty(this.formData.takeStockPlanId)) {
+          createError('请先选择关联盘点任务！');
           return;
         }
 
@@ -350,7 +402,7 @@
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -376,7 +428,7 @@
               this.tableData[index] = Object.assign(this.tableData[index], value);
               return;
             }
-            this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
+            createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
             this.tableData = this.tableData.filter((t) => {
               return t.id !== row.id;
             });
@@ -388,23 +440,23 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
         });
       },
       openBatchAddProductDialog() {
-        if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          this.$msg.createError('请先选择关联盘点任务！');
+        if (isEmpty(this.formData.takeStockPlanId)) {
+          createError('请先选择关联盘点任务！');
           return;
         }
         this.$refs.batchAddProductDialog.openDialog();
@@ -413,9 +465,7 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (
-            this.$utils.isEmpty(this.tableData.filter((data) => item.productId === data.productId))
-          ) {
+          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
             filterProductList.push(item);
           }
         });
@@ -426,13 +476,13 @@
         });
       },
       beforeSelectPreTakeStockSheet() {
-        if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          this.$msg.createError('请先选择关联盘点任务');
+        if (isEmpty(this.formData.takeStockPlanId)) {
+          createError('请先选择关联盘点任务');
           return false;
         }
 
-        if (!this.$utils.isEmpty(this.formData.preTakeStockSheetId)) {
-          return this.$msg.createConfirm(
+        if (!isEmpty(this.formData.preTakeStockSheetId)) {
+          return createConfirm(
             '更改关联盘点任务，不会清除已加载的预先盘点单的商品数据，是否确认更改？',
           );
         }
@@ -440,8 +490,8 @@
         return true;
       },
       beforeSelectTakeStockPlan() {
-        if (!this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          return this.$msg.createConfirm('更改关联盘点任务，会清空商品数据，是否确认更改？');
+        if (!isEmpty(this.formData.takeStockPlanId)) {
+          return createConfirm('更改关联盘点任务，会清空商品数据，是否确认更改？');
         } else {
           return true;
         }
@@ -455,7 +505,7 @@
         this.formData.takeStatus = '';
         this.formData.bizName = '';
 
-        if (!this.$utils.isEmpty(e)) {
+        if (!isEmpty(e)) {
           this.loading = true;
           planApi.get(e).then((res) => {
             this.formData.scId = res.scId;
@@ -486,7 +536,7 @@
           .then((products) => {
             products.forEach((item) => {
               const tableData = this.tableData.filter((obj) => obj.productId === item.productId);
-              if (!this.$utils.isEmpty(tableData)) {
+              if (!isEmpty(tableData)) {
                 tableData.forEach((obj) => {
                   obj.takeNum = item.takeNum;
                 });

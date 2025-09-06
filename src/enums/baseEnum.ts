@@ -1,12 +1,17 @@
 import { isFunction, isNull, isEmpty, isEqualWithStr } from '@/utils/utils';
 
 export class BaseEnum<C, D> {
+  // 索引签名：支持通过字符串键访问枚举项，如 AVAILABLE.ENABLE
+  [key: string]: any;
+
   #itemKeys: string[] = [];
   #itemValues: BaseEnumItem<C, D>[] = [];
 
   set(key: string, value: BaseEnumItem<C, D>): void {
     this.#itemKeys.push(key);
     this.#itemValues.push(value);
+    // 自动挂载属性，支持直接访问，如 AVAILABLE.ENABLE
+    this[key] = value;
   }
 
   keys(): string[] {
@@ -49,7 +54,7 @@ export class BaseEnum<C, D> {
     const enumList: BaseEnumItem<C, D>[] = [];
     enumsKeys.forEach((item) => {
       const val = this.get(item);
-      if (!isEmpty(val) && !isFunction(val)) {
+      if (val && !isEmpty(val) && !isFunction(val)) {
         enumList.push(val);
       }
     });
@@ -79,7 +84,7 @@ export class BaseEnum<C, D> {
     const enumList: BaseEnumItem<C, D>[] = [];
     enumsKeys.forEach((item) => {
       const val = this.get(item);
-      if (!isEmpty(val) && !isFunction(val)) {
+      if (val && !isEmpty(val) && !isFunction(val)) {
         enumList.push(val);
       }
     });

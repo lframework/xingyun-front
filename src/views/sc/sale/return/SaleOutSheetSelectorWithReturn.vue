@@ -22,24 +22,24 @@
       <template #form>
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="销售出库单号" :span="6">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="销售出库单号" :span="6">
               <a-input v-model:value="searchParams.code" allow-clear />
             </j-form-item>
             <j-form-item label="仓库" :span="6">
               <store-center-selector
-                v-if="$utils.isEmpty(requestParams.scId)"
+                v-if="isEmpty(requestParams.scId)"
                 v-model:value="searchParams.scId"
               />
             </j-form-item>
             <j-form-item label="客户" :span="6">
               <customer-selector
-                v-if="$utils.isEmpty(requestParams.customerId)"
+                v-if="isEmpty(requestParams.customerId)"
                 v-model:value="searchParams.customerId"
               />
             </j-form-item>
             <j-form-item label="操作人" :span="6">
               <user-selector
-                v-if="$utils.isEmpty(requestParams.createBy)"
+                v-if="isEmpty(requestParams.createBy)"
                 v-model:value="searchParams.createBy"
               />
             </j-form-item>
@@ -79,10 +79,24 @@
   import moment from 'moment';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/sale/out';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+  } from '@/utils/utils';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
 
   export default defineComponent({
     name: 'SaleOutSheetSelectorWithReturn',
-    components: { DialogTable },
+    components: {
+      DialogTable,
+      CustomerSelector,
+      StoreCenterSelector,
+      UserSelector,
+    },
     props: {
       value: { type: [Object, Array], required: true },
       multiple: { type: Boolean, default: false },
@@ -114,6 +128,7 @@
       return {
         h,
         SearchOutlined,
+        isEmpty,
       };
     },
     data() {
@@ -123,10 +138,8 @@
           scId: '',
           customerId: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createStartTime: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createEndTime: formatDateTime(getDateTimeWithMaxTime(moment())),
         },
       };
     },

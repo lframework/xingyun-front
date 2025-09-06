@@ -48,7 +48,7 @@
   import { computed, ref, unref } from 'vue';
   import { useUserStore } from '/@/store/modules/user';
   import { CaptchaModel } from '@/api/sys/model/userModel';
-  import Icon from '@/components/Icon/Icon.vue';
+  import { Icon } from '@/components/Icon';
   import emptyCaptchaImg from '@/assets/images/empty-captcha.png';
   import type { Rule as ValidationRule } from 'ant-design-vue/lib/form/interface';
   import { useFormValid } from '@/views/sys/login/useLogin';

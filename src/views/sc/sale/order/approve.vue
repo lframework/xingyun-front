@@ -14,22 +14,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SALE_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ SALE_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SALE_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ SALE_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SALE_ORDER_STATUS.getDesc(formData.status)
+              SALE_ORDER_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -42,8 +42,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -51,8 +51,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -75,8 +75,8 @@
       >
         <!-- 含税金额 列自定义内容 -->
         <template #orderAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.orderNum)">{{
-            $utils.mul(row.taxPrice, row.orderNum)
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.orderNum)">{{
+            getNumber(mul(row.taxPrice, row.orderNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -111,8 +111,8 @@
 
       <div
         v-if="
-          $enums.SALE_ORDER_STATUS.CREATED.equalsCode(formData.status) ||
-          $enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+          SALE_ORDER_STATUS.CREATED.equalsCode(formData.status) ||
+          SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
         "
         style="text-align: center; background-color: #ffffff; padding: 8px 0"
       >
@@ -125,7 +125,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.SALE_ORDER_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="SALE_ORDER_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['sale:order:approve']"
             danger
             :loading="loading"
@@ -145,14 +145,27 @@
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/sale/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { SALE_ORDER_STATUS } from '@/enums/biz/saleOrderStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApproveSaleOrder',
     components: {
       ApproveRefuse,
       PayType,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        isFloatGeZero,
+        getNumber,
+        mul,
+        SALE_ORDER_STATUS,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -233,10 +246,10 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.SALE_ORDER_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !SALE_ORDER_STATUS.CREATED.equalsCode(res.status) &&
+              !SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('订单已审核通过，无需重复审核！');
+              createError('订单已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -272,17 +285,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.orderNum);
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.orderNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.orderNum);
+            const num = parseFloat(t.orderNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(num, giftNum);
+              giftNum = add(num, giftNum);
             } else {
-              totalNum = this.$utils.add(num, totalNum);
+              totalNum = add(num, totalNum);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -291,7 +304,7 @@
       },
       // 审核通过
       approvePassOrder() {
-        this.$msg.createConfirm('对销售单据执行审核通过操作？').then(() => {
+        createConfirm('对销售单据执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -299,7 +312,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -322,7 +335,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

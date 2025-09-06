@@ -64,10 +64,19 @@
   import { h, defineComponent } from 'vue';
   import { SearchOutlined, DownloadOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/product-stock';
+  import { buildSortPageVo } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
 
   export default defineComponent({
     name: 'ProductStock',
-    components: {},
+    components: {
+      ProductBrandSelector,
+      ProductCategorySelector,
+      StoreCenterSelector,
+    },
     setup() {
       return {
         h,
@@ -135,7 +144,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -154,7 +163,7 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;

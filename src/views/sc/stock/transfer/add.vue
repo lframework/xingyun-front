@@ -46,7 +46,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="!row.isFixed && $utils.isEmpty(row.productId)"
+            v-if="!row.isFixed && isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
@@ -113,13 +113,26 @@
   import { h, defineComponent } from 'vue';
   import BatchAddProduct from '@/views/sc/stock/transfer/batch-add-product.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import * as api from '@/api/sc/stock/transfer-sc';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    isEqualWithStr,
+    isFloat,
+    isFloatGtZero,
+    isNumberPrecision,
+    uuid,
+    isFloatGeZero,
+    add,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'AddScTransferSheet',
     components: {
       BatchAddProduct,
+      StoreCenterSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -127,6 +140,7 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        isEmpty,
       };
     },
     data() {
@@ -140,8 +154,8 @@
             { required: true, message: '请选择转出仓库' },
             {
               validator: (rule, value, callback) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (this.$utils.isEqualWithStr(value, this.formData.targetScId)) {
+                if (!isEmpty(value)) {
+                  if (isEqualWithStr(value, this.formData.targetScId)) {
                     return callback(new Error('转出仓库不能与转入仓库相同'));
                   }
                 }
@@ -225,110 +239,100 @@
         this.tableData = [];
       },
       validData() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return false;
         }
         for (let i = 0; i < this.tableData.length; i++) {
           const data = this.tableData[i];
-          if (this.$utils.isEmpty(data.productId)) {
-            this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
+          if (isEmpty(data.productId)) {
+            createError('第' + (i + 1) + '行商品不允许为空！');
             return false;
           }
-          if (this.$utils.isEmpty(data.transferNum)) {
-            this.$msg.createError('第' + (i + 1) + '行调拨数量不允许为空！');
+          if (isEmpty(data.transferNum)) {
+            createError('第' + (i + 1) + '行调拨数量不允许为空！');
             return false;
           }
-          if (!this.$utils.isInteger(data.transferNum)) {
-            this.$msg.createError('第' + (i + 1) + '行调拨数量必须是整数！');
+          if (!isFloat(data.transferNum)) {
+            createError('第' + (i + 1) + '行调拨数量必须是数字！');
             return false;
           }
-          if (!this.$utils.isIntegerGtZero(data.transferNum)) {
-            this.$msg.createError('第' + (i + 1) + '行调拨数量必须大于0！');
+          if (!isFloatGtZero(data.transferNum)) {
+            createError('第' + (i + 1) + '行调拨数量必须大于0！');
+            return false;
+          }
+          if (!isNumberPrecision(data.transferNum, 8)) {
+            createError('第' + (i + 1) + '行调拨数量最多允许8位小数！');
             return false;
           }
         }
 
         return true;
       },
+      buildParams() {
+        return {
+          sourceScId: this.formData.sourceScId,
+          targetScId: this.formData.targetScId,
+          description: this.formData.description,
+          products: this.tableData.map((item) => {
+            return {
+              productId: item.productId,
+              transferNum: item.transferNum,
+              description: item.description,
+            };
+          }),
+        };
+      },
       // 提交表单事件
       submit() {
-        this.$refs.form
-          .validate()
-          .then()
-          .then((valid) => {
-            if (valid) {
-              if (!this.validData()) {
-                return;
-              }
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            if (!this.validData()) {
+              return;
+            }
 
-              const params = {
-                sourceScId: this.formData.sourceScId,
-                targetScId: this.formData.targetScId,
-                description: this.formData.description,
-                products: this.tableData.map((item) => {
-                  return {
-                    productId: item.productId,
-                    transferNum: item.transferNum,
-                    description: item.description,
-                  };
-                }),
-              };
+            const params = this.buildParams();
+            this.loading = true;
+            api
+              .create(params)
+              .then(() => {
+                createSuccess('保存成功！');
+                this.$emit('confirm');
+
+                this.closeDialog();
+              })
+              .finally(() => {
+                this.loading = false;
+              });
+          }
+        });
+      },
+      // 直接审核通过
+      directApprovePass() {
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            if (!this.validData()) {
+              return;
+            }
+
+            const params = this.buildParams();
+
+            createConfirm('对仓库调拨单执行审核通过操作？').then(() => {
               this.loading = true;
               api
-                .create(params)
-                .then(() => {
-                  this.$msg.createSuccess('保存成功！');
-                  this.$emit('confirm');
+                .directApprovePass(params)
+                .then((res) => {
+                  createSuccess('审核通过！');
 
+                  this.$emit('confirm');
                   this.closeDialog();
                 })
                 .finally(() => {
                   this.loading = false;
                 });
-            }
-          });
-      },
-      // 直接审核通过
-      directApprovePass() {
-        this.$refs.form
-          .validate()
-          .then()
-          .then((valid) => {
-            if (valid) {
-              if (!this.validData()) {
-                return;
-              }
-
-              const params = {
-                sourceScId: this.formData.sourceScId,
-                targetScId: this.formData.targetScId,
-                description: this.formData.description,
-                products: this.tableData.map((item) => {
-                  return {
-                    productId: item.productId,
-                    transferNum: item.transferNum,
-                    description: item.description,
-                  };
-                }),
-              };
-
-              this.$msg.createConfirm('对仓库调拨单执行审核通过操作？').then(() => {
-                this.loading = true;
-                api
-                  .directApprovePass(params)
-                  .then((res) => {
-                    this.$msg.createSuccess('审核通过！');
-
-                    this.$emit('confirm');
-                    this.closeDialog();
-                  })
-                  .finally(() => {
-                    this.loading = false;
-                  });
-              });
-            }
-          });
+            });
+          }
+        });
       },
       // 页面显示时触发
       open() {
@@ -337,7 +341,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -355,15 +359,15 @@
       },
       // 新增商品
       addProduct() {
-        if (this.$utils.isEmpty(this.formData.sourceScId)) {
-          this.$msg.createError('请先选择转出仓库！');
+        if (isEmpty(this.formData.sourceScId)) {
+          createError('请先选择转出仓库！');
           return;
         }
         this.tableData.push(this.emptyProduct());
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -389,7 +393,7 @@
               this.tableData[index] = Object.assign(this.tableData[index], value);
               return;
             }
-            this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
+            createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
             this.tableData = this.tableData.filter((t) => {
               return t.id !== row.id;
             });
@@ -402,15 +406,15 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -419,8 +423,8 @@
         });
       },
       openBatchAddProductDialog() {
-        if (this.$utils.isEmpty(this.formData.sourceScId)) {
-          this.$msg.createError('请先选择转出仓库！');
+        if (isEmpty(this.formData.sourceScId)) {
+          createError('请先选择转出仓库！');
           return;
         }
         this.$refs.batchAddProductDialog.openDialog();
@@ -429,9 +433,7 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (
-            this.$utils.isEmpty(this.tableData.filter((data) => item.productId === data.productId))
-          ) {
+          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
             filterProductList.push(item);
           }
         });
@@ -443,8 +445,8 @@
       },
       beforeSelectSc() {
         let flag = false;
-        if (!this.$utils.isEmpty(this.formData.sourceScId)) {
-          return this.$msg.createConfirm('更改转出仓库，会清空商品数据，是否确认更改？');
+        if (!isEmpty(this.formData.sourceScId)) {
+          return createConfirm('更改转出仓库，会清空商品数据，是否确认更改？');
         } else {
           flag = true;
         }
@@ -452,7 +454,7 @@
         return flag;
       },
       afterSelectSc(e) {
-        if (!this.$utils.isEmpty(e)) {
+        if (!isEmpty(e)) {
           this.tableData = [];
           this.calcSum();
         }
@@ -463,9 +465,9 @@
       calcSum() {
         let totalNum = 0;
         this.tableData.forEach((item) => {
-          if (!this.$utils.isEmpty(item.productId)) {
-            if (this.$utils.isIntegerGeZero(item.transferNum)) {
-              totalNum = this.$utils.add(item.transferNum, totalNum);
+          if (!isEmpty(item.productId)) {
+            if (isFloatGeZero(item.transferNum)) {
+              totalNum = add(item.transferNum, totalNum);
             }
           }
         });

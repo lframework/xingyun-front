@@ -26,24 +26,22 @@
           <j-form-item />
           <j-form-item label="状态">
             <span
-              v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="
-                $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
-              "
+              v-else-if="CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status)
+              CUSTOMER_SETTLE_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -56,8 +54,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -65,8 +63,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -95,7 +93,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSettleCheckSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSettleCheckSheetDetailDialog.openDialog());
               }
             "
@@ -106,16 +104,14 @@
 
         <!-- 已收款金额 列自定义内容 -->
         <template #totalPayedAmount_default="{ row }">
-          <span v-if="$utils.isFloat(row.payAmount)">{{
-            $utils.add(row.totalPayedAmount, row.payAmount)
-          }}</span>
+          <span v-if="isFloat(row.payAmount)">{{ add(row.totalPayedAmount, row.payAmount) }}</span>
           <span v-else>{{ row.totalPayedAmount }}</span>
         </template>
 
         <!-- 已优惠金额 列自定义内容 -->
         <template #totalDiscountAmount_default="{ row }">
-          <span v-if="$utils.isFloat(row.discountAmount)">{{
-            $utils.add(row.totalDiscountAmount, row.discountAmount)
+          <span v-if="isFloat(row.discountAmount)">{{
+            add(row.totalDiscountAmount, row.discountAmount)
           }}</span>
           <span v-else>{{ row.totalDiscountAmount }}</span>
         </template>
@@ -123,9 +119,9 @@
         <!-- 未收款金额 列自定义内容 -->
         <template #totalUnPayAmount_default="{ row }">
           <span>{{
-            $utils.sub(
-              $utils.sub(row.totalUnPayAmount, $utils.isFloat(row.payAmount) ? row.payAmount : 0),
-              $utils.isFloat(row.discountAmount) ? row.discountAmount : 0,
+            sub(
+              sub(row.totalUnPayAmount, isFloat(row.payAmount) ? row.payAmount : 0),
+              isFloat(row.discountAmount) ? row.discountAmount : 0,
             )
           }}</span>
         </template>
@@ -157,8 +153,8 @@
 
       <div
         v-if="
-          $enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
-          $enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+          CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
+          CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
         "
         style="text-align: center; background-color: #ffffff; padding: 8px 0"
       >
@@ -171,7 +167,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['customer-settle:sheet:approve']"
             danger
             :loading="loading"
@@ -184,7 +180,7 @@
     </div>
     <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
     <!-- 客户对账单详情 -->
-    <settle-check-sheet-detail :id="''" ref="viewSettleCheckSheetDetailDialog" />
+    <settle-check-sheet-detail :id="bizId" ref="viewSettleCheckSheetDetailDialog" />
   </div>
 </template>
 <script>
@@ -193,14 +189,27 @@
   import SettleCheckSheetDetail from '@/views/customer-settle/check-sheet/detail.vue';
   import * as api from '@/api/customer-settle/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isFloat, add, sub } from '@/utils/utils';
+  import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { CUSTOMER_SETTLE_SHEET_STATUS } from '@/enums/biz/customerSettleSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApproveCustomerSettleSheet',
     components: {
       ApproveRefuse,
       SettleCheckSheetDetail,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        isFloat,
+        add,
+        sub,
+        CUSTOMER_SETTLE_SHEET_STATUS,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -248,6 +257,7 @@
           { field: 'description', title: '备注', width: 260 },
         ],
         tableData: [],
+        bizId: '',
       };
     },
     computed: {},
@@ -284,10 +294,10 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
+              !CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('单据已审核通过，无需重复审核！');
+              createError('单据已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -337,27 +347,24 @@
         let totalDiscountAmount = 0;
 
         this.tableData.forEach((item) => {
-          if (this.$utils.isFloat(item.payAmount)) {
-            totalAmount = this.$utils.add(totalAmount, item.payAmount);
+          if (isFloat(item.payAmount)) {
+            totalAmount = add(totalAmount, item.payAmount);
           }
 
-          if (this.$utils.isFloat(item.discountAmount)) {
-            totalDiscountAmount = this.$utils.add(
+          if (isFloat(item.discountAmount)) {
+            totalDiscountAmount = add(
               totalDiscountAmount,
-              this.$utils.add(item.discountAmount, item.totalDiscountAmount),
+              add(item.discountAmount, item.totalDiscountAmount),
             );
           } else {
-            totalDiscountAmount = this.$utils.add(totalDiscountAmount, item.totalDiscountAmount);
+            totalDiscountAmount = add(totalDiscountAmount, item.totalDiscountAmount);
           }
 
-          totalUnPayAmount = this.$utils.add(
+          totalUnPayAmount = add(
             totalUnPayAmount,
-            this.$utils.sub(
-              this.$utils.sub(
-                item.totalUnPayAmount,
-                this.$utils.isFloat(item.payAmount) ? item.payAmount : 0,
-              ),
-              this.$utils.isFloat(item.discountAmount) ? item.discountAmount : 0,
+            sub(
+              sub(item.totalUnPayAmount, isFloat(item.payAmount) ? item.payAmount : 0),
+              isFloat(item.discountAmount) ? item.discountAmount : 0,
             ),
           );
         });
@@ -368,7 +375,7 @@
       },
       // 审核通过
       approvePassOrder() {
-        this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
+        createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -376,7 +383,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -399,7 +406,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

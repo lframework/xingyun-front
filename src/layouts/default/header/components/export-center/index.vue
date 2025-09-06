@@ -33,21 +33,18 @@
                         {{ item.name }}
                       </template>
                       <template #description>
-                        <div v-if="$enums.EXPORT_TASK_STATUS.EXPORTING.equalsCode(item.status)">
+                        <div v-if="EXPORT_TASK_STATUS.EXPORTING.equalsCode(item.status)">
                           <a-progress
                             :stroke-color="projectSetting.themeColor"
                             :percent="
                               item.totalCount === 0
                                 ? 0
-                                : $utils.getNumber(
-                                    $utils.mul($utils.div(item.curCount, item.totalCount), 100),
-                                    2,
-                                  )
+                                : getNumber(mul(div(item.curCount, item.totalCount), 100), 2)
                             "
                             status="active"
                           />
                         </div>
-                        <div v-else> {{ $enums.EXPORT_TASK_STATUS.CREATED.desc }} </div>
+                        <div v-else> {{ EXPORT_TASK_STATUS.CREATED.desc }} </div>
                       </template>
                     </a-list-item-meta>
                   </a-list-item>
@@ -88,11 +85,12 @@
   import { useDesign } from '@/hooks/web/useDesign';
   import eventBus from '@/events/eventBus';
   import * as api from '@/api/export-task';
-  import { uuid, isEmpty } from '@/utils/utils';
+  import { uuid, isEmpty, getNumber, mul, div } from '@/utils/utils';
   import { ExportingExportTaskBo } from '@/api/export-task/model/exportingExportTaskBo';
   import projectSetting from '@/settings/projectSetting';
   import SuccessList from './SuccessList.vue';
   import FailList from './FailList.vue';
+  import { EXPORT_TASK_STATUS } from '@/enums/biz/exportTaskStatus';
 
   export default defineComponent({
     components: {
@@ -188,6 +186,10 @@
         exportingDataList,
         projectSetting,
         activeKey,
+        getNumber,
+        mul,
+        div,
+        EXPORT_TASK_STATUS,
       };
     },
     mounted() {},

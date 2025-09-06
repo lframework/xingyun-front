@@ -1,4 +1,3 @@
-import { withInstall } from '/@/utils/index';
-import relativeTime from './src/RelativeTime.vue';
+import RelativeTime from './src/RelativeTime.vue';
 
-export const RelativeTime = withInstall(relativeTime);
+export default RelativeTime;

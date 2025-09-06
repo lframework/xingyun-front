@@ -63,7 +63,7 @@
           <a @click="() => clickRow(row)">
             <a-space>
               <icon
-                v-if="$enums.FILE_BOX_FILE_TYPE.DIR.equalsCode(row.fileType)"
+                v-if="FILE_BOX_FILE_TYPE.DIR.equalsCode(row.fileType)"
                 icon="flat-color-icons:folder"
               />
               <icon v-else icon="flat-color-icons:file" />
@@ -118,7 +118,11 @@
   import Modify from './modify.vue';
   import Detail from './detail.vue';
   import * as api from '@/api/smart-work/file-box';
-  import Icon from '@/components/Icon/Icon.vue';
+  import { Icon } from '@/components/Icon';
+  import { isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import { FILE_BOX_FILE_TYPE } from '@/enums/biz/fileBoxFileType';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'FileBox',
@@ -131,6 +135,7 @@
       SearchDialog,
       Modify,
       Detail,
+      BatchHandler,
     },
     setup() {
       return {
@@ -139,6 +144,7 @@
         DeleteOutlined,
         CloudUploadOutlined,
         FolderAddOutlined,
+        FILE_BOX_FILE_TYPE,
       };
     },
     data() {
@@ -237,8 +243,8 @@
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的文件或目录！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的文件或目录！');
           return;
         }
 
@@ -265,7 +271,7 @@
         ];
       },
       clickRow(row) {
-        if (this.$enums.FILE_BOX_FILE_TYPE.DIR.equalsCode(row.fileType)) {
+        if (FILE_BOX_FILE_TYPE.DIR.equalsCode(row.fileType)) {
           this.currentPath += (this.currentPath === '/' ? '' : '/') + row.name;
           this.search();
         } else {

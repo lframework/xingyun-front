@@ -10,9 +10,9 @@
     <div v-if="visible" v-permission="['stock:warning:notify']" v-loading="loading">
       <a-alert
         :message="
-          '列表中的状态显示的是消息通知组的状态，如果消息通知组的状态是“' +
-          $enums.AVAILABLE.UNABLE.desc +
-          '”，那么即使配置了该消息通知组，也不会发送预警消息。'
+          '列表中的状态显示的是消息通知组的状态，如果消息通知组的状态是' +
+          AVAILABLE.UNABLE.desc +
+          '，那么即使配置了该消息通知组，也不会发送预警消息。'
         "
         type="info"
         show-icon
@@ -41,7 +41,7 @@
 
         <!-- 名称 列自定义内容 -->
         <template #name_default="{ row }">
-          <span v-if="!$utils.isEmpty(row.id)">{{ row.name }}</span>
+          <span v-if="!isEmpty(row.id)">{{ row.name }}</span>
           <sys-notify-group-selector
             v-else
             v-model:value="row.id"
@@ -51,13 +51,13 @@
 
         <!-- 状态 列自定义内容 -->
         <template #available_default="{ row }">
-          <available-tag v-if="!$utils.isEmpty(row.id)" :available="row.available" />
+          <available-tag v-if="!isEmpty(row.id)" :available="row.available" />
           <div v-else></div>
         </template>
 
         <!-- 操作 列自定义内容 -->
         <template #action_default="{ row }">
-          <table-action v-if="!$utils.isEmpty(row.id)" outside :actions="createActions(row)" />
+          <table-action v-if="!isEmpty(row.id)" outside :actions="createActions(row)" />
         </template>
       </vxe-grid>
     </div>
@@ -67,14 +67,24 @@
   import { h, defineComponent } from 'vue';
   import { PlusOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/warning';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createConfirm, createWarning } from '@/hooks/web/msg';
+  import SysNotifyGroupSelector from '@/components/Selector/SysNotifyGroupSelector.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      SysNotifyGroupSelector,
+      AvailableTag,
+    },
     setup() {
       return {
         h,
         PlusOutlined,
+        isEmpty,
+        AVAILABLE,
       };
     },
     data() {
@@ -154,20 +164,20 @@
       },
       addRow() {
         const { tableData } = this.$refs.grid.getTableData();
-        if (!this.$utils.isEmpty(tableData.filter((item) => this.$utils.isEmpty(item.id)))) {
-          this.$msg.createWarning('请先选择消息通知组后再新增');
+        if (!isEmpty(tableData.filter((item) => isEmpty(item.id)))) {
+          createWarning('请先选择消息通知组后再新增');
           return;
         }
 
         this.$refs.grid.insert({});
       },
       deleteRow(id) {
-        this.$msg.createConfirm('是否确定不再通知此消息通知组？').then(() => {
+        createConfirm('是否确定不再通知此消息通知组？').then(() => {
           this.loading = true;
           api
             .deleteSetting(id)
             .then(() => {
-              this.$msg.createSuccess('取消成功！');
+              createSuccess('取消成功！');
               this.$refs.grid.commitProxy('reload');
             })
             .finally(() => {

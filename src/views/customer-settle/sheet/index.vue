@@ -67,7 +67,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.status" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.CUSTOMER_SETTLE_SHEET_STATUS.values()"
+                      v-for="item in CUSTOMER_SETTLE_SHEET_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -184,12 +184,27 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/customer-settle/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    buildSortPageVo,
+  } from '@/utils/utils';
+  import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { CUSTOMER_SETTLE_SHEET_STATUS } from '@/enums/biz/customerSettleSheetStatus';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'CustomerSettleSheet',
     components: {
       Detail,
+      CustomerSelector,
       ApproveRefuse,
+      UserSelector,
+      BatchHandler,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -201,6 +216,7 @@
         CloseOutlined,
         DeleteOutlined,
         DownloadOutlined,
+        CUSTOMER_SETTLE_SHEET_STATUS,
       };
     },
     data() {
@@ -213,10 +229,8 @@
           code: '',
           customerId: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createStartTime: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createEndTime: formatDateTime(getDateTimeWithMaxTime(moment())),
           approveBy: '',
           approveStartTime: '',
           approveEndTime: '',
@@ -244,7 +258,7 @@
             title: '状态',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.getDesc(cellValue);
+              return CUSTOMER_SETTLE_SHEET_STATUS.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170, sortable: true },
@@ -280,7 +294,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -300,12 +314,12 @@
       },
       // 删除订单
       deleteOrder(row) {
-        this.$msg.createConfirm('对选中的结算单执行删除操作？').then(() => {
+        createConfirm('对选中的结算单执行删除操作？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -319,14 +333,14 @@
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的结算单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的结算单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个结算单已审核通过，不允许执行删除操作！');
+          if (CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+            createError('第' + (i + 1) + '个结算单已审核通过，不允许执行删除操作！');
             return;
           }
         }
@@ -343,14 +357,14 @@
       // 批量审核通过
       batchApprovePass() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的结算单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的结算单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个结算单已审核通过，不允许继续执行审核！');
+          if (CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+            createError('第' + (i + 1) + '个结算单已审核通过，不允许继续执行审核！');
             return;
           }
         }
@@ -362,21 +376,19 @@
       // 批量审核拒绝
       batchApproveRefuse() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的结算单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的结算单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个结算单已审核通过，不允许继续执行审核！');
+          if (CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+            createError('第' + (i + 1) + '个结算单已审核通过，不允许继续执行审核！');
             return;
           }
 
-          if (
-            this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)
-          ) {
-            this.$msg.createError('第' + (i + 1) + '个结算单已审核拒绝，不允许继续执行审核！');
+          if (CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
+            createError('第' + (i + 1) + '个结算单已审核拒绝，不允许继续执行审核！');
             return;
           }
         }
@@ -401,7 +413,7 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;
@@ -421,8 +433,8 @@
             label: '审核',
             ifShow: () => {
               return (
-                this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {
@@ -434,8 +446,8 @@
             label: '修改',
             ifShow: () => {
               return (
-                this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {
@@ -448,8 +460,8 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                CUSTOMER_SETTLE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                CUSTOMER_SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {

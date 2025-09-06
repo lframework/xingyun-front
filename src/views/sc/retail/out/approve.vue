@@ -17,22 +17,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status)
+              RETAIL_OUT_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
             <a-input
-              v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -45,8 +45,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -54,8 +54,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -84,8 +84,8 @@
 
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.outNum)">{{
-            $utils.mul(row.taxPrice, row.outNum)
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.outNum)">{{
+            getNumber(mul(row.taxPrice, row.outNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -120,8 +120,8 @@
 
       <div
         v-if="
-          $enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
-          $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+          RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
+          RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
         "
         style="text-align: center; background-color: #ffffff; padding: 8px 0"
       >
@@ -134,7 +134,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['retail:out:approve']"
             danger
             :loading="loading"
@@ -154,14 +154,28 @@
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/retail/out';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloatGeZero, isFloatGtZero, getNumber, mul, add } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { RETAIL_OUT_SHEET_STATUS } from '@/enums/biz/retailOutSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApproveRetailOutSheet',
     components: {
       ApproveRefuse,
       PayType,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        RETAIL_OUT_SHEET_STATUS,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -204,7 +218,7 @@
             align: 'right',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           { field: 'outNum', title: '出库数量', align: 'right', width: 100 },
@@ -258,10 +272,10 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(res.status) &&
+              !RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('零售出库单已审核通过，无需重复审核！');
+              createError('零售出库单已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -298,17 +312,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.outNum);
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.outNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.outNum);
+            const num = parseFloat(t.outNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -319,13 +333,13 @@
       approvePassOrder() {
         const checkStockNumArr = [];
         this.tableData
-          .filter((item) => this.$utils.isIntegerGtZero(item.outNum))
+          .filter((item) => isFloatGtZero(item.outNum))
           .forEach((item) => {
             if (checkStockNumArr.map((v) => item.productId).includes(item.productId)) {
               checkStockNumArr
                 .filter((v) => v.productId === item.productId)
                 .forEach((v) => {
-                  v.outNum = this.$utils.add(v.outNum, item.outNum);
+                  v.outNum = add(v.outNum, item.outNum);
                 });
             } else {
               checkStockNumArr.push({
@@ -339,8 +353,8 @@
           });
 
         const unValidStockNumArr = checkStockNumArr.filter((item) => item.stockNum < item.outNum);
-        if (!this.$utils.isEmpty(unValidStockNumArr)) {
-          this.$msg.createError(
+        if (!isEmpty(unValidStockNumArr)) {
+          createError(
             '商品（' +
               unValidStockNumArr[0].productCode +
               '）' +
@@ -354,7 +368,7 @@
           return false;
         }
 
-        this.$msg.createConfirm('对零售出库单执行审核通过操作？').then(() => {
+        createConfirm('对零售出库单执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -362,7 +376,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -385,7 +399,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -399,12 +413,12 @@
         const checkArr = this.tableData
           .filter((item) => item.productId === row.productId)
           .map((item) => item.outNum);
-        if (this.$utils.isEmpty(checkArr)) {
+        if (isEmpty(checkArr)) {
           checkArr.push(0);
         }
         const totalOutNum = checkArr.reduce((total, item) => {
-          const outNum = this.$utils.isIntegerGtZero(item) ? item : 0;
-          return this.$utils.add(total, outNum);
+          const outNum = isFloatGtZero(item) ? item : 0;
+          return add(total, outNum);
         }, 0);
 
         return totalOutNum <= row.stockNum;

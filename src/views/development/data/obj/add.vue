@@ -69,11 +69,17 @@
   import RelaTable from './rela-table.vue';
   import CustomQuery from './custom-query.vue';
   import * as api from '@/api/development/data/obj';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenDataEntitySelector from '@/components/Selector/GenDataEntitySelector.vue';
+  import GenDataObjCategorySelector from '@/components/Selector/GenDataObjCategorySelector.vue';
 
   export default defineComponent({
     components: {
       RelaTable,
       CustomQuery,
+      GenDataEntitySelector,
+      GenDataObjCategorySelector,
     },
     data() {
       return {
@@ -127,16 +133,16 @@
         this.queryColumns = [];
       },
       submit() {
-        if (this.$utils.isEmpty(this.formData.name)) {
-          this.$msg.createError('请输入名称');
+        if (isEmpty(this.formData.name)) {
+          createError('请输入名称');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.mainTableId)) {
-          this.$msg.createError('请选择主表');
+        if (isEmpty(this.formData.mainTableId)) {
+          createError('请选择主表');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.mainTableAlias)) {
-          this.$msg.createError('请输入主表别名');
+        if (isEmpty(this.formData.mainTableAlias)) {
+          createError('请输入主表别名');
           return;
         }
         if (!this.$refs.relaTable.validDate()) {
@@ -159,7 +165,7 @@
         api
           .create(params)
           .then(() => {
-            this.$msg.createSuccess('新增成功！');
+            createSuccess('新增成功！');
             this.$emit('confirm');
             this.closeDialog();
           })

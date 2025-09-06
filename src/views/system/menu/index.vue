@@ -27,9 +27,9 @@
         <template #icon_default="{ row }">
           <icon
             v-if="
-              !$utils.isEmpty(row.icon) &&
-              ($enums.MENU_DISPLAY.CATALOG.equalsCode(row.display) ||
-                $enums.MENU_DISPLAY.FUNCTION.equalsCode(row.display))
+              !isEmpty(row.icon) &&
+              (MENU_DISPLAY.CATALOG.equalsCode(row.display) ||
+                MENU_DISPLAY.FUNCTION.equalsCode(row.display))
             "
             :icon="row.icon"
           />
@@ -55,8 +55,8 @@
               </j-form-item>
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option :value="$enums.AVAILABLE.ENABLE.code">{{
-                    '仅显示' + $enums.AVAILABLE.ENABLE.desc
+                  <a-select-option :value="AVAILABLE.ENABLE.code">{{
+                    '仅显示' + AVAILABLE.ENABLE.desc
                   }}</a-select-option>
                 </a-select>
               </j-form-item>
@@ -134,6 +134,21 @@
     SearchOutlined,
     StopOutlined,
   } from '@ant-design/icons-vue';
+  import {
+    isEmpty,
+    toArrayTree,
+    toString,
+    searchTree,
+    toTreeArray,
+    isEqualWithStr,
+    union,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { MENU_DISPLAY } from '@/enums/biz/menuDisplay';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import MenuDisplayTag from '@/components/Tag/MenuDisplayTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'Menu',
@@ -142,6 +157,9 @@
       Modify,
       Detail,
       DownOutlined,
+      AvailableTag,
+      MenuDisplayTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -150,6 +168,9 @@
         SearchOutlined,
         PlusOutlined,
         h,
+        isEmpty,
+        MENU_DISPLAY,
+        AVAILABLE,
       };
     },
     data() {
@@ -166,7 +187,7 @@
             query: () =>
               api.query().then((res) => {
                 // 将带层级的列表转成树结构
-                res = this.$utils.toArrayTree(res, {
+                res = toArrayTree(res, {
                   key: 'id',
                   parentKey: 'parentId',
                   children: 'children',
@@ -217,18 +238,18 @@
     created() {},
     methods: {
       handleSearch() {
-        const filterName = this.$utils.toString(this.searchFormData.searchMenuName).trim();
+        const filterName = toString(this.searchFormData.searchMenuName).trim();
         const filterAvailable = this.searchFormData.available;
-        const isFilterName = !this.$utils.isEmpty(filterName);
-        const isFilterAvailable = !this.$utils.isEmpty(filterAvailable);
+        const isFilterName = !isEmpty(filterName);
+        const isFilterAvailable = !isEmpty(filterAvailable);
         if (isFilterName || isFilterAvailable) {
           const options = { key: 'id', parentKey: 'parentId', children: 'children', strict: true };
-          let tableData = this.$utils.searchTree(
+          let tableData = searchTree(
             this.originData,
             (item) => {
               let filterResult = true;
               if (isFilterName) {
-                filterResult &= this.$utils.toString(item['title']).indexOf(filterName) > -1;
+                filterResult &= toString(item['title']).indexOf(filterName) > -1;
               }
 
               return filterResult;
@@ -237,11 +258,11 @@
           );
 
           if (isFilterAvailable) {
-            tableData = this.$utils.toTreeArray(tableData, options);
+            tableData = toTreeArray(tableData, options);
             tableData = tableData.filter((item) =>
-              this.$utils.isEqualWithStr(item['available'], filterAvailable),
+              isEqualWithStr(item['available'], filterAvailable),
             );
-            tableData = this.$utils.toArrayTree(tableData, options);
+            tableData = toArrayTree(tableData, options);
           }
 
           return tableData;
@@ -265,8 +286,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的菜单！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的菜单！');
           return;
         }
         this.batchHandleDatas = records;
@@ -277,13 +298,13 @@
         return api.enable(row.id);
       },
       batchEnable() {
-        const records = this.$utils.union(
+        const records = union(
           this.$refs.grid.getCheckboxRecords(),
           this.$refs.grid.getCheckboxIndeterminateRecords(true),
         );
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的菜单！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的菜单！');
           return;
         }
 
@@ -293,24 +314,22 @@
       },
       // 删除
       deleteRow(row) {
-        this.$msg
-          .createConfirm(
-            row.isSpecial
-              ? '当前菜单为内置菜单，是否确定删除？注：删除内置菜单可能会导致系统功能异常，请谨慎操作'
-              : '是否确定删除该菜单？',
-          )
-          .then(() => {
-            this.loading = true;
-            api
-              .deleteById(row.id)
-              .then(() => {
-                this.$msg.createSuccess('删除成功！');
-                this.search();
-              })
-              .finally(() => {
-                this.loading = false;
-              });
-          });
+        createConfirm(
+          row.isSpecial
+            ? '当前菜单为内置菜单，是否确定删除？注：删除内置菜单可能会导致系统功能异常，请谨慎操作'
+            : '是否确定删除该菜单？',
+        ).then(() => {
+          this.loading = true;
+          api
+            .deleteById(row.id)
+            .then(() => {
+              createSuccess('删除成功！');
+              this.search();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        });
       },
       createActions(row) {
         return [

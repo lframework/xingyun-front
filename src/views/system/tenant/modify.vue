@@ -19,6 +19,17 @@
         <a-form-item label="名称" name="name">
           <a-input v-model:value="formData.name" allow-clear />
         </a-form-item>
+        <a-form-item name="serverName">
+          <template #label>
+            <a-space>
+              <span>绑定域名</span>
+              <a-tooltip title="绑定域名后，可以直接通过域名获取租户信息。"
+                ><QuestionCircleOutlined
+              /></a-tooltip>
+            </a-space>
+          </template>
+          <a-input v-model:value="formData.serverName" allow-clear />
+        </a-form-item>
         <a-form-item label="Jdbc Url" name="jdbcUrl">
           <a-space v-if="!modifyJdbcUrl">
             <span>{{ oriFormData.jdbcUrl }}</span
@@ -43,7 +54,7 @@
         <a-form-item label="状态" name="available">
           <a-select v-model:value="formData.available" allow-clear>
             <a-select-option
-              v-for="item in $enums.AVAILABLE.values()"
+              v-for="item in AVAILABLE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -65,11 +76,18 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/tenant';
+  import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+  import { createSuccess } from '@/hooks/web/msg';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
-    components: {},
-
+    components: { QuestionCircleOutlined },
+    setup() {
+      return {
+        AVAILABLE,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -130,7 +148,7 @@
             api
               .update(this.formData)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

@@ -1,6 +1,11 @@
 <template>
   <div class="app-card-container">
     <div v-permission="['purchase:order:modify']" v-loading="loading">
+      <a-alert
+        description="提示：使用回车键可以快速添加商品；使用Tab键可以快速跳转至下一个输入框。"
+        type="info"
+        show-icon
+      />
       <j-border>
         <j-form bordered>
           <j-form-item label="仓库" required>
@@ -21,22 +26,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.PURCHASE_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ PURCHASE_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.PURCHASE_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ PURCHASE_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.PURCHASE_ORDER_STATUS.getDesc(formData.status)
+              PURCHASE_ORDER_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false">
             <a-input
-              v-if="$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -49,8 +54,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -58,8 +63,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -102,16 +107,39 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="$utils.isEmpty(row.productId)"
+            v-if="isEmpty(row.productId)"
+            :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
-            style="width: 100%"
-            placeholder=""
-            value-key="productName"
+            placeholder="请输入商品编号/名称/SKU编号/简码"
             :options="row.productOptions"
-            @search="(e) => queryProduct(e, row)"
-            @select="(e) => handleSelectProduct(rowIndex, e, row)"
-          />
-          <span v-else>{{row.productName}}</span>
+            :dropdown-match-select-width="false"
+            :dropdown-style="{ width: '900px' }"
+            @search="(e) => queryProduct(e, row, rowIndex)"
+          >
+            <!-- 自定义下拉框内容 -->
+            <template #dropdownRender>
+              <div v-if="!isEmpty(row.products)">
+                <vxe-table
+                  :data="row.products"
+                  max-height="500"
+                  class="cursor-pointer"
+                  highlight-hover-row
+                  show-overflow
+                  :row-config="{ isHover: true }"
+                  @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
+                >
+                  <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="skuCode" title="商品SKU编号" width="120" />
+                  <vxe-column field="spec" title="规格" width="80" />
+                  <vxe-column field="unit" title="单位" width="80" />
+                  <vxe-column field="purchasePrice" title="采购价（元）" width="140" align="right" />
+                  <vxe-column field="stockNum" title="库存数量" width="140" align="right" />
+                </vxe-table>
+              </div>
+            </template>
+          </a-auto-complete>
+          <span v-else>{{ row.productName }}</span>
         </template>
 
         <!-- 采购价 列自定义内容 -->
@@ -136,10 +164,9 @@
 
         <!-- 采购含税金额 列自定义内容 -->
         <template #purchaseAmount_default="{ row }">
-          <span
-            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.purchaseNum)"
-            >{{ $utils.mul(row.purchasePrice, row.purchaseNum) }}</span
-          >
+          <span v-if="isFloatGeZero(row.purchasePrice) && isFloatGeZero(row.purchaseNum)">{{
+            getNumber(mul(row.purchasePrice, row.purchaseNum), 2)
+          }}</span>
         </template>
 
         <!-- 备注 列自定义内容 -->
@@ -198,6 +225,9 @@
   import { h, defineComponent } from 'vue';
   import BatchAddProduct from '@/views/sc/purchase/batch-add-product.vue';
   import PayType from '@/views/sc/pay-type/index.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
   import {
     PlusOutlined,
     DeleteOutlined,
@@ -207,12 +237,31 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    isFloatGeZero,
+    getNumber,
+    mul,
+    add,
+    isFloat,
+    isFloatGtZero,
+    isNumberPrecision,
+    eq,
+    uuid,
+    PATTERN_IS_FLOAT_GT_ZERO,
+    PATTERN_IS_PRICE,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
+  import { PURCHASE_ORDER_STATUS } from '@/enums/biz/purchaseOrderStatus';
 
   export default defineComponent({
     name: 'ModifyPurchaseOrder',
     components: {
       BatchAddProduct,
       PayType,
+      StoreCenterSelector,
+      SupplierSelector,
+      UserSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -223,6 +272,11 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        PURCHASE_ORDER_STATUS,
       };
     },
     data() {
@@ -258,15 +312,15 @@
           },
           { field: 'skuCode', title: '商品SKU编号', width: 120 },
           { field: 'externalCode', title: '商品简码', width: 120 },
-          { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
+          { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           {
             field: 'purchasePrice',
             title: '采购价（元）',
             align: 'right',
-            width: 120,
+            width: 140,
             slots: { default: 'purchasePrice_default' },
           },
           { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
@@ -279,19 +333,19 @@
             },
           },
           { field: 'taxCostPrice', title: '含税成本价（元）', align: 'right', width: 140 },
-          { field: 'stockNum', title: '库存数量', align: 'right', width: 100 },
+          { field: 'stockNum', title: '库存数量', align: 'right', width: 140 },
           {
             field: 'purchaseNum',
             title: '采购数量',
             align: 'right',
-            width: 100,
+            width: 140,
             slots: { default: 'purchaseNum_default' },
           },
           {
             field: 'purchaseAmount',
             title: '采购含税金额',
             align: 'right',
-            width: 120,
+            width: 140,
             slots: { default: 'purchaseAmount_default' },
           },
           {
@@ -308,7 +362,22 @@
     created() {
       this.openDialog();
     },
+    mounted() {
+      // 监听键盘事件，按下回车键时调用addProduct方法
+      document.addEventListener('keydown', this.handleKeyDown);
+    },
+    beforeUnmount() {
+      // 移除键盘事件监听
+      document.removeEventListener('keydown', this.handleKeyDown);
+    },
     methods: {
+      // 处理键盘事件
+      handleKeyDown(event) {
+        // 按下回车键时调用addProduct方法
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          this.addProduct();
+        }
+      },
       // 打开对话框 由父页面触发
       openDialog() {
         // 初始化表单数据
@@ -341,10 +410,10 @@
           .get(this.id, this.isForm)
           .then((res) => {
             if (
-              !this.$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !PURCHASE_ORDER_STATUS.CREATED.equalsCode(res.status) &&
+              !PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('订单已审核通过，无法修改！');
+              createError('订单已审核通过，无法修改！');
               this.closeDialog();
               return;
             }
@@ -376,7 +445,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -395,19 +464,26 @@
           purchaseAmount: '',
           description: '',
           products: [],
+          productOptions: [],
         };
       },
       // 新增商品
       addProduct() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('请先选择仓库！');
+        if (isEmpty(this.formData.scId)) {
+          createError('请先选择仓库！');
           return;
         }
         this.tableData.push(this.emptyProduct());
+        this.$nextTick(() => {
+          const productInputRef = this.$refs['productInputRef' + (this.tableData.length - 1)];
+          if (productInputRef) {
+            productInputRef.focus();
+          }
+        });
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -423,26 +499,24 @@
           });
         });
       },
-      // 选择商品
-      handleSelectProduct(index, value, row) {
-        this.tableData[index] = Object.assign(
-          this.tableData[index],
-          row ? row.products.filter((item) => item.productId === value)[0] : value,
-        );
+      // 选择商品（从表格中点击）
+      handleSelectProduct(index, product) {
+        // 将选中的商品数据赋值给当前行
+        this.tableData[index] = Object.assign(this.tableData[index], product);
 
         this.purchasePriceInput(this.tableData[index], this.tableData[index].purchasePrice);
       },
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -452,8 +526,8 @@
       },
       // 批量添加商品
       openBatchAddProductDialog() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('请先选择仓库！');
+        if (isEmpty(this.formData.scId)) {
+          createError('请先选择仓库！');
           return;
         }
         this.$refs.batchAddProductDialog.openDialog();
@@ -472,20 +546,19 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isIntegerGeZero(t.purchaseNum)
-            );
+            return isFloatGeZero(t.purchasePrice) && isFloatGeZero(t.purchaseNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.purchaseNum);
+            const num = parseFloat(t.purchaseNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice));
+            // 先将每行的金额格式化成2位小数，然后再累加
+            const rowAmount = getNumber(mul(num, t.purchasePrice), 2);
+            totalAmount = add(totalAmount, rowAmount);
           });
 
         this.formData.totalNum = totalNum;
@@ -495,61 +568,57 @@
       // 批量录入数量
       batchInputPurchaseNum() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择商品数据！');
           return;
         }
 
-        this.$msg
-          .createPrompt('请输入采购数量', {
-            inputPattern: this.$utils.PATTERN_IS_INTEGER_GT_ZERO,
-            inputErrorMessage: '采购数量必须为整数并且大于0',
-            title: '批量录入数量',
-            required: true,
-          })
-          .then(({ value }) => {
-            records.forEach((t) => {
-              t.purchaseNum = value;
+        createPrompt('请输入采购数量', {
+          inputPattern: PATTERN_IS_FLOAT_GT_ZERO,
+          inputErrorMessage: '采购数量必须是数字并且大于0',
+          title: '批量录入数量',
+          required: true,
+        }).then(({ value }) => {
+          records.forEach((t) => {
+            t.purchaseNum = value;
 
-              this.purchaseNumInput(value);
-            });
+            this.purchaseNumInput(value);
           });
+        });
       },
       // 批量录入采购价
       batchInputPurchasePrice() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择商品数据！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (records[i].isGift) {
-            this.$msg.createError('第' + (i + 1) + '行商品为赠品，不允许录入采购价！');
+            createError('第' + (i + 1) + '行商品为赠品，不允许录入采购价！');
             return;
           }
         }
 
-        this.$msg
-          .createPrompt('请输入采购价（元）', {
-            inputPattern: this.$utils.PATTERN_IS_PRICE,
-            inputErrorMessage: '采购价（元）必须为数字并且不小于0',
-            title: '批量调整采购价',
-            required: true,
-          })
-          .then(({ value }) => {
-            records.forEach((t) => {
-              t.purchasePrice = value;
+        createPrompt('请输入采购价（元）', {
+          inputPattern: PATTERN_IS_PRICE,
+          inputErrorMessage: '采购价（元）必须是数字并且不小于0，最多允许6位小数',
+          title: '批量调整采购价',
+          required: true,
+        }).then(({ value }) => {
+          records.forEach((t) => {
+            t.purchasePrice = value;
 
-              this.purchasePriceInput(t, value);
-            });
+            this.purchasePriceInput(t, value);
           });
+        });
       },
       // 设置赠品
       setGift() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要设置为赠品的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要设置为赠品的商品数据！');
           return;
         }
 
@@ -564,78 +633,84 @@
       batchAddProduct(productList) {
         productList.forEach((item) => {
           this.tableData.push(this.emptyProduct());
-          this.handleSelectProduct(this.tableData.length - 1, item);
+          const index = this.tableData.length - 1;
+          this.handleSelectProduct(index, item);
         });
       },
       // 校验数据
       validData() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('仓库不允许为空！');
+        if (isEmpty(this.formData.scId)) {
+          createError('仓库不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.supplierId)) {
-          this.$msg.createError('供应商不允许为空！');
+        if (isEmpty(this.formData.supplierId)) {
+          createError('供应商不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.expectArriveDate)) {
-          this.$msg.createError('预计到货日期不允许为空！');
+        if (isEmpty(this.formData.expectArriveDate)) {
+          createError('预计到货日期不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const product = this.tableData[i];
 
-          if (this.$utils.isEmpty(product.productId)) {
-            this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
+          if (isEmpty(product.productId)) {
+            createError('第' + (i + 1) + '行商品不允许为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(product.purchasePrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价不允许为空！');
+          if (isEmpty(product.purchasePrice)) {
+            createError('第' + (i + 1) + '行商品采购价不允许为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(product.purchasePrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价必须为数字！');
+          if (!isFloat(product.purchasePrice)) {
+            createError('第' + (i + 1) + '行商品采购价必须是数字！');
             return false;
           }
 
           if (product.isGift) {
             if (parseFloat(product.purchasePrice) !== 0) {
-              this.$msg.createError('第' + (i + 1) + '行商品采购价必须等于0！');
+              createError('第' + (i + 1) + '行商品采购价必须等于0！');
               return false;
             }
           } else {
-            if (!this.$utils.isFloatGtZero(product.purchasePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行商品采购价必须大于0！');
+            if (!isFloatGtZero(product.purchasePrice)) {
+              createError('第' + (i + 1) + '行商品采购价必须大于0！');
               return false;
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.purchasePrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许2位小数！');
+          if (!isNumberPrecision(product.purchasePrice, 6)) {
+            createError('第' + (i + 1) + '行商品采购价最多允许6位小数！');
             return false;
           }
 
-          if (this.$utils.isEmpty(product.purchaseNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购数量不允许为空！');
+          if (isEmpty(product.purchaseNum)) {
+            createError('第' + (i + 1) + '行商品采购数量不允许为空！');
             return false;
           }
 
-          if (!this.$utils.isInteger(product.purchaseNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购数量必须为整数！');
+          if (!isFloat(product.purchaseNum)) {
+            createError('第' + (i + 1) + '行商品采购数量必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isIntegerGtZero(product.purchaseNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购数量必须大于0！');
+          if (!isFloatGtZero(product.purchaseNum)) {
+            createError('第' + (i + 1) + '行商品采购数量必须大于0！');
+            return false;
+          }
+
+          if (!isNumberPrecision(product.purchaseNum, 8)) {
+            createError('第' + (i + 1) + '行商品采购数量最多允许8位小数！');
             return false;
           }
         }
@@ -645,12 +720,9 @@
         }
 
         const payTypes = this.$refs.payType.getTableData();
-        const totalPayAmount = payTypes.reduce(
-          (tot, item) => this.$utils.add(tot, item.payAmount),
-          0,
-        );
-        if (!this.$utils.eq(this.formData.totalAmount, totalPayAmount)) {
-          this.$msg.createError('所有约定支付的支付金额不等于含税总金额，请检查！');
+        const totalPayAmount = payTypes.reduce((tot, item) => add(tot, item.payAmount), 0);
+        if (!eq(this.formData.totalAmount, totalPayAmount)) {
+          createError('所有约定支付的支付金额不等于含税总金额，请检查！');
           return false;
         }
 
@@ -691,7 +763,7 @@
         api
           .update(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();

@@ -43,7 +43,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.AVAILABLE.values()"
+                      v-for="item in AVAILABLE.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -89,18 +89,23 @@
   import Modify from './modify.vue';
   import * as api from '@/api/system/notify-group';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import { buildSortPageVo } from '@/utils/utils';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'SysNotifyGroup',
     components: {
       Add,
       Modify,
+      AvailableTag,
     },
     setup() {
       return {
         h,
         SearchOutlined,
         PlusOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -113,7 +118,7 @@
           name: '',
           createTimeStart: '',
           createTimeEnd: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -160,7 +165,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },

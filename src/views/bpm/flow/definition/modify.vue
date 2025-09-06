@@ -40,9 +40,13 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/bpm/flow/definition';
   import { validCode } from '@/utils/validate';
+  import { createSuccess } from '@/hooks/web/msg';
+  import FlowCategorySelector from '@/components/Selector/FlowCategorySelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      FlowCategorySelector,
+    },
     props: {
       id: {
         type: String,
@@ -117,7 +121,7 @@
             api
               .update(this.formData)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.closeDialog();
               })

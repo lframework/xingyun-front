@@ -14,7 +14,7 @@
 - Vue 3.3.4
 - ant-design-vue 4.0.7
 - vxe-table 4.4.5
-- vue-vben-admin
+- vue-vben-admin 2.10.1
 
 ### License
 

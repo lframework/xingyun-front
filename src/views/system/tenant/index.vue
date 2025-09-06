@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -88,6 +88,9 @@
   import SetModule from './set-module.vue';
   import * as api from '@/api/system/tenant';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import { buildSortPageVo } from '@/utils/utils';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'SysTenant',
@@ -96,12 +99,14 @@
       Modify,
       Detail,
       SetModule,
+      AvailableTag,
     },
     setup() {
       return {
         h,
         SearchOutlined,
         PlusOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -126,6 +131,7 @@
           { type: 'checkbox', width: 45 },
           { field: 'id', title: '租户ID', width: 100, sortable: true },
           { field: 'name', title: '名称', minWidth: 180, sortable: true },
+          { field: 'serverName', title: '绑定域名', with: 150 },
           { field: 'jdbcUrl', title: 'JDBC Url', minWidth: 260 },
           { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
           { title: '操作', width: 160, fixed: 'right', slots: { default: 'action_default' } },
@@ -156,7 +162,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },

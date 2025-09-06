@@ -43,6 +43,8 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/category';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -103,7 +105,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })
@@ -127,7 +129,7 @@
         api
           .get(this.id)
           .then((data) => {
-            if (!this.$utils.isEmpty(data)) {
+            if (!isEmpty(data)) {
               this.formData.parentName = data.name;
               this.formData.parentId = data.id;
             }

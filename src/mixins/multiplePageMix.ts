@@ -1,5 +1,6 @@
 import eventBus from '@/events/eventBus';
 import { useRefreshStore } from '@/store/modules/multipleTab';
+import { isEmpty } from '@/utils/utils';
 
 export const multiplePageMix = {
   activated() {
@@ -25,7 +26,7 @@ export const multiplePageMix = {
       refreshStore.setRefreshFlag(parentPath);
       eventBus.$emit(eventBus.$otherEvent.CLOSE_CURRENT_TAB);
 
-      if (!this.$utils.isEmpty(parentPath)) {
+      if (!isEmpty(parentPath)) {
         this.$router.push(parentPath);
       }
     },

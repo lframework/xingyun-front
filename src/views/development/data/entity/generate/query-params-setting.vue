@@ -37,7 +37,7 @@
           <template #queryType_default="{ row }">
             <a-select v-model:value="row.queryType">
               <a-select-option
-                v-for="item in $enums.GEN_QUERY_TYPE.values()"
+                v-for="item in GEN_QUERY_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -58,13 +58,20 @@
   import { defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import { GEN_QUERY_TYPE } from '@/enums/biz/genQueryType';
 
   export default defineComponent({
     // 使用组件
     components: {
       DragOutlined,
     },
-
+    setup() {
+      return {
+        GEN_QUERY_TYPE,
+      };
+    },
     props: {
       columns: {
         type: Array,
@@ -122,14 +129,14 @@
     },
     methods: {
       validDate() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('查询功能参数必须配置');
+        if (isEmpty(this.tableData)) {
+          createError('查询功能参数必须配置');
           return false;
         }
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
-          if (this.$utils.isEmpty(column.queryType)) {
-            this.$msg.createError('字段【' + column.name + '】查询类型不能为空');
+          if (isEmpty(column.queryType)) {
+            createError('字段【' + column.name + '】查询类型不能为空');
             return false;
           }
         }
@@ -138,7 +145,7 @@
       emptyLine() {
         return {
           id: '',
-          queryType: this.$enums.GEN_QUERY_TYPE.EQ.code,
+          queryType: GEN_QUERY_TYPE.EQ.code,
           orderNo: '',
         };
       },

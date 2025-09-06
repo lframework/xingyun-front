@@ -9,22 +9,22 @@
           <j-form-item :span="16" />
           <j-form-item label="状态">
             <span
-              v-if="$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SETTLE_PRE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_PRE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SETTLE_PRE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_PRE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SETTLE_PRE_SHEET_STATUS.getDesc(formData.status)
+              SETTLE_PRE_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -37,8 +37,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -46,8 +46,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -89,8 +89,8 @@
 
       <div
         v-if="
-          $enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
-          $enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+          SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
+          SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
         "
         style="text-align: center; background-color: #ffffff; padding: 8px 0"
       >
@@ -103,7 +103,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['settle:pre-sheet:approve']"
             danger
             :loading="loading"
@@ -122,13 +122,23 @@
   import ApproveRefuse from '@/components/ApproveRefuse';
   import * as api from '@/api/settle/pre';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloatGeZero, add } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { SETTLE_PRE_SHEET_STATUS } from '@/enums/biz/settlePreSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApproveSupplierSettlePreSheet',
     components: {
       ApproveRefuse,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        SETTLE_PRE_SHEET_STATUS,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -184,10 +194,10 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
+              !SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('单据已审核通过，无需重复审核！');
+              createError('单据已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -227,17 +237,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.amount) && !this.$utils.isEmpty(t.item);
+            return isFloatGeZero(t.amount) && !isEmpty(t.item);
           })
           .forEach((t) => {
-            totalAmount = this.$utils.add(totalAmount, t.amount);
+            totalAmount = add(totalAmount, t.amount);
           });
 
         this.formData.totalAmount = totalAmount;
       },
       // 审核通过
       approvePassOrder() {
-        this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
+        createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -245,7 +255,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -268,7 +278,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

@@ -66,6 +66,8 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/take/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isInteger, isIntegerGtZero } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'TakeStockConfig',
@@ -129,14 +131,14 @@
       },
       // 提交表单事件
       submit() {
-        if (!this.$utils.isEmpty(this.formData.cancelHours)) {
-          if (!this.$utils.isInteger(this.formData.cancelHours)) {
-            this.$msg.createError('盘点任务自动作废时间必须是整数');
+        if (!isEmpty(this.formData.cancelHours)) {
+          if (!isInteger(this.formData.cancelHours)) {
+            createError('盘点任务自动作废时间必须是整数');
             return;
           }
 
-          if (!this.$utils.isIntegerGtZero(this.formData.cancelHours)) {
-            this.$msg.createError('盘点任务自动作废时间必须大于0');
+          if (!isIntegerGtZero(this.formData.cancelHours)) {
+            createError('盘点任务自动作废时间必须大于0');
             return;
           }
         }
@@ -146,7 +148,7 @@
             api
               .update(this.formData)
               .then(() => {
-                this.$msg.createSuccess('保存成功！');
+                createSuccess('保存成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

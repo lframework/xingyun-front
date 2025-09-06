@@ -14,19 +14,22 @@ GEN_DATA_TYPE.set('BIG_DECIMAL', new BaseEnumItem<number, string>(9, 'BigDecimal
 
 function isNumberType(code: number): boolean | undefined {
   return <boolean | undefined>(
-    (GEN_DATA_TYPE.get('INTEGER')?.equalsCode(code) ||
-      GEN_DATA_TYPE.get('SHORT')?.equalsCode(code) ||
-      GEN_DATA_TYPE.get('LONG')?.equalsCode(code) ||
-      GEN_DATA_TYPE.get('DOUBLE')?.equalsCode(code) ||
-      GEN_DATA_TYPE.get('BIG_DECIMAL')?.equalsCode(code))
+    (GEN_DATA_TYPE.INTEGER?.equalsCode(code) ||
+      GEN_DATA_TYPE.SHORT?.equalsCode(code) ||
+      GEN_DATA_TYPE.LONG?.equalsCode(code) ||
+      GEN_DATA_TYPE.DOUBLE?.equalsCode(code) ||
+      GEN_DATA_TYPE.BIG_DECIMAL?.equalsCode(code))
   );
 }
 
 function isDecimalType(code: number): boolean | undefined {
   return <boolean | undefined>(
-    (GEN_DATA_TYPE.get('DOUBLE')?.equalsCode(code) ||
-      GEN_DATA_TYPE.get('BIG_DECIMAL')?.equalsCode(code))
+    (GEN_DATA_TYPE.DOUBLE?.equalsCode(code) || GEN_DATA_TYPE.BIG_DECIMAL?.equalsCode(code))
   );
 }
 
-export { GEN_DATA_TYPE, isNumberType, isDecimalType };
+// 将工具函数挂载到枚举对象上，兼容全局访问方式
+GEN_DATA_TYPE.isNumberType = isNumberType;
+GEN_DATA_TYPE.isDecimalType = isDecimalType;
+
+export { GEN_DATA_TYPE };

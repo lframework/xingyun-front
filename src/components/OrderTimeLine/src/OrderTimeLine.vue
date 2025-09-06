@@ -1,5 +1,5 @@
 <template>
-  <j-border v-show="!$utils.isEmpty(domLines)">
+  <j-border v-show="!isEmpty(domLines)">
     <div style="padding: 5px">
       <a-timeline>
         <transition-group enter-active-class="animated fadeIn">
@@ -11,13 +11,13 @@
           >
             <template #dot>
               <ExclamationCircleOutlined
-                v-if="$enums.ORDER_TIME_LINE_BIZ_TYPE.APPROVE_RETURN.equalsCode(item.bizType)"
+                v-if="ORDER_TIME_LINE_BIZ_TYPE.APPROVE_RETURN.equalsCode(item.bizType)"
               />
               <ExclamationCircleOutlined
-                v-else-if="$enums.ORDER_TIME_LINE_BIZ_TYPE.CANCEL_APPROVE.equalsCode(item.bizType)"
+                v-else-if="ORDER_TIME_LINE_BIZ_TYPE.CANCEL_APPROVE.equalsCode(item.bizType)"
               />
               <CheckCircleOutlined
-                v-else-if="$enums.ORDER_TIME_LINE_BIZ_TYPE.APPROVE_PASS.equalsCode(item.bizType)"
+                v-else-if="ORDER_TIME_LINE_BIZ_TYPE.APPROVE_PASS.equalsCode(item.bizType)"
               />
               <ClockCircleOutlined v-else />
             </template>
@@ -48,6 +48,8 @@
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/components';
+  import { isEmpty } from '@/utils/utils';
+  import { ORDER_TIME_LINE_BIZ_TYPE } from '@/enums/biz/orderTimeLineBizType';
 
   export default defineComponent({
     name: 'OrderTimeLine',
@@ -57,6 +59,12 @@
       ClockCircleOutlined,
       UpOutlined,
       DownOutlined,
+    },
+    setup() {
+      return {
+        isEmpty,
+        ORDER_TIME_LINE_BIZ_TYPE,
+      };
     },
     props: {
       id: {
@@ -72,10 +80,10 @@
     },
     computed: {
       showCollapse() {
-        return !this.$utils.isEmpty(this.lines) && this.lines.length > 1;
+        return !isEmpty(this.lines) && this.lines.length > 1;
       },
       domLines() {
-        if (this.$utils.isEmpty(this.lines)) {
+        if (isEmpty(this.lines)) {
           return [];
         }
         return this.collapseStatus ? this.lines : [this.lines[this.lines.length - 1]];
@@ -91,15 +99,15 @@
         return api.getOrderTimeLine(this.id);
       },
       color(item) {
-        if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.NORMAL.equalsCode(item.bizType)) {
+        if (ORDER_TIME_LINE_BIZ_TYPE.NORMAL.equalsCode(item.bizType)) {
           return 'gray';
-        } else if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.CREATE.equalsCode(item.bizType)) {
+        } else if (ORDER_TIME_LINE_BIZ_TYPE.CREATE.equalsCode(item.bizType)) {
           return 'gray';
-        } else if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.APPROVE_PASS.equalsCode(item.bizType)) {
+        } else if (ORDER_TIME_LINE_BIZ_TYPE.APPROVE_PASS.equalsCode(item.bizType)) {
           return 'green';
-        } else if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.APPROVE_RETURN.equalsCode(item.bizType)) {
+        } else if (ORDER_TIME_LINE_BIZ_TYPE.APPROVE_RETURN.equalsCode(item.bizType)) {
           return 'red';
-        } else if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.CANCEL_APPROVE.equalsCode(item.bizType)) {
+        } else if (ORDER_TIME_LINE_BIZ_TYPE.CANCEL_APPROVE.equalsCode(item.bizType)) {
           return 'red';
         }
 

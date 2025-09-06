@@ -17,7 +17,7 @@
         <a-form-item label="说明" name="message">
           <a-textarea v-model:value.trim="formData.message" max-length="200" allow-clear />
         </a-form-item>
-        <a-form-item v-if="!$utils.isEmpty(_messageList)" label="快捷说明">
+        <a-form-item v-if="!isEmpty(_messageList)" label="快捷说明">
           <a-tag
             v-for="(item, index) in _messageList"
             class="cursor-pointer"
@@ -38,6 +38,7 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     components: {},
@@ -46,6 +47,11 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

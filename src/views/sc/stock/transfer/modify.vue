@@ -19,22 +19,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SC_TRANSFER_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ SC_TRANSFER_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SC_TRANSFER_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ SC_TRANSFER_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SC_TRANSFER_ORDER_STATUS.getDesc(formData.status)
+              SC_TRANSFER_ORDER_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
             <a-input
-              v-if="$enums.SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -47,8 +47,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -56,8 +56,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -94,7 +94,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="!row.isFixed && $utils.isEmpty(row.productId)"
+            v-if="!row.isFixed && isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
@@ -156,13 +156,29 @@
   import { h, defineComponent } from 'vue';
   import BatchAddProduct from './batch-add-product.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import * as api from '@/api/sc/stock/transfer-sc';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    isEqualWithStr,
+    isFloat,
+    isFloatGtZero,
+    isNumberPrecision,
+    isFloatGeZero,
+    add,
+    uuid,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { SC_TRANSFER_ORDER_STATUS } from '@/enums/biz/scTransferOrderStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ModifyScTransferSheet',
     components: {
       BatchAddProduct,
+      StoreCenterSelector,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -170,6 +186,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        isEmpty,
+        SC_TRANSFER_ORDER_STATUS,
       };
     },
     data() {
@@ -184,8 +202,8 @@
             { required: true, message: '请选择转出仓库' },
             {
               validator: (rule, value, callback) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (this.$utils.isEqualWithStr(value, this.formData.targetScId)) {
+                if (!isEmpty(value)) {
+                  if (isEqualWithStr(value, this.formData.targetScId)) {
                     return callback(new Error('转出仓库不能与转入仓库相同'));
                   }
                 }
@@ -282,27 +300,31 @@
           .then()
           .then((valid) => {
             if (valid) {
-              if (this.$utils.isEmpty(this.tableData)) {
-                this.$msg.createError('请录入商品！');
+              if (isEmpty(this.tableData)) {
+                createError('请录入商品！');
                 return;
               }
 
               for (let i = 0; i < this.tableData.length; i++) {
                 const data = this.tableData[i];
-                if (this.$utils.isEmpty(data.productId)) {
-                  this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
+                if (isEmpty(data.productId)) {
+                  createError('第' + (i + 1) + '行商品不允许为空！');
                   return;
                 }
-                if (this.$utils.isEmpty(data.transferNum)) {
-                  this.$msg.createError('第' + (i + 1) + '行调拨数量不允许为空！');
+                if (isEmpty(data.transferNum)) {
+                  createError('第' + (i + 1) + '行调拨数量不允许为空！');
                   return false;
                 }
-                if (!this.$utils.isInteger(data.transferNum)) {
-                  this.$msg.createError('第' + (i + 1) + '行调拨数量必须是整数！');
+                if (!isFloat(data.transferNum)) {
+                  createError('第' + (i + 1) + '行调拨数量必须是数字！');
                   return false;
                 }
-                if (!this.$utils.isIntegerGtZero(data.transferNum)) {
-                  this.$msg.createError('第' + (i + 1) + '行调拨数量必须大于0！');
+                if (!isFloatGtZero(data.transferNum)) {
+                  createError('第' + (i + 1) + '行调拨数量必须大于0！');
+                  return false;
+                }
+                if (!isNumberPrecision(data.transferNum, 8)) {
+                  createError('第' + (i + 1) + '行调拨数量最多允许8位小数！');
                   return false;
                 }
               }
@@ -324,7 +346,7 @@
               api
                 .update(params)
                 .then(() => {
-                  this.$msg.createSuccess('修改成功！');
+                  createSuccess('修改成功！');
                   this.$emit('confirm');
 
                   this.closeDialog();
@@ -342,7 +364,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -360,15 +382,15 @@
       },
       // 新增商品
       addProduct() {
-        if (this.$utils.isEmpty(this.formData.sourceScId)) {
-          this.$msg.createError('请先选择转出仓库！');
+        if (isEmpty(this.formData.sourceScId)) {
+          createError('请先选择转出仓库！');
           return;
         }
         this.tableData.push(this.emptyProduct());
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -394,7 +416,7 @@
               this.tableData[index] = Object.assign(this.tableData[index], value);
               return;
             }
-            this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
+            createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
             this.tableData = this.tableData.filter((t) => {
               return t.id !== row.id;
             });
@@ -407,15 +429,15 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -424,8 +446,8 @@
         });
       },
       openBatchAddProductDialog() {
-        if (this.$utils.isEmpty(this.formData.sourceScId)) {
-          this.$msg.createError('请先选择转出仓库！');
+        if (isEmpty(this.formData.sourceScId)) {
+          createError('请先选择转出仓库！');
           return;
         }
         this.$refs.batchAddProductDialog.openDialog();
@@ -434,9 +456,7 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (
-            this.$utils.isEmpty(this.tableData.filter((data) => item.productId === data.productId))
-          ) {
+          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
             filterProductList.push(item);
           }
         });
@@ -448,8 +468,8 @@
       },
       beforeSelectSc() {
         let flag = false;
-        if (!this.$utils.isEmpty(this.formData.scId)) {
-          return this.$msg.createConfirm('更改转出仓库，会清空商品数据，是否确认更改？');
+        if (!isEmpty(this.formData.scId)) {
+          return createConfirm('更改转出仓库，会清空商品数据，是否确认更改？');
         } else {
           flag = true;
         }
@@ -457,7 +477,7 @@
         return flag;
       },
       afterSelectSc(e) {
-        if (!this.$utils.isEmpty(e)) {
+        if (!isEmpty(e)) {
           this.tableData = [];
           this.calcSum();
         }
@@ -465,9 +485,9 @@
       calcSum() {
         let totalNum = 0;
         this.tableData.forEach((item) => {
-          if (!this.$utils.isEmpty(item.productId)) {
-            if (this.$utils.isIntegerGeZero(item.transferNum)) {
-              totalNum = this.$utils.add(item.transferNum, totalNum);
+          if (!isEmpty(item.productId)) {
+            if (isFloatGeZero(item.transferNum)) {
+              totalNum = add(item.transferNum, totalNum);
             }
           }
         });

@@ -74,10 +74,17 @@
   import { h, defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/sheet';
+  import { isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      ProductBrandSelector,
+      ProductCategorySelector,
+    },
     props: {
       planId: {
         type: String,
@@ -179,8 +186,8 @@
       // 选择商品
       doSelect() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择商品数据！');
           return;
         }
 

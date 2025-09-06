@@ -74,9 +74,17 @@
   import moment from 'moment/moment';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/logistics/sheet';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+  } from '@/utils/utils';
+  import { LOGISTICS_SHEET_DETAIL_BIZ_TYPE } from '@/enums/biz/logisticsSheetDetailBizType';
 
   export default defineComponent({
-    components: {},
+    components: { UserSelector },
     setup() {
       return {
         h,
@@ -103,7 +111,7 @@
             title: '业务类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.getDesc(cellValue);
+              return LOGISTICS_SHEET_DETAIL_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'scName', title: '仓库名称', width: 100 },
@@ -115,10 +123,8 @@
         searchFormData: {
           code: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createStartTime: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createEndTime: formatDateTime(getDateTimeWithMaxTime(moment())),
         },
         // 请求接口配置
         proxyConfig: {
@@ -181,7 +187,7 @@
       initFormData() {},
       submit() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (!this.$utils.isEmpty(records)) {
+        if (!isEmpty(records)) {
           this.$emit('confirm', records);
         }
         this.closeDialog();

@@ -108,15 +108,33 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/customer-settle/check';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    uuid,
+    isEmpty,
+    isFloat,
+    add,
+    isNumberPrecision,
+    dateTimeToDate,
+  } from '@/utils/utils';
+  import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import { CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE } from '@/enums/biz/customerSettleCheckSheetBizType';
+  import { CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE } from '@/enums/biz/customerSettleCheckSheetCalcType';
 
   export default defineComponent({
     name: 'AddCustomerSettleCheckSheet',
-    components: {},
+    components: {
+      CustomerSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {
         h,
         SearchOutlined,
+        CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE,
       };
     },
     data() {
@@ -142,7 +160,7 @@
             title: '单据类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
+              return CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170 },
@@ -182,10 +200,8 @@
       initFormData() {
         this.formData = {
           customerId: '',
-          startTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          endTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          startTime: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          endTime: formatDateTime(getDateTimeWithMaxTime(moment())),
           description: '',
           totalAmount: 0,
           totalPayAmount: 0,
@@ -195,7 +211,7 @@
       },
       emptyLine() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           code: '',
           bizType: '',
           calcType: '',
@@ -213,14 +229,14 @@
         let totalAmount = 0;
         let totalPayAmount = 0;
         const records = this.$refs.grid.getCheckboxRecords();
-        if (!this.$utils.isEmpty(records)) {
+        if (!isEmpty(records)) {
           records.forEach((item) => {
-            if (this.$utils.isFloat(item.totalAmount)) {
-              totalAmount = this.$utils.add(totalAmount, item.totalAmount);
+            if (isFloat(item.totalAmount)) {
+              totalAmount = add(totalAmount, item.totalAmount);
             }
 
-            if (this.$utils.isFloat(item.payAmount)) {
-              totalPayAmount = this.$utils.add(totalPayAmount, item.payAmount);
+            if (isFloat(item.payAmount)) {
+              totalPayAmount = add(totalPayAmount, item.payAmount);
             }
           });
         }
@@ -230,55 +246,55 @@
       },
       // 校验数据
       validData() {
-        if (this.$utils.isEmpty(this.formData.customerId)) {
-          this.$msg.createError('客户不允许为空！');
+        if (isEmpty(this.formData.customerId)) {
+          createError('客户不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.startTime)) {
-          this.$msg.createError('审核起始日期不能为空！');
+        if (isEmpty(this.formData.startTime)) {
+          createError('审核起始日期不能为空！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.endTime)) {
-          this.$msg.createError('审核截止日期不能为空！');
+        if (isEmpty(this.formData.endTime)) {
+          createError('审核截止日期不能为空！');
           return;
         }
 
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择业务单据！');
+        if (isEmpty(records)) {
+          createError('请选择业务单据！');
           return false;
         }
 
         for (let i = 0; i < records.length; i++) {
           const item = records[i];
 
-          if (this.$utils.isEmpty(item.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行应收金额不能为空！');
+          if (isEmpty(item.payAmount)) {
+            createError('第' + (i + 1) + '行应收金额不能为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(item.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行应收金额必须为数字！');
+          if (!isFloat(item.payAmount)) {
+            createError('第' + (i + 1) + '行应收金额必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isNumberPrecision(item.payAmount, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行应收金额最多允许2位小数！');
+          if (!isNumberPrecision(item.payAmount, 2)) {
+            createError('第' + (i + 1) + '行应收金额最多允许2位小数！');
             return false;
           }
 
-          if (this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.SUB.equalsCode(item.calcType)) {
+          if (CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.SUB.equalsCode(item.calcType)) {
             if (item.payAmount > 0) {
-              this.$msg.createError('第' + (i + 1) + '行应收金额不允许大于0！');
+              createError('第' + (i + 1) + '行应收金额不允许大于0！');
               return false;
             }
           }
 
-          if (this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.ADD.equalsCode(item.calcType)) {
+          if (CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.ADD.equalsCode(item.calcType)) {
             if (item.payAmount < 0) {
-              this.$msg.createError('第' + (i + 1) + '行应收金额不允许小于0！');
+              createError('第' + (i + 1) + '行应收金额不允许小于0！');
               return false;
             }
           }
@@ -286,19 +302,14 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
+      buildParams() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        const params = {
+        return {
           customerId: this.formData.customerId,
           description: this.formData.description,
-          startDate: this.$utils.dateTimeToDate(this.formData.startTime),
-          endDate: this.$utils.dateTimeToDate(this.formData.endTime),
+          startDate: dateTimeToDate(this.formData.startTime),
+          endDate: dateTimeToDate(this.formData.endTime),
           items: records.map((t) => {
             return {
               id: t.id,
@@ -308,12 +319,20 @@
             };
           }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
           .create(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -328,29 +347,14 @@
           return;
         }
 
-        const records = this.$refs.grid.getCheckboxRecords();
+        const params = this.buildParams();
 
-        const params = {
-          customerId: this.formData.customerId,
-          description: this.formData.description,
-          startDate: this.$utils.dateTimeToDate(this.formData.startTime),
-          endDate: this.$utils.dateTimeToDate(this.formData.endTime),
-          items: records.map((t) => {
-            return {
-              id: t.id,
-              bizType: t.bizType,
-              payAmount: t.payAmount,
-              description: t.description,
-            };
-          }),
-        };
-
-        this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
+        createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .directApprovePass(params)
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -361,18 +365,18 @@
         });
       },
       searchUnCheckItems() {
-        if (this.$utils.isEmpty(this.formData.customerId)) {
-          this.$msg.createError('请先选择客户！');
+        if (isEmpty(this.formData.customerId)) {
+          createError('请先选择客户！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.startTime)) {
-          this.$msg.createError('审核起始日期不能为空！');
+        if (isEmpty(this.formData.startTime)) {
+          createError('审核起始日期不能为空！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.endTime)) {
-          this.$msg.createError('审核截止日期不能为空！');
+        if (isEmpty(this.formData.endTime)) {
+          createError('审核截止日期不能为空！');
           return;
         }
 
@@ -385,7 +389,7 @@
           })
           .then((res) => {
             const tableData = [];
-            if (!this.$utils.isEmpty(res)) {
+            if (!isEmpty(res)) {
               res.forEach((item) => {
                 const obj = Object.assign(this.emptyLine(), item);
                 obj.payAmount = obj.totalAmount;

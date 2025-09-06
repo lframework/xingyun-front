@@ -50,7 +50,7 @@
                     allow-clear
                   >
                     <a-select-option
-                      v-for="item in $enums.SYS_MAIL_MESSAGE_SEND_STATUS.values()"
+                      v-for="item in SYS_MAIL_MESSAGE_SEND_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -85,6 +85,8 @@
   import * as api from '@/api/system/mail-message';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import moment from 'moment/moment';
+  import { formatDateTime, getDateTimeWithMinTime, getDateTimeWithMaxTime } from '@/utils/utils';
+  import { SYS_MAIL_MESSAGE_SEND_STATUS } from '@/enums/biz/sysMailMessageSendStatus';
 
   export default defineComponent({
     name: 'MailMessage',
@@ -96,6 +98,7 @@
         h,
         SearchOutlined,
         api,
+        SYS_MAIL_MESSAGE_SEND_STATUS,
       };
     },
     data() {
@@ -106,10 +109,8 @@
         // 查询列表的查询条件
         searchFormData: {
           title: '',
-          createTimeStart: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createTimeStart: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createTimeEnd: formatDateTime(getDateTimeWithMaxTime(moment())),
           mail: '',
           sendStatus: undefined,
         },
@@ -132,7 +133,7 @@
             title: '发送状态',
             width: 80,
             formatter: ({ cellValue }) => {
-              return this.$enums.SYS_MAIL_MESSAGE_SEND_STATUS.getDesc(cellValue);
+              return SYS_MAIL_MESSAGE_SEND_STATUS.getDesc(cellValue);
             },
           },
           { title: '操作', width: 70, fixed: 'right', slots: { default: 'action_default' } },

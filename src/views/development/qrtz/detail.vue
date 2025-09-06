@@ -19,44 +19,42 @@
           {{ formData.cron }}
         </a-descriptions-item>
         <a-descriptions-item label="任务类型" :span="2">
-          {{ $enums.QRTZ_JOB_TYPE.getDesc(formData.jobType) }}
+          {{ QRTZ_JOB_TYPE.getDesc(formData.jobType) }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
           label="类名"
           :span="4"
         >
           {{ formData.targetClassName }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
           label="方法名"
           :span="4"
         >
           {{ formData.targetMethodName }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
           label="参数类型"
           :span="4"
         >
           <span style="white-space: pre-wrap">
-            {{
-              $utils.isEmpty(formData.targetParamTypes) ? '' : formData.targetParamTypes.join('\n')
-            }}
+            {{ isEmpty(formData.targetParamTypes) ? '' : formData.targetParamTypes.join('\n') }}
           </span>
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
           label="参数值"
           :span="4"
         >
           <span style="white-space: pre-wrap">
-            {{ $utils.isEmpty(formData.targetParams) ? '' : formData.targetParams.join('\n') }}
+            {{ isEmpty(formData.targetParams) ? '' : formData.targetParams.join('\n') }}
           </span>
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="$enums.QRTZ_JOB_TYPE.GROOVY.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.GROOVY.equalsCode(formData.jobType)"
           label="脚本"
           :span="4"
         >
@@ -72,11 +70,18 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/development/qrtz';
+  import { isEmpty } from '@/utils/utils';
+  import { QRTZ_JOB_TYPE } from '@/enums/biz/qrtzJobType';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        isEmpty,
+        QRTZ_JOB_TYPE,
+      };
+    },
     props: {
       name: {
         type: String,

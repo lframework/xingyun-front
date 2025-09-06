@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -132,6 +132,12 @@
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/product/brand';
+  import { buildSortPageVo, isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import ProductBrandImporter from '@/components/Importor/ProductBrandImporter.vue';
+  import BatchHandler from '@/components/BatchHandler';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'ProductBrand',
@@ -140,6 +146,9 @@
       Modify,
       Detail,
       DownOutlined,
+      ProductBrandImporter,
+      BatchHandler,
+      AvailableTag,
     },
     setup() {
       return {
@@ -149,6 +158,7 @@
         CloudUploadOutlined,
         PlusOutlined,
         StopOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -159,7 +169,7 @@
         ids: [],
         // 查询列表的查询条件
         searchFormData: {
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -204,7 +214,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -228,8 +238,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的品牌！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的品牌！');
           return;
         }
 
@@ -244,8 +254,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的品牌！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的品牌！');
           return;
         }
 

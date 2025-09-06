@@ -42,10 +42,15 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/open-domain';
+  import { uuid } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
+  import NoWrap from '@/components/NoWrap';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      NoWrap,
+    },
 
     props: {
       id: {
@@ -96,7 +101,7 @@
             api
               .updateSecret(this.formData)
               .then(() => {
-                this.$msg.createSuccess('重置成功！');
+                createSuccess('重置成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })
@@ -129,7 +134,7 @@
           });
       },
       generateApiSecret() {
-        this.formData.apiSecret = this.$utils.uuid().toUpperCase();
+        this.formData.apiSecret = uuid().toUpperCase();
         this.apiSecret = this.formData.apiSecret;
       },
     },

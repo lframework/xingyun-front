@@ -26,6 +26,7 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/print-template';
   import { CodeEditor } from '@/components/CodeEditor';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -89,7 +90,7 @@
             demoData: this.formData,
           })
           .then(() => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
             this.closeDialog();
           })
           .finally(() => {

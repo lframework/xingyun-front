@@ -16,22 +16,22 @@
         </j-form-item>
         <j-form-item label="状态">
           <span
-            v-if="$enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+            v-if="PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
             style="color: #52c41a"
-            >{{ $enums.PURCHASE_ORDER_STATUS.getDesc(formData.status) }}</span
+            >{{ PURCHASE_ORDER_STATUS.getDesc(formData.status) }}</span
           >
           <span
-            v-else-if="$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+            v-else-if="PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
             style="color: #f5222d"
-            >{{ $enums.PURCHASE_ORDER_STATUS.getDesc(formData.status) }}</span
+            >{{ PURCHASE_ORDER_STATUS.getDesc(formData.status) }}</span
           >
           <span v-else style="color: #303133">{{
-            $enums.PURCHASE_ORDER_STATUS.getDesc(formData.status)
+            PURCHASE_ORDER_STATUS.getDesc(formData.status)
           }}</span>
         </j-form-item>
         <j-form-item label="拒绝理由" :content-nest="false">
           <a-input
-            v-if="$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+            v-if="PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
             v-model:value="formData.refuseReason"
             readonly
           />
@@ -44,8 +44,8 @@
         </j-form-item>
         <j-form-item
           v-if="
-            $enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-            $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+            PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+            PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
           "
           label="审核人"
         >
@@ -53,8 +53,8 @@
         </j-form-item>
         <j-form-item
           v-if="
-            $enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-            $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+            PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+            PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
           "
           label="审核时间"
           :span="16"
@@ -77,10 +77,9 @@
     >
       <!-- 采购含税金额 列自定义内容 -->
       <template #purchaseAmount_default="{ row }">
-        <span
-          v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.purchaseNum)"
-          >{{ $utils.mul(row.purchasePrice, row.purchaseNum) }}</span
-        >
+        <span v-if="isFloatGeZero(row.purchasePrice) && isFloatGeZero(row.purchaseNum)">{{
+          getNumber(mul(row.purchasePrice, row.purchaseNum), 2)
+        }}</span>
       </template>
     </vxe-grid>
 
@@ -115,6 +114,8 @@
   import { defineComponent } from 'vue';
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/purchase/order';
+  import { isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
+  import { PURCHASE_ORDER_STATUS } from '@/enums/biz/purchaseOrderStatus';
 
   export default defineComponent({
     components: {
@@ -129,6 +130,14 @@
         type: Boolean,
         default: false,
       },
+    },
+    setup() {
+      return {
+        isFloatGeZero,
+        getNumber,
+        mul,
+        PURCHASE_ORDER_STATUS,
+      };
     },
     data() {
       return {
@@ -242,20 +251,19 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isIntegerGeZero(t.purchaseNum)
-            );
+            return isFloatGeZero(t.purchasePrice) && isFloatGeZero(t.purchaseNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.purchaseNum);
+            const num = parseFloat(t.purchaseNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice));
+            // 先将每行的金额格式化成2位小数，然后再累加
+            const rowAmount = getNumber(mul(num, t.purchasePrice), 2);
+            totalAmount = add(totalAmount, rowAmount);
           });
 
         this.formData.totalNum = totalNum;

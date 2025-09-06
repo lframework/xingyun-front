@@ -39,6 +39,8 @@
   import { defineComponent } from 'vue';
   import { isPassword } from '@/utils/validate';
   import * as api from '@/api/sys/center';
+  import { isEmpty } from '@/utils/utils';
+  import { createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -68,7 +70,7 @@
     },
     methods: {
       validOldPsw(rule, value) {
-        if (this.$utils.isEmpty(value)) {
+        if (isEmpty(value)) {
           return Promise.resolve();
         }
 
@@ -79,12 +81,12 @@
         return Promise.resolve();
       },
       validNewPsw(rule, value) {
-        if (this.$utils.isEmpty(value)) {
+        if (isEmpty(value)) {
           return Promise.resolve();
         }
 
         if (isPassword(value)) {
-          if (!this.$utils.isEmpty(this.formData.confirmPsw)) {
+          if (!isEmpty(this.formData.confirmPsw)) {
             if (value !== this.formData.confirmPsw) {
               return Promise.reject('两次密码输入不一致');
             }
@@ -96,12 +98,12 @@
         return Promise.resolve();
       },
       validConfirmPsw(rule, value) {
-        if (this.$utils.isEmpty(value)) {
+        if (isEmpty(value)) {
           return Promise.resolve();
         }
 
         if (isPassword(value)) {
-          if (!this.$utils.isEmpty(this.formData.newPsw)) {
+          if (!isEmpty(this.formData.newPsw)) {
             if (value !== this.formData.newPsw) {
               return Promise.reject('两次密码输入不一致');
             }
@@ -135,7 +137,7 @@
       submitEvent() {
         this.$refs.form.validate().then((valid) => {
           if (valid) {
-            this.$msg.createConfirm('是否确认修改密码？注：修改密码后需要重新登录').then(() => {
+            createConfirm('是否确认修改密码？注：修改密码后需要重新登录').then(() => {
               this.loading = true;
               api
                 .updatePassword(this.formData)

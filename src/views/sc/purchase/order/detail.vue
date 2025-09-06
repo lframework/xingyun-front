@@ -11,13 +11,10 @@
         <a-tab-pane key="detail" tab="详情"
           ><viewer :id="id" @load-data-complete="(e) => (formData = e)"
         /></a-tab-pane>
-        <a-tab-pane
-          key="orderTimeLine"
-          v-if="$utils.isEmpty(formData.flowInstanceId)"
-          tab="变动记录"
+        <a-tab-pane key="orderTimeLine" v-if="isEmpty(formData.flowInstanceId)" tab="变动记录"
           ><order-time-line :id="id"
         /></a-tab-pane>
-        <a-tab-pane key="approveHis" v-if="!$utils.isEmpty(formData.flowInstanceId)" tab="审批历史"
+        <a-tab-pane key="approveHis" v-if="!isEmpty(formData.flowInstanceId)" tab="审批历史"
           ><bpm-approve-his :business-id="formData.id"
         /></a-tab-pane>
       </a-tabs>
@@ -37,12 +34,21 @@
   import * as api from '@/api/sc/purchase/order';
   import { printMix } from '@/mixins/print';
   import Viewer from './viewer.vue';
+  import { isEmpty } from '@/utils/utils';
+  import { PRINT_TYPE } from '@/enums/biz/printType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
       Viewer,
+      OrderTimeLine,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -92,7 +98,7 @@
         api
           .print(this.id)
           .then((res) => {
-            this.lodopPreview(this.$enums.PRINT_TYPE.PURCHASE_ORDER.code, res);
+            this.lodopPreview(PRINT_TYPE.PURCHASE_ORDER.code, res);
           })
           .finally(() => {
             this.loading = false;

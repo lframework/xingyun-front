@@ -50,10 +50,14 @@
   import { defineComponent } from 'vue';
   import MonacoEditor from '@/components/MonacoEditor';
   import * as api from '@/api/development/custom/page';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenCustomPageCategorySelector from '@/components/Selector/GenCustomPageCategorySelector.vue';
 
   export default defineComponent({
     components: {
       MonacoEditor,
+      GenCustomPageCategorySelector,
     },
     data() {
       return {
@@ -104,23 +108,23 @@
         this.initFormData();
       },
       submit() {
-        if (this.$utils.isEmpty(this.formData.name)) {
-          this.$msg.createError('请输入名称');
+        if (isEmpty(this.formData.name)) {
+          createError('请输入名称');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.pageCode)) {
-          this.$msg.createError('请输入页面代码');
+        if (isEmpty(this.formData.pageCode)) {
+          createError('请输入页面代码');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.scriptCode)) {
-          this.$msg.createError('请输入脚本代码');
+        if (isEmpty(this.formData.scriptCode)) {
+          createError('请输入脚本代码');
           return;
         }
 
         if (!this.formData.scriptCode.startsWith('export default')) {
-          this.$msg.createError('脚本代码必须以export default开头');
+          createError('脚本代码必须以export default开头');
           return;
         }
 
@@ -130,7 +134,7 @@
         api
           .create(params)
           .then(() => {
-            this.$msg.createSuccess('新增成功！');
+            createSuccess('新增成功！');
             this.$emit('confirm');
             this.closeDialog();
           })

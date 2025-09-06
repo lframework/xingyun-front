@@ -3,7 +3,7 @@
     <template v-if="!canViewAll && menus.length > 6" #extra
       ><a @click="viewAll">查看全部</a></template
     >
-    <template v-if="!$utils.isEmpty(_menus)">
+    <template v-if="!isEmpty(_menus)">
       <a-card-grid v-for="item in _menus" :key="item.id">
         <router-link :to="item.path" :class="'router-link-color-' + item.color">
           <span class="flex flex-col items-center">
@@ -17,14 +17,20 @@
   </a-card>
 </template>
 <script>
-  import Icon from '@/components/Icon/Icon.vue';
+  import { Icon } from '@/components/Icon';
   import { defineComponent } from 'vue';
   import { getCollectMenu } from '@/api/sys/menu';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'QuickNav',
     components: {
       Icon,
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

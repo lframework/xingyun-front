@@ -33,7 +33,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -112,12 +112,12 @@
     <data-permission
       ref="dataPermissionDialog"
       :biz-id="id"
-      :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code"
+      :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code"
     />
     <batch-data-permission
       ref="batchDataPermissionDialog"
       :biz-ids="ids"
-      :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code"
+      :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code"
     />
 
     <!-- 批量操作 -->
@@ -155,6 +155,7 @@
   import DataPermission from '@/components/DataPermission/index.vue';
   import BatchDataPermission from '@/components/DataPermission/batch.vue';
   import * as api from '@/api/system/user';
+  import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
   import {
     SearchOutlined,
     PlusOutlined,
@@ -164,6 +165,12 @@
     CheckOutlined,
     StopOutlined,
   } from '@ant-design/icons-vue';
+  import { isEmpty, buildSortPageVo } from '@/utils/utils';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import { SYS_DATA_PERMISSION_DATA_BIZ_TYPE } from '@/enums/biz/sysDataPermissionDataBizType';
+  import { GENDER } from '@/enums/biz/gender';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'User',
@@ -175,6 +182,8 @@
       DataPermission,
       BatchDataPermission,
       DownOutlined,
+      AvailableTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -185,6 +194,9 @@
         SettingOutlined,
         CheckOutlined,
         StopOutlined,
+        isEmpty,
+        AVAILABLE,
+        SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
       };
     },
     data() {
@@ -219,7 +231,7 @@
             title: '性别',
             width: 80,
             formatter: ({ cellValue }) => {
-              return this.$enums.GENDER.getDesc(cellValue);
+              return GENDER.getDesc(cellValue);
             },
           },
           { field: 'description', title: '备注', minWidth: 200 },
@@ -265,7 +277,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -331,8 +343,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的用户！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的用户！');
           return;
         }
 
@@ -347,8 +359,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的用户！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的用户！');
           return;
         }
 
@@ -365,8 +377,8 @@
       batchSetting() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要授权的用户！');
+        if (isEmpty(records)) {
+          createError('请选择要授权的用户！');
           return;
         }
 
@@ -374,12 +386,12 @@
         this.$refs.permissionDialog.openDialog();
       },
       unlock(row) {
-        this.$msg.createConfirm('是否确定解锁该用户？').then(() => {
+        createConfirm('是否确定解锁该用户？').then(() => {
           this.loading = true;
           api
             .unlock(row.id)
             .then(() => {
-              this.$msg.createSuccess('解锁成功！');
+              createSuccess('解锁成功！');
               this.search();
             })
             .finally(() => {
@@ -390,8 +402,8 @@
       batchDataPermmission() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要设置数据权限的用户！');
+        if (isEmpty(records)) {
+          createError('请选择要设置数据权限的用户！');
           return;
         }
 

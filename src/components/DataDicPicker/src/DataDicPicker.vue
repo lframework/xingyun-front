@@ -20,9 +20,15 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/dic-item';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'DataDicPicker',
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     props: {
       code: {
         type: String,
@@ -49,7 +55,7 @@
     computed: {
       _value() {
         const filters = this.dicOptions.filter((item) => item.id === this.value);
-        if (this.$utils.isEmpty(filters)) {
+        if (isEmpty(filters)) {
           return undefined;
         }
 

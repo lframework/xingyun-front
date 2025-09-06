@@ -17,11 +17,11 @@
         '/warm-flow-ui/index.html?id=' +
         id +
         '&disabled=' +
-        !$enums.FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(formData.isPublish) +
+        !FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(formData.isPublish) +
         '&token=' +
         token +
         '&uuid=' +
-        $utils.uuid()
+        uuid()
       "
     ></iframe>
   </a-modal>
@@ -31,11 +31,18 @@
   import { useGlobSetting } from '/@/hooks/setting';
   import { getToken } from '@/utils/auth';
   import * as api from '@/api/bpm/flow/definition';
+  import { uuid } from '@/utils/utils';
+  import { FLOW_DEFINITION_IS_PUBLISH } from '@/enums/biz/flowDefinitionIsPublish';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        uuid,
+        FLOW_DEFINITION_IS_PUBLISH,
+      };
+    },
     props: {
       id: {
         type: String,

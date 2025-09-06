@@ -22,7 +22,7 @@
             {{ formData.paymentDate }}
           </j-form-item>
           <j-form-item label="零售出库单" :span="16">
-            <div v-if="!$utils.isEmpty(formData.outSheetCode)">
+            <div v-if="!isEmpty(formData.outSheetCode)">
               <a
                 v-permission="['retail:out:query']"
                 @click="(e) => $refs.viewOutSheetDetailDialog.openDialog()"
@@ -33,22 +33,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.RETAIL_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="RETAIL_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.RETAIL_RETURN_STATUS.getDesc(formData.status) }}</span
+              >{{ RETAIL_RETURN_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.RETAIL_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="RETAIL_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.RETAIL_RETURN_STATUS.getDesc(formData.status) }}</span
+              >{{ RETAIL_RETURN_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.RETAIL_RETURN_STATUS.getDesc(formData.status)
+              RETAIL_RETURN_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
             <a-input
-              v-if="$enums.RETAIL_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="RETAIL_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -61,8 +61,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RETAIL_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RETAIL_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RETAIL_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RETAIL_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -70,8 +70,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RETAIL_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RETAIL_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RETAIL_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RETAIL_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -99,10 +99,9 @@
 
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span
-            v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.returnNum)"
-            >{{ $utils.mul(row.taxPrice, row.returnNum) }}</span
-          >
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.returnNum)">{{
+            getNumber(mul(row.taxPrice, row.returnNum), 2)
+          }}</span>
         </template>
       </vxe-grid>
 
@@ -152,13 +151,27 @@
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/retail/return';
   import { printMix } from '@/mixins/print';
+  import { isEmpty, isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
+  import { RETAIL_RETURN_STATUS } from '@/enums/biz/retailReturnStatus';
+  import { PRINT_TYPE } from '@/enums/biz/printType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
       OutSheetDetail,
       PayType,
+      OrderTimeLine,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        RETAIL_RETURN_STATUS,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -194,7 +207,7 @@
             align: 'right',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           {
@@ -203,7 +216,7 @@
             align: 'right',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           { field: 'returnNum', title: '退货数量', align: 'right', width: 100 },
@@ -302,19 +315,17 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.returnNum)
-            );
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.returnNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.returnNum);
+            const num = parseFloat(t.returnNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -326,7 +337,7 @@
         api
           .print(this.id)
           .then((res) => {
-            this.lodopPreview(this.$enums.PRINT_TYPE.RETAIL_RETURN.code, res);
+            this.lodopPreview(PRINT_TYPE.RETAIL_RETURN.code, res);
           })
           .finally(() => {
             this.loading = false;

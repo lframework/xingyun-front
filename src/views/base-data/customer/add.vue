@@ -81,7 +81,7 @@
             <a-form-item label="结算方式" name="settleType">
               <a-select v-model:value="formData.settleType" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.SETTLE_TYPE.values()"
+                  v-for="item in SETTLE_TYPE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -143,9 +143,21 @@
   import { validCode, isEmail } from '@/utils/validate';
   import * as api from '@/api/base-data/customer';
   import { generateCode } from '@/api/components';
+  import { isEmpty, getCamelCharsUpperCase } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
+  import { SETTLE_TYPE } from '@/enums/biz/settleType';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      CitySelector,
+    },
+    setup() {
+      return {
+        SETTLE_TYPE,
+      };
+    },
     data() {
       return {
         // 是否可见
@@ -162,7 +174,7 @@
           email: [
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value) || isEmail(value)) {
+                if (isEmpty(value) || isEmail(value)) {
                   return Promise.resolve();
                 } else {
                   return Promise.reject('邮箱地址格式不正确');
@@ -220,28 +232,24 @@
       submit() {
         this.$refs.form.validate().then((valid) => {
           if (valid) {
-            this.$msg
-              .createConfirm('新增后结算方式不允许修改，请仔细核对结算方式是否正确')
-              .then(() => {
-                this.loading = true;
-                const params = Object.assign({}, this.formData);
-                params.cityId = this.$utils.isEmpty(params.city)
-                  ? ''
-                  : params.city[params.city.length - 1];
-                delete params.city;
-                api
-                  .create(params)
-                  .then(() => {
-                    this.$msg.createSuccess('新增成功！');
-                    // 初始化表单数据
-                    this.initFormData();
-                    this.$emit('confirm');
-                    this.visible = false;
-                  })
-                  .finally(() => {
-                    this.loading = false;
-                  });
-              });
+            createConfirm('新增后结算方式不允许修改，请仔细核对结算方式是否正确').then(() => {
+              this.loading = true;
+              const params = Object.assign({}, this.formData);
+              params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];
+              delete params.city;
+              api
+                .create(params)
+                .then(() => {
+                  createSuccess('新增成功！');
+                  // 初始化表单数据
+                  this.initFormData();
+                  this.$emit('confirm');
+                  this.visible = false;
+                })
+                .finally(() => {
+                  this.loading = false;
+                });
+            });
           }
         });
       },
@@ -254,10 +262,10 @@
       },
       // 名称改变
       changeName(e) {
-        this.formData.mnemonicCode = this.$utils.getCamelCharsUpperCase(e);
+        this.formData.mnemonicCode = getCamelCharsUpperCase(e);
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.CUSTOMER.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.CUSTOMER.code).then((res) => {
           this.formData.code = res;
         });
       },

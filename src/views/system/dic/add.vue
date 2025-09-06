@@ -40,9 +40,13 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/system/dic';
+  import { createSuccess } from '@/hooks/web/msg';
+  import SysDataDicCategorySelector from '@/components/Selector/SysDataDicCategorySelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      SysDataDicCategorySelector,
+    },
     data() {
       return {
         // 是否可见
@@ -96,7 +100,7 @@
             api
               .create(params)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

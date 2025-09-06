@@ -74,7 +74,7 @@
             <a-form-item label="结算方式" name="settleType">
               <a-select v-model:value="formData.settleType" disabled>
                 <a-select-option
-                  v-for="item in $enums.SETTLE_TYPE.values()"
+                  v-for="item in SETTLE_TYPE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -117,7 +117,7 @@
             <a-form-item label="状态" name="available">
               <a-select v-model:value="formData.available" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.AVAILABLE.values()"
+                  v-for="item in AVAILABLE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -149,11 +149,23 @@
   import { defineComponent } from 'vue';
   import { validCode, isEmail } from '@/utils/validate';
   import * as api from '@/api/base-data/customer';
+  import { isEmpty, getCamelCharsUpperCase } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
+  import { SETTLE_TYPE } from '@/enums/biz/settleType';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
-    components: {},
-
+    components: {
+      CitySelector,
+    },
+    setup() {
+      return {
+        SETTLE_TYPE,
+        AVAILABLE,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -176,7 +188,7 @@
           email: [
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value) || isEmail(value)) {
+                if (isEmpty(value) || isEmail(value)) {
                   return Promise.resolve();
                 } else {
                   return Promise.reject('邮箱地址格式不正确');
@@ -237,14 +249,12 @@
           if (valid) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
-            params.cityId = this.$utils.isEmpty(params.city)
-              ? ''
-              : params.city[params.city.length - 1];
+            params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];
             delete params.city;
             api
               .update(params)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })
@@ -275,8 +285,8 @@
       },
       // 名称改变
       changeName(e) {
-        if (this.$utils.isEmpty(this.formData.mnemonicCode)) {
-          this.formData.mnemonicCode = this.$utils.getCamelCharsUpperCase(e);
+        if (isEmpty(this.formData.mnemonicCode)) {
+          this.formData.mnemonicCode = getCamelCharsUpperCase(e);
         }
       },
     },

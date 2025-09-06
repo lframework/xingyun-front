@@ -5,20 +5,17 @@
         <a-tab-pane key="detail" tab="详情"
           ><viewer ref="viewer" :id="id" @load-data-complete="(e) => (formData = e)"
         /></a-tab-pane>
-        <a-tab-pane
-          v-if="$utils.isEmpty(formData.flowInstanceId)"
-          key="orderTimeLine"
-          tab="变动记录"
+        <a-tab-pane v-if="isEmpty(formData.flowInstanceId)" key="orderTimeLine" tab="变动记录"
           ><order-time-line :id="id"
         /></a-tab-pane>
-        <a-tab-pane key="approveHis" v-if="!$utils.isEmpty(formData.flowInstanceId)" tab="审批历史"
+        <a-tab-pane key="approveHis" v-if="!isEmpty(formData.flowInstanceId)" tab="审批历史"
           ><bpm-approve-his :business-id="formData.id"
         /></a-tab-pane>
       </a-tabs>
       <div
         v-if="
-          $enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(formData.status) ||
-          $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+          PURCHASE_ORDER_STATUS.CREATED.equalsCode(formData.status) ||
+          PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
         "
         style="text-align: center; background-color: #ffffff; padding: 8px 0"
       >
@@ -31,7 +28,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="PURCHASE_ORDER_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['purchase:order:approve']"
             danger
             :loading="loading"
@@ -51,14 +48,25 @@
   import * as api from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import Viewer from './viewer.vue';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { PURCHASE_ORDER_STATUS } from '@/enums/biz/purchaseOrderStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApprovePurchaseOrder',
     components: {
       Viewer,
       ApproveRefuse,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        isEmpty,
+        PURCHASE_ORDER_STATUS,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -91,7 +99,7 @@
       },
       // 审核通过
       approvePassOrder() {
-        this.$msg.createConfirm('对采购单据执行审核通过操作？').then(() => {
+        createConfirm('对采购单据执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -99,7 +107,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -122,7 +130,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

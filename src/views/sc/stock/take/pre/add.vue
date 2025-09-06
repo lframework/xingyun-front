@@ -12,22 +12,18 @@
           </j-form-item>
           <j-form-item label="预先盘点状态" required :span="16">
             <a-checkbox-group v-model:value="checkedStatus" @change="changeCheckedStatus">
-              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{
-                $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc
+              <a-checkbox :value="PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{
+                PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc
               }}</a-checkbox>
               <a-checkbox
-                :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code"
-                :disabled="
-                  formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
-                "
-                >{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</a-checkbox
+                :value="PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code"
+                :disabled="formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code"
+                >{{ PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</a-checkbox
               >
               <a-checkbox
-                :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code"
-                :disabled="
-                  formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code
-                "
-                >{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</a-checkbox
+                :value="PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code"
+                :disabled="formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code"
+                >{{ PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</a-checkbox
               >
             </a-checkbox-group>
           </j-form-item>
@@ -64,7 +60,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="!row.isFixed && $utils.isEmpty(row.productId)"
+            v-if="!row.isFixed && isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
@@ -79,7 +75,7 @@
         <!-- 初盘数量 列自定义内容 -->
         <template #firstNum_default="{ row }">
           <a-input
-            v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.equalsCode(formData.takeStatus)"
+            v-if="PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.equalsCode(formData.takeStatus)"
             v-model:value="row.firstNum"
             class="number-input"
           />
@@ -89,20 +85,19 @@
         <!-- 复盘数量 列自定义内容 -->
         <template #secondNum_default="{ row }">
           <a-input
-            v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.equalsCode(formData.takeStatus)"
+            v-if="PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.equalsCode(formData.takeStatus)"
             v-model:value="row.secondNum"
             class="number-input"
           />
-          <span
-            v-else-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)"
-            >{{ row.secondNum }}</span
-          >
+          <span v-else-if="PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)">{{
+            row.secondNum
+          }}</span>
         </template>
 
         <!-- 抽盘数量 列自定义内容 -->
         <template #randNum_default="{ row }">
           <a-input
-            v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)"
+            v-if="PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)"
             v-model:value="row.randNum"
             class="number-input"
           />
@@ -112,13 +107,13 @@
         <template #secondDiffNum_default="{ row }">
           <span
             v-if="
-              formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code ||
-              formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
+              formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code ||
+              formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
             "
             >{{
-              $utils.sub(
-                $utils.isInteger(row.secondNum) ? row.secondNum : 0,
-                $utils.isInteger(row.firstNum) ? row.firstNum : 0,
+              sub(
+                isFloat(row.secondNum) ? row.secondNum : 0,
+                isFloat(row.firstNum) ? row.firstNum : 0,
               )
             }}</span
           >
@@ -126,11 +121,8 @@
 
         <!-- 抽盘复盘差异数量 列自定义内容 -->
         <template #randDiffNum_default="{ row }">
-          <span v-if="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
-            $utils.sub(
-              $utils.isInteger(row.randNum) ? row.randNum : 0,
-              $utils.isInteger(row.secondNum) ? row.secondNum : 0,
-            )
+          <span v-if="formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
+            sub(isFloat(row.randNum) ? row.randNum : 0, isFloat(row.secondNum) ? row.secondNum : 0)
           }}</span>
         </template>
       </vxe-grid>
@@ -157,12 +149,17 @@
   import BatchAddProduct from '@/views/sc/stock/take/pre/batch-add-product.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/pre';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloat, isFloatGeZero, isNumberPrecision, sub, uuid } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { PRE_TAKE_STOCK_SHEET_STATUS } from '@/enums/biz/preTakeStockSheetStatus';
 
   export default defineComponent({
     name: 'AddPreTakeStockSheet',
     components: {
       BatchAddProduct,
+      StoreCenterSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -170,6 +167,10 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        isEmpty,
+        sub,
+        isFloat,
+        PRE_TAKE_STOCK_SHEET_STATUS,
       };
     },
     data() {
@@ -267,70 +268,96 @@
         this.formData = {
           scId: '',
           description: '',
-          takeStatus: this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code,
+          takeStatus: PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code,
         };
 
-        this.checkedStatus = [this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code];
+        this.checkedStatus = [PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code];
 
         this.tableData = [];
       },
       // 提交表单事件
       submit() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('请选择仓库！');
+        if (isEmpty(this.formData.scId)) {
+          createError('请选择仓库！');
           return;
         }
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return;
         }
-        if (this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code) {
+        if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code) {
           // 初盘
           for (let i = 0; i < this.tableData.length; i++) {
             const data = this.tableData[i];
-            if (this.$utils.isEmpty(data.productId)) {
-              this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
+            if (isEmpty(data.productId)) {
+              createError('第' + (i + 1) + '行商品不允许为空！');
               return;
             }
-            if (this.$utils.isEmpty(data.firstNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的初盘数量不允许为空！');
+            if (isEmpty(data.firstNum)) {
+              createError('第' + (i + 1) + '行商品的初盘数量不允许为空！');
               return;
             }
 
-            if (!this.$utils.isIntegerGeZero(data.firstNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的初盘数量不允许小于0！');
+            if (!isFloat(data.firstNum)) {
+              createError('第' + (i + 1) + '行商品的初盘数量必须是数字！');
+              return;
+            }
+
+            if (!isFloatGeZero(data.firstNum)) {
+              createError('第' + (i + 1) + '行商品的初盘数量不允许小于0！');
+              return;
+            }
+
+            if (!isNumberPrecision(data.firstNum, 8)) {
+              createError('第' + (i + 1) + '行商品的初盘数量最多允许8位小数！');
               return;
             }
           }
-        } else if (
-          this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code
-        ) {
+        } else if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code) {
           // 复盘
           for (let i = 0; i < this.tableData.length; i++) {
             const data = this.tableData[i];
-            if (this.$utils.isEmpty(data.secondNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的复盘数量不允许为空！');
+            if (isEmpty(data.secondNum)) {
+              createError('第' + (i + 1) + '行商品的复盘数量不允许为空！');
               return;
             }
 
-            if (!this.$utils.isIntegerGeZero(data.secondNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的复盘数量不允许小于0！');
+            if (!isFloat(data.secondNum)) {
+              createError('第' + (i + 1) + '行商品的复盘数量必须是数字！');
+              return;
+            }
+
+            if (!isFloatGeZero(data.secondNum)) {
+              createError('第' + (i + 1) + '行商品的复盘数量不允许小于0！');
+              return;
+            }
+
+            if (!isNumberPrecision(data.secondNum, 8)) {
+              createError('第' + (i + 1) + '行商品的复盘数量最多允许8位小数！');
               return;
             }
           }
-        } else if (
-          this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
-        ) {
+        } else if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code) {
           // 抽盘
           for (let i = 0; i < this.tableData.length; i++) {
             const data = this.tableData[i];
-            if (this.$utils.isEmpty(data.randNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的抽盘数量不允许为空！');
+            if (isEmpty(data.randNum)) {
+              createError('第' + (i + 1) + '行商品的抽盘数量不允许为空！');
               return;
             }
 
-            if (!this.$utils.isIntegerGeZero(data.randNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的抽盘数量不允许小于0！');
+            if (!isFloat(data.randNum)) {
+              createError('第' + (i + 1) + '行商品的抽盘数量必须是数字！');
+              return;
+            }
+
+            if (!isFloatGeZero(data.randNum)) {
+              createError('第' + (i + 1) + '行商品的抽盘数量不允许小于0！');
+              return;
+            }
+
+            if (!isNumberPrecision(data.randNum, 8)) {
+              createError('第' + (i + 1) + '行商品的抽盘数量最多允许8位小数！');
               return;
             }
           }
@@ -353,7 +380,7 @@
         api
           .create(params)
           .then(() => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
             this.$emit('confirm');
 
             this.closeDialog();
@@ -370,34 +397,28 @@
       changeCheckedStatus() {
         if (
           this.checkedStatus.length === 1 &&
-          this.checkedStatus.includes(this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code)
+          this.checkedStatus.includes(PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code)
         ) {
-          this.formData.takeStatus = this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code;
-        } else if (
-          this.checkedStatus.includes(this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code)
-        ) {
-          this.formData.takeStatus = this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code;
+          this.formData.takeStatus = PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code;
+        } else if (this.checkedStatus.includes(PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code)) {
+          this.formData.takeStatus = PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code;
         } else {
-          this.formData.takeStatus = this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code;
+          this.formData.takeStatus = PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code;
         }
 
-        if (this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code) {
+        if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code) {
           this.tableData.forEach((item) => {
             item.secondNum = '';
             item.randNum = '';
           });
-        } else if (
-          this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code
-        ) {
+        } else if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code) {
           this.tableData.forEach((item) => {
-            if (this.$utils.isEmpty(item.secondNum)) {
+            if (isEmpty(item.secondNum)) {
               item.secondNum = item.firstNum;
             }
             item.randNum = '';
           });
-        } else if (
-          this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
-        ) {
+        } else if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code) {
           this.tableData.forEach((item) => {
             item.randNum = item.secondNum;
           });
@@ -405,7 +426,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -425,15 +446,15 @@
       },
       // 新增商品
       addProduct() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('请先选择仓库！');
+        if (isEmpty(this.formData.scId)) {
+          createError('请先选择仓库！');
           return;
         }
         this.tableData.push(this.emptyProduct());
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -459,7 +480,7 @@
               this.tableData[index] = Object.assign(this.tableData[index], value);
               return;
             }
-            this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
+            createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
             this.tableData = this.tableData.filter((t) => {
               return t.id !== row.id;
             });
@@ -471,23 +492,23 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
         });
       },
       openBatchAddProductDialog() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('请先选择仓库！');
+        if (isEmpty(this.formData.scId)) {
+          createError('请先选择仓库！');
           return;
         }
         this.$refs.batchAddProductDialog.openDialog();
@@ -496,9 +517,7 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (
-            this.$utils.isEmpty(this.tableData.filter((data) => item.productId === data.productId))
-          ) {
+          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
             filterProductList.push(item);
           }
         });
@@ -510,8 +529,8 @@
       },
       beforeSelectSc() {
         let flag = false;
-        if (!this.$utils.isEmpty(this.formData.scId)) {
-          return this.$msg.createConfirm('更改仓库，会清空商品数据，是否确认更改？');
+        if (!isEmpty(this.formData.scId)) {
+          return createConfirm('更改仓库，会清空商品数据，是否确认更改？');
         } else {
           flag = true;
         }
@@ -519,7 +538,7 @@
         return flag;
       },
       afterSelectSc(e) {
-        if (!this.$utils.isEmpty(e)) {
+        if (!isEmpty(e)) {
           this.tableData = [];
         }
       },

@@ -41,7 +41,7 @@
       <template #relaType_default="{ row }">
         <a-select v-model:value="row.relaType" allow-clear>
           <a-select-option
-            v-for="item in $enums.GEN_RELA_TYPE.values()"
+            v-for="item in GEN_RELA_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -53,7 +53,7 @@
       <template #relaMode_default="{ row }">
         <a-select v-model:value="row.relaMode" allow-clear>
           <a-select-option
-            v-for="item in $enums.GEN_RELA_MODE.values()"
+            v-for="item in GEN_RELA_MODE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -77,7 +77,7 @@
       <!-- 子表字段 列自定义内容 -->
       <template #subTableDetailIds_default="{ row }">
         <gen-data-entity-detail-selector
-          v-if="!$utils.isEmpty(row.subTableId)"
+          v-if="!isEmpty(row.subTableId)"
           v-model:value="row.subTableDetailIds"
           :entity-id="row.subTableId"
         />
@@ -89,11 +89,19 @@
   import { h, defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { DeleteOutlined, PlusOutlined, DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, uuid, clearAll } from '@/utils/utils';
+  import { createError, createConfirm } from '@/hooks/web/msg';
+  import GenDataEntityDetailSelector from '@/components/Selector/GenDataEntityDetailSelector.vue';
+  import GenDataEntitySelector from '@/components/Selector/GenDataEntitySelector.vue';
+  import { GEN_RELA_TYPE } from '@/enums/biz/genRelaType';
+  import { GEN_RELA_MODE } from '@/enums/biz/genRelaMode';
 
   export default defineComponent({
     // 使用组件
     components: {
       DragOutlined,
+      GenDataEntityDetailSelector,
+      GenDataEntitySelector,
     },
 
     props: {
@@ -111,6 +119,9 @@
         h,
         DeleteOutlined,
         PlusOutlined,
+        isEmpty,
+        GEN_RELA_TYPE,
+        GEN_RELA_MODE,
       };
     },
     data() {
@@ -173,7 +184,7 @@
     methods: {
       emptyLine() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           mainTableDetailIds: [],
           relaType: '',
           relaMode: '',
@@ -183,25 +194,25 @@
         };
       },
       addLine() {
-        if (this.$utils.isEmpty(this.mainTableId)) {
-          this.$msg.createError('请先选择主表');
+        if (isEmpty(this.mainTableId)) {
+          createError('请先选择主表');
           return;
         }
         this.columns.push(this.emptyLine());
       },
       delLine() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的行！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的行！');
           return;
         }
-        this.$msg.createConfirm('是否确定删除选中的行？').then(() => {
+        createConfirm('是否确定删除选中的行？').then(() => {
           const columns = this.columns.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
-          this.$utils.clearAll(this.columns);
+          clearAll(this.columns);
           this.columns.push(...columns);
         });
       },
@@ -216,33 +227,33 @@
         for (let i = 0; i < this.columns.length; i++) {
           const column = this.columns[i];
 
-          if (this.$utils.isEmpty(column.mainTableDetailIds)) {
-            this.$msg.createError('第' + (i + 1) + '行主表字段不能为空！');
+          if (isEmpty(column.mainTableDetailIds)) {
+            createError('第' + (i + 1) + '行主表字段不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.relaType)) {
-            this.$msg.createError('第' + (i + 1) + '行关联类型不能为空！');
+          if (isEmpty(column.relaType)) {
+            createError('第' + (i + 1) + '行关联类型不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.relaMode)) {
-            this.$msg.createError('第' + (i + 1) + '行关联方式不能为空！');
+          if (isEmpty(column.relaMode)) {
+            createError('第' + (i + 1) + '行关联方式不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.subTableId)) {
-            this.$msg.createError('第' + (i + 1) + '行子表不能为空！');
+          if (isEmpty(column.subTableId)) {
+            createError('第' + (i + 1) + '行子表不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.subTableAlias)) {
-            this.$msg.createError('第' + (i + 1) + '行子表别名不能为空！');
+          if (isEmpty(column.subTableAlias)) {
+            createError('第' + (i + 1) + '行子表别名不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.subTableDetailIds)) {
-            this.$msg.createError('第' + (i + 1) + '行子表字段不能为空！');
+          if (isEmpty(column.subTableDetailIds)) {
+            createError('第' + (i + 1) + '行子表字段不能为空！');
             return false;
           }
         }

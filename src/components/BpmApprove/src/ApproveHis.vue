@@ -11,6 +11,7 @@
   import { defineComponent } from 'vue';
   import FlowChart from '@/components/FlowChart';
   import * as api from '@/api/bpm/flow/instance';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     components: { FlowChart },
@@ -40,7 +41,7 @@
         api.listBusiness(this.businessId).then((res) => {
           this.formData = res;
 
-          this.activeKey = this.$utils.isEmpty(this.formData) ? '' : this.formData[0].id;
+          this.activeKey = isEmpty(this.formData) ? '' : this.formData[0].id;
         });
       },
     },

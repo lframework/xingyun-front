@@ -23,8 +23,8 @@
         </a-form-item>
         <a-form-item
           v-if="
-            $enums.MENU_DISPLAY.CATALOG.equalsCode(formData.display) ||
-            $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)
+            MENU_DISPLAY.CATALOG.equalsCode(formData.display) ||
+            MENU_DISPLAY.FUNCTION.equalsCode(formData.display)
           "
           label="图标"
           name="icon"
@@ -36,8 +36,8 @@
         </a-form-item>
         <a-form-item
           v-if="
-            $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) ||
-            $enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
+            MENU_DISPLAY.FUNCTION.equalsCode(formData.display) ||
+            MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
           "
           label="权限"
           name="permission"
@@ -47,7 +47,7 @@
         <a-form-item label="状态" name="available">
           <a-select v-model:value="formData.available" allow-clear>
             <a-select-option
-              v-for="item in $enums.AVAILABLE.values()"
+              v-for="item in AVAILABLE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -58,14 +58,11 @@
           <a-textarea v-model:value.trim="formData.description" />
         </a-form-item>
         <div
-          v-if="
-            !$utils.isEmpty(formData.display) &&
-            !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
-          "
+          v-if="!isEmpty(formData.display) && !MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
         >
           <a-divider>以下均为前端配置项</a-divider>
           <a-form-item
-            v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
+            v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
             label="路由名称"
             name="name"
           >
@@ -76,13 +73,13 @@
             />
           </a-form-item>
           <a-form-item
-            v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
+            v-if="MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
             label="组件类型"
             name="componentType"
           >
             <a-select v-model:value="formData.componentType" allow-clear>
               <a-select-option
-                v-for="item in $enums.MENU_COMPONENT_TYPE.values()"
+                v-for="item in MENU_COMPONENT_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -91,8 +88,8 @@
           </a-form-item>
           <a-form-item
             v-if="
-              $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
-              $enums.MENU_COMPONENT_TYPE.NORMAL.equalsCode(formData.componentType)
+              MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
+              MENU_COMPONENT_TYPE.NORMAL.equalsCode(formData.componentType)
             "
             name="component"
           >
@@ -112,8 +109,8 @@
           </a-form-item>
           <a-form-item
             v-if="
-              $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
-              $enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)
+              MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
+              MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)
             "
             label="自定义列表"
             name="customListId"
@@ -125,18 +122,15 @@
           </a-form-item>
           <a-form-item
             v-if="
-              $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
-              $enums.MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(formData.componentType)
+              MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
+              MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(formData.componentType)
             "
             label="自定义页面"
             name="customPageId"
           >
             <gen-custom-page-selector v-model:value="formData.customPageId" />
           </a-form-item>
-          <a-form-item
-            v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
-            name="path"
-          >
+          <a-form-item v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" name="path">
             <template #label>
               <a-space>
                 <span>路由路径</span>
@@ -153,14 +147,14 @@
             />
           </a-form-item>
           <a-form-item
-            v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
+            v-if="MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
             label="是否不缓存"
             name="noCache"
           >
             <a-switch v-model:checked="formData.noCache" />
           </a-form-item>
           <a-form-item
-            v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
+            v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
             label="是否隐藏"
             name="hidden"
           >
@@ -192,12 +186,31 @@
   import JsonEditor from './json-editor.vue';
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/menu';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import GenCustomListSelector from '@/components/Selector/GenCustomListSelector.vue';
+  import GenCustomPageSelector from '@/components/Selector/GenCustomPageSelector.vue';
+  import SysMenuSelector from '@/components/Selector/SysMenuSelector.vue';
+  import { MENU_DISPLAY } from '@/enums/biz/menuDisplay';
+  import { MENU_COMPONENT_TYPE } from '@/enums/biz/menuComponentType';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     components: {
       IconPicker,
       JsonEditor,
       QuestionCircleOutlined,
+      GenCustomListSelector,
+      GenCustomPageSelector,
+      SysMenuSelector,
+    },
+    setup() {
+      return {
+        isEmpty,
+        MENU_DISPLAY,
+        MENU_COMPONENT_TYPE,
+        AVAILABLE,
+      };
     },
     props: {
       id: {
@@ -274,17 +287,15 @@
       // 提交表单事件
       submit() {
         if (this.formData.isSpecial) {
-          this.$msg
-            .createConfirm(
-              '当前菜单为内置菜单，是否确定修改？注：修改内置菜单可能会导致系统功能异常，请谨慎操作',
-            )
-            .then(() => {
-              this.$refs.form.validate().then((valid) => {
-                if (valid) {
-                  this.doSubmit();
-                }
-              });
+          createConfirm(
+            '当前菜单为内置菜单，是否确定修改？注：修改内置菜单可能会导致系统功能异常，请谨慎操作',
+          ).then(() => {
+            this.$refs.form.validate().then((valid) => {
+              if (valid) {
+                this.doSubmit();
+              }
             });
+          });
         } else {
           this.doSubmit();
         }
@@ -292,17 +303,15 @@
       doSubmit() {
         this.loading = true;
         const params = Object.assign({}, this.formData);
-        if (this.$enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)) {
+        if (MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)) {
           params.component = params.customListId;
-        } else if (
-          this.$enums.MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(this.formData.componentType)
-        ) {
+        } else if (MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(this.formData.componentType)) {
           params.component = params.customPageId;
         }
         api
           .update(params)
           .then(() => {
-            this.$msg.createSuccess('修改成功！');
+            createSuccess('修改成功！');
             // 初始化表单数据
             this.initFormData();
             this.$emit('confirm');

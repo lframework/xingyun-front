@@ -13,10 +13,10 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
+            {{ TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
+            {{ TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="备注" :span="24">
             <a-textarea v-model:value.trim="formData.description" readonly />
@@ -83,6 +83,10 @@
   import { defineComponent } from 'vue';
   import * as constants from './constants';
   import * as api from '@/api/sc/stock/take/plan';
+  import { isEmpty, keys } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
 
   export default defineComponent({
     // 使用组件
@@ -92,6 +96,12 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
+      };
     },
     data() {
       return {
@@ -169,9 +179,7 @@
           updateTime: '',
         };
 
-        this.checkedFilterType = this.$utils
-          .keys(this.filterType)
-          .map((item) => this.filterType[item].code);
+        this.checkedFilterType = keys(this.filterType).map((item) => this.filterType[item].code);
 
         this.tableData = [];
         this.oriTableData = [];
@@ -214,7 +222,7 @@
           }
 
           if (this.checkedFilterType.includes(this.filterType.NONE.code)) {
-            if (item.diffNum === 0 || this.$utils.isEmpty(item.diffNum)) {
+            if (item.diffNum === 0 || isEmpty(item.diffNum)) {
               return true;
             }
           }
@@ -223,34 +231,32 @@
         });
       },
       submit() {
-        const unTakeRecords = this.oriTableData.filter((item) =>
-          this.$utils.isEmpty(item.oriTakeNum),
-        );
-        if (!this.$utils.isEmpty(unTakeRecords)) {
-          this.$msg
-            .createConfirm('盘点任务中存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？')
-            .then(() => {
-              this.doSubmit();
-            });
+        const unTakeRecords = this.oriTableData.filter((item) => isEmpty(item.oriTakeNum));
+        if (!isEmpty(unTakeRecords)) {
+          createConfirm(
+            '盘点任务中存在盘点数量为空的商品，差异生成时会将此部分商品的盘点数量置为0，确认对此盘点任务进行差异生成？',
+          ).then(() => {
+            this.doSubmit();
+          });
         } else {
-          this.doSubmit();
+          createConfirm('确认对此盘点任务进行差异生成？').then(() => {
+            this.doSubmit();
+          });
         }
       },
       doSubmit() {
-        this.$msg.createConfirm('确认对此盘点任务进行差异生成？').then(() => {
-          this.loading = true;
-          api
-            .createDiff(this.id)
-            .then(() => {
-              this.$msg.createSuccess('盘点任务完成差异生成！');
-              this.$emit('confirm');
+        this.loading = true;
+        api
+          .createDiff(this.id)
+          .then(() => {
+            createSuccess('盘点任务完成差异生成！');
+            this.$emit('confirm');
 
-              this.closeDialog();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+            this.closeDialog();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       },
     },
   });

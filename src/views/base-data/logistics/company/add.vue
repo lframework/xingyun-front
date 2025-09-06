@@ -66,9 +66,14 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/logistics/company';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      CitySelector,
+    },
     data() {
       return {
         // 是否可见
@@ -119,14 +124,12 @@
           if (valid) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
-            params.cityId = this.$utils.isEmpty(params.city)
-              ? ''
-              : params.city[params.city.length - 1];
+            params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];
             delete params.city;
             api
               .create(params)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');

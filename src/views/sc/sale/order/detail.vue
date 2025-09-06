@@ -20,22 +20,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SALE_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ SALE_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SALE_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ SALE_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SALE_ORDER_STATUS.getDesc(formData.status)
+              SALE_ORDER_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -48,8 +48,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -57,8 +57,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SALE_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -81,8 +81,8 @@
       >
         <!-- 含税金额 列自定义内容 -->
         <template #orderAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.orderNum)">{{
-            $utils.mul(row.taxPrice, row.orderNum)
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.orderNum)">{{
+            getNumber(mul(row.taxPrice, row.orderNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -130,12 +130,25 @@
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/sale/order';
   import { printMix } from '@/mixins/print';
+  import { isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
+  import { SALE_ORDER_STATUS } from '@/enums/biz/saleOrderStatus';
+  import { PRINT_TYPE } from '@/enums/biz/printType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
       PayType,
+      OrderTimeLine,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        isFloatGeZero,
+        getNumber,
+        mul,
+        SALE_ORDER_STATUS,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -263,17 +276,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.orderNum);
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.orderNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.orderNum);
+            const num = parseFloat(t.orderNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(num, giftNum);
+              giftNum = add(num, giftNum);
             } else {
-              totalNum = this.$utils.add(num, totalNum);
+              totalNum = add(num, totalNum);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -285,7 +298,7 @@
         api
           .print(this.id)
           .then((res) => {
-            this.lodopPreview(this.$enums.PRINT_TYPE.SALE_ORDER.code, res);
+            this.lodopPreview(PRINT_TYPE.SALE_ORDER.code, res);
           })
           .finally(() => {
             this.loading = false;

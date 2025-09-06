@@ -23,24 +23,24 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="采购收货单号">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="采购收货单号">
               <a-input v-model:value="searchParams.code" allow-clear />
             </j-form-item>
             <j-form-item label="仓库">
               <store-center-selector
-                v-if="$utils.isEmpty(requestParams.scId)"
+                v-if="isEmpty(requestParams.scId)"
                 v-model:value="searchParams.scId"
               />
             </j-form-item>
             <j-form-item label="供应商">
               <supplier-selector
-                v-if="$utils.isEmpty(requestParams.supplierId)"
+                v-if="isEmpty(requestParams.supplierId)"
                 v-model:value="searchParams.supplierId"
               />
             </j-form-item>
             <j-form-item label="操作人">
               <user-selector
-                v-if="$utils.isEmpty(requestParams.createBy)"
+                v-if="isEmpty(requestParams.createBy)"
                 v-model:value="searchParams.createBy"
               />
             </j-form-item>
@@ -82,10 +82,24 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/receive';
   import Moment from 'moment';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+  } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ReceiveSheetSelectorWithReturn',
-    components: { SearchOutlined },
+    components: {
+      SearchOutlined,
+      StoreCenterSelector,
+      SupplierSelector,
+      UserSelector,
+    },
     props: {
       requestParams: {
         type: Object,
@@ -98,6 +112,7 @@
       const moment = Moment;
       return {
         moment,
+        isEmpty,
       };
     },
     data() {
@@ -107,12 +122,8 @@
           scId: '',
           supplierId: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(this.moment().subtract(1, 'M')),
-          ),
-          createEndTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMaxTime(this.moment()),
-          ),
+          createStartTime: formatDateTime(getDateTimeWithMinTime(this.moment().subtract(1, 'M'))),
+          createEndTime: formatDateTime(getDateTimeWithMaxTime(this.moment())),
         },
       };
     },

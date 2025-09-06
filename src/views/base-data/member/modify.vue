@@ -24,7 +24,7 @@
             <a-form-item label="性别" name="gender">
               <a-select v-model:value="formData.gender" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.GENDER.values()"
+                  v-for="item in GENDER.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -90,7 +90,7 @@
             <a-form-item label="状态" name="available">
               <a-select v-model:value="formData.available" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.AVAILABLE.values()"
+                  v-for="item in AVAILABLE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -123,11 +123,25 @@
   import moment from 'moment';
   import { validCode, isEmail } from '@/utils/validate';
   import * as api from '@/api/base-data/member';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
+  import ShopSelector from '@/components/Selector/ShopSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { GENDER } from '@/enums/biz/gender';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
-    components: {},
-
+    components: {
+      ShopSelector,
+      UserSelector,
+    },
+    setup() {
+      return {
+        GENDER,
+        AVAILABLE,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -150,7 +164,7 @@
           email: [
             {
               validator: (rule, value, callback) => {
-                if (this.$utils.isEmpty(value) || isEmail(value)) {
+                if (isEmpty(value) || isEmail(value)) {
                   return Promise.resolve();
                 } else {
                   return Promise.reject('邮箱地址格式不正确');
@@ -210,7 +224,7 @@
             api
               .update(params)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

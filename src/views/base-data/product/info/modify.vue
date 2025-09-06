@@ -10,8 +10,8 @@
       >
         <a-row
           v-if="
-            $enums.PRODUCT_TYPE.NORMAL.equalsCode(productType) ||
-            $enums.PRODUCT_TYPE.BUNDLE.equalsCode(productType)
+            PRODUCT_TYPE.NORMAL.equalsCode(productType) ||
+            PRODUCT_TYPE.BUNDLE.equalsCode(productType)
           "
         >
           <a-col :md="8" :sm="24">
@@ -66,27 +66,27 @@
               <a-input v-model:value="formData.unit" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-item label="重量（kg）" name="weight">
               <a-input v-model:value="formData.weight" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-item label="体积（cm³）" name="volume">
               <a-input v-model:value="formData.volume" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-item label="进项税率（%）" name="taxRate">
               <a-input v-model:value="formData.taxRate" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-item label="销项税率（%）" name="saleTaxRate">
               <a-input v-model:value="formData.saleTaxRate" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col :md="8" :sm="24">
             <a-form-item label="采购价（元）" name="purchasePrice">
               <a-input v-model:value="formData.purchasePrice" allow-clear />
             </a-form-item>
@@ -105,7 +105,7 @@
             <a-form-item label="状态" name="available">
               <a-select v-model:value="formData.available" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.AVAILABLE.values()"
+                  v-for="item in AVAILABLE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -114,7 +114,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-        <a-row v-if="$enums.PRODUCT_TYPE.BUNDLE.equalsCode(productType)">
+        <a-row v-if="PRODUCT_TYPE.BUNDLE.equalsCode(productType)">
           <a-col :span="24">
             <vxe-grid
               ref="grid"
@@ -139,6 +139,13 @@
                   width: 200,
                   align: 'right',
                   slots: { default: 'bundleNum_default', header: 'bundleNum_header' },
+                },
+                {
+                  field: 'purchasePrice',
+                  title: '采购价（元）',
+                  width: 200,
+                  align: 'right',
+                  slots: { default: 'purchasePrice_default', header: 'purchasePrice_header' },
                 },
                 {
                   field: 'salePrice',
@@ -171,8 +178,8 @@
               <!-- 工具栏 -->
               <template #toolbar_buttons>
                 <a-space>
-                  <a-button type="primary" icon="plus" @click="addRow">新增</a-button>
-                  <a-button danger icon="delete" @click="delRow">删除</a-button>
+                  <a-button type="primary" :icon="h(PlusOutlined)" @click="addRow">新增</a-button>
+                  <a-button danger :icon="h(DeleteOutlined)" @click="delRow">删除</a-button>
                 </a-space>
               </template>
 
@@ -180,7 +187,7 @@
               <template #product_default="{ row }">
                 <product-selector
                   v-model:value="row.productId"
-                  :request-params="{ productType: $enums.PRODUCT_TYPE.NORMAL.code }"
+                  :request-params="{ productType: PRODUCT_TYPE.NORMAL.code }"
                 />
               </template>
 
@@ -197,6 +204,22 @@
               <!-- 包含数量 列自定义内容 -->
               <template #bundleNum_default="{ row }">
                 <a-input v-model:value="row.bundleNum" class="number-input" />
+              </template>
+
+              <!-- 采购价 列自定义表头 -->
+              <template #purchasePrice_header>
+                <a-space>
+                  <span>采购价（元）</span
+                  ><a-tooltip
+                    title="表示一个组合商品采购后的单品的采购价，此处的计算公式：每行单品的【包含数量】乘以【采购价】的总和 等于【组合商品的采购价】"
+                    ><a-icon type="question-circle"
+                  /></a-tooltip>
+                </a-space>
+              </template>
+
+              <!-- 采购价 列自定义内容 -->
+              <template #purchasePrice_default="{ row }">
+                <a-input v-model:value="row.purchasePrice" class="number-input" />
               </template>
 
               <!-- 销售价 列自定义表头 -->
@@ -237,7 +260,7 @@
           <a-col v-for="modelor in modelorList" :key="modelor.id" :md="8" :sm="24">
             <a-form-item :label="modelor.name" :required="modelor.isRequired">
               <a-select
-                v-if="$enums.COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)"
+                v-if="COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)"
                 v-model:value="modelor.text"
                 mode="multiple"
                 placeholder="请选择"
@@ -247,7 +270,7 @@
                 }}</a-select-option>
               </a-select>
               <a-select
-                v-if="$enums.COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)"
+                v-if="COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)"
                 v-model:value="modelor.text"
                 placeholder="请选择"
               >
@@ -255,36 +278,36 @@
                   item.name
                 }}</a-select-option>
               </a-select>
-              <div v-else-if="$enums.COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
+              <div v-else-if="COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
                 <a-input-number
-                  v-if="$enums.COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)"
+                  v-if="COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   class="number-input"
                 />
                 <a-input-number
-                  v-else-if="$enums.COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   :precision="2"
                   class="number-input"
                 />
                 <a-input
-                  v-else-if="$enums.COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                 />
                 <a-date-picker
-                  v-else-if="$enums.COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   placeholder=""
                   value-format="YYYY-MM-DD"
                 />
                 <a-time-picker
-                  v-else-if="$enums.COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   placeholder=""
                   value-format="HH:mm:ss"
                 />
                 <a-date-picker
-                  v-else-if="$enums.COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   placeholder=""
                   show-time
@@ -305,18 +328,56 @@
   </div>
 </template>
 <script>
-  import { defineComponent } from 'vue';
+  import { h, defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/info';
   import * as propertyApi from '@/api/base-data/product/property';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+  import {
+    isEmpty,
+    isFloat,
+    isFloatGeZero,
+    isNumberPrecision,
+    isInteger,
+    isIntegerGtZero,
+    isFloatGtZero,
+    add,
+    mul,
+    eq,
+    isArray,
+    uuid,
+  } from '@/utils/utils';
+  import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
+  import ProductSelector from '@/components/Selector/ProductSelector.vue';
+  import { PRODUCT_TYPE } from '@/enums/biz/productType';
+  import { COLUMN_TYPE } from '@/enums/biz/columnType';
+  import { COLUMN_DATA_TYPE } from '@/enums/biz/columnDataType';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     name: 'ModifyProduct',
     // 使用组件
-    components: {},
+    components: {
+      ProductBrandSelector,
+      ProductCategorySelector,
+      ProductSelector,
+    },
     mixins: [multiplePageMix],
     props: {},
+    setup() {
+      return {
+        h,
+        PlusOutlined,
+        DeleteOutlined,
+        PRODUCT_TYPE,
+        COLUMN_TYPE,
+        COLUMN_DATA_TYPE,
+        AVAILABLE,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -340,14 +401,14 @@
           weight: [
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('重量（kg）必须为数字');
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
+                    return Promise.reject('重量（kg）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('重量（kg）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return Promise.reject('重量（kg）最多允许2位小数');
                   }
                 }
@@ -359,14 +420,14 @@
           volume: [
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('体积（cm³）必须为数字');
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
+                    return Promise.reject('体积（cm³）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('体积（cm³）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return Promise.reject('体积（cm³）最多允许2位小数');
                   }
                 }
@@ -379,14 +440,14 @@
             { required: true, message: '请输入进项税率（%）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('进项税率（%）必须为数字');
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
+                    return Promise.reject('进项税率（%）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('进项税率（%）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return Promise.reject('进项税率（%）最多允许2位小数');
                   }
                 }
@@ -399,14 +460,14 @@
             { required: true, message: '请输入销项税率（%）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('销项税率（%）必须为数字');
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
+                    return Promise.reject('销项税率（%）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('销项税率（%）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return Promise.reject('销项税率（%）最多允许2位小数');
                   }
                 }
@@ -419,15 +480,15 @@
             { required: true, message: '请输入采购价（元）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('采购价（元）必须为数字');
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
+                    return Promise.reject('采购价（元）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('采购价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
-                    return Promise.reject('采购价（元）最多允许2位小数');
+                  if (!isNumberPrecision(value, 6)) {
+                    return Promise.reject('采购价（元）最多允许6位小数');
                   }
                 }
 
@@ -439,15 +500,15 @@
             { required: true, message: '请输入销售价（元）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('销售价（元）必须为数字');
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
+                    return Promise.reject('销售价（元）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('销售价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
-                    return Promise.reject('销售价（元）最多允许2位小数');
+                  if (!isNumberPrecision(value, 6)) {
+                    return Promise.reject('销售价（元）最多允许6位小数');
                   }
                 }
 
@@ -459,15 +520,15 @@
             { required: true, message: '请输入零售价（元）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('零售价（元）必须为数字');
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
+                    return Promise.reject('零售价（元）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('零售价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
-                    return Promise.reject('零售价（元）最多允许2位小数');
+                  if (!isNumberPrecision(value, 6)) {
+                    return Promise.reject('零售价（元）最多允许6位小数');
                   }
                 }
 
@@ -506,81 +567,108 @@
         if (!valid) {
           return;
         }
-        if (this.$enums.PRODUCT_TYPE.BUNDLE.equalsCode(this.productType)) {
+        if (PRODUCT_TYPE.BUNDLE.equalsCode(this.productType)) {
           // 如果是组合商品
-          if (this.$utils.isEmpty(this.productBundles)) {
-            this.$msg.createError('组合商品必须包含单品数据！');
+          if (isEmpty(this.productBundles)) {
+            createError('组合商品必须包含单品数据！');
             return;
           }
 
+          let purchasePrice = 0;
           let salePrice = 0;
           let retailPrice = 0;
           for (let i = 0; i < this.productBundles.length; i++) {
             const bundleProduct = this.productBundles[i];
-            if (this.$utils.isEmpty(bundleProduct.productId)) {
-              this.$msg.createError('第' + (i + 1) + '行单品不能为空！');
+            if (isEmpty(bundleProduct.productId)) {
+              createError('第' + (i + 1) + '行单品不能为空！');
               return;
             }
 
-            if (this.$utils.isEmpty(bundleProduct.bundleNum)) {
-              this.$msg.createError('第' + (i + 1) + '行单品包含数量不能为空！');
+            if (isEmpty(bundleProduct.bundleNum)) {
+              createError('第' + (i + 1) + '行单品包含数量不能为空！');
               return;
             }
-            if (!this.$utils.isInteger(bundleProduct.bundleNum)) {
-              this.$msg.createError('第' + (i + 1) + '行单品包含数量必须为整数！');
+            if (!isInteger(bundleProduct.bundleNum)) {
+              createError('第' + (i + 1) + '行单品包含数量必须为整数！');
               return;
             }
-            if (!this.$utils.isIntegerGtZero(bundleProduct.bundleNum)) {
-              this.$msg.createError('第' + (i + 1) + '行单品包含数量必须大于0！');
-              return;
-            }
-
-            if (this.$utils.isEmpty(bundleProduct.salePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）不能为空！');
-              return;
-            }
-            if (!this.$utils.isFloat(bundleProduct.salePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）必须为数字！');
-              return;
-            }
-            if (!this.$utils.isFloatGtZero(bundleProduct.salePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）必须大于0！');
-              return;
-            }
-            if (!this.$utils.isNumberPrecision(bundleProduct.salePrice, 2)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）最多允许2位小数！');
+            if (!isIntegerGtZero(bundleProduct.bundleNum)) {
+              createError('第' + (i + 1) + '行单品包含数量必须大于0！');
               return;
             }
 
-            if (this.$utils.isEmpty(bundleProduct.retailPrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）不能为空！');
+            if (isEmpty(bundleProduct.purchasePrice)) {
+              createError('第' + (i + 1) + '行单品采购价（元）不能为空！');
               return;
             }
-            if (!this.$utils.isFloat(bundleProduct.retailPrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）必须为数字！');
+            if (!isFloat(bundleProduct.purchasePrice)) {
+              createError('第' + (i + 1) + '行单品采购价（元）必须是数字！');
               return;
             }
-            if (!this.$utils.isFloatGtZero(bundleProduct.retailPrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）必须大于0！');
+            if (!isFloatGtZero(bundleProduct.purchasePrice)) {
+              createError('第' + (i + 1) + '行单品采购价（元）必须大于0！');
               return;
             }
-            if (!this.$utils.isNumberPrecision(bundleProduct.retailPrice, 2)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）最多允许2位小数！');
+            if (!isNumberPrecision(bundleProduct.purchasePrice, 6)) {
+              createError('第' + (i + 1) + '行单品采购价（元）最多允许6位小数！');
               return;
             }
 
-            salePrice = this.$utils.add(
-              salePrice,
-              this.$utils.mul(bundleProduct.bundleNum, bundleProduct.salePrice),
+            if (isEmpty(bundleProduct.salePrice)) {
+              createError('第' + (i + 1) + '行单品销售价（元）不能为空！');
+              return;
+            }
+            if (!isFloat(bundleProduct.salePrice)) {
+              createError('第' + (i + 1) + '行单品销售价（元）必须是数字！');
+              return;
+            }
+            if (!isFloatGtZero(bundleProduct.salePrice)) {
+              createError('第' + (i + 1) + '行单品销售价（元）必须大于0！');
+              return;
+            }
+            if (!isNumberPrecision(bundleProduct.salePrice, 6)) {
+              createError('第' + (i + 1) + '行单品销售价（元）最多允许6位小数！');
+              return;
+            }
+
+            if (isEmpty(bundleProduct.retailPrice)) {
+              createError('第' + (i + 1) + '行单品零售价（元）不能为空！');
+              return;
+            }
+            if (!isFloat(bundleProduct.retailPrice)) {
+              createError('第' + (i + 1) + '行单品零售价（元）必须是数字！');
+              return;
+            }
+            if (!isFloatGtZero(bundleProduct.retailPrice)) {
+              createError('第' + (i + 1) + '行单品零售价（元）必须大于0！');
+              return;
+            }
+            if (!isNumberPrecision(bundleProduct.retailPrice, 6)) {
+              createError('第' + (i + 1) + '行单品零售价（元）最多允许6位小数！');
+              return;
+            }
+
+            purchasePrice = add(
+              purchasePrice,
+              mul(bundleProduct.bundleNum, bundleProduct.purchasePrice),
             );
-            retailPrice = this.$utils.add(
-              retailPrice,
-              this.$utils.mul(bundleProduct.bundleNum, bundleProduct.retailPrice),
-            );
+            salePrice = add(salePrice, mul(bundleProduct.bundleNum, bundleProduct.salePrice));
+            retailPrice = add(retailPrice, mul(bundleProduct.bundleNum, bundleProduct.retailPrice));
           }
 
-          if (!this.$utils.eq(salePrice, this.formData.salePrice)) {
-            this.$msg.createError(
+          if (!eq(purchasePrice, this.formData.purchasePrice)) {
+            createError(
+              '当前所有单品的【包含数量】乘以【采购价（元）】的总和为' +
+                purchasePrice +
+                '元，组合商品的采购价为' +
+                this.formData.purchasePrice +
+                '元，两个值不相等，请调整！',
+            );
+            return;
+          }
+
+          if (!eq(salePrice, this.formData.salePrice)) {
+            createError(
               '当前所有单品的【包含数量】乘以【销售价（元）】的总和为' +
                 salePrice +
                 '元，组合商品的销售价为' +
@@ -590,8 +678,8 @@
             return;
           }
 
-          if (!this.$utils.eq(retailPrice, this.formData.retailPrice)) {
-            this.$msg.createError(
+          if (!eq(retailPrice, this.formData.retailPrice)) {
+            createError(
               '当前所有单品的【包含数量】乘以【零售价（元）】的总和为' +
                 retailPrice +
                 '元，组合商品的零售价为' +
@@ -601,12 +689,12 @@
             return;
           }
         }
-        if (!this.$utils.isEmpty(this.modelorList)) {
+        if (!isEmpty(this.modelorList)) {
           this.modelorList
             .filter((item) => item.isRequired)
             .every((item) => {
-              if (that.$utils.isEmpty(item.text)) {
-                that.$msg.createError(item.name + '不能为空！');
+              if (isEmpty(item.text)) {
+                createError(item.name + '不能为空！');
                 valid = false;
                 return false;
               }
@@ -620,11 +708,11 @@
         }
 
         const properties = this.modelorList
-          .filter((item) => !this.$utils.isEmpty(item.text))
+          .filter((item) => !isEmpty(item.text))
           .map((item) => {
             return {
               id: item.id,
-              text: this.$utils.isArray(item.text) ? JSON.stringify(item.text) : item.text,
+              text: isArray(item.text) ? JSON.stringify(item.text) : item.text,
             };
           });
 
@@ -636,7 +724,7 @@
         api
           .update(params)
           .then(() => {
-            this.$msg.createSuccess('修改成功！');
+            createSuccess('修改成功！');
             this.closeDialog();
           })
           .finally(() => {
@@ -660,23 +748,23 @@
       },
       selectCategory(val, formData) {
         this.modelorList = [];
-        if (!this.$utils.isEmpty(val)) {
+        if (!isEmpty(val)) {
           propertyApi.getModelorByCategory(val).then((res) => {
             const modelorList = res;
             if (formData) {
               const properties = formData.properties || [];
               modelorList.forEach((item) => {
                 item.text = (properties.filter((p) => p.id === item.id)[0] || {}).text;
-                if (this.$enums.COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
-                  item.text = this.$utils.isEmpty(item.text) ? [] : item.text.split(',');
+                if (COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
+                  item.text = isEmpty(item.text) ? [] : item.text.split(',');
                 }
               });
             }
 
             modelorList
-              .filter((item) => this.$utils.isEmpty(item.text))
+              .filter((item) => isEmpty(item.text))
               .forEach((item) => {
-                if (this.$enums.COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
+                if (COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
                   item.text = [];
                 } else {
                   item.text = '';
@@ -692,21 +780,21 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
         };
       },
       delRow() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           this.productBundles = this.productBundles.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
         });
       },

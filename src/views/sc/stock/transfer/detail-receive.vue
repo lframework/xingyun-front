@@ -5,6 +5,7 @@
     width="30%"
     title="收货记录"
     :style="{ top: '20px' }"
+    :footer="null"
   >
     <div v-if="visible" v-permission="['stock:sc-transfer:query']">
       <!-- 数据列表 -->
@@ -24,15 +25,11 @@
         :loading="loading"
       />
     </div>
-    <template #footer>
-      <a-space>
-        <a-button @click="closeDialog">关 闭</a-button>
-      </a-space>
-    </template>
   </a-modal>
 </template>
 <script>
   import { defineComponent } from 'vue';
+  import * as api from '@/api/sc/stock/transfer-sc';
 
   export default defineComponent({
     // 使用组件

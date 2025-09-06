@@ -15,14 +15,14 @@
           </j-form-item>
           <j-form-item label="预先盘点状态" :span="16">
             <a-checkbox-group v-model:value="checkedStatus">
-              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{
-                $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc
+              <a-checkbox :value="PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{
+                PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc
               }}</a-checkbox>
-              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code" disabled>{{
-                $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc
+              <a-checkbox :value="PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code" disabled>{{
+                PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc
               }}</a-checkbox>
-              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code" disabled>{{
-                $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc
+              <a-checkbox :value="PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code" disabled>{{
+                PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc
               }}</a-checkbox>
             </a-checkbox-group>
           </j-form-item>
@@ -54,13 +54,13 @@
         <template #secondDiffNum_default="{ row }">
           <span
             v-if="
-              formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code ||
-              formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
+              formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code ||
+              formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
             "
             >{{
-              $utils.sub(
-                $utils.isInteger(row.secondNum) ? row.secondNum : 0,
-                $utils.isInteger(row.firstNum) ? row.firstNum : 0,
+              sub(
+                isFloat(row.secondNum) ? row.secondNum : 0,
+                isFloat(row.firstNum) ? row.firstNum : 0,
               )
             }}</span
           >
@@ -68,11 +68,8 @@
 
         <!-- 抽盘复盘差异数量 列自定义内容 -->
         <template #randDiffNum_default="{ row }">
-          <span v-if="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
-            $utils.sub(
-              $utils.isInteger(row.randNum) ? row.randNum : 0,
-              $utils.isInteger(row.secondNum) ? row.secondNum : 0,
-            )
+          <span v-if="formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
+            sub(isFloat(row.randNum) ? row.randNum : 0, isFloat(row.secondNum) ? row.secondNum : 0)
           }}</span>
         </template>
       </vxe-grid>
@@ -82,6 +79,8 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/take/pre';
+  import { sub, isFloat, uuid } from '@/utils/utils';
+  import { PRE_TAKE_STOCK_SHEET_STATUS } from '@/enums/biz/preTakeStockSheetStatus';
 
   export default defineComponent({
     // 使用组件
@@ -91,6 +90,13 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        sub,
+        isFloat,
+        PRE_TAKE_STOCK_SHEET_STATUS,
+      };
     },
     data() {
       return {
@@ -159,7 +165,7 @@
           description: '',
         };
 
-        this.checkedStatus = [this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code];
+        this.checkedStatus = [PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code];
 
         this.tableData = [];
       },
@@ -189,22 +195,18 @@
               return Object.assign(this.emptyProduct(), item);
             });
 
-            if (this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.equalsCode(res.takeStatus)) {
-              this.checkedStatus = [this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code];
-            } else if (
-              this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.equalsCode(res.takeStatus)
-            ) {
+            if (PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.equalsCode(res.takeStatus)) {
+              this.checkedStatus = [PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code];
+            } else if (PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.equalsCode(res.takeStatus)) {
               this.checkedStatus = [
-                this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code,
-                this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code,
+                PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code,
+                PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code,
               ];
-            } else if (
-              this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(res.takeStatus)
-            ) {
+            } else if (PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(res.takeStatus)) {
               this.checkedStatus = [
-                this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code,
-                this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code,
-                this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code,
+                PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code,
+                PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code,
+                PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code,
               ];
             }
           })
@@ -214,7 +216,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',

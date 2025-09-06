@@ -1,8 +1,8 @@
 <template>
   <div
     :style="{
-      height: $utils.isEmpty(height) ? 80 * $vh + 'px' : height,
-      width: $utils.isEmpty(width) ? '100%' : width,
+      height: isEmpty(height) ? 80 * $vh + 'px' : height,
+      width: isEmpty(width) ? '100%' : width,
     }"
   >
     <iframe
@@ -16,7 +16,7 @@
         '&token=' +
         token +
         '&uuid=' +
-        $utils.uuid()
+        uuid()
       "
     ></iframe>
   </div>
@@ -25,10 +25,17 @@
   import { defineComponent } from 'vue';
   import { useGlobSetting } from '@/hooks/setting';
   import { getToken } from '@/utils/auth';
+  import { isEmpty, uuid } from '@/utils/utils';
 
   export default defineComponent({
     name: 'FlowChart',
     components: {},
+    setup() {
+      return {
+        isEmpty,
+        uuid,
+      };
+    },
     props: {
       instanceId: {
         type: String,

@@ -23,7 +23,7 @@
               {{ formData.paymentDate }}
             </j-form-item>
             <j-form-item label="采购收货单" :span="16">
-              <div v-if="!$utils.isEmpty(formData.receiveSheetCode)">
+              <div v-if="!isEmpty(formData.receiveSheetCode)">
                 <a
                   v-permission="['purchase:receive:query']"
                   @click="(e) => $refs.viewReceiveSheetDetailDialog.openDialog()"
@@ -36,22 +36,22 @@
             </j-form-item>
             <j-form-item label="状态">
               <span
-                v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+                v-if="PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)"
                 style="color: #52c41a"
-                >{{ $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span
+                >{{ PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span
               >
               <span
-                v-else-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+                v-else-if="PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
                 style="color: #f5222d"
-                >{{ $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span
+                >{{ PURCHASE_RETURN_STATUS.getDesc(formData.status) }}</span
               >
               <span v-else style="color: #303133">{{
-                $enums.PURCHASE_RETURN_STATUS.getDesc(formData.status)
+                PURCHASE_RETURN_STATUS.getDesc(formData.status)
               }}</span>
             </j-form-item>
             <j-form-item label="拒绝理由" :span="16" :content-nest="false">
               <a-input
-                v-if="$enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+                v-if="PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
                 v-model:value="formData.refuseReason"
                 readonly
               />
@@ -64,8 +64,8 @@
             </j-form-item>
             <j-form-item
               v-if="
-                $enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-                $enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+                PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+                PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
               "
               label="审核人"
             >
@@ -73,8 +73,8 @@
             </j-form-item>
             <j-form-item
               v-if="
-                $enums.PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-                $enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+                PURCHASE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+                PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
               "
               label="审核时间"
               :span="16"
@@ -97,12 +97,9 @@
         >
           <!-- 含税金额 列自定义内容 -->
           <template #taxAmount_default="{ row }">
-            <span
-              v-if="
-                $utils.isFloatGeZero(row.purchasePrice) && $utils.isIntegerGeZero(row.returnNum)
-              "
-              >{{ $utils.mul(row.purchasePrice, row.returnNum) }}</span
-            >
+            <span v-if="isFloatGeZero(row.purchasePrice) && isFloatGeZero(row.returnNum)">{{
+              getNumber(mul(row.purchasePrice, row.returnNum), 2)
+            }}</span>
           </template>
         </vxe-grid>
 
@@ -148,12 +145,26 @@
   import ReceiveSheetDetail from '@/views/sc/purchase/receive/detail.vue';
   import * as api from '@/api/sc/purchase/return';
   import { printMix } from '@/mixins/print';
+  import { isEmpty, isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
+  import { PURCHASE_RETURN_STATUS } from '@/enums/biz/purchaseReturnStatus';
+  import { PRINT_TYPE } from '@/enums/biz/printType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
       ReceiveSheetDetail,
+      OrderTimeLine,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        PURCHASE_RETURN_STATUS,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -194,7 +205,7 @@
             align: 'right',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           {
@@ -203,7 +214,7 @@
             align: 'right',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           { field: 'returnNum', title: '退货数量', align: 'right', width: 100 },
@@ -301,19 +312,17 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isIntegerGeZero(t.returnNum)
-            );
+            return isFloatGeZero(t.purchasePrice) && isFloatGeZero(t.returnNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.returnNum);
+            const num = parseFloat(t.returnNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice));
+            totalAmount = add(totalAmount, getNumber(mul(num, t.purchasePrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -325,7 +334,7 @@
         api
           .print(this.id)
           .then((res) => {
-            this.lodopPreview(this.$enums.PRINT_TYPE.PURCHASE_RETURN.code, res);
+            this.lodopPreview(PRINT_TYPE.PURCHASE_RETURN.code, res);
           })
           .finally(() => {
             this.loading = false;

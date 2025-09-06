@@ -4,9 +4,7 @@
       <template #item="{ element }">
         <ul>
           <j-form
-            v-if="
-              $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(element.nodeType)
-            "
+            v-if="SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(element.nodeType)"
           >
             <j-form-item :span="2" :colon="false" :hidden-label="true">
               <a-icon style="cursor: move" type="drag" />
@@ -14,7 +12,7 @@
             <j-form-item label="运算类型" :span="6">
               <a-select v-model:value="element.calcType" style="width: 100%">
                 <a-select-option
-                  v-for="item in $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.values()"
+                  v-for="item in SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -37,9 +35,7 @@
           </j-form>
           <j-form
             v-else-if="
-              $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CONDITION.equalsCode(
-                element.nodeType,
-              )
+              SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CONDITION.equalsCode(element.nodeType)
             "
           >
             <j-form-item :span="2" :colon="false" :hidden-label="true">
@@ -50,9 +46,7 @@
                 <div>{{ element.name }}</div>
                 <a-select
                   v-if="
-                    !$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.SQL.equalsCode(
-                      element.inputType,
-                    )
+                    !SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.SQL.equalsCode(element.inputType)
                   "
                   v-model:value="element.conditionType"
                   style="width: 150px"
@@ -66,17 +60,15 @@
                 </a-select>
                 <div
                   v-if="
-                    $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.INPUT.equalsCode(
-                      element.inputType,
-                    )
+                    SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.INPUT.equalsCode(element.inputType)
                   "
                 >
                   <a-select
                     v-if="
-                      $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.IN.equalsCode(
+                      SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.IN.equalsCode(
                         element.conditionType,
                       ) ||
-                      $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.NOT_IN.equalsCode(
+                      SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.NOT_IN.equalsCode(
                         element.conditionType,
                       )
                     "
@@ -88,17 +80,15 @@
                 </div>
                 <div
                   v-else-if="
-                    $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.SELECT.equalsCode(
-                      element.inputType,
-                    )
+                    SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.SELECT.equalsCode(element.inputType)
                   "
                 >
                   <a-select
                     v-if="
-                      $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.IN.equalsCode(
+                      SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.IN.equalsCode(
                         element.conditionType,
                       ) ||
-                      $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.NOT_IN.equalsCode(
+                      SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.NOT_IN.equalsCode(
                         element.conditionType,
                       )
                     "
@@ -107,7 +97,7 @@
                     mode="multiple"
                   >
                     <a-select-option
-                      v-for="item in $enums[element.enumName]"
+                      v-for="item in getEnum(element.enumName)?.values() || []"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -115,7 +105,7 @@
                   </a-select>
                   <a-select v-else v-model:value="element.value" style="min-width: 175px">
                     <a-select-option
-                      v-for="item in $enums[element.enumName]"
+                      v-for="item in getEnum(element.enumName)?.values() || []"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -124,7 +114,7 @@
                 </div>
                 <div
                   v-else-if="
-                    $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.DATE_TIME.equalsCode(
+                    SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.DATE_TIME.equalsCode(
                       element.inputType,
                     )
                   "
@@ -138,9 +128,7 @@
                 </div>
                 <div
                   v-else-if="
-                    $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.DATE.equalsCode(
-                      element.inputType,
-                    )
+                    SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.DATE.equalsCode(element.inputType)
                   "
                 >
                   <a-date-picker
@@ -165,9 +153,7 @@
             </j-form-item>
           </j-form>
           <data-permission-nested
-            v-if="
-              $enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(element.nodeType)
-            "
+            v-if="SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(element.nodeType)"
             :list="element.children"
             :only-calc-node="false"
             @removeNodes="(e) => $emit('removeNodes', e)"
@@ -181,11 +167,26 @@
   import Draggable from 'vuedraggable';
   import { Empty } from 'ant-design-vue';
   import { defineComponent } from 'vue';
+  import { createError } from '@/hooks/web/msg';
+  import { getEnum } from '@/utils/enumUtil';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE } from '@/enums/biz/sysDataPermissionModelDetailNodeType';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE } from '@/enums/biz/sysDataPermissionModelDetailCalcType';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE } from '@/enums/biz/sysDataPermissionModelDetailInputType';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE } from '@/enums/biz/sysDataPermissionModelDetailConditionType';
 
   export default defineComponent({
     name: 'DataPermissionNested',
     components: {
       Draggable,
+    },
+    setup() {
+      return {
+        getEnum,
+        SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE,
+        SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE,
+        SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE,
+        SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE,
+      };
     },
     props: {
       list: {
@@ -211,22 +212,18 @@
           const added = e.added;
           if (
             added &&
-            !this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(
-              added.element.nodeType,
-            )
+            !SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(added.element.nodeType)
           ) {
-            this.$msg.createError('此区域只允许添加运算节点');
+            createError('此区域只允许添加运算节点');
             this.removeNodes(added.element.id);
           }
 
           const moved = e.moved;
           if (
             moved &&
-            !this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(
-              moved.element.nodeType,
-            )
+            !SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(moved.element.nodeType)
           ) {
-            this.$msg.createError('此区域只允许添加运算节点');
+            createError('此区域只允许添加运算节点');
             this.removeNodes(added.element.id);
           }
         }

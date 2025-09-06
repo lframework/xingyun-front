@@ -67,6 +67,9 @@
   import ApproveDialog from './ApproveDialog.vue';
   import * as api from '@/api/bpm/flow/task';
   import * as instanceApi from '@/api/bpm/flow/instance';
+  import { createSuccess } from '@/hooks/web/msg';
+  import { FLOW_INSTANCE_STATUS } from '@/enums/biz/flowInstanceStatus';
+  import { FLOW_COOPERATE_TYPE } from '@/enums/biz/flowCooperateType';
 
   export default defineComponent({
     name: 'BpmApprove',
@@ -124,15 +127,11 @@
       },
       showUndoBtn() {
         return (
-          'my' === this.pageFrom &&
-          this.$enums.FLOW_INSTANCE_STATUS.APPROVING.equalsCode(this.instanceStatus)
+          'my' === this.pageFrom && FLOW_INSTANCE_STATUS.APPROVING.equalsCode(this.instanceStatus)
         );
       },
       showRejectBtn() {
-        return (
-          'todo' === this.pageFrom &&
-          this.$enums.FLOW_COOPERATE_TYPE.VOTE.equalsCode(this.cooperateType)
-        );
+        return 'todo' === this.pageFrom && FLOW_COOPERATE_TYPE.VOTE.equalsCode(this.cooperateType);
       },
     },
     mounted() {},
@@ -186,7 +185,7 @@
             })
             .then(() => {
               this.$emit('confirm');
-              this.$msg.createSuccess('通过成功！');
+              createSuccess('通过成功！');
               this.closeDialog();
             })
             .finally(() => {
@@ -202,7 +201,7 @@
             })
             .then(() => {
               this.$emit('confirm');
-              this.$msg.createSuccess('退回成功！');
+              createSuccess('退回成功！');
               this.closeDialog();
             })
             .finally(() => {
@@ -218,7 +217,7 @@
             })
             .then(() => {
               this.$emit('confirm');
-              this.$msg.createSuccess('撤回成功！');
+              createSuccess('撤回成功！');
               this.closeDialog();
             })
             .finally(() => {
@@ -234,7 +233,7 @@
             })
             .then(() => {
               this.$emit('confirm');
-              this.$msg.createSuccess('反对成功！');
+              createSuccess('反对成功！');
               this.closeDialog();
             })
             .finally(() => {

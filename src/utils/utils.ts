@@ -67,11 +67,11 @@ export const PATTERN_IS_NUMBERIC: RegExp = /^[0-9]*$/;
 
 /**
  * 是否 价格
- * 大于或等于0的两位小数
+ * 大于或等于0的六位小数
  * @type {RegExp}
  */
 export const PATTERN_IS_PRICE: RegExp =
-  /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
+  /(^[1-9]([0-9]+)?(\.[0-9]{1,6})?$)|(^(0){1}$)|(^[0-9]\.[0-9]{1,6}$)/;
 
 /**
  * 是否是编号
@@ -734,10 +734,12 @@ export const eq = function (n1, n2) {
  * @param decimal 小数位数
  */
 export const getNumber = function (number, decimal) {
-  return math.format(math.bignumber(number), {
-    notation: 'fixed',
-    precision: decimal,
-  });
+  return math.number(
+    math.format(math.bignumber(number), {
+      notation: 'fixed',
+      precision: decimal,
+    }),
+  );
 };
 
 /**

@@ -66,6 +66,7 @@
   import * as api from '@/api/bpm/flow/task';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { getSysFlowComponentPath } from '@/views/bpm/flow/task/common';
+  import { FLOW_DEFINITION_EXT_BIZ_TYPE } from '@/enums/biz/flowDefinitionExtBizType';
 
   export default defineComponent({
     name: 'FlowTodo',
@@ -162,7 +163,7 @@
               this.instanceId = row.instanceId;
               this.businessId = row.businessId;
               const ext = JSON.parse(row.ext || '{}');
-              if (this.$enums.FLOW_DEFINITION_EXT_BIZ_TYPE.SYSTEM.equalsCode(ext.bizType)) {
+              if (FLOW_DEFINITION_EXT_BIZ_TYPE.SYSTEM.equalsCode(ext.bizType)) {
                 this.componentPath = getSysFlowComponentPath(ext.bizFlag);
                 this.$refs.systemApproveDialog.openDialog();
               }

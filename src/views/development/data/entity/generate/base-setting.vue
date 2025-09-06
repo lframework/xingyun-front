@@ -11,7 +11,7 @@
       <a-form-item label="生成模板类型" name="templateType">
         <a-select v-model:value="formData.templateType" placeholder="" allow-clear>
           <a-select-option
-            v-for="item in $enums.GEN_TEMPLATE_TYPE.values()"
+            v-for="item in GEN_TEMPLATE_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -30,7 +30,7 @@
       <a-form-item label="主键类型" name="keyType">
         <a-select v-model:value="formData.keyType" placeholder="" allow-clear>
           <a-select-option
-            v-for="item in $enums.GEN_KEY_TYPE.values()"
+            v-for="item in GEN_KEY_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -57,7 +57,7 @@
           v-model:value="formData.parentMenuId"
           :only-final="false"
           :request-params="{
-            display: $enums.MENU_DISPLAY.CATALOG.code,
+            display: MENU_DISPLAY.CATALOG.code,
           }"
         />
       </a-form-item>
@@ -103,11 +103,26 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, isIntegerGtZero } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import SysMenuSelector from '@/components/Selector/SysMenuSelector.vue';
+  import { GEN_TEMPLATE_TYPE } from '@/enums/biz/genTemplateType';
+  import { GEN_KEY_TYPE } from '@/enums/biz/genKeyType';
+  import { MENU_DISPLAY } from '@/enums/biz/menuDisplay';
 
   export default defineComponent({
     // 使用组件
-    components: { QuestionCircleOutlined },
-
+    components: {
+      QuestionCircleOutlined,
+      SysMenuSelector,
+    },
+    setup() {
+      return {
+        GEN_TEMPLATE_TYPE,
+        GEN_KEY_TYPE,
+        MENU_DISPLAY,
+      };
+    },
     props: {
       formData: {
         type: Object,
@@ -145,13 +160,13 @@
     computed: {
       fullPackageNameBack() {
         let fullPackageNameBack = '';
-        if (!this.$utils.isEmpty(this.formData.packageName)) {
+        if (!isEmpty(this.formData.packageName)) {
           fullPackageNameBack += this.formData.packageName + '.';
         }
-        if (!this.$utils.isEmpty(this.formData.moduleName)) {
+        if (!isEmpty(this.formData.moduleName)) {
           fullPackageNameBack += this.formData.moduleName + '.';
         }
-        if (!this.$utils.isEmpty(this.formData.bizName)) {
+        if (!isEmpty(this.formData.bizName)) {
           fullPackageNameBack += this.formData.bizName;
         }
 
@@ -160,11 +175,11 @@
       fullPackageNameFront() {
         let fullPackageNameFront = 'views/';
 
-        if (!this.$utils.isEmpty(this.formData.moduleName)) {
+        if (!isEmpty(this.formData.moduleName)) {
           fullPackageNameFront += this.formData.moduleName + '/';
         }
 
-        if (!this.$utils.isEmpty(this.formData.bizName)) {
+        if (!isEmpty(this.formData.bizName)) {
           fullPackageNameFront += this.formData.bizName;
         }
 
@@ -186,73 +201,73 @@
         if (!flag) {
           return false;
         }
-        if (this.$utils.isEmpty(this.formData.templateType)) {
-          this.$msg.createError('请选择生成模板类型！');
+        if (isEmpty(this.formData.templateType)) {
+          createError('请选择生成模板类型！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.keyType)) {
-          this.$msg.createError('请选择主键类型！');
+        if (isEmpty(this.formData.keyType)) {
+          createError('请选择主键类型！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.className)) {
-          this.$msg.createError('请输入类名！');
+        if (isEmpty(this.formData.className)) {
+          createError('请输入类名！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.classDescription)) {
-          this.$msg.createError('请输入类描述！');
+        if (isEmpty(this.formData.classDescription)) {
+          createError('请输入类描述！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.packageName)) {
-          this.$msg.createError('请输入包名！');
+        if (isEmpty(this.formData.packageName)) {
+          createError('请输入包名！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.moduleName)) {
-          this.$msg.createError('请输入模块名！');
+        if (isEmpty(this.formData.moduleName)) {
+          createError('请输入模块名！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.bizName)) {
-          this.$msg.createError('请输入业务名！');
+        if (isEmpty(this.formData.bizName)) {
+          createError('请输入业务名！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.parentMenuId)) {
-          this.$msg.createError('请选择父级菜单！');
+        if (isEmpty(this.formData.parentMenuId)) {
+          createError('请选择父级菜单！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.menuCode)) {
-          this.$msg.createError('请输入本级菜单编号！');
+        if (isEmpty(this.formData.menuCode)) {
+          createError('请输入本级菜单编号！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.menuName)) {
-          this.$msg.createError('请输入本级菜单名称！');
+        if (isEmpty(this.formData.menuName)) {
+          createError('请输入本级菜单名称！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.detailSpan)) {
-          this.$msg.createError('请输入详情页Span总数量！');
+        if (isEmpty(this.formData.detailSpan)) {
+          createError('请输入详情页Span总数量！');
           return false;
         }
 
-        if (!this.$utils.isIntegerGtZero(this.formData.detailSpan)) {
-          this.$msg.createError('详情页Span总数量必须是整数并且大于0！');
+        if (!isIntegerGtZero(this.formData.detailSpan)) {
+          createError('详情页Span总数量必须是整数并且大于0！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.isCache)) {
-          this.$msg.createError('请选择是否应用缓存！');
+        if (isEmpty(this.formData.isCache)) {
+          createError('请选择是否应用缓存！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.hasDelete)) {
-          this.$msg.createError('请选择是否内置删除功能！');
+        if (isEmpty(this.formData.hasDelete)) {
+          createError('请选择是否内置删除功能！');
           return false;
         }
 

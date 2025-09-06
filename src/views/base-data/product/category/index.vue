@@ -41,8 +41,8 @@
               </j-form-item>
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option :value="$enums.AVAILABLE.ENABLE.code">{{
-                    '仅显示' + $enums.AVAILABLE.ENABLE.desc
+                  <a-select-option :value="AVAILABLE.ENABLE.code">{{
+                    '仅显示' + AVAILABLE.ENABLE.desc
                   }}</a-select-option>
                 </a-select>
               </j-form-item>
@@ -133,6 +133,21 @@
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/product/category';
+  import {
+    toArrayTree,
+    toString,
+    isEmpty,
+    searchTree,
+    isEqualWithStr,
+    toTreeArray,
+    union,
+  } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import ProductCategoryImporter from '@/components/Importor/ProductCategoryImporter.vue';
+  import BatchHandler from '@/components/BatchHandler';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import MenuDisplayTag from '@/components/Tag/MenuDisplayTag.vue';
 
   export default defineComponent({
     name: 'ProductCategory',
@@ -141,6 +156,10 @@
       Modify,
       AddChildren,
       DownOutlined,
+      ProductCategoryImporter,
+      BatchHandler,
+      AvailableTag,
+      MenuDisplayTag,
     },
     setup() {
       return {
@@ -150,6 +169,7 @@
         PlusOutlined,
         SearchOutlined,
         StopOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -159,7 +179,7 @@
         searchFormData: {
           code: '',
           name: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         originData: [],
         tableProxy: {
@@ -167,7 +187,7 @@
             query: () =>
               api.query().then((res) => {
                 // 将带层级的列表转成树结构
-                res = this.$utils.toArrayTree(res, {
+                res = toArrayTree(res, {
                   key: 'id',
                   parentKey: 'parentId',
                   children: 'children',
@@ -205,27 +225,24 @@
     created() {},
     methods: {
       handleSearch() {
-        const filterCode = this.$utils.toString(this.searchFormData.code).trim();
-        const filterName = this.$utils.toString(this.searchFormData.name).trim();
+        const filterCode = toString(this.searchFormData.code).trim();
+        const filterName = toString(this.searchFormData.name).trim();
         const filterAvailable = this.searchFormData.available;
-        const isFilterCode = !this.$utils.isEmpty(filterCode);
-        const isFilterName = !this.$utils.isEmpty(filterName);
-        const isFilterAvailable = !this.$utils.isEmpty(filterAvailable);
+        const isFilterCode = !isEmpty(filterCode);
+        const isFilterName = !isEmpty(filterName);
+        const isFilterAvailable = !isEmpty(filterAvailable);
         if (isFilterName || isFilterAvailable || isFilterCode) {
           const options = { key: 'id', parentKey: 'parentId', children: 'children', strict: true };
-          let tableData = this.$utils.searchTree(
+          let tableData = searchTree(
             this.originData,
             (item) => {
               let filterResult = true;
               if (isFilterCode) {
-                filterResult &= this.$utils.isEqualWithStr(
-                  this.$utils.toString(item['code']),
-                  filterCode,
-                );
+                filterResult &= isEqualWithStr(toString(item['code']), filterCode);
               }
 
               if (isFilterName) {
-                filterResult &= this.$utils.toString(item['name']).indexOf(filterName) > -1;
+                filterResult &= toString(item['name']).indexOf(filterName) > -1;
               }
 
               return filterResult;
@@ -234,11 +251,11 @@
           );
 
           if (isFilterAvailable) {
-            tableData = this.$utils.toTreeArray(tableData, options);
+            tableData = toTreeArray(tableData, options);
             tableData = tableData.filter((item) =>
-              this.$utils.isEqualWithStr(item['available'], filterAvailable),
+              isEqualWithStr(item['available'], filterAvailable),
             );
-            tableData = this.$utils.toArrayTree(tableData, options);
+            tableData = toArrayTree(tableData, options);
           }
 
           // 搜索之后默认展开所有子节点
@@ -266,8 +283,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的分类！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的分类！');
           return;
         }
 
@@ -279,13 +296,13 @@
         return api.enable(row.id);
       },
       batchEnable() {
-        const records = this.$utils.union(
+        const records = union(
           this.$refs.grid.getCheckboxRecords(),
           this.$refs.grid.getCheckboxIndeterminateRecords(true),
         );
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的分类！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的分类！');
           return;
         }
 

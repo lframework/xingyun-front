@@ -94,9 +94,16 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/development/custom/selector';
   import * as dataObjApi from '@/api/development/data/obj';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenCustomListSelector from '@/components/Selector/GenCustomListSelector.vue';
+  import GenCustomSelectorCategorySelector from '@/components/Selector/GenCustomSelectorCategorySelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      GenCustomListSelector,
+      GenCustomSelectorCategorySelector,
+    },
     data() {
       return {
         // 是否可见
@@ -154,25 +161,25 @@
         });
       },
       submit() {
-        if (this.$utils.isEmpty(this.formData.name)) {
-          this.$msg.createError('请输入名称');
+        if (isEmpty(this.formData.name)) {
+          createError('请输入名称');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.customListId)) {
-          this.$msg.createError('请选择自定义列表');
+        if (isEmpty(this.formData.customListId)) {
+          createError('请选择自定义列表');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.dialogWidth)) {
-          this.$msg.createError('请输入对话框宽度');
+        if (isEmpty(this.formData.dialogWidth)) {
+          createError('请输入对话框宽度');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.idColumn)) {
-          this.$msg.createError('请选择ID字段');
+        if (isEmpty(this.formData.idColumn)) {
+          createError('请选择ID字段');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.nameColumn)) {
-          this.$msg.createError('请选择父级ID字段');
+        if (isEmpty(this.formData.nameColumn)) {
+          createError('请选择父级ID字段');
           return;
         }
 
@@ -201,7 +208,7 @@
         api
           .create(params)
           .then(() => {
-            this.$msg.createSuccess('新增成功！');
+            createSuccess('新增成功！');
             this.$emit('confirm');
             this.closeDialog();
           })

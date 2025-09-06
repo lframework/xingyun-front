@@ -36,10 +36,17 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/user-role';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
     components: {},
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     props: {
       ids: {
         type: Array,
@@ -85,7 +92,7 @@
       query() {
         this.loading = true;
         const params = {};
-        if (!this.$utils.isEmpty(this.ids) && this.ids.length === 1) {
+        if (!isEmpty(this.ids) && this.ids.length === 1) {
           params.userId = this.ids[0];
         }
         api
@@ -101,14 +108,14 @@
       submit() {
         this.loading = true;
         const records = this.$refs.grid.getCheckboxRecords();
-        const roleIds = this.$utils.isEmpty(records) ? [] : records.map((item) => item.id);
+        const roleIds = isEmpty(records) ? [] : records.map((item) => item.id);
         api
           .setting({
             userIds: this.ids,
             roleIds: roleIds,
           })
           .then(() => {
-            this.$msg.createSuccess('授权成功！');
+            createSuccess('授权成功！');
             this.$emit('confirm');
             this.visible = false;
           })

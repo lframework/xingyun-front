@@ -21,22 +21,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SC_TRANSFER_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ SC_TRANSFER_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SC_TRANSFER_ORDER_STATUS.getDesc(formData.status) }}</span
+              >{{ SC_TRANSFER_ORDER_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SC_TRANSFER_ORDER_STATUS.getDesc(formData.status)
+              SC_TRANSFER_ORDER_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
             <a-input
-              v-if="$enums.SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -49,8 +49,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -58,8 +58,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SC_TRANSFER_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -83,7 +83,7 @@
       >
         <!-- 已收货数量 列自定义内容 -->
         <template #receiveNum_default="{ row }">
-          <span v-if="$utils.gt(row.receiveNum, 0)"
+          <span v-if="gt(row.receiveNum, 0)"
             ><a @click="detailReceive(row.id)">{{ row.receiveNum }}</a></span
           >
           <span v-else>{{ row.receiveNum }}</span>
@@ -99,9 +99,9 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SC_TRANSFER_ORDER_STATUS.PART_RECEIVED.equalsCode(formData.status) ||
-              $enums.SC_TRANSFER_ORDER_STATUS.RECEIVED.equalsCode(formData.status)
+              SC_TRANSFER_ORDER_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SC_TRANSFER_ORDER_STATUS.PART_RECEIVED.equalsCode(formData.status) ||
+              SC_TRANSFER_ORDER_STATUS.RECEIVED.equalsCode(formData.status)
             "
             label="调拨成本金额"
             :span="6"
@@ -119,10 +119,20 @@
   import { defineComponent } from 'vue';
   import DetailReceive from './detail-receive.vue';
   import * as api from '@/api/sc/stock/transfer-sc';
+  import { gt } from '@/utils/utils';
+  import { SC_TRANSFER_ORDER_STATUS } from '@/enums/biz/scTransferOrderStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
       DetailReceive,
+      OrderTimeLine,
+    },
+    setup() {
+      return {
+        gt,
+        SC_TRANSFER_ORDER_STATUS,
+      };
     },
     props: {
       id: {

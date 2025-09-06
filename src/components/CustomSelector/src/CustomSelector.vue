@@ -16,7 +16,7 @@
     <a-modal
       v-if="loadedConfig"
       v-model:open="dialogVisible"
-      :title="$utils.isEmpty(config.dialogTittle) ? '选择' : config.dialogTittle"
+      :title="isEmpty(config.dialogTittle) ? '选择' : config.dialogTittle"
       :width="config.dialogWidth"
       :force-render="true"
       :mask-closable="false"
@@ -46,11 +46,14 @@
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/development/gen/api';
+  import { isEmpty, isPromise, isArray } from '@/utils/utils';
+  import CustomList from '@/components/CustomList';
 
   export default defineComponent({
     name: 'CustomSelector',
     components: {
       SearchOutlined,
+      CustomList,
     },
     props: {
       customSelectorId: {
@@ -70,6 +73,11 @@
           };
         },
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {
@@ -91,7 +99,7 @@
     },
     methods: {
       async initConfig() {
-        if (this.$utils.isEmpty(this.customSelectorId)) {
+        if (isEmpty(this.customSelectorId)) {
           return;
         }
         const that = this;
@@ -109,7 +117,7 @@
           return;
         }
         const result = this.beforeOpen();
-        if (this.$utils.isPromise(result)) {
+        if (isPromise(result)) {
           result.then(() => {
             this.dialogVisible = true;
           });
@@ -131,7 +139,7 @@
       open() {},
       doSelect() {
         const selectData = this.$refs.customList.getSelectedRecords();
-        if (!this.$utils.isEmpty(selectData)) {
+        if (!isEmpty(selectData)) {
           this.label = selectData[this.config.nameColumn];
           this.$emit('update:value', selectData[this.config.idColumn], this.value);
         }
@@ -141,10 +149,10 @@
         this.dialogVisible = false;
       },
       customListLoaded() {
-        if (!this.$utils.isEmpty(this.value)) {
+        if (!isEmpty(this.value)) {
           this.$refs.customList.getRecordsByIds(this.value).then((res) => {
             const records = res;
-            if (this.$utils.isArray(records)) {
+            if (isArray(records)) {
               this.label = records.map((item) => item[this.config.nameColumn]).join(',');
             } else {
               this.label = records[this.config.nameColumn];

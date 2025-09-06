@@ -1,6 +1,11 @@
 <template>
   <div class="app-card-container">
     <div v-permission="['retail:return:add']" v-loading="loading">
+      <a-alert
+        description="提示：使用回车键可以快速添加商品；使用Tab键可以快速跳转至下一个输入框。"
+        type="info"
+        show-icon
+      />
       <j-border>
         <j-form bordered>
           <j-form-item label="仓库" required>
@@ -65,15 +70,38 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="!row.isFixed && $utils.isEmpty(row.productId)"
+            v-if="!row.isFixed && isEmpty(row.productId)"
+            :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
-            style="width: 100%"
-            placeholder=""
-            value-key="productName"
+            placeholder="请输入商品编号/名称/SKU编号/简码"
             :options="row.productOptions"
+            :dropdown-match-select-width="false"
+            :dropdown-style="{ width: '890px' }"
             @search="(e) => queryProduct(e, row)"
-            @select="(e) => handleSelectProduct(rowIndex, e, row)"
-          />
+          >
+            <!-- 自定义下拉框内容 -->
+            <template #dropdownRender>
+              <div v-if="!isEmpty(row.products)">
+                <vxe-table
+                  :data="row.products"
+                  max-height="500"
+                  class="cursor-pointer"
+                  highlight-hover-row
+                  show-overflow
+                  :row-config="{ isHover: true }"
+                  @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
+                >
+                  <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="skuCode" title="商品SKU编号" width="120" />
+                  <vxe-column field="spec" title="规格" width="80" />
+                  <vxe-column field="unit" title="单位" width="80" />
+                  <vxe-column field="retailPrice" title="参考零售价（元）" width="140" align="right" />
+                  <vxe-column field="stockNum" title="库存数量" width="140" align="right" />
+                </vxe-table>
+              </div>
+            </template>
+          </a-auto-complete>
           <span v-else>{{ row.productName }}</span>
         </template>
 
@@ -84,9 +112,9 @@
 
         <!-- 剩余退货数量 列自定义内容 -->
         <template #remainNum_default="{ row }">
-          <span v-if="$utils.isEmpty(row.remainNum)">-</span>
-          <span v-else-if="$utils.isIntegerGeZero(row.returnNum)">{{
-            Math.max(0, $utils.sub(row.remainNum, row.returnNum))
+          <span v-if="isEmpty(row.remainNum)">-</span>
+          <span v-else-if="isFloatGeZero(row.returnNum)">{{
+            Math.max(0, sub(row.remainNum, row.returnNum))
           }}</span>
           <span v-else>{{ row.remainNum }}</span>
         </template>
@@ -102,10 +130,9 @@
 
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span
-            v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.returnNum)"
-            >{{ $utils.mul(row.taxPrice, row.returnNum) }}</span
-          >
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.returnNum)">{{
+            getNumber(mul(row.taxPrice, row.returnNum), 2)
+          }}</span>
         </template>
 
         <!-- 备注 列自定义内容 -->
@@ -174,12 +201,31 @@
   import BatchAddProduct from '@/views/sc/retail/batch-add-product.vue';
   import Moment from 'moment';
   import PayType from '@/views/sc/pay-type/index.vue';
+  import MemberSelector from '@/components/Selector/MemberSelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import { PlusOutlined, DeleteOutlined, NumberOutlined } from '@ant-design/icons-vue';
   import * as payTypeApi from '@/api/base-data/pay-type';
   import * as configApi from '@/api/sc/retail/config';
   import * as outApi from '@/api/sc/retail/out';
   import * as api from '@/api/sc/retail/return';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    isFloatGeZero,
+    sub,
+    getNumber,
+    mul,
+    add,
+    isFloatGtZero,
+    isNumberPrecision,
+    isFloat,
+    eq,
+    uuid,
+    formatDate,
+    PATTERN_IS_FLOAT_GE_ZERO,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
 
   export default defineComponent({
     name: 'AddRetailReturnRequire',
@@ -187,6 +233,9 @@
       RetailOutSheetSelector,
       BatchAddProduct,
       PayType,
+      MemberSelector,
+      StoreCenterSelector,
+      UserSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -197,6 +246,11 @@
         DeleteOutlined,
         NumberOutlined,
         moment,
+        isEmpty,
+        isFloatGeZero,
+        sub,
+        getNumber,
+        mul,
       };
     },
     data() {
@@ -230,42 +284,42 @@
           },
           { field: 'skuCode', title: '商品SKU编号', width: 120 },
           { field: 'externalCode', title: '商品简码', width: 120 },
-          { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
+          { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
-          { field: 'retailPrice', title: '参考零售价（元）', align: 'right', width: 150 },
+          { field: 'retailPrice', title: '参考零售价（元）', align: 'right', width: 140 },
           { field: 'isGift', title: '是否赠品', width: 80, slots: { default: 'isGift_default' } },
           { field: 'discountRate', title: '折扣（%）', align: 'right', width: 120 },
-          { field: 'taxPrice', title: '价格（元）', align: 'right', width: 120 },
+          { field: 'taxPrice', title: '价格（元）', align: 'right', width: 140 },
           {
             field: 'outNum',
             title: '出库数量',
             align: 'right',
-            width: 100,
+            width: 140,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           {
             field: 'remainNum',
             title: '剩余退货数量',
             align: 'right',
-            width: 120,
+            width: 140,
             slots: { default: 'remainNum_default' },
           },
           {
             field: 'returnNum',
             title: '退货数量',
             align: 'right',
-            width: 100,
+            width: 140,
             slots: { default: 'returnNum_default' },
           },
           {
             field: 'taxAmount',
             title: '含税金额',
             align: 'right',
-            width: 120,
+            width: 140,
             slots: { default: 'taxAmount_default' },
           },
           { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
@@ -284,7 +338,22 @@
     created() {
       this.openDialog();
     },
+    mounted() {
+      // 监听键盘事件，按下回车键时调用addProduct方法
+      document.addEventListener('keydown', this.handleKeyDown);
+    },
+    beforeUnmount() {
+      // 移除键盘事件监听
+      document.removeEventListener('keydown', this.handleKeyDown);
+    },
     methods: {
+      // 处理键盘事件
+      handleKeyDown(event) {
+        // 按下回车键时调用addProduct方法
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          this.addProduct();
+        }
+      },
       // 打开对话框 由父页面触发
       openDialog() {
         // 初始化表单数据
@@ -301,7 +370,7 @@
           memberId: '',
           outSheetId: '',
           salerId: '',
-          paymentDate: this.$utils.formatDate(Moment().add(1, 'M')),
+          paymentDate: formatDate(Moment().add(1, 'M')),
           totalNum: 0,
           giftNum: 0,
           totalAmount: 0,
@@ -318,7 +387,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -340,19 +409,26 @@
           description: '',
           isFixed: false,
           products: [],
+          productOptions: [],
         };
       },
       // 新增商品
       addProduct() {
-        if (this.$utils.isEmpty(this.formData.outSheetId)) {
-          this.$msg.createError('请先选择零售出库单！');
+        if (isEmpty(this.formData.outSheetId)) {
+          createError('请先选择零售出库单！');
           return;
         }
         this.tableData.push(this.emptyProduct());
+        this.$nextTick(() => {
+          const productInputRef = this.$refs['productInputRef' + (this.tableData.length - 1)];
+          if (productInputRef) {
+            productInputRef.focus();
+          }
+        });
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -368,10 +444,10 @@
           });
         });
       },
-      // 选择商品
-      handleSelectProduct(index, value, row) {
-        value = row ? row.products.filter((item) => item.productId === value)[0] : value;
-        this.tableData[index] = Object.assign(this.tableData[index], value, {
+      // 选择商品（从表格中点击）
+      handleSelectProduct(index, product) {
+        // 将选中的商品数据赋值给当前行
+        this.tableData[index] = Object.assign(this.tableData[index], product, {
           isGift: true,
           taxPrice: 0,
         });
@@ -381,21 +457,21 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (records[i].isFixed) {
-            this.$msg.createError('第' + (i + 1) + '行商品是零售出库单中的商品，不允许删除！');
+            createError('第' + (i + 1) + '行商品是零售出库单中的商品，不允许删除！');
             return;
           }
         }
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -404,8 +480,8 @@
         });
       },
       openBatchAddProductDialog() {
-        if (this.$utils.isEmpty(this.formData.outSheetId)) {
-          this.$msg.createError('请先选择零售出库单！');
+        if (isEmpty(this.formData.outSheetId)) {
+          createError('请先选择零售出库单！');
           return;
         }
         this.$refs.batchAddProductDialog.openDialog();
@@ -424,19 +500,17 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.returnNum)
-            );
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.returnNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.returnNum);
+            const num = parseFloat(t.returnNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -446,25 +520,23 @@
       // 批量录入数量
       batchInputReturnNum() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择商品数据！');
           return;
         }
 
-        this.$msg
-          .createPrompt('请输入退货数量', {
-            inputPattern: this.$utils.PATTERN_IS_INTEGER_GE_ZERO,
-            inputErrorMessage: '退货数量必须为整数并且不小于0',
-            title: '批量录入数量',
-            required: true,
-          })
-          .then(({ value }) => {
-            records.forEach((t) => {
-              t.returnNum = value;
+        createPrompt('请输入退货数量', {
+          inputPattern: PATTERN_IS_FLOAT_GE_ZERO,
+          inputErrorMessage: '退货数量必须是数字并且不小于0',
+          title: '批量录入数量',
+          required: true,
+        }).then(({ value }) => {
+          records.forEach((t) => {
+            t.returnNum = value;
 
-              this.returnNumInput(value);
-            });
+            this.returnNumInput(value);
           });
+        });
       },
       // 批量新增商品
       batchAddProduct(productList) {
@@ -475,86 +547,88 @@
       },
       // 校验数据
       validData() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('仓库不允许为空！');
+        if (isEmpty(this.formData.scId)) {
+          createError('仓库不允许为空！');
           return false;
         }
 
-        if (
-          this.retailConfig.retailReturnRequireMember &&
-          this.$utils.isEmpty(this.formData.memberId)
-        ) {
-          this.$msg.createError('会员不允许为空！');
+        if (this.retailConfig.retailReturnRequireMember && isEmpty(this.formData.memberId)) {
+          createError('会员不允许为空！');
           return false;
         }
 
         if (this.formData.allowModifyPaymentDate) {
-          if (this.$utils.isEmpty(this.formData.paymentDate)) {
-            this.$msg.createError('付款日期不允许为空！');
+          if (isEmpty(this.formData.paymentDate)) {
+            createError('付款日期不允许为空！');
             return false;
           }
         }
 
-        if (this.$utils.isEmpty(this.formData.outSheetId)) {
-          this.$msg.createError('零售出库单不允许为空！');
+        if (isEmpty(this.formData.outSheetId)) {
+          createError('零售出库单不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const product = this.tableData[i];
 
-          if (this.$utils.isEmpty(product.productId)) {
-            this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
+          if (isEmpty(product.productId)) {
+            createError('第' + (i + 1) + '行商品不允许为空！');
             return false;
           }
 
           if (product.isGift) {
             if (parseFloat(product.taxPrice) !== 0) {
-              this.$msg.createError('第' + (i + 1) + '行商品价格必须等于0！');
+              createError('第' + (i + 1) + '行商品价格必须等于0！');
               return false;
             }
           } else {
-            if (!this.$utils.isFloatGtZero(product.taxPrice)) {
-              this.$msg.createError('第' + (i + 1) + '行商品价格必须大于0！');
+            if (!isFloatGtZero(product.taxPrice)) {
+              createError('第' + (i + 1) + '行商品价格必须大于0！');
               return false;
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.taxPrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品价格最多允许2位小数！');
+          if (!isNumberPrecision(product.taxPrice, 6)) {
+            createError('第' + (i + 1) + '行商品价格最多允许6位小数！');
             return false;
           }
 
-          if (!this.$utils.isEmpty(product.returnNum)) {
-            if (!this.$utils.isInteger(product.returnNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须为整数！');
+          if (!isEmpty(product.returnNum)) {
+            if (!isFloat(product.returnNum)) {
+              createError('第' + (i + 1) + '行商品退货数量必须是数字！');
               return false;
             }
 
             if (product.isFixed) {
-              if (!this.$utils.isIntegerGeZero(product.returnNum)) {
-                this.$msg.createError('第' + (i + 1) + '行商品退货数量不允许小于0！');
+              if (!isFloatGeZero(product.returnNum)) {
+                createError('第' + (i + 1) + '行商品退货数量不允许小于0！');
                 return false;
               }
             } else {
-              if (!this.$utils.isIntegerGtZero(product.returnNum)) {
-                this.$msg.createError('第' + (i + 1) + '行商品退货数量必须大于0！');
+              if (!isFloatGtZero(product.returnNum)) {
+                createError('第' + (i + 1) + '行商品退货数量必须大于0！');
                 return false;
               }
+            }
+
+            if (!isNumberPrecision(product.returnNum, 8)) {
+              createError('第' + (i + 1) + '行商品退货数量最多允许8位小数！');
+              return false;
             }
 
             if (product.isFixed) {
               if (product.returnNum > product.remainNum) {
-                this.$msg.createError(
+                createError(
                   '第' +
                     (i + 1) +
                     '行商品累计退货数量为' +
-                    (product.outNum - product.remainNum) +
+                    sub(product.outNum, product.remainNum) +
                     '，剩余退货数量为' +
                     product.remainNum +
                     '，本次退货数量不允许大于' +
@@ -566,16 +640,14 @@
             }
           } else {
             if (!product.isFixed) {
-              this.$msg.createError('第' + (i + 1) + '行商品退货数量不允许为空！');
+              createError('第' + (i + 1) + '行商品退货数量不允许为空！');
               return false;
             }
           }
         }
 
-        if (
-          this.tableData.filter((item) => this.$utils.isIntegerGtZero(item.returnNum)).length === 0
-        ) {
-          this.$msg.createError('零售出库单中的商品必须全部或部分退货！');
+        if (this.tableData.filter((item) => isFloatGtZero(item.returnNum)).length === 0) {
+          createError('零售出库单中的商品必须全部或部分退货！');
           return false;
         }
 
@@ -584,24 +656,16 @@
         }
 
         const payTypes = this.$refs.payType.getTableData();
-        const totalPayAmount = payTypes.reduce(
-          (tot, item) => this.$utils.add(tot, item.payAmount),
-          0,
-        );
-        if (!this.$utils.eq(this.formData.totalAmount, totalPayAmount)) {
-          this.$msg.createError('所有支付方式的支付金额不等于含税总金额，请检查！');
+        const totalPayAmount = payTypes.reduce((tot, item) => add(tot, item.payAmount), 0);
+        if (!eq(this.formData.totalAmount, totalPayAmount)) {
+          createError('所有支付方式的支付金额不等于含税总金额，请检查！');
           return false;
         }
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
-        const params = {
+      buildParams() {
+        return {
           scId: this.formData.scId,
           memberId: this.formData.memberId,
           salerId: this.formData.salerId || '',
@@ -617,7 +681,7 @@
             };
           }),
           products: this.tableData
-            .filter((t) => this.$utils.isIntegerGtZero(t.returnNum))
+            .filter((t) => isFloatGtZero(t.returnNum))
             .map((t) => {
               const product = {
                 productId: t.productId,
@@ -633,12 +697,20 @@
               return product;
             }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
           .create(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -653,43 +725,14 @@
           return;
         }
 
-        const params = {
-          scId: this.formData.scId,
-          memberId: this.formData.memberId,
-          salerId: this.formData.salerId,
-          paymentDate: this.formData.paymentDate || '',
-          outSheetId: this.formData.outSheetId,
-          description: this.formData.description,
-          payTypes: this.$refs.payType.getTableData().map((t) => {
-            return {
-              id: t.payTypeId,
-              payAmount: t.payAmount,
-              text: t.text,
-            };
-          }),
-          products: this.tableData
-            .filter((t) => this.$utils.isIntegerGtZero(t.returnNum))
-            .map((t) => {
-              const product = {
-                productId: t.productId,
-                returnNum: t.returnNum,
-                description: t.description,
-              };
+        const params = this.buildParams();
 
-              if (t.isFixed) {
-                product.outSheetDetailId = t.id;
-              }
-
-              return product;
-            }),
-        };
-
-        this.$msg.createConfirm('对零售退货单执行审核通过操作？').then(() => {
+        createConfirm('对零售退货单执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .directApprovePass(params)
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -703,7 +746,7 @@
       outSheetChange(e) {
         // 只要选择了零售出库单，清空所有商品，然后将零售出库单中所有的明细列出来
         this.$refs.payType.setTableData([]);
-        if (!this.$utils.isEmpty(e)) {
+        if (!isEmpty(e)) {
           this.loading = true;
           outApi
             .getWithReturn(e)
@@ -721,9 +764,9 @@
 
               this.formData.memberId = res.memberId;
 
-              this.canChangeMember = this.$utils.isEmpty(this.formData.memberId);
+              this.canChangeMember = isEmpty(this.formData.memberId);
 
-              if (!this.$utils.isEmpty(res.salerId)) {
+              if (!isEmpty(res.salerId)) {
                 this.formData.salerId = res.salerId;
               }
 
@@ -743,7 +786,7 @@
           return false;
         }
 
-        this.$msg.createError('由于“零售退货单关联零售出库单”，不允许修改仓库！');
+        createError('由于“零售退货单关联零售出库单”，不允许修改仓库！');
         return false;
       },
       beforeSelectMember() {
@@ -755,15 +798,15 @@
           return true;
         }
 
-        this.$msg.createError('由于“零售退货单关联零售出库单”，不允许修改会员！');
+        createError('由于“零售退货单关联零售出库单”，不允许修改会员！');
         return false;
       },
       beforeSelectSaler() {
         return this.beforeSelectComponents();
       },
       beforeSelectComponents() {
-        if (this.$utils.isEmpty(this.formData.outSheetId)) {
-          this.$msg.createError('请先选择零售出库单！');
+        if (isEmpty(this.formData.outSheetId)) {
+          createError('请先选择零售出库单！');
           return false;
         }
 

@@ -19,6 +19,17 @@
         <a-form-item label="名称" name="name">
           <a-input v-model:value="formData.name" allow-clear />
         </a-form-item>
+        <a-form-item name="serverName">
+          <template #label>
+            <a-space>
+              <span>绑定域名</span>
+              <a-tooltip title="绑定域名后，可以直接通过域名获取租户信息。"
+                ><QuestionCircleOutlined
+              /></a-tooltip>
+            </a-space>
+          </template>
+          <a-input v-model:value="formData.serverName" allow-clear />
+        </a-form-item>
         <a-form-item label="Jdbc Url" name="jdbcUrl">
           <a-input v-model:value="formData.jdbcUrl" allow-clear />
         </a-form-item>
@@ -43,9 +54,11 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/tenant';
+  import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
-    components: {},
+    components: { QuestionCircleOutlined },
     data() {
       return {
         // 是否可见
@@ -92,7 +105,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');

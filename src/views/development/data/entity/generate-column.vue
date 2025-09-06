@@ -24,10 +24,10 @@
       <template #dataType_default="{ row }">
         <a-select
           v-model:value="row.dataType"
-          :disabled="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code"
+          :disabled="row.viewType === GEN_VIEW_TYPE.DATA_DIC.code"
         >
           <a-select-option
-            v-for="item in $enums.GEN_DATA_TYPE.values()"
+            v-for="item in GEN_DATA_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -54,7 +54,7 @@
           @change="(e) => changeViewType(row, e)"
         >
           <a-select-option
-            v-for="item in $enums.GEN_VIEW_TYPE.values()"
+            v-for="item in GEN_VIEW_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -65,12 +65,12 @@
       <!-- 显示类型配置 列自定义内容 -->
       <template #viewTypeConfig_default="{ row }">
         <sys-data-dic-selector
-          v-if="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code"
+          v-if="row.viewType === GEN_VIEW_TYPE.DATA_DIC.code"
           v-model:value="row.dataDicId"
           :request-params="{ available: true }"
         />
         <gen-custom-selector-selector
-          v-else-if="row.viewType === $enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.code"
+          v-else-if="row.viewType === GEN_VIEW_TYPE.CUSTOM_SELECTOR.code"
           v-model:value="row.customSelectorId"
           :request-params="{ available: true }"
         />
@@ -138,8 +138,8 @@
             v-model:value="row.regularExpression"
             style="width: 50%"
             :disabled="
-              row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code &&
-              row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code
+              row.viewType !== GEN_VIEW_TYPE.INPUT.code &&
+              row.viewType !== GEN_VIEW_TYPE.TEXTAREA.code
             "
           />
           <a-select
@@ -147,8 +147,8 @@
             allow-clear
             style="width: 50%"
             :disabled="
-              row.viewType !== $enums.GEN_VIEW_TYPE.INPUT.code &&
-              row.viewType !== $enums.GEN_VIEW_TYPE.TEXTAREA.code
+              row.viewType !== GEN_VIEW_TYPE.INPUT.code &&
+              row.viewType !== GEN_VIEW_TYPE.TEXTAREA.code
             "
             @change="(e) => (row.regularExpression = e)"
           >
@@ -195,7 +195,7 @@
       <template #orderType_default="{ row }">
         <a-select v-if="row.isOrder" v-model:value="row.orderType">
           <a-select-option
-            v-for="item in $enums.GEN_ORDER_TYPE.values()"
+            v-for="item in GEN_ORDER_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -213,24 +213,22 @@
         <div
           v-if="
             !row.isKey &&
-            ($enums.GEN_VIEW_TYPE.INPUT.equalsCode(row.viewType) ||
-              $enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(row.viewType))
+            (GEN_VIEW_TYPE.INPUT.equalsCode(row.viewType) ||
+              GEN_VIEW_TYPE.TEXTAREA.equalsCode(row.viewType))
           "
         >
           <a-input
             v-if="
-              $enums.GEN_DATA_TYPE.STRING.equalsCode(row.dataType) ||
-              $enums.GEN_DATA_TYPE.isNumberType(row.dataType)
+              GEN_DATA_TYPE.STRING.equalsCode(row.dataType) ||
+              GEN_DATA_TYPE.isNumberType(row.dataType)
             "
             v-model:value="row.len"
             class="number-input"
             style="width: 70px"
           />
-          <span v-if="$enums.GEN_DATA_TYPE.isDecimalType(row.dataType)" style="margin: 0 5px"
-            >.</span
-          >
+          <span v-if="GEN_DATA_TYPE.isDecimalType(row.dataType)" style="margin: 0 5px">.</span>
           <a-input
-            v-if="$enums.GEN_DATA_TYPE.isDecimalType(row.dataType)"
+            v-if="GEN_DATA_TYPE.isDecimalType(row.dataType)"
             v-model:value="row.decimals"
             class="number-input"
             style="width: 70px"
@@ -244,14 +242,29 @@
   import { defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { QuestionCircleOutlined, DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, isIntegerGtZero, isIntegerGeZero } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import GenCustomSelectorSelector from '@/components/Selector/GenCustomSelectorSelector.vue';
+  import SysDataDicSelector from '@/components/Selector/SysDataDicSelector.vue';
+  import { GEN_VIEW_TYPE } from '@/enums/biz/genViewType';
+  import { GEN_DATA_TYPE } from '@/enums/biz/genDataType';
+  import { GEN_ORDER_TYPE } from '@/enums/biz/genOrderType';
 
   export default defineComponent({
     // 使用组件
     components: {
       QuestionCircleOutlined,
       DragOutlined,
+      GenCustomSelectorSelector,
+      SysDataDicSelector,
     },
-
+    setup() {
+      return {
+        GEN_VIEW_TYPE,
+        GEN_DATA_TYPE,
+        GEN_ORDER_TYPE,
+      };
+    },
     props: {
       columns: {
         type: Array,
@@ -354,86 +367,86 @@
     },
     methods: {
       validDate() {
-        if (this.$utils.isEmpty(this.columns)) {
-          this.$msg.createError('字段信息不能为空！');
+        if (isEmpty(this.columns)) {
+          createError('字段信息不能为空！');
           return false;
         }
         for (let i = 0; i < this.columns.length; i++) {
           const column = this.columns[i];
 
-          if (this.$utils.isEmpty(column.name)) {
-            this.$msg.createError('第' + (i + 1) + '行字段显示名称不能为空！');
+          if (isEmpty(column.name)) {
+            createError('第' + (i + 1) + '行字段显示名称不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.dataType)) {
-            this.$msg.createError('字段【' + column.name + '】数据类型不能为空！');
+          if (isEmpty(column.dataType)) {
+            createError('字段【' + column.name + '】数据类型不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.viewType)) {
-            this.$msg.createError('字段【' + column.name + '】显示类型不能为空！');
+          if (isEmpty(column.viewType)) {
+            createError('字段【' + column.name + '】显示类型不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.fixEnum)) {
-            this.$msg.createError('字段【' + column.name + '】是否内置枚举不能为空！');
+          if (isEmpty(column.fixEnum)) {
+            createError('字段【' + column.name + '】是否内置枚举不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.columnOrder)) {
-            this.$msg.createError('字段【' + column.name + '】字段排序不能为空！');
+          if (isEmpty(column.columnOrder)) {
+            createError('字段【' + column.name + '】字段排序不能为空！');
             return false;
           }
 
           if (column.fixEnum) {
-            if (this.$utils.isEmpty(column.enumBack)) {
-              this.$msg.createError('字段【' + column.name + '】后端枚举名不能为空！');
+            if (isEmpty(column.enumBack)) {
+              createError('字段【' + column.name + '】后端枚举名不能为空！');
               return false;
             }
 
-            if (this.$utils.isEmpty(column.enumFront)) {
-              this.$msg.createError('字段【' + column.name + '】前端枚举名不能为空！');
+            if (isEmpty(column.enumFront)) {
+              createError('字段【' + column.name + '】前端枚举名不能为空！');
               return false;
             }
           }
 
-          if (this.$utils.isEmpty(column.isOrder)) {
-            this.$msg.createError('字段【' + column.name + '】是否排序字段不能为空！');
+          if (isEmpty(column.isOrder)) {
+            createError('字段【' + column.name + '】是否排序字段不能为空！');
             return false;
           }
 
           if (column.isOrder) {
-            if (this.$utils.isEmpty(column.orderType)) {
-              this.$msg.createError('字段【' + column.name + '】排序类型不能为空！');
+            if (isEmpty(column.orderType)) {
+              createError('字段【' + column.name + '】排序类型不能为空！');
               return false;
             }
           }
 
-          if (!this.$utils.isEmpty(column.len)) {
-            if (!this.$utils.isIntegerGtZero(column.len)) {
-              this.$msg.createError('字段【' + column.name + '】长度的整数部分必须是大于0的整数！');
+          if (!isEmpty(column.len)) {
+            if (!isIntegerGtZero(column.len)) {
+              createError('字段【' + column.name + '】长度的整数部分必须是大于0的整数！');
               return false;
             }
           }
 
-          if (!this.$utils.isEmpty(column.decimals)) {
-            if (!this.$utils.isIntegerGeZero(column.decimals)) {
-              this.$msg.createError('字段【' + column.name + '】长度的小数部分必须是不小于0整数！');
+          if (!isEmpty(column.decimals)) {
+            if (!isIntegerGeZero(column.decimals)) {
+              createError('字段【' + column.name + '】长度的小数部分必须是不小于0整数！');
               return false;
             }
           }
 
-          if (this.$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
-            if (this.$utils.isEmpty(column.dataDicId)) {
-              this.$msg.createError('字段【' + column.name + '】数据字典不能为空！');
+          if (GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
+            if (isEmpty(column.dataDicId)) {
+              createError('字段【' + column.name + '】数据字典不能为空！');
               return false;
             }
           }
 
-          if (this.$enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
-            if (this.$utils.isEmpty(column.customSelectorId)) {
-              this.$msg.createError('字段【' + column.name + '】自定义选择器不能为空！');
+          if (GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
+            if (isEmpty(column.customSelectorId)) {
+              createError('字段【' + column.name + '】自定义选择器不能为空！');
               return false;
             }
           }
@@ -445,25 +458,22 @@
         if (val) {
           // 是内置枚举
           // viewType必须是SELECT
-          row.viewType = this.$enums.GEN_VIEW_TYPE.SELECT.code;
-          this.changeViewType(row, this.$enums.GEN_VIEW_TYPE.SELECT.code);
+          row.viewType = GEN_VIEW_TYPE.SELECT.code;
+          this.changeViewType(row, GEN_VIEW_TYPE.SELECT.code);
         } else {
           row.enumBack = '';
           row.enumFront = '';
         }
       },
       changeViewType(row, val) {
-        if (
-          val !== this.$enums.GEN_VIEW_TYPE.INPUT.code &&
-          val !== this.$enums.GEN_VIEW_TYPE.TEXTAREA.code
-        ) {
+        if (val !== GEN_VIEW_TYPE.INPUT.code && val !== GEN_VIEW_TYPE.TEXTAREA.code) {
           // 如果viewType不是INPUT、TEAXTAREA，正则必须是空
           row.regularExpression = '';
         }
 
-        if (val === this.$enums.GEN_VIEW_TYPE.DATA_DIC.code) {
+        if (val === GEN_VIEW_TYPE.DATA_DIC.code) {
           // 数据字典 类型必须是String
-          row.dataType = this.$enums.GEN_DATA_TYPE.STRING.code;
+          row.dataType = GEN_DATA_TYPE.STRING.code;
         }
       },
       changeIsOrder(row, val) {
@@ -494,7 +504,7 @@
             // 如果是主键
             delete column.len;
             delete column.decimals;
-            column.viewType = this.$enums.GEN_VIEW_TYPE.INPUT.code;
+            column.viewType = GEN_VIEW_TYPE.INPUT.code;
             column.dataDicId = '';
             column.customSelectorId = '';
             column.fixEnum = false;
@@ -502,28 +512,28 @@
             delete column.enumFront;
             delete column.regularExpression;
           } else {
-            if (!that.$enums.GEN_DATA_TYPE.isDecimalType(column.dataType)) {
+            if (!GEN_DATA_TYPE.isDecimalType(column.dataType)) {
               delete column.decimals;
             }
             if (
-              !that.$enums.GEN_DATA_TYPE.STRING.equalsCode(column.dataType) &&
-              !that.$enums.GEN_DATA_TYPE.isNumberType(column.dataType)
+              !GEN_DATA_TYPE.STRING.equalsCode(column.dataType) &&
+              !GEN_DATA_TYPE.isNumberType(column.dataType)
             ) {
               delete column.len;
               delete column.decimals;
             }
 
-            if (!that.$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
+            if (!GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
               column.dataDicId = '';
             }
 
-            if (!that.$enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
+            if (!GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
               column.customSelectorId = '';
             }
 
             if (
-              !that.$enums.GEN_VIEW_TYPE.INPUT.equalsCode(column.viewType) &&
-              !that.$enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(column.viewType)
+              !GEN_VIEW_TYPE.INPUT.equalsCode(column.viewType) &&
+              !GEN_VIEW_TYPE.TEXTAREA.equalsCode(column.viewType)
             ) {
               delete column.regularExpression;
               delete column.len;

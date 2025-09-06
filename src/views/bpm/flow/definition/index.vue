@@ -45,7 +45,7 @@
                         allow-clear
                       >
                         <a-select-option
-                          v-for="item in $enums.FLOW_DEFINITION_IS_PUBLISH.values()"
+                          v-for="item in FLOW_DEFINITION_IS_PUBLISH.values()"
                           :key="item.code"
                           :value="item.code"
                           >{{ item.desc }}</a-select-option
@@ -59,7 +59,7 @@
                         allow-clear
                       >
                         <a-select-option
-                          v-for="item in $enums.FLOW_DEFINITION_ACTIVITY_STATUS.values()"
+                          v-for="item in FLOW_DEFINITION_ACTIVITY_STATUS.values()"
                           :key="item.code"
                           :value="item.code"
                           >{{ item.desc }}</a-select-option
@@ -118,6 +118,10 @@
   import CategoryTree from './category-tree.vue';
   import { SearchOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/bpm/flow/definition';
+  import { isEmpty, isEqualWithStr } from '@/utils/utils';
+  import { createConfirm, createSuccess } from '@/hooks/web/msg';
+  import { FLOW_DEFINITION_IS_PUBLISH } from '@/enums/biz/flowDefinitionIsPublish';
+  import { FLOW_DEFINITION_ACTIVITY_STATUS } from '@/enums/biz/flowDefinitionActivityStatus';
 
   export default defineComponent({
     name: 'DesignFlowDefinition',
@@ -135,6 +139,8 @@
         SearchOutlined,
         PlusOutlined,
         DeleteOutlined,
+        FLOW_DEFINITION_IS_PUBLISH,
+        FLOW_DEFINITION_ACTIVITY_STATUS,
       };
     },
     data() {
@@ -169,7 +175,7 @@
             title: '是否发布',
             width: 80,
             formatter: ({ cellValue }) => {
-              return this.$enums.FLOW_DEFINITION_IS_PUBLISH.getDesc(cellValue);
+              return FLOW_DEFINITION_IS_PUBLISH.getDesc(cellValue);
             },
           },
           {
@@ -177,7 +183,7 @@
             title: '激活状态',
             width: 80,
             formatter: ({ cellValue }) => {
-              return this.$enums.FLOW_DEFINITION_ACTIVITY_STATUS.getDesc(cellValue);
+              return FLOW_DEFINITION_ACTIVITY_STATUS.getDesc(cellValue);
             },
           },
           { field: 'createTime', title: '创建时间', width: 170 },
@@ -208,8 +214,8 @@
         this.$refs.grid.commitProxy('reload');
       },
       doSearch(categoryId) {
-        if (!this.$utils.isEmpty(categoryId)) {
-          if (this.$utils.isEqualWithStr(0, categoryId)) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
             this.searchFormData.categoryId = '';
           } else {
             this.searchFormData.categoryId = categoryId;
@@ -236,12 +242,12 @@
       },
       // 删除
       deleteRow(row) {
-        this.$msg.createConfirm('是否确定删除该流程？').then(() => {
+        createConfirm('是否确定删除该流程？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -254,7 +260,7 @@
           {
             label: '流程设计',
             ifShow: () => {
-              return this.$enums.FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
+              return FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
             },
             onClick: () => {
               this.id = row.id;
@@ -275,7 +281,7 @@
           {
             label: '修改',
             ifShow: () => {
-              return this.$enums.FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
+              return FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
             },
             onClick: () => {
               this.id = row.id;
@@ -287,17 +293,17 @@
           {
             label: '发布',
             ifShow: () => {
-              return this.$enums.FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
+              return FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
             },
             onClick: () => {
-              this.$msg.createConfirm('是否确定发布该流程？').then(() => {
+              createConfirm('是否确定发布该流程？').then(() => {
                 api
                   .setPublishStatus({
                     id: row.id,
-                    isPublish: this.$enums.FLOW_DEFINITION_IS_PUBLISH.Y.code,
+                    isPublish: FLOW_DEFINITION_IS_PUBLISH.Y.code,
                   })
                   .then(() => {
-                    this.$msg.createSuccess('发布成功！');
+                    createSuccess('发布成功！');
 
                     this.search();
                   });
@@ -307,17 +313,17 @@
           {
             label: '取消发布',
             ifShow: () => {
-              return this.$enums.FLOW_DEFINITION_IS_PUBLISH.Y.equalsCode(row.isPublish);
+              return FLOW_DEFINITION_IS_PUBLISH.Y.equalsCode(row.isPublish);
             },
             onClick: () => {
-              this.$msg.createConfirm('是否确定取消发布该流程？').then(() => {
+              createConfirm('是否确定取消发布该流程？').then(() => {
                 api
                   .setPublishStatus({
                     id: row.id,
-                    isPublish: this.$enums.FLOW_DEFINITION_IS_PUBLISH.N.code,
+                    isPublish: FLOW_DEFINITION_IS_PUBLISH.N.code,
                   })
                   .then(() => {
-                    this.$msg.createSuccess('取消发布成功！');
+                    createSuccess('取消发布成功！');
 
                     this.search();
                   });
@@ -327,19 +333,17 @@
           {
             label: '激活',
             ifShow: () => {
-              return this.$enums.FLOW_DEFINITION_ACTIVITY_STATUS.DEACTIVATE.equalsCode(
-                row.activityStatus,
-              );
+              return FLOW_DEFINITION_ACTIVITY_STATUS.DEACTIVATE.equalsCode(row.activityStatus);
             },
             onClick: () => {
-              this.$msg.createConfirm('是否确定激活该流程？').then(() => {
+              createConfirm('是否确定激活该流程？').then(() => {
                 api
                   .setActivityStatus({
                     id: row.id,
-                    activityStatus: this.$enums.FLOW_DEFINITION_ACTIVITY_STATUS.ACTIVATE.code,
+                    activityStatus: FLOW_DEFINITION_ACTIVITY_STATUS.ACTIVATE.code,
                   })
                   .then(() => {
-                    this.$msg.createSuccess('激活成功！');
+                    createSuccess('激活成功！');
 
                     this.search();
                   });
@@ -349,19 +353,17 @@
           {
             label: '挂起',
             ifShow: () => {
-              return this.$enums.FLOW_DEFINITION_ACTIVITY_STATUS.ACTIVATE.equalsCode(
-                row.activityStatus,
-              );
+              return FLOW_DEFINITION_ACTIVITY_STATUS.ACTIVATE.equalsCode(row.activityStatus);
             },
             onClick: () => {
-              this.$msg.createConfirm('是否确定挂起该流程？').then(() => {
+              createConfirm('是否确定挂起该流程？').then(() => {
                 api
                   .setActivityStatus({
                     id: row.id,
-                    activityStatus: this.$enums.FLOW_DEFINITION_ACTIVITY_STATUS.DEACTIVATE.code,
+                    activityStatus: FLOW_DEFINITION_ACTIVITY_STATUS.DEACTIVATE.code,
                   })
                   .then(() => {
-                    this.$msg.createSuccess('挂起成功！');
+                    createSuccess('挂起成功！');
 
                     this.search();
                   });
@@ -371,7 +373,7 @@
           {
             label: '生成新版本',
             ifShow: () => {
-              return this.$enums.FLOW_DEFINITION_IS_PUBLISH.Y.equalsCode(row.isPublish);
+              return FLOW_DEFINITION_IS_PUBLISH.Y.equalsCode(row.isPublish);
             },
             onClick: () => {
               this.id = row.id;
@@ -384,7 +386,7 @@
             label: '删除',
             danger: true,
             ifShow: () => {
-              return this.$enums.FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
+              return FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
             },
             onClick: () => {
               this.deleteRow(row);

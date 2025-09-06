@@ -51,9 +51,14 @@
   import * as api from '@/api/system/user-group';
   import { generateCode } from '@/api/components';
   import { validCode } from '@/utils/validate';
+  import { createSuccess } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      UserSelector,
+    },
     data() {
       return {
         // 是否可见
@@ -69,16 +74,6 @@
           userIds: [{ required: true, message: '请选择用户' }],
         },
       };
-    },
-    computed: {
-      messageTypeOptions() {
-        return this.$enums.SYS_NOTIFY_GROUP_MESSAGE_TYPE.values().map((item) => {
-          return {
-            label: item.desc,
-            value: item.code,
-          };
-        });
-      },
     },
     created() {
       // 初始化表单数据
@@ -115,7 +110,7 @@
             api
               .create(params)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })
@@ -133,7 +128,7 @@
         this.onGenerateCode();
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.USER_GROUP.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.USER_GROUP.code).then((res) => {
           this.formData.code = res;
         });
       },

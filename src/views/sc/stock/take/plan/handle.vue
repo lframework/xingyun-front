@@ -13,10 +13,10 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
+            {{ TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
+            {{ TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="备注" :span="24">
             <a-textarea v-model:value.trim="formData.description" maxlength="200" />
@@ -75,9 +75,7 @@
 
         <!-- 差异数量 列自定义内容 -->
         <template #diffNum_default="{ row }">
-          <span v-if="$utils.isInteger(row.takeNum)">{{
-            $utils.sub(row.takeNum, row.stockNum)
-          }}</span>
+          <span v-if="isFloat(row.takeNum)">{{ sub(row.takeNum, row.stockNum) }}</span>
         </template>
 
         <!-- 备注 列自定义内容 -->
@@ -107,6 +105,18 @@
   import * as constants from './constants';
   import * as configApi from '@/api/sc/stock/take/config';
   import * as api from '@/api/sc/stock/take/plan';
+  import {
+    isFloat,
+    sub,
+    add,
+    isEmpty,
+    isFloatGeZero,
+    isNumberPrecision,
+    keys,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
 
   export default defineComponent({
     // 使用组件
@@ -116,6 +126,14 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        isFloat,
+        sub,
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
+      };
     },
     data() {
       return {
@@ -212,9 +230,7 @@
           updateTime: '',
         };
 
-        this.checkedFilterType = this.$utils
-          .keys(this.filterType)
-          .map((item) => this.filterType[item].code);
+        this.checkedFilterType = keys(this.filterType).map((item) => this.filterType[item].code);
 
         this.tableData = [];
         this.oriTableData = [];
@@ -257,10 +273,7 @@
             });
             details.forEach((item) => {
               if (this.config.autoChangeStock) {
-                item.takeNum = this.$utils.sub(
-                  this.$utils.add(item.takeNum, item.totalOutNum),
-                  item.totalInNum,
-                );
+                item.takeNum = sub(add(item.takeNum, item.totalOutNum), item.totalInNum);
               }
             });
             this.tableData = details;
@@ -276,24 +289,24 @@
         });
         this.tableData = this.oriTableData;
         this.tableData = this.tableData.filter((item) => {
-          if (!this.$utils.isInteger(item.takeNum)) {
+          if (!isFloat(item.takeNum)) {
             return true;
           }
 
           if (this.checkedFilterType.includes(this.filterType.LOSS.code)) {
-            if (this.$utils.sub(item.takeNum, item.stockNum) < 0) {
+            if (sub(item.takeNum, item.stockNum) < 0) {
               return true;
             }
           }
 
           if (this.checkedFilterType.includes(this.filterType.OVERFLOW.code)) {
-            if (this.$utils.sub(item.takeNum, item.stockNum) > 0) {
+            if (sub(item.takeNum, item.stockNum) > 0) {
               return true;
             }
           }
 
           if (this.checkedFilterType.includes(this.filterType.NONE.code)) {
-            if (this.$utils.sub(item.takeNum, item.stockNum) === 0) {
+            if (sub(item.takeNum, item.stockNum) === 0) {
               return true;
             }
           }
@@ -302,31 +315,25 @@
         });
       },
       submit() {
-        const unTakeRecords = this.oriTableData.filter((item) =>
-          this.$utils.isEmpty(item.oriTakeNum),
-        );
-        if (!this.$utils.isEmpty(unTakeRecords)) {
-          this.$msg
-            .createConfirm('盘点任务中存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？')
-            .then(() => {
-              this.doSubmit();
-            });
-        } else {
-          this.doSubmit();
-        }
+        this.doSubmit();
       },
       doSubmit() {
         for (let i = 0; i < this.oriTableData.length; i++) {
           const data = this.oriTableData[i];
           if (this.config.allowChangeNum) {
-            if (!this.$utils.isEmpty(data.takeNum)) {
-              if (!this.$utils.isInteger(data.takeNum)) {
-                this.$msg.createError('第' + (i + 1) + '行商品修改后盘点数量必须是整数！');
+            if (!isEmpty(data.takeNum)) {
+              if (!isFloat(data.takeNum)) {
+                createError('第' + (i + 1) + '行商品修改后盘点数量必须是整数！');
                 return;
               }
 
-              if (!this.$utils.isIntegerGeZero(data.takeNum)) {
-                this.$msg.createError('第' + (i + 1) + '行商品修改后盘点数量不允许小于0！');
+              if (!isFloatGeZero(data.takeNum)) {
+                createError('第' + (i + 1) + '行商品修改后盘点数量不允许小于0！');
+                return;
+              }
+
+              if (!isNumberPrecision(data.takeNum, 8)) {
+                createError('第' + (i + 1) + '行商品修改后盘点数量最多允许8位小数！');
                 return;
               }
             }
@@ -345,12 +352,12 @@
           autoChangeStock: this.config.autoChangeStock,
           description: this.formData.description,
         };
-        this.$msg.createConfirm('确认对此盘点任务进行差异处理？').then(() => {
+        createConfirm('确认对此盘点任务进行差异处理？').then(() => {
           this.loading = true;
           api
             .handleDiff(params)
             .then(() => {
-              this.$msg.createSuccess('盘点任务完成差异处理！');
+              createSuccess('盘点任务完成差异处理！');
               this.$emit('confirm');
 
               this.closeDialog();

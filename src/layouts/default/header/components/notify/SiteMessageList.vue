@@ -62,6 +62,7 @@
   import { List, Avatar, Tag, Typography } from 'ant-design-vue';
   import { isNumber } from '/@/utils/is';
   import { MailTwoTone } from '@ant-design/icons-vue';
+  import RelativeTime from '@/components/RelativeTime';
 
   export default defineComponent({
     components: {
@@ -72,6 +73,7 @@
       ATypographyParagraph: Typography.Paragraph,
       [Tag.name]: Tag,
       MailTwoTone,
+      RelativeTime,
     },
     props: {
       list: {

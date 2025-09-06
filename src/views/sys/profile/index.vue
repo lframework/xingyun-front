@@ -14,7 +14,7 @@
                 <p> <AlertOutlined /> {{ user.name }} </p>
                 <p> <MailOutlined /> {{ user.email }} </p>
                 <p> <PhoneOutlined /> {{ user.telephone }} </p>
-                <p> <UserOutlined /> {{ $enums.GENDER.getDesc(user.gender) }} </p>
+                <p> <UserOutlined /> {{ GENDER.getDesc(user.gender) }} </p>
               </div>
               <a-divider style="margin: 10px 0" />
               <div class="account-center-actions">
@@ -47,6 +47,8 @@
     PhoneOutlined,
     AlertOutlined,
   } from '@ant-design/icons-vue';
+  import { createConfirm } from '@/hooks/web/msg';
+  import { GENDER } from '@/enums/biz/gender';
 
   export default defineComponent({
     name: 'ProfileIndex',
@@ -64,6 +66,7 @@
       const userStore = useUserStore();
       return {
         userStore,
+        GENDER,
       };
     },
     data() {
@@ -100,7 +103,7 @@
         this[type] = key;
       },
       logout() {
-        this.$msg.createConfirm('确定退出登录？').then(() => {
+        createConfirm('确定退出登录？').then(() => {
           this.userStore.logout(true);
         });
       },
