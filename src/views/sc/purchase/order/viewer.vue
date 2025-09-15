@@ -79,7 +79,7 @@
       <template #purchaseAmount_default="{ row }">
         <span
           v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.purchaseNum)"
-          >{{ $utils.mul(row.purchasePrice, row.purchaseNum) }}</span
+          >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.purchaseNum), 2) }}</span
         >
       </template>
     </vxe-grid>
@@ -244,18 +244,20 @@
           .filter((t) => {
             return (
               this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isIntegerGeZero(t.purchaseNum)
+              this.$utils.isFloatGeZero(t.purchaseNum)
             );
           })
           .forEach((t) => {
-            const num = parseInt(t.purchaseNum);
+            const num = parseFloat(t.purchaseNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice));
+            // 先将每行的金额格式化成2位小数，然后再累加
+            const rowAmount = this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2);
+            totalAmount = this.$utils.add(totalAmount, rowAmount);
           });
 
         this.formData.totalNum = totalNum;

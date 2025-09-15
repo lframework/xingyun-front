@@ -151,8 +151,8 @@
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
           <span
-            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isIntegerGeZero(row.receiveNum)"
-            >{{ $utils.mul(row.purchasePrice, row.receiveNum) }}</span
+            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.receiveNum)"
+            >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.receiveNum), 2) }}</span
           >
         </template>
 
@@ -220,6 +220,7 @@
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { PATTERN_IS_FLOAT_GE_ZERO } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ModifyPurchaseReceiveSheetUnRequire',
@@ -505,19 +506,21 @@
         this.tableData
           .filter((t) => {
             return (
-              this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isIntegerGeZero(t.receiveNum)
+              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.receiveNum)
             );
           })
           .forEach((t) => {
-            const num = parseInt(t.receiveNum);
+            const num = parseFloat(t.receiveNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice));
+            totalAmount = this.$utils.add(
+              totalAmount,
+              this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2),
+            );
           });
 
         this.formData.totalNum = totalNum;
@@ -534,8 +537,8 @@
 
         this.$msg
           .createPrompt('请输入收货数量', {
-            inputPattern: this.$utils.PATTERN_IS_INTEGER_GT_ZERO,
-            inputErrorMessage: '收货数量必须为整数并且大于0',
+            inputPattern: this.$utils.PATTERN_IS_FLOAT_GT_ZERO,
+            inputErrorMessage: '收货数量必须为数字并且大于0',
             title: '批量录入数量',
             required: true,
           })
@@ -565,7 +568,7 @@
         this.$msg
           .createPrompt('请输入采购价（元）', {
             inputPattern: this.$utils.PATTERN_IS_PRICE,
-            inputErrorMessage: '采购价（元）必须为数字并且不小于0',
+            inputErrorMessage: '采购价（元）必须为数字并且不小于0，最多允许6位小数',
             title: '批量调整采购价',
             required: true,
           })
@@ -658,19 +661,24 @@
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.purchasePrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许2位小数！');
+          if (!this.$utils.isNumberPrecision(product.purchasePrice, 6)) {
+            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许6位小数！');
             return false;
           }
 
           if (!this.$utils.isEmpty(product.receiveNum)) {
-            if (!this.$utils.isInteger(product.receiveNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品收货数量必须为整数！');
+            if (!this.$utils.isFloat(product.receiveNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品收货数量必须为数字！');
               return false;
             }
 
-            if (!this.$utils.isIntegerGtZero(product.receiveNum)) {
+            if (!this.$utils.isFloatGtZero(product.receiveNum)) {
               this.$msg.createError('第' + (i + 1) + '行商品收货数量必须大于0！');
+              return false;
+            }
+
+            if (!this.$utils.isNumberPrecision(product.receiveNum, 8)) {
+              this.$msg.createError('第' + (i + 1) + '行商品收货数量最多允许8位小数！');
               return false;
             }
           } else {
@@ -697,7 +705,7 @@
           allowModifyPaymentDate: true,
           description: this.formData.description,
           products: this.tableData
-            .filter((t) => this.$utils.isIntegerGtZero(t.receiveNum))
+            .filter((t) => this.$utils.isFloatGtZero(t.receiveNum))
             .map((t) => {
               const product = {
                 productId: t.productId,

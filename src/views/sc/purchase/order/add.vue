@@ -93,7 +93,7 @@
         <template #purchaseAmount_default="{ row }">
           <span
             v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.purchaseNum)"
-            >{{ $utils.mul(row.purchasePrice, row.purchaseNum) }}</span
+            >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.purchaseNum), 2) }}</span
           >
         </template>
 
@@ -172,6 +172,7 @@
   import * as api from '@/api/sc/purchase/order';
   import * as configApi from '@/api/sc/purchase/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {PATTERN_IS_FLOAT_GE_ZERO} from "@/utils/utils";
 
   export default defineComponent({
     name: 'AddPurchaseOrder',
@@ -401,18 +402,20 @@
           .filter((t) => {
             return (
               this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isIntegerGeZero(t.purchaseNum)
+              this.$utils.isFloatGeZero(t.purchaseNum)
             );
           })
           .forEach((t) => {
-            const num = parseInt(t.purchaseNum);
+            const num = parseFloat(t.purchaseNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice));
+            // 先将每行的金额格式化成2位小数，然后再累加
+            const rowAmount = this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2);
+            totalAmount = this.$utils.add(totalAmount, rowAmount);
           });
 
         this.formData.totalNum = totalNum;
@@ -429,8 +432,8 @@
 
         this.$msg
           .createPrompt('请输入采购数量', {
-            inputPattern: this.$utils.PATTERN_IS_INTEGER_GT_ZERO,
-            inputErrorMessage: '采购数量必须为整数并且大于0',
+            inputPattern: this.$utils.PATTERN_IS_FLOAT_GT_ZERO,
+            inputErrorMessage: '采购数量必须为数字并且大于0',
             title: '批量录入数量',
             required: true,
           })
@@ -460,7 +463,7 @@
         this.$msg
           .createPrompt('请输入采购价（元）', {
             inputPattern: this.$utils.PATTERN_IS_PRICE,
-            inputErrorMessage: '采购价（元）必须为数字并且不小于0',
+            inputErrorMessage: '采购价（元）必须为数字并且不小于0，最多允许6位小数',
             title: '批量调整采购价',
             required: true,
           })
@@ -546,8 +549,8 @@
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.purchasePrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许2位小数！');
+          if (!this.$utils.isNumberPrecision(product.purchasePrice, 6)) {
+            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许6位小数！');
             return false;
           }
 
@@ -556,13 +559,18 @@
             return false;
           }
 
-          if (!this.$utils.isInteger(product.purchaseNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购数量必须为整数！');
+          if (!this.$utils.isFloat(product.purchaseNum)) {
+            this.$msg.createError('第' + (i + 1) + '行商品采购数量必须为数字！');
             return false;
           }
 
-          if (!this.$utils.isIntegerGtZero(product.purchaseNum)) {
+          if (!this.$utils.isFloatGtZero(product.purchaseNum)) {
             this.$msg.createError('第' + (i + 1) + '行商品采购数量必须大于0！');
+            return false;
+          }
+
+          if (!this.$utils.isNumberPrecision(product.purchaseNum, 8)) {
+            this.$msg.createError('第' + (i + 1) + '行商品采购数量最多允许8位小数！');
             return false;
           }
         }

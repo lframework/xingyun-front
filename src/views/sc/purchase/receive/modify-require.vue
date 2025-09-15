@@ -148,7 +148,7 @@
         <!-- 剩余收货数量 列自定义内容 -->
         <template #remainNum_default="{ row }">
           <span v-if="$utils.isEmpty(row.remainNum)">-</span>
-          <span v-else-if="$utils.isIntegerGeZero(row.receiveNum)">{{
+          <span v-else-if="$utils.isFloatGeZero(row.receiveNum)">{{
             Math.max(0, $utils.sub(row.remainNum, row.receiveNum))
           }}</span>
           <span v-else>{{ row.remainNum }}</span>
@@ -166,8 +166,8 @@
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
           <span
-            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isIntegerGeZero(row.receiveNum)"
-            >{{ $utils.mul(row.purchasePrice, row.receiveNum) }}</span
+            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.receiveNum)"
+            >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.receiveNum), 2) }}</span
           >
         </template>
 
@@ -238,6 +238,7 @@
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { PATTERN_IS_FLOAT_GE_ZERO } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ModifyPurchaseReceiveSheetRequire',
@@ -564,19 +565,21 @@
         this.tableData
           .filter((t) => {
             return (
-              this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isIntegerGeZero(t.receiveNum)
+              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.receiveNum)
             );
           })
           .forEach((t) => {
-            const num = parseInt(t.receiveNum);
+            const num = parseFloat(t.receiveNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice));
+            totalAmount = this.$utils.add(
+              totalAmount,
+              this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2),
+            );
           });
 
         this.formData.totalNum = totalNum;
@@ -593,8 +596,8 @@
 
         this.$msg
           .createPrompt('请输入收货数量', {
-            inputPattern: this.$utils.PATTERN_IS_INTEGER_GE_ZERO,
-            inputErrorMessage: '收货数量必须为整数并且不小于0',
+            inputPattern: this.$utils.PATTERN_IS_FLOAT_GE_ZERO,
+            inputErrorMessage: '收货数量必须为数字并且不小于0',
             title: '批量录入数量',
             required: true,
           })
@@ -694,27 +697,32 @@
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.purchasePrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许2位小数！');
+          if (!this.$utils.isNumberPrecision(product.purchasePrice, 6)) {
+            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许6位小数！');
             return false;
           }
 
           if (!this.$utils.isEmpty(product.receiveNum)) {
-            if (!this.$utils.isInteger(product.receiveNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品收货数量必须为整数！');
+            if (!this.$utils.isFloat(product.receiveNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品收货数量必须为数字！');
               return false;
             }
 
             if (product.isFixed) {
-              if (!this.$utils.isIntegerGeZero(product.receiveNum)) {
+              if (!this.$utils.isFloatGeZero(product.receiveNum)) {
                 this.$msg.createError('第' + (i + 1) + '行商品收货数量不允许小于0！');
                 return false;
               }
             } else {
-              if (!this.$utils.isIntegerGtZero(product.receiveNum)) {
+              if (!this.$utils.isFloatGtZero(product.receiveNum)) {
                 this.$msg.createError('第' + (i + 1) + '行商品收货数量必须大于0！');
                 return false;
               }
+            }
+
+            if (!this.$utils.isNumberPrecision(product.receiveNum, 8)) {
+              this.$msg.createError('第' + (i + 1) + '行商品收货数量最多允许8位小数！');
+              return false;
             }
 
             if (product.isFixed) {
@@ -742,7 +750,7 @@
         }
 
         if (
-          this.tableData.filter((item) => this.$utils.isIntegerGtZero(item.receiveNum)).length === 0
+          this.tableData.filter((item) => this.$utils.isFloatGtZero(item.receiveNum)).length === 0
         ) {
           this.$msg.createError('采购订单中的商品必须全部或部分收货！');
           return false;
@@ -767,7 +775,7 @@
           description: this.formData.description,
           allowModifyPaymentDate: true,
           products: this.tableData
-            .filter((t) => this.$utils.isIntegerGtZero(t.receiveNum))
+            .filter((t) => this.$utils.isFloatGtZero(t.receiveNum))
             .map((t) => {
               const product = {
                 productId: t.productId,
