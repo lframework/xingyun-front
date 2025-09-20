@@ -132,7 +132,7 @@
         <!-- 剩余退货数量 列自定义内容 -->
         <template #remainNum_default="{ row }">
           <span v-if="$utils.isEmpty(row.remainNum)">-</span>
-          <span v-else-if="$utils.isIntegerGeZero(row.returnNum)">{{
+          <span v-else-if="$utils.isFloatGeZero(row.returnNum)">{{
             Math.max(0, $utils.sub(row.remainNum, row.returnNum))
           }}</span>
           <span v-else>{{ row.remainNum }}</span>
@@ -150,8 +150,8 @@
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
           <span
-            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isIntegerGeZero(row.returnNum)"
-            >{{ $utils.mul(row.purchasePrice, row.returnNum) }}</span
+            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.returnNum)"
+            >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.returnNum), 2) }}</span
           >
         </template>
 
@@ -540,18 +540,21 @@
         this.tableData
           .filter((t) => {
             return (
-              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isIntegerGeZero(t.returnNum)
+              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.returnNum)
             );
           })
           .forEach((t) => {
-            const num = parseInt(t.returnNum);
+            const num = parseFloat(t.returnNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.purchasePrice));
+            totalAmount = this.$utils.add(
+              totalAmount,
+              this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2),
+            );
           });
 
         this.formData.totalNum = totalNum;
@@ -568,8 +571,8 @@
 
         this.$msg
           .createPrompt('请输入退货数量', {
-            inputPattern: this.$utils.PATTERN_IS_INTEGER_GE_ZERO,
-            inputErrorMessage: '退货数量必须为整数并且不小于0',
+            inputPattern: this.$utils.PATTERN_IS_FLOAT_GE_ZERO,
+            inputErrorMessage: '退货数量必须为数字并且不小于0',
             title: '批量录入数量',
             required: true,
           })
@@ -647,27 +650,32 @@
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.purchasePrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品退货价最多允许2位小数！');
+          if (!this.$utils.isNumberPrecision(product.purchasePrice, 6)) {
+            this.$msg.createError('第' + (i + 1) + '行商品退货价最多允许6位小数！');
             return false;
           }
 
           if (!this.$utils.isEmpty(product.returnNum)) {
-            if (!this.$utils.isInteger(product.returnNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须为整数！');
+            if (!this.$utils.isFloat(product.returnNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须为数字！');
               return false;
             }
 
             if (product.isFixed) {
-              if (!this.$utils.isIntegerGeZero(product.returnNum)) {
+              if (!this.$utils.isFloatGeZero(product.returnNum)) {
                 this.$msg.createError('第' + (i + 1) + '行商品退货数量不允许小于0！');
                 return false;
               }
             } else {
-              if (!this.$utils.isIntegerGtZero(product.returnNum)) {
+              if (!this.$utils.isFloatGtZero(product.returnNum)) {
                 this.$msg.createError('第' + (i + 1) + '行商品退货数量必须大于0！');
                 return false;
               }
+            }
+
+            if (!this.$utils.isNumberPrecision(product.returnNum, 8)) {
+              this.$msg.createError('第' + (i + 1) + '行商品退货数量最多允许8位小数！');
+              return false;
             }
 
             if (product.isFixed) {
@@ -695,7 +703,7 @@
         }
 
         if (
-          this.tableData.filter((item) => this.$utils.isIntegerGtZero(item.returnNum)).length === 0
+          this.tableData.filter((item) => this.$utils.isFloatGtZero(item.returnNum)).length === 0
         ) {
           this.$msg.createError('采购收货单中的商品必须全部或部分退货！');
           return false;
@@ -718,7 +726,7 @@
           receiveSheetId: this.formData.receiveSheet.id,
           description: this.formData.description,
           products: this.tableData
-            .filter((t) => this.$utils.isIntegerGtZero(t.returnNum))
+            .filter((t) => this.$utils.isFloatGtZero(t.returnNum))
             .map((t) => {
               const product = {
                 productId: t.productId,
@@ -772,7 +780,7 @@
           checkArr.push(0);
         }
         const totalReturnNum = checkArr.reduce((total, item) => {
-          const returnNum = this.$utils.isIntegerGtZero(item) ? item : 0;
+          const returnNum = this.$utils.isFloatGtZero(item) ? item : 0;
           return this.$utils.add(total, returnNum);
         }, 0);
 

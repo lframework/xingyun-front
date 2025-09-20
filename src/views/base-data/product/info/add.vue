@@ -442,8 +442,8 @@
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('采购价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
-                    return Promise.reject('采购价（元）最多允许2位小数');
+                  if (!this.$utils.isNumberPrecision(value, 6)) {
+                    return Promise.reject('采购价（元）最多允许6位小数');
                   }
                 }
 
@@ -462,8 +462,8 @@
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('销售价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
-                    return Promise.reject('销售价（元）最多允许2位小数');
+                  if (!this.$utils.isNumberPrecision(value, 6)) {
+                    return Promise.reject('销售价（元）最多允许6位小数');
                   }
                 }
 
@@ -482,8 +482,8 @@
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('零售价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
-                    return Promise.reject('零售价（元）最多允许2位小数');
+                  if (!this.$utils.isNumberPrecision(value, 6)) {
+                    return Promise.reject('零售价（元）最多允许6位小数');
                   }
                 }
 
@@ -565,8 +565,8 @@
               this.$msg.createError('第' + (i + 1) + '行单品销售价（元）必须大于0！');
               return;
             }
-            if (!this.$utils.isNumberPrecision(bundleProduct.salePrice, 2)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）最多允许2位小数！');
+            if (!this.$utils.isNumberPrecision(bundleProduct.salePrice, 6)) {
+              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）最多允许6位小数！');
               return;
             }
 
@@ -582,8 +582,8 @@
               this.$msg.createError('第' + (i + 1) + '行单品零售价（元）必须大于0！');
               return;
             }
-            if (!this.$utils.isNumberPrecision(bundleProduct.retailPrice, 2)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）最多允许2位小数！');
+            if (!this.$utils.isNumberPrecision(bundleProduct.retailPrice, 6)) {
+              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）最多允许6位小数！');
               return;
             }
 
