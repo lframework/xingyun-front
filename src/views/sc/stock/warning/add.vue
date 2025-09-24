@@ -64,11 +64,14 @@
                 if (this.$utils.isEmpty(value)) {
                   return Promise.resolve();
                 }
-                if (!this.$utils.isInteger(value)) {
-                  return Promise.reject('预警下限必须为整数');
+                if (!this.$utils.isFloat(value)) {
+                  return Promise.reject('预警下限必须为数字');
                 }
-                if (!this.$utils.isIntegerGtZero(value)) {
+                if (!this.$utils.isFloatGtZero(value)) {
                   return Promise.reject('预警下限必须大于0');
+                }
+                if (!this.$utils.isNumberPrecision(value, 8)) {
+                  return Promise.reject('预警下限最多允许8位小数');
                 }
                 return Promise.resolve();
               },
@@ -81,15 +84,18 @@
                 if (this.$utils.isEmpty(value)) {
                   return Promise.resolve();
                 }
-                if (!this.$utils.isInteger(value)) {
-                  return Promise.reject('预警上限必须为整数');
+                if (!this.$utils.isFloat(value)) {
+                  return Promise.reject('预警上限必须为数字');
                 }
-                if (!this.$utils.isIntegerGtZero(value)) {
+                if (!this.$utils.isFloatGtZero(value)) {
                   return Promise.reject('预警上限必须大于0');
                 }
+                if (!this.$utils.isNumberPrecision(value, 8)) {
+                  return Promise.reject('预警上限最多允许8位小数');
+                }
                 if (
-                  this.$utils.isIntegerGtZero(value) &&
-                  this.$utils.isIntegerGtZero(this.formData.minLimit)
+                  this.$utils.isFloatGtZero(value) &&
+                  this.$utils.isFloatGtZero(this.formData.minLimit)
                 ) {
                   if (Number(value) < Number(this.formData.minLimit)) {
                     return Promise.reject('预警上限必须大于预警下限');
