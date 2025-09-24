@@ -297,12 +297,16 @@
                   this.$msg.createError('第' + (i + 1) + '行调拨数量不允许为空！');
                   return false;
                 }
-                if (!this.$utils.isInteger(data.transferNum)) {
-                  this.$msg.createError('第' + (i + 1) + '行调拨数量必须是整数！');
+                if (!this.$utils.isFloat(data.transferNum)) {
+                  this.$msg.createError('第' + (i + 1) + '行调拨数量必须是数字！');
                   return false;
                 }
-                if (!this.$utils.isIntegerGtZero(data.transferNum)) {
+                if (!this.$utils.isFloatGtZero(data.transferNum)) {
                   this.$msg.createError('第' + (i + 1) + '行调拨数量必须大于0！');
+                  return false;
+                }
+                if (!this.$utils.isNumberPrecision(data.transferNum, 8)) {
+                  this.$msg.createError('第' + (i + 1) + '行调拨数量最多允许8位小数！');
                   return false;
                 }
               }
@@ -466,7 +470,7 @@
         let totalNum = 0;
         this.tableData.forEach((item) => {
           if (!this.$utils.isEmpty(item.productId)) {
-            if (this.$utils.isIntegerGeZero(item.transferNum)) {
+            if (this.$utils.isFloatGeZero(item.transferNum)) {
               totalNum = this.$utils.add(item.transferNum, totalNum);
             }
           }

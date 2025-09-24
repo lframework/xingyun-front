@@ -470,7 +470,7 @@
               );
             },
             onClick: () => {
-              this.deleteOrder(row);
+              this.deleteRow(row.id);
             },
           },
           {

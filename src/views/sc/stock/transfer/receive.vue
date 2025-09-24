@@ -80,7 +80,7 @@
         <template #transferNum_default="{ row }">
           <span
             v-if="
-              $utils.isIntegerGeZero(row.curReceiveNum) &&
+              $utils.isFloatGeZero(row.curReceiveNum) &&
               $utils.sub($utils.sub(row.transferNum, row.curReceiveNum), row.receiveNum) < 0
             "
             style="color: #ff4d4f"
@@ -93,7 +93,7 @@
         <template #receiveNum_default="{ row }">
           <span
             v-if="
-              $utils.isIntegerGeZero(row.curReceiveNum) &&
+              $utils.isFloatGeZero(row.curReceiveNum) &&
               $utils.sub($utils.sub(row.transferNum, row.curReceiveNum), row.receiveNum) < 0
             "
             style="color: #ff4d4f"
@@ -247,12 +247,16 @@
           if (this.$utils.isEmpty(data.curReceiveNum)) {
             continue;
           }
-          if (!this.$utils.isInteger(data.curReceiveNum)) {
-            this.$msg.createError('第' + (i + 1) + '行本次调拨数量必须是整数！');
+          if (!this.$utils.isFloat(data.curReceiveNum)) {
+            this.$msg.createError('第' + (i + 1) + '行本次调拨数量必须是数字！');
             return false;
           }
-          if (!this.$utils.isIntegerGtZero(data.curReceiveNum)) {
+          if (!this.$utils.isFloatGtZero(data.curReceiveNum)) {
             this.$msg.createError('第' + (i + 1) + '行本次调拨数量必须大于0！');
+            return false;
+          }
+          if (!this.$utils.isNumberPrecision(data.curReceiveNum, 8)) {
+            this.$msg.createError('第' + (i + 1) + '行本次调拨数量最多允许8位小数！');
             return false;
           }
 
@@ -278,7 +282,7 @@
             .filter((data) => {
               return (
                 !this.$utils.isEmpty(data.curReceiveNum) &&
-                this.$utils.isIntegerGtZero(data.curReceiveNum)
+                this.$utils.isFloatGtZero(data.curReceiveNum)
               );
             })
             .map((item) => {
@@ -314,7 +318,7 @@
         let totalNum = 0;
         this.tableData.forEach((item) => {
           if (!this.$utils.isEmpty(item.productId)) {
-            if (this.$utils.isIntegerGeZero(item.curReceiveNum)) {
+            if (this.$utils.isFloatGeZero(item.curReceiveNum)) {
               totalNum = this.$utils.add(item.curReceiveNum, totalNum);
             }
           }

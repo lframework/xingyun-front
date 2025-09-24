@@ -189,7 +189,7 @@
         let totalNum = 0;
         this.tableData.forEach((item) => {
           if (!this.$utils.isEmpty(item.productId)) {
-            if (this.$utils.isIntegerGeZero(item.transferNum)) {
+            if (this.$utils.isFloatGeZero(item.transferNum)) {
               totalNum = this.$utils.add(item.transferNum, totalNum);
             }
           }
