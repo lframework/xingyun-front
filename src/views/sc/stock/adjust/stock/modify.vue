@@ -4,6 +4,7 @@
       <j-border>
         <j-form
           ref="form"
+          bordered
           :model="formData"
           :rules="{
             scId: [{ required: true, message: '请选择仓库' }],
@@ -31,7 +32,6 @@
           <j-form-item label="调整原因" required>
             <stock-adjust-reason-selector v-model:value="formData.reasonId" />
           </j-form-item>
-          <j-form-item :span="16" />
           <j-form-item label="备注" :span="24">
             <a-textarea v-model:value.trim="formData.description" maxlength="200" />
           </j-form-item>
@@ -181,6 +181,7 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/adjust/stock';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {isNumberPrecision} from "@/utils/utils";
 
   export default defineComponent({
     name: 'ModifyStockAdjustSheet',
@@ -301,12 +302,16 @@
                   this.$msg.createError('第' + (i + 1) + '行调整库存数量不允许为空！');
                   return;
                 }
-                if (!this.$utils.isInteger(data.stockNum)) {
-                  this.$msg.createError('第' + (i + 1) + '行调整库存数量必须是整数！');
+                if (!this.$utils.isFloat(data.stockNum)) {
+                  this.$msg.createError('第' + (i + 1) + '行调整库存数量必须是数字！');
                   return;
                 }
-                if (!this.$utils.isIntegerGtZero(data.stockNum)) {
+                if (!this.$utils.isFloatGtZero(data.stockNum)) {
                   this.$msg.createError('第' + (i + 1) + '行调整库存数量必须大于0！');
+                  return;
+                }
+                if (!this.$utils.isNumberPrecision(data.stockNum, 8)) {
+                  this.$msg.createError('第' + (i + 1) + '行调整库存数量最多允许8位小数！');
                   return;
                 }
               }
@@ -476,7 +481,7 @@
           if (!this.$utils.isEmpty(item.productId)) {
             productNum += 1;
 
-            if (this.$utils.isIntegerGeZero(item.stockNum)) {
+            if (this.$utils.isFloatGeZero(item.stockNum)) {
               diffStockNum = this.$utils.add(item.stockNum, diffStockNum);
             }
           }

@@ -200,7 +200,7 @@
           if (!this.$utils.isEmpty(item.productId)) {
             productNum += 1;
 
-            if (this.$utils.isIntegerGeZero(item.stockNum)) {
+            if (this.$utils.isFloatGeZero(item.stockNum)) {
               diffStockNum = this.$utils.add(item.stockNum, diffStockNum);
             }
           }
