@@ -734,10 +734,12 @@ export const eq = function (n1, n2) {
  * @param decimal 小数位数
  */
 export const getNumber = function (number, decimal) {
-  return math.format(math.bignumber(number), {
-    notation: 'fixed',
-    precision: decimal,
-  });
+  return math.number(
+    math.format(math.bignumber(number), {
+      notation: 'fixed',
+      precision: decimal,
+    }),
+  );
 };
 
 /**

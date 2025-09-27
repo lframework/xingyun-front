@@ -94,8 +94,8 @@
 
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.outNum)">{{
-            $utils.mul(row.taxPrice, row.outNum)
+          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.outNum)">{{
+            $utils.getNumber($utils.mul(row.taxPrice, row.outNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -320,17 +320,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.outNum);
+            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.outNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.outNum);
+            const num = parseFloat(t.outNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = this.$utils.add(totalAmount, this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -341,7 +341,7 @@
       approvePassOrder() {
         const checkStockNumArr = [];
         this.tableData
-          .filter((item) => this.$utils.isIntegerGtZero(item.outNum))
+          .filter((item) => this.$utils.isFloatGtZero(item.outNum))
           .forEach((item) => {
             if (checkStockNumArr.map((v) => item.productId).includes(item.productId)) {
               checkStockNumArr
@@ -425,7 +425,7 @@
           checkArr.push(0);
         }
         const totalOutNum = checkArr.reduce((total, item) => {
-          const outNum = this.$utils.isIntegerGtZero(item) ? item : 0;
+          const outNum = this.$utils.isFloatGtZero(item) ? item : 0;
           return this.$utils.add(total, outNum);
         }, 0);
 

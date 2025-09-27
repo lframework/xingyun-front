@@ -88,10 +88,9 @@
       >
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span
-            v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.returnNum)"
-            >{{ $utils.mul(row.taxPrice, row.returnNum) }}</span
-          >
+          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.returnNum)">{{
+            $utils.getNumber($utils.mul(row.taxPrice, row.returnNum), 2)
+          }}</span>
         </template>
       </vxe-grid>
 
@@ -307,19 +306,20 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.returnNum)
-            );
+            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.returnNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.returnNum);
+            const num = parseFloat(t.returnNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = this.$utils.add(
+              totalAmount,
+              this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2),
+            );
           });
 
         this.formData.totalNum = totalNum;

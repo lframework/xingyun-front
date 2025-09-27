@@ -137,7 +137,6 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/adjust/stock';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
-  import {isNumberPrecision} from "@/utils/utils";
 
   export default defineComponent({
     name: 'AddStockAdjustSheet',

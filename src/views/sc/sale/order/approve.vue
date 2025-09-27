@@ -76,7 +76,7 @@
         <!-- 含税金额 列自定义内容 -->
         <template #orderAmount_default="{ row }">
           <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.orderNum)">{{
-            $utils.mul(row.taxPrice, row.orderNum)
+            $utils.getNumber($utils.mul(row.taxPrice, row.orderNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -272,17 +272,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.orderNum);
+            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.orderNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.orderNum);
+            const num = parseFloat(t.orderNum);
             if (t.isGift) {
               giftNum = this.$utils.add(num, giftNum);
             } else {
               totalNum = this.$utils.add(num, totalNum);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = this.$utils.add(totalAmount, this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
