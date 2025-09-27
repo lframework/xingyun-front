@@ -108,8 +108,8 @@
 
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.outNum)">{{
-            $utils.mul(row.taxPrice, row.outNum)
+          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.outNum)">{{
+            $utils.getNumber($utils.mul(row.taxPrice, row.outNum), 2)
           }}</span>
         </template>
 
@@ -444,9 +444,10 @@
       taxPriceInput(row, value) {
         if (row.retailPrice !== 0) {
           if (this.$utils.isFloatGeZero(row.taxPrice)) {
-            row.discountRate = this.$utils
-              .mul(this.$utils.div(row.taxPrice, row.retailPrice), 100)
-              .toFixed(2);
+            row.discountRate = this.$utils.getNumber(
+              this.$utils.mul(this.$utils.div(row.taxPrice, row.retailPrice), 100),
+              2,
+            );
           }
         }
         this.calcSum();
@@ -462,17 +463,20 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.outNum);
+            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.outNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.outNum);
+            const num = parseFloat(t.outNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = this.$utils.add(
+              totalAmount,
+              this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2),
+            );
           });
 
         this.formData.totalNum = totalNum;
@@ -489,8 +493,8 @@
 
         this.$msg
           .createPrompt('请输入出库数量', {
-            inputPattern: this.$utils.PATTERN_IS_INTEGER_GT_ZERO,
-            inputErrorMessage: '出库数量必须为整数并且大于0',
+            inputPattern: this.$utils.PATTERN_IS_FLOAT_GT_ZERO,
+            inputErrorMessage: '出库数量必须为数字并且大于0',
             title: '批量录入数量',
             required: true,
           })
@@ -520,7 +524,7 @@
         this.$msg
           .createPrompt('请输入价格（元）', {
             inputPattern: this.$utils.PATTERN_IS_PRICE,
-            inputErrorMessage: '价格（元）必须为数字并且不小于0',
+            inputErrorMessage: '价格（元）必须为数字并且不小于0，最多允许6位小数',
             title: '批量调整价格',
             required: true,
           })
@@ -612,27 +616,32 @@
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.taxPrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品价格最多允许2位小数！');
+          if (!this.$utils.isNumberPrecision(product.taxPrice, 6)) {
+            this.$msg.createError('第' + (i + 1) + '行商品价格最多允许6位小数！');
             return false;
           }
 
           if (!this.$utils.isEmpty(product.outNum)) {
-            if (!this.$utils.isInteger(product.outNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品出库数量必须为整数！');
+            if (!this.$utils.isFloat(product.outNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品出库数量必须为数字！');
               return false;
             }
 
             if (product.isFixed) {
-              if (!this.$utils.isIntegerGeZero(product.outNum)) {
+              if (!this.$utils.isFloatGeZero(product.outNum)) {
                 this.$msg.createError('第' + (i + 1) + '行商品出库数量不允许小于0！');
                 return false;
               }
             } else {
-              if (!this.$utils.isIntegerGtZero(product.outNum)) {
+              if (!this.$utils.isFloatGtZero(product.outNum)) {
                 this.$msg.createError('第' + (i + 1) + '行商品出库数量必须大于0！');
                 return false;
               }
+            }
+
+            if (!this.$utils.isNumberPrecision(product.outNum, 8)) {
+              this.$msg.createError('第' + (i + 1) + '行商品出库数量最多允许8位小数！');
+              return false;
             }
           } else {
             if (!product.isFixed) {
@@ -678,7 +687,7 @@
             };
           }),
           products: this.tableData
-            .filter((t) => this.$utils.isIntegerGtZero(t.outNum))
+            .filter((t) => this.$utils.isFloatGtZero(t.outNum))
             .map((t) => {
               const product = {
                 productId: t.productId,
@@ -714,7 +723,7 @@
 
         const checkStockNumArr = [];
         this.tableData
-          .filter((item) => this.$utils.isIntegerGtZero(item.outNum))
+          .filter((item) => this.$utils.isFloatGtZero(item.outNum))
           .forEach((item) => {
             if (checkStockNumArr.map((v) => item.productId).includes(item.productId)) {
               checkStockNumArr
@@ -763,7 +772,7 @@
             };
           }),
           products: this.tableData
-            .filter((t) => this.$utils.isIntegerGtZero(t.outNum))
+            .filter((t) => this.$utils.isFloatGtZero(t.outNum))
             .map((t) => {
               const product = {
                 productId: t.productId,
@@ -819,7 +828,7 @@
           checkArr.push(0);
         }
         const totalOutNum = checkArr.reduce((total, item) => {
-          const outNum = this.$utils.isIntegerGtZero(item) ? item : 0;
+          const outNum = this.$utils.isFloatGtZero(item) ? item : 0;
           return this.$utils.add(total, outNum);
         }, 0);
 

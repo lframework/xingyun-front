@@ -150,10 +150,9 @@
 
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span
-            v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isIntegerGeZero(row.returnNum)"
-            >{{ $utils.mul(row.taxPrice, row.returnNum) }}</span
-          >
+          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.returnNum)">{{
+            $utils.getNumber($utils.mul(row.taxPrice, row.returnNum), 2)
+          }}</span>
         </template>
 
         <!-- 备注 列自定义内容 -->
@@ -503,9 +502,10 @@
           this.$utils.isFloatGeZero(row.discountRate) &&
           this.$utils.isFloatGtZero(row.retailPrice)
         ) {
-          row.taxPrice = this.$utils
-            .div(this.$utils.mul(row.retailPrice, row.discountRate), 100)
-            .toFixed(2);
+          row.taxPrice = this.$utils.getNumber(
+            this.$utils.div(this.$utils.mul(row.retailPrice, row.discountRate), 100),
+            6,
+          );
         }
 
         this.calcSum();
@@ -513,9 +513,10 @@
       taxPriceInput(row, value) {
         if (row.retailPrice !== 0) {
           if (this.$utils.isFloatGeZero(row.taxPrice)) {
-            row.discountRate = this.$utils
-              .mul(this.$utils.div(row.taxPrice, row.retailPrice), 100)
-              .toFixed(2);
+            row.discountRate = this.$utils.getNumber(
+              this.$utils.mul(this.$utils.div(row.taxPrice, row.retailPrice), 100),
+              2,
+            );
           }
         }
         this.calcSum();
@@ -531,19 +532,20 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isIntegerGeZero(t.returnNum)
-            );
+            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.returnNum);
           })
           .forEach((t) => {
-            const num = parseInt(t.returnNum);
+            const num = parseFloat(t.returnNum);
             if (t.isGift) {
               giftNum = this.$utils.add(giftNum, num);
             } else {
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.mul(num, t.taxPrice));
+            totalAmount = this.$utils.add(
+              totalAmount,
+              this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2),
+            );
           });
 
         this.formData.totalNum = totalNum;
@@ -560,8 +562,8 @@
 
         this.$msg
           .createPrompt('请输入退货数量', {
-            inputPattern: this.$utils.PATTERN_IS_INTEGER_GT_ZERO,
-            inputErrorMessage: '退货数量必须为整数并且大于0',
+            inputPattern: this.$utils.PATTERN_IS_FLOAT_GT_ZERO,
+            inputErrorMessage: '退货数量必须为数字并且大于0',
             title: '批量录入数量',
             required: true,
           })
@@ -591,7 +593,7 @@
         this.$msg
           .createPrompt('请输入价格（元）', {
             inputPattern: this.$utils.PATTERN_IS_PRICE,
-            inputErrorMessage: '价格（元）必须为数字并且不小于0',
+            inputErrorMessage: '价格（元）必须为数字并且不小于0，最多允许6位小数',
             title: '批量调整价格',
             required: true,
           })
@@ -682,19 +684,24 @@
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.retailPrice, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行商品价格最多允许2位小数！');
+          if (!this.$utils.isNumberPrecision(product.retailPrice, 6)) {
+            this.$msg.createError('第' + (i + 1) + '行商品价格最多允许6位小数！');
             return false;
           }
 
           if (!this.$utils.isEmpty(product.returnNum)) {
-            if (!this.$utils.isInteger(product.returnNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须为整数！');
+            if (!this.$utils.isFloat(product.returnNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须为数字！');
               return false;
             }
 
-            if (!this.$utils.isIntegerGtZero(product.returnNum)) {
+            if (!this.$utils.isFloatGtZero(product.returnNum)) {
               this.$msg.createError('第' + (i + 1) + '行商品退货数量必须大于0！');
+              return false;
+            }
+
+            if (!this.$utils.isNumberPrecision(product.returnNum, 8)) {
+              this.$msg.createError('第' + (i + 1) + '行商品退货数量最多允许8位小数！');
               return false;
             }
           } else {
@@ -741,7 +748,7 @@
             };
           }),
           products: this.tableData
-            .filter((t) => this.$utils.isIntegerGtZero(t.returnNum))
+            .filter((t) => this.$utils.isFloatGtZero(t.returnNum))
             .map((t) => {
               const product = {
                 productId: t.productId,
