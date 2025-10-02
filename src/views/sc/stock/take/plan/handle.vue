@@ -75,7 +75,7 @@
 
         <!-- 差异数量 列自定义内容 -->
         <template #diffNum_default="{ row }">
-          <span v-if="$utils.isInteger(row.takeNum)">{{
+          <span v-if="$utils.isFloat(row.takeNum)">{{
             $utils.sub(row.takeNum, row.stockNum)
           }}</span>
         </template>
@@ -276,7 +276,7 @@
         });
         this.tableData = this.oriTableData;
         this.tableData = this.tableData.filter((item) => {
-          if (!this.$utils.isInteger(item.takeNum)) {
+          if (!this.$utils.isFloat(item.takeNum)) {
             return true;
           }
 
@@ -320,13 +320,18 @@
           const data = this.oriTableData[i];
           if (this.config.allowChangeNum) {
             if (!this.$utils.isEmpty(data.takeNum)) {
-              if (!this.$utils.isInteger(data.takeNum)) {
+              if (!this.$utils.isFloat(data.takeNum)) {
                 this.$msg.createError('第' + (i + 1) + '行商品修改后盘点数量必须是整数！');
                 return;
               }
 
-              if (!this.$utils.isIntegerGeZero(data.takeNum)) {
+              if (!this.$utils.isFloatGeZero(data.takeNum)) {
                 this.$msg.createError('第' + (i + 1) + '行商品修改后盘点数量不允许小于0！');
+                return;
+              }
+
+              if (!this.$utils.isNumberPrecision(data.takeNum, 8)) {
+                this.$msg.createError('第' + (i + 1) + '行商品修改后盘点数量最多允许8位小数！');
                 return;
               }
             }

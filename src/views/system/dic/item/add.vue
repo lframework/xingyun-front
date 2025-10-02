@@ -95,7 +95,7 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             if (!this.$utils.isInteger(this.formData.orderNo)) {
-              this.$msg.createError('排序必须为数字类型');
+              this.$msg.createError('排序必须是数字');
               return;
             }
             this.loading = true;

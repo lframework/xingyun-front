@@ -170,7 +170,7 @@
           }
 
           if (!this.$utils.isFloat(row.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行支付方式支付金额必须为数字！');
+            this.$msg.createError('第' + (i + 1) + '行支付方式支付金额必须是数字！');
             return false;
           }
 

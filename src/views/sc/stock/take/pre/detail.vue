@@ -59,8 +59,8 @@
             "
             >{{
               $utils.sub(
-                $utils.isInteger(row.secondNum) ? row.secondNum : 0,
-                $utils.isInteger(row.firstNum) ? row.firstNum : 0,
+                $utils.isFloat(row.secondNum) ? row.secondNum : 0,
+                $utils.isFloat(row.firstNum) ? row.firstNum : 0,
               )
             }}</span
           >
@@ -70,8 +70,8 @@
         <template #randDiffNum_default="{ row }">
           <span v-if="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
             $utils.sub(
-              $utils.isInteger(row.randNum) ? row.randNum : 0,
-              $utils.isInteger(row.secondNum) ? row.secondNum : 0,
+              $utils.isFloat(row.randNum) ? row.randNum : 0,
+              $utils.isFloat(row.secondNum) ? row.secondNum : 0,
             )
           }}</span>
         </template>

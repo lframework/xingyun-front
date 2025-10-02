@@ -107,7 +107,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewPurchaseReceiveSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewPurchaseReceiveSheetDetailDialog.openDialog());
               }
             "
@@ -126,7 +126,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewPurchaseReturnDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewPurchaseReturnDetailDialog.openDialog());
               }
             "
@@ -145,7 +145,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSettleFeeSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSettleFeeSheetDetailDialog.openDialog());
               }
             "
@@ -164,7 +164,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSettlePreSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSettlePreSheetDetailDialog.openDialog());
               }
             "
@@ -196,13 +196,13 @@
       </j-border>
     </div>
     <!-- 采购收货单详情 -->
-    <purchase-receive-sheet-detail :id="''" ref="viewPurchaseReceiveSheetDetailDialog" />
+    <purchase-receive-sheet-detail :id="bizId" ref="viewPurchaseReceiveSheetDetailDialog" />
     <!-- 采购退货单详情 -->
-    <purchase-return-detail :id="''" ref="viewPurchaseReturnDetailDialog" />
+    <purchase-return-detail :id="bizId" ref="viewPurchaseReturnDetailDialog" />
     <!-- 供应商费用单详情 -->
-    <settle-fee-sheet-detail :id="''" ref="viewSettleFeeSheetDetailDialog" />
+    <settle-fee-sheet-detail :id="bizId" ref="viewSettleFeeSheetDetailDialog" />
     <!-- 供应商预付款单详情 -->
-    <settle-pre-sheet-detail :id="''" ref="viewSettlePreSheetDetailDialog" />
+    <settle-pre-sheet-detail :id="bizId" ref="viewSettlePreSheetDetailDialog" />
   </a-modal>
 </template>
 <script>
@@ -252,6 +252,7 @@
           { field: 'description', title: '备注', width: 260 },
         ],
         tableData: [],
+        bizId: '',
       };
     },
     computed: {},

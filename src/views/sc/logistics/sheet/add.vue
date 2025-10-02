@@ -467,7 +467,7 @@
 
         if (!this.$utils.isEmpty(this.formData.totalWeight)) {
           if (!this.$utils.isFloat(this.formData.totalWeight)) {
-            this.$msg.createError('总重量必须为数字');
+            this.$msg.createError('总重量必须是数字');
             return false;
           }
           if (!this.$utils.isFloatGeZero(this.formData.totalWeight)) {
@@ -482,7 +482,7 @@
 
         if (!this.$utils.isEmpty(this.formData.totalVolume)) {
           if (!this.$utils.isFloat(this.formData.totalVolume)) {
-            this.$msg.createError('总体积必须为数字');
+            this.$msg.createError('总体积必须是数字');
             return false;
           }
           if (!this.$utils.isFloatGeZero(this.formData.totalVolume)) {
@@ -497,7 +497,7 @@
 
         if (!this.$utils.isEmpty(this.formData.totalAmount)) {
           if (!this.$utils.isFloat(this.formData.totalAmount)) {
-            this.$msg.createError('物流费必须为数字');
+            this.$msg.createError('物流费必须是数字');
             return false;
           }
           if (!this.$utils.isFloatGeZero(this.formData.totalAmount)) {

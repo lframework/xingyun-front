@@ -60,7 +60,7 @@
               validator: (rule, value, callback) => {
                 if (!this.$utils.isEmpty(value)) {
                   if (!this.$utils.isFloat(value)) {
-                    return callback(new Error('物流费必须为数字类型'));
+                    return callback(new Error('物流费必须是数字类型'));
                   }
                   if (!this.$utils.isFloatGeZero(value)) {
                     return callback(new Error('物流费必须大于0'));

@@ -454,7 +454,7 @@
         this.$msg
           .createPrompt('请输入退货数量', {
             inputPattern: this.$utils.PATTERN_IS_FLOAT_GE_ZERO,
-            inputErrorMessage: '退货数量必须为数字并且不小于0',
+            inputErrorMessage: '退货数量必须是数字并且不小于0',
             title: '批量录入数量',
             required: true,
           })
@@ -532,7 +532,7 @@
 
           if (!this.$utils.isEmpty(product.returnNum)) {
             if (!this.$utils.isFloat(product.returnNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须为数字！');
+              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须是数字！');
               return false;
             }
 
@@ -665,6 +665,7 @@
           paymentDate: this.formData.paymentDate || '',
           outSheetId: this.formData.outSheetId,
           description: this.formData.description,
+          required: true,
           payTypes: this.$refs.payType.getTableData().map((t) => {
             return {
               id: t.payTypeId,

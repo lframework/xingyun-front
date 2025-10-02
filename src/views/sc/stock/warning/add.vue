@@ -65,7 +65,7 @@
                   return Promise.resolve();
                 }
                 if (!this.$utils.isFloat(value)) {
-                  return Promise.reject('预警下限必须为数字');
+                  return Promise.reject('预警下限必须是数字');
                 }
                 if (!this.$utils.isFloatGtZero(value)) {
                   return Promise.reject('预警下限必须大于0');
@@ -85,7 +85,7 @@
                   return Promise.resolve();
                 }
                 if (!this.$utils.isFloat(value)) {
-                  return Promise.reject('预警上限必须为数字');
+                  return Promise.reject('预警上限必须是数字');
                 }
                 if (!this.$utils.isFloatGtZero(value)) {
                   return Promise.reject('预警上限必须大于0');

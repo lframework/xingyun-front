@@ -111,7 +111,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSaleOutSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSaleOutSheetDetailDialog.openDialog());
               }
             "
@@ -130,7 +130,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSaleReturnDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSaleReturnDetailDialog.openDialog());
               }
             "
@@ -153,7 +153,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSettleFeeSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSettleFeeSheetDetailDialog.openDialog());
               }
             "
@@ -176,7 +176,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSettlePreSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSettlePreSheetDetailDialog.openDialog());
               }
             "
@@ -208,13 +208,13 @@
       </j-border>
     </div>
     <!-- 销售出库单详情 -->
-    <sale-out-sheet-detail :id="''" ref="viewSaleOutSheetDetailDialog" />
+    <sale-out-sheet-detail :id="bizId" ref="viewSaleOutSheetDetailDialog" />
     <!-- 销售退货单详情 -->
-    <sale-return-detail :id="''" ref="viewSaleReturnDetailDialog" />
+    <sale-return-detail :id="bizId" ref="viewSaleReturnDetailDialog" />
     <!-- 客户费用单详情 -->
-    <settle-fee-sheet-detail :id="''" ref="viewSettleFeeSheetDetailDialog" />
-    <!-- 客户预付款单详情 -->
-    <settle-pre-sheet-detail :id="''" ref="viewSettlePreSheetDetailDialog" />
+    <settle-fee-sheet-detail :id="bizId" ref="viewSettleFeeSheetDetailDialog" />
+    <!-- 客户预收款单详情 -->
+    <settle-pre-sheet-detail :id="bizId" ref="viewSettlePreSheetDetailDialog" />
   </a-modal>
 </template>
 <script>
@@ -264,6 +264,7 @@
           { field: 'description', title: '备注', width: 260 },
         ],
         tableData: [],
+        bizId: '',
       };
     },
     computed: {},

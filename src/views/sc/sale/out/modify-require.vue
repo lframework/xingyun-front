@@ -560,7 +560,7 @@
         this.$msg
           .createPrompt('请输入出库数量', {
             inputPattern: this.$utils.PATTERN_IS_FLOAT_GE_ZERO,
-            inputErrorMessage: '出库数量必须为数字并且不小于0',
+            inputErrorMessage: '出库数量必须是数字并且不小于0',
             title: '批量录入数量',
             required: true,
           })
@@ -639,7 +639,7 @@
           }
 
           if (!this.$utils.isFloat(product.taxPrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品价格必须为数字！');
+            this.$msg.createError('第' + (i + 1) + '行商品价格必须是数字！');
             return false;
           }
 
@@ -662,7 +662,7 @@
 
           if (!this.$utils.isEmpty(product.outNum)) {
             if (!this.$utils.isFloat(product.outNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品出库数量必须为数字！');
+              this.$msg.createError('第' + (i + 1) + '行商品出库数量必须是数字！');
               return false;
             }
 

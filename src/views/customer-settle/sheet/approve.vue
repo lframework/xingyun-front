@@ -95,7 +95,7 @@
             type="link"
             @click="
               (e) => {
-                $refs.viewSettleCheckSheetDetailDialog.id = row.bizId;
+                bizId = row.bizId;
                 $nextTick(() => $refs.viewSettleCheckSheetDetailDialog.openDialog());
               }
             "
@@ -184,7 +184,7 @@
     </div>
     <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
     <!-- 客户对账单详情 -->
-    <settle-check-sheet-detail :id="''" ref="viewSettleCheckSheetDetailDialog" />
+    <settle-check-sheet-detail :id="bizId" ref="viewSettleCheckSheetDetailDialog" />
   </div>
 </template>
 <script>
@@ -248,6 +248,7 @@
           { field: 'description', title: '备注', width: 260 },
         ],
         tableData: [],
+        bizId: '',
       };
     },
     computed: {},

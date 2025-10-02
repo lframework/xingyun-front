@@ -342,7 +342,7 @@
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
                   if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('重量（kg）必须为数字');
+                    return Promise.reject('重量（kg）必须是数字');
                   }
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('重量（kg）不允许小于0');
@@ -361,7 +361,7 @@
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
                   if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('体积（cm³）必须为数字');
+                    return Promise.reject('体积（cm³）必须是数字');
                   }
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('体积（cm³）不允许小于0');
@@ -381,7 +381,7 @@
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
                   if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('进项税率（%）必须为数字');
+                    return Promise.reject('进项税率（%）必须是数字');
                   }
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('进项税率（%）不允许小于0');
@@ -401,7 +401,7 @@
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
                   if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('销项税率（%）必须为数字');
+                    return Promise.reject('销项税率（%）必须是数字');
                   }
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('销项税率（%）不允许小于0');
@@ -421,7 +421,7 @@
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
                   if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('采购价（元）必须为数字');
+                    return Promise.reject('采购价（元）必须是数字');
                   }
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('采购价（元）不允许小于0');
@@ -441,7 +441,7 @@
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
                   if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('销售价（元）必须为数字');
+                    return Promise.reject('销售价（元）必须是数字');
                   }
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('销售价（元）不允许小于0');
@@ -461,7 +461,7 @@
               validator: (rule, value) => {
                 if (!this.$utils.isEmpty(value)) {
                   if (!this.$utils.isFloat(value)) {
-                    return Promise.reject('零售价（元）必须为数字');
+                    return Promise.reject('零售价（元）必须是数字');
                   }
                   if (!this.$utils.isFloatGeZero(value)) {
                     return Promise.reject('零售价（元）不允许小于0');
@@ -540,7 +540,7 @@
               return;
             }
             if (!this.$utils.isFloat(bundleProduct.salePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）必须为数字！');
+              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）必须是数字！');
               return;
             }
             if (!this.$utils.isFloatGtZero(bundleProduct.salePrice)) {
@@ -557,7 +557,7 @@
               return;
             }
             if (!this.$utils.isFloat(bundleProduct.retailPrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）必须为数字！');
+              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）必须是数字！');
               return;
             }
             if (!this.$utils.isFloatGtZero(bundleProduct.retailPrice)) {

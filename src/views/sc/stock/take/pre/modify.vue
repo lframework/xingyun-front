@@ -113,8 +113,8 @@
             "
             >{{
               $utils.sub(
-                $utils.isInteger(row.secondNum) ? row.secondNum : 0,
-                $utils.isInteger(row.firstNum) ? row.firstNum : 0,
+                $utils.isFloat(row.secondNum) ? row.secondNum : 0,
+                $utils.isFloat(row.firstNum) ? row.firstNum : 0,
               )
             }}</span
           >
@@ -124,8 +124,8 @@
         <template #randDiffNum_default="{ row }">
           <span v-if="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
             $utils.sub(
-              $utils.isInteger(row.randNum) ? row.randNum : 0,
-              $utils.isInteger(row.secondNum) ? row.secondNum : 0,
+              $utils.isFloat(row.randNum) ? row.randNum : 0,
+              $utils.isFloat(row.secondNum) ? row.secondNum : 0,
             )
           }}</span>
         </template>
@@ -295,8 +295,18 @@
               return;
             }
 
-            if (!this.$utils.isInteger(data.firstNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的初盘数量必须是整数！');
+            if (!this.$utils.isFloat(data.firstNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的初盘数量必须是数字！');
+              return;
+            }
+
+            if (!this.$utils.isFloatGeZero(data.firstNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的初盘数量不允许小于0！');
+              return;
+            }
+
+            if (!this.$utils.isNumberPrecision(data.firstNum, 8)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的初盘数量最多允许8位小数！');
               return;
             }
           }
@@ -311,8 +321,18 @@
               return;
             }
 
-            if (!this.$utils.isInteger(data.secondNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的复盘数量必须是整数！');
+            if (!this.$utils.isFloat(data.secondNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的复盘数量必须是数字！');
+              return;
+            }
+
+            if (!this.$utils.isFloatGeZero(data.secondNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的复盘数量不允许小于0！');
+              return;
+            }
+
+            if (!this.$utils.isNumberPrecision(data.secondNum, 8)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的复盘数量最多允许8位小数！');
               return;
             }
           }
@@ -327,8 +347,18 @@
               return;
             }
 
-            if (!this.$utils.isIntegerGeZero(data.randNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品的抽盘数量必须是整数！');
+            if (!this.$utils.isFloat(data.randNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的抽盘数量必须是数字！');
+              return;
+            }
+
+            if (!this.$utils.isFloatGeZero(data.randNum)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的抽盘数量不允许小于0！');
+              return;
+            }
+
+            if (!this.$utils.isNumberPrecision(data.randNum, 8)) {
+              this.$msg.createError('第' + (i + 1) + '行商品的抽盘数量最多允许8位小数！');
               return;
             }
           }

@@ -322,7 +322,7 @@
       },
       // 删除订单
       deleteOrder(row) {
-        this.$msg.createConfirm('对选中的预付款单执行删除操作？').then(() => {
+        this.$msg.createConfirm('对选中的预收款单执行删除操作？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
@@ -342,7 +342,7 @@
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
         if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的预付款单！');
+          this.$msg.createError('请选择要执行操作的预收款单！');
           return;
         }
 
@@ -350,7 +350,7 @@
           if (
             this.$enums.CUSTOMER_SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)
           ) {
-            this.$msg.createError('第' + (i + 1) + '个预付款单已审核通过，不允许执行删除操作！');
+            this.$msg.createError('第' + (i + 1) + '个预收款单已审核通过，不允许执行删除操作！');
             return;
           }
         }
@@ -368,7 +368,7 @@
       batchApprovePass() {
         const records = this.$refs.grid.getCheckboxRecords();
         if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的预付款单！');
+          this.$msg.createError('请选择要执行操作的预收款单！');
           return;
         }
 
@@ -376,7 +376,7 @@
           if (
             this.$enums.CUSTOMER_SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)
           ) {
-            this.$msg.createError('第' + (i + 1) + '个预付款单已审核通过，不允许继续执行审核！');
+            this.$msg.createError('第' + (i + 1) + '个预收款单已审核通过，不允许继续执行审核！');
             return;
           }
         }
@@ -389,7 +389,7 @@
       batchApproveRefuse() {
         const records = this.$refs.grid.getCheckboxRecords();
         if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的预付款单！');
+          this.$msg.createError('请选择要执行操作的预收款单！');
           return;
         }
 
@@ -397,7 +397,7 @@
           if (
             this.$enums.CUSTOMER_SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)
           ) {
-            this.$msg.createError('第' + (i + 1) + '个预付款单已审核通过，不允许继续执行审核！');
+            this.$msg.createError('第' + (i + 1) + '个预收款单已审核通过，不允许继续执行审核！');
             return;
           }
 
@@ -406,7 +406,7 @@
               records[i].status,
             )
           ) {
-            this.$msg.createError('第' + (i + 1) + '个预付款单已审核拒绝，不允许继续执行审核！');
+            this.$msg.createError('第' + (i + 1) + '个预收款单已审核拒绝，不允许继续执行审核！');
             return;
           }
         }

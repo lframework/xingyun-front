@@ -597,7 +597,7 @@
         this.$msg
           .createPrompt('请输入收货数量', {
             inputPattern: this.$utils.PATTERN_IS_FLOAT_GE_ZERO,
-            inputErrorMessage: '收货数量必须为数字并且不小于0',
+            inputErrorMessage: '收货数量必须是数字并且不小于0',
             title: '批量录入数量',
             required: true,
           })
@@ -681,7 +681,7 @@
           }
 
           if (!this.$utils.isFloat(product.purchasePrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价必须为数字！');
+            this.$msg.createError('第' + (i + 1) + '行商品采购价必须是数字！');
             return false;
           }
 
@@ -704,7 +704,7 @@
 
           if (!this.$utils.isEmpty(product.receiveNum)) {
             if (!this.$utils.isFloat(product.receiveNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品收货数量必须为数字！');
+              this.$msg.createError('第' + (i + 1) + '行商品收货数量必须是数字！');
               return false;
             }
 

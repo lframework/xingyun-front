@@ -117,7 +117,7 @@
           for (let i = 0; i < this.tableData.length; i++) {
             const obj = this.tableData[i];
             if (!this.$utils.isInteger(obj.span)) {
-              this.$msg.createError('字段【' + obj.name + '】列宽必须为数字！');
+              this.$msg.createError('字段【' + obj.name + '】列宽必须是数字！');
               return false;
             }
 

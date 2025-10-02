@@ -470,7 +470,7 @@
         this.$msg
           .createPrompt('请输入退货数量', {
             inputPattern: this.$utils.PATTERN_IS_FLOAT_GE_ZERO,
-            inputErrorMessage: '退货数量必须为数字并且不小于0',
+            inputErrorMessage: '退货数量必须是数字并且不小于0',
             title: '批量录入数量',
             required: true,
           })
@@ -500,7 +500,7 @@
         this.$msg
           .createPrompt('请输入价格（元）', {
             inputPattern: this.$utils.PATTERN_IS_PRICE,
-            inputErrorMessage: '价格（元）必须为数字并且不小于0，最多允许6位小数',
+            inputErrorMessage: '价格（元）必须是数字并且不小于0，最多允许6位小数',
             title: '批量调整价格',
             required: true,
           })
@@ -572,7 +572,7 @@
           }
 
           if (!this.$utils.isFloat(product.taxPrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品价格必须为数字！');
+            this.$msg.createError('第' + (i + 1) + '行商品价格必须是数字！');
             return false;
           }
 
@@ -595,7 +595,7 @@
 
           if (!this.$utils.isEmpty(product.returnNum)) {
             if (!this.$utils.isFloat(product.returnNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须为数字！');
+              this.$msg.createError('第' + (i + 1) + '行商品退货数量必须是数字！');
               return false;
             }
 
@@ -670,6 +670,7 @@
           salerId: this.formData.salerId || '',
           paymentDate: this.formData.paymentDate || '',
           description: this.formData.description,
+          required: false,
           products: this.tableData
             .filter((t) => this.$utils.isFloatGtZero(t.returnNum))
             .map((t) => {

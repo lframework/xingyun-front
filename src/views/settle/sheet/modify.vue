@@ -395,7 +395,7 @@
         );
         if (diff < 0) {
           if (this.$utils.isFloat(row.payAmount)) {
-            row.payAmount += diff;
+            row.payAmount = this.$utils.add(row.payAmount, diff);
           }
         }
         this.calcSum();
@@ -470,7 +470,7 @@
           }
 
           if (!this.$utils.isFloat(item.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行实付金额必须为数字！');
+            this.$msg.createError('第' + (i + 1) + '行实付金额必须是数字！');
             return false;
           }
 
@@ -485,7 +485,7 @@
           }
 
           if (!this.$utils.isFloat(item.discountAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行优惠金额必须为数字！');
+            this.$msg.createError('第' + (i + 1) + '行优惠金额必须是数字！');
             return false;
           }
 

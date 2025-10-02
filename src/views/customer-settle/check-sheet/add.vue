@@ -260,7 +260,7 @@
           }
 
           if (!this.$utils.isFloat(item.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行应收金额必须为数字！');
+            this.$msg.createError('第' + (i + 1) + '行应收金额必须是数字！');
             return false;
           }
 

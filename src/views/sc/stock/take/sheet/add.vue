@@ -246,8 +246,18 @@
             return false;
           }
 
-          if (!this.$utils.isIntegerGeZero(column.takeNum)) {
+          if (!this.$utils.isFloat(column.takeNum)) {
+            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
+            return false;
+          }
+
+          if (!this.$utils.isFloatGeZero(column.takeNum)) {
             this.$msg.createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
+            return false;
+          }
+
+          if (!this.$utils.isNumberPrecision(column.takeNum, 8)) {
+            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
             return false;
           }
         }
