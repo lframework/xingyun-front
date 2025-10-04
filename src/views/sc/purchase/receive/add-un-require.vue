@@ -184,7 +184,7 @@
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
-  import {PATTERN_IS_FLOAT_GE_ZERO} from "@/utils/utils";
+  import { PATTERN_IS_FLOAT_GE_ZERO } from '@/utils/utils';
 
   export default defineComponent({
     name: 'AddPurchaseReceiveSheetUnRequire',

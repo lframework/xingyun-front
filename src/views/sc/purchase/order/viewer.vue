@@ -243,8 +243,7 @@
         this.tableData
           .filter((t) => {
             return (
-              this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isFloatGeZero(t.purchaseNum)
+              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.purchaseNum)
             );
           })
           .forEach((t) => {

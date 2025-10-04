@@ -111,7 +111,7 @@
             @search="(e) => queryProduct(e, row)"
             @select="(e) => handleSelectProduct(rowIndex, e, row)"
           />
-          <span v-else>{{row.productName}}</span>
+          <span v-else>{{ row.productName }}</span>
         </template>
 
         <!-- 采购价 列自定义内容 -->
@@ -207,7 +207,7 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
-  import {PATTERN_IS_FLOAT_GE_ZERO} from "@/utils/utils";
+  import { PATTERN_IS_FLOAT_GE_ZERO } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ModifyPurchaseOrder',
@@ -474,8 +474,7 @@
         this.tableData
           .filter((t) => {
             return (
-              this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isFloatGeZero(t.purchaseNum)
+              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.purchaseNum)
             );
           })
           .forEach((t) => {

@@ -550,7 +550,7 @@
 
             if (!this.$utils.isNumberPrecision(product.returnNum, 8)) {
               this.$msg.createError('第' + (i + 1) + '行商品退货数量最多允许8位小数！');
-              return false
+              return false;
             }
 
             if (product.isFixed) {

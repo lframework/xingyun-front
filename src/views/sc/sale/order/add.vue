@@ -400,8 +400,10 @@
           this.$utils.isFloatGeZero(row.discountRate) &&
           this.$utils.isFloatGtZero(row.oriPrice)
         ) {
-          row.taxPrice = this.$utils.getNumber(this.$utils
-          .div(this.$utils.mul(row.oriPrice, row.discountRate), 100), 6);
+          row.taxPrice = this.$utils.getNumber(
+            this.$utils.div(this.$utils.mul(row.oriPrice, row.discountRate), 100),
+            6,
+          );
         }
 
         this.calcSum();

@@ -330,7 +330,10 @@
               totalNum = this.$utils.add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(totalAmount, this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2));
+            totalAmount = this.$utils.add(
+              totalAmount,
+              this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2),
+            );
           });
 
         this.formData.totalNum = totalNum;
