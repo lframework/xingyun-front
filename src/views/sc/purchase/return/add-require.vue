@@ -147,6 +147,7 @@
       <batch-add-product
         ref="batchAddProductDialog"
         :sc-id="formData.scId"
+        :is-return="true"
         @confirm="batchAddProduct"
       />
 
@@ -370,7 +371,7 @@
           return;
         }
 
-        purchaseApi.searchPurchaseProducts(this.formData.scId, queryString).then((res) => {
+        purchaseApi.searchPurchaseProducts(this.formData.scId, queryString, true).then((res) => {
           row.products = res;
           row.productOptions = res.map((item) => {
             return {

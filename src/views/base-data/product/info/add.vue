@@ -107,7 +107,7 @@
               <a-input v-model:value="formData.saleTaxRate" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col :md="8" :sm="24">
             <a-form-item label="采购价（元）" name="purchasePrice">
               <a-input v-model:value="formData.purchasePrice" allow-clear />
             </a-form-item>
@@ -148,6 +148,13 @@
                   width: 200,
                   align: 'right',
                   slots: { default: 'bundleNum_default', header: 'bundleNum_header' },
+                },
+                {
+                  field: 'purchasePrice',
+                  title: '采购价（元）',
+                  width: 200,
+                  align: 'right',
+                  slots: { default: 'purchasePrice_default', header: 'purchasePrice_header' },
                 },
                 {
                   field: 'salePrice',
@@ -206,6 +213,22 @@
               <!-- 包含数量 列自定义内容 -->
               <template #bundleNum_default="{ row }">
                 <a-input v-model:value="row.bundleNum" class="number-input" />
+              </template>
+
+              <!-- 采购价 列自定义表头 -->
+              <template #purchasePrice_header>
+                <a-space>
+                  <span>采购价（元）</span
+                  ><a-tooltip
+                    title="表示一个组合商品采购后的单品的采购价，此处的计算公式：每行单品的【包含数量】乘以【采购价】的总和 等于【组合商品的采购价】"
+                    ><a-icon type="question-circle"
+                  /></a-tooltip>
+                </a-space>
+              </template>
+
+              <!-- 采购价 列自定义内容 -->
+              <template #purchasePrice_default="{ row }">
+                <a-input v-model:value="row.purchasePrice" class="number-input" />
               </template>
 
               <!-- 销售价 列自定义表头 -->
@@ -531,6 +554,7 @@
             return;
           }
 
+          let purchasePrice = 0;
           let salePrice = 0;
           let retailPrice = 0;
           for (let i = 0; i < this.productBundles.length; i++) {
@@ -550,6 +574,23 @@
             }
             if (!this.$utils.isIntegerGtZero(bundleProduct.bundleNum)) {
               this.$msg.createError('第' + (i + 1) + '行单品包含数量必须大于0！');
+              return;
+            }
+
+            if (this.$utils.isEmpty(bundleProduct.purchasePrice)) {
+              this.$msg.createError('第' + (i + 1) + '行单品采购价（元）不能为空！');
+              return;
+            }
+            if (!this.$utils.isFloat(bundleProduct.purchasePrice)) {
+              this.$msg.createError('第' + (i + 1) + '行单品采购价（元）必须是数字！');
+              return;
+            }
+            if (!this.$utils.isFloatGtZero(bundleProduct.purchasePrice)) {
+              this.$msg.createError('第' + (i + 1) + '行单品采购价（元）必须大于0！');
+              return;
+            }
+            if (!this.$utils.isNumberPrecision(bundleProduct.purchasePrice, 6)) {
+              this.$msg.createError('第' + (i + 1) + '行单品采购价（元）最多允许6位小数！');
               return;
             }
 
@@ -587,6 +628,11 @@
               return;
             }
 
+            purchasePrice = this.$utils.add(
+              purchasePrice,
+              this.$utils.mul(bundleProduct.bundleNum, bundleProduct.purchasePrice),
+            );
+
             salePrice = this.$utils.add(
               salePrice,
               this.$utils.mul(bundleProduct.bundleNum, bundleProduct.salePrice),
@@ -595,6 +641,17 @@
               retailPrice,
               this.$utils.mul(bundleProduct.bundleNum, bundleProduct.retailPrice),
             );
+          }
+
+          if (!this.$utils.eq(purchasePrice, this.formData.purchasePrice)) {
+            this.$msg.createError(
+              '当前所有单品的【包含数量】乘以【采购价（元）】的总和为' +
+                purchasePrice +
+                '元，组合商品的采购价为' +
+                this.formData.purchasePrice +
+                '元，两个值不相等，请调整！',
+            );
+            return;
           }
 
           if (!this.$utils.eq(salePrice, this.formData.salePrice)) {

@@ -35,7 +35,7 @@
           $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.saleTaxRate : '-'
         }}</a-descriptions-item>
         <a-descriptions-item label="采购价（元）" :span="2">{{
-          $enums.PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.purchasePrice : '-'
+          formData.purchasePrice
         }}</a-descriptions-item>
         <a-descriptions-item label="销售价（元）" :span="2">{{
           formData.salePrice
