@@ -262,6 +262,21 @@
 
         return true;
       },
+      buildParams() {
+        return {
+          scId: this.formData.scId,
+          bizType: this.formData.bizType,
+          reasonId: this.formData.reasonId,
+          description: this.formData.description,
+          products: this.tableData.map((item) => {
+            return {
+              productId: item.productId,
+              stockNum: item.stockNum,
+              description: item.description,
+            };
+          }),
+        };
+      },
       // 提交表单事件
       submit() {
         this.$refs.form.validate().then((valid) => {
@@ -270,19 +285,7 @@
               return;
             }
 
-            const params = {
-              scId: this.formData.scId,
-              bizType: this.formData.bizType,
-              reasonId: this.formData.reasonId,
-              description: this.formData.description,
-              products: this.tableData.map((item) => {
-                return {
-                  productId: item.productId,
-                  stockNum: item.stockNum,
-                  description: item.description,
-                };
-              }),
-            };
+            const params = this.buildParams();
             this.loading = true;
             api
               .create(params)
@@ -300,45 +303,30 @@
       },
       // 直接审核通过
       directApprovePass() {
-        this.$refs.form
-          .validate()
-          .then()
-          .then((valid) => {
-            if (valid) {
-              if (!this.validData()) {
-                return;
-              }
-
-              const params = {
-                scId: this.formData.scId,
-                bizType: this.formData.bizType,
-                reasonId: this.formData.reasonId,
-                description: this.formData.description,
-                products: this.tableData.map((item) => {
-                  return {
-                    productId: item.productId,
-                    stockNum: item.stockNum,
-                    description: item.description,
-                  };
-                }),
-              };
-
-              this.$msg.createConfirm('对库存调整单执行审核通过操作？').then(() => {
-                this.loading = true;
-                api
-                  .directApprovePass(params)
-                  .then((res) => {
-                    this.$msg.createSuccess('审核通过！');
-
-                    this.$emit('confirm');
-                    this.closeDialog();
-                  })
-                  .finally(() => {
-                    this.loading = false;
-                  });
-              });
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            if (!this.validData()) {
+              return;
             }
-          });
+
+            const params = this.buildParams();
+
+            this.$msg.createConfirm('对库存调整单执行审核通过操作？').then(() => {
+              this.loading = true;
+              api
+                .directApprovePass(params)
+                .then((res) => {
+                  this.$msg.createSuccess('审核通过！');
+
+                  this.$emit('confirm');
+                  this.closeDialog();
+                })
+                .finally(() => {
+                  this.loading = false;
+                });
+            });
+          }
+        });
       },
       // 页面显示时触发
       open() {

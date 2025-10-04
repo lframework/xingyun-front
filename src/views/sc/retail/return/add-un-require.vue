@@ -643,13 +643,8 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
-        const params = {
+      buildParams() {
+        return {
           scId: this.formData.scId,
           memberId: this.formData.memberId,
           salerId: this.formData.salerId || '',
@@ -678,6 +673,14 @@
               return product;
             }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -698,35 +701,7 @@
           return;
         }
 
-        const params = {
-          scId: this.formData.scId,
-          memberId: this.formData.memberId,
-          salerId: this.formData.salerId || '',
-          paymentDate: this.formData.paymentDate || '',
-          description: this.formData.description,
-          required: false,
-          payTypes: this.$refs.payType.getTableData().map((t) => {
-            return {
-              id: t.payTypeId,
-              payAmount: t.payAmount,
-              text: t.text,
-            };
-          }),
-          products: this.tableData
-            .filter((t) => this.$utils.isFloatGtZero(t.returnNum))
-            .map((t) => {
-              const product = {
-                productId: t.productId,
-                oriPrice: t.retailPrice,
-                taxPrice: t.taxPrice,
-                discountRate: t.discountRate,
-                returnNum: t.returnNum,
-                description: t.description,
-              };
-
-              return product;
-            }),
-        };
+        const params = this.buildParams();
 
         this.$msg.createConfirm('对零售退货单执行审核通过操作？').then(() => {
           this.loading = true;

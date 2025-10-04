@@ -667,13 +667,8 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
-        const params = {
+      buildParams() {
+        return {
           scId: this.formData.scId,
           memberId: this.formData.memberId,
           salerId: this.formData.salerId || '',
@@ -701,6 +696,14 @@
               return product;
             }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -758,34 +761,7 @@
           return false;
         }
 
-        const params = {
-          scId: this.formData.scId,
-          memberId: this.formData.memberId,
-          salerId: this.formData.salerId || '',
-          paymentDate: this.formData.paymentDate || '',
-          description: this.formData.description,
-          payTypes: this.$refs.payType.getTableData().map((t) => {
-            return {
-              id: t.payTypeId,
-              payAmount: t.payAmount,
-              text: t.text,
-            };
-          }),
-          products: this.tableData
-            .filter((t) => this.$utils.isFloatGtZero(t.outNum))
-            .map((t) => {
-              const product = {
-                productId: t.productId,
-                oriPrice: t.retailPrice,
-                taxPrice: t.taxPrice,
-                discountRate: t.discountRate,
-                orderNum: t.outNum,
-                description: t.description,
-              };
-
-              return product;
-            }),
-        };
+        const params = this.buildParams();
 
         this.$msg.createConfirm('对零售出库单执行审核通过操作？').then(() => {
           this.loading = true;

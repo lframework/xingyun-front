@@ -255,84 +255,70 @@
 
         return true;
       },
+      buildParams() {
+        return {
+          sourceScId: this.formData.sourceScId,
+          targetScId: this.formData.targetScId,
+          description: this.formData.description,
+          products: this.tableData.map((item) => {
+            return {
+              productId: item.productId,
+              transferNum: item.transferNum,
+              description: item.description,
+            };
+          }),
+        };
+      },
       // 提交表单事件
       submit() {
-        this.$refs.form
-          .validate()
-          .then()
-          .then((valid) => {
-            if (valid) {
-              if (!this.validData()) {
-                return;
-              }
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            if (!this.validData()) {
+              return;
+            }
 
-              const params = {
-                sourceScId: this.formData.sourceScId,
-                targetScId: this.formData.targetScId,
-                description: this.formData.description,
-                products: this.tableData.map((item) => {
-                  return {
-                    productId: item.productId,
-                    transferNum: item.transferNum,
-                    description: item.description,
-                  };
-                }),
-              };
+            const params = this.buildParams();
+            this.loading = true;
+            api
+              .create(params)
+              .then(() => {
+                this.$msg.createSuccess('保存成功！');
+                this.$emit('confirm');
+
+                this.closeDialog();
+              })
+              .finally(() => {
+                this.loading = false;
+              });
+          }
+        });
+      },
+      // 直接审核通过
+      directApprovePass() {
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            if (!this.validData()) {
+              return;
+            }
+
+            const params = this.buildParams();
+
+            this.$msg.createConfirm('对仓库调拨单执行审核通过操作？').then(() => {
               this.loading = true;
               api
-                .create(params)
-                .then(() => {
-                  this.$msg.createSuccess('保存成功！');
-                  this.$emit('confirm');
+                .directApprovePass(params)
+                .then((res) => {
+                  this.$msg.createSuccess('审核通过！');
 
+                  this.$emit('confirm');
                   this.closeDialog();
                 })
                 .finally(() => {
                   this.loading = false;
                 });
-            }
-          });
-      },
-      // 直接审核通过
-      directApprovePass() {
-        this.$refs.form
-          .validate()
-          .then()
-          .then((valid) => {
-            if (valid) {
-              if (!this.validData()) {
-                return;
-              }
-
-              const params = {
-                sourceScId: this.formData.sourceScId,
-                targetScId: this.formData.targetScId,
-                description: this.formData.description,
-                products: this.tableData.map((item) => {
-                  return {
-                    productId: item.productId,
-                    transferNum: item.transferNum,
-                    description: item.description,
-                  };
-                }),
-              };
-
-              this.$msg.createConfirm('对仓库调拨单执行审核通过操作？').then(() => {
-                this.loading = true;
-                api
-                  .directApprovePass(params)
-                  .then((res) => {
-                    this.$msg.createSuccess('审核通过！');
-
-                    this.$emit('confirm');
-                    this.closeDialog();
-                  })
-                  .finally(() => {
-                    this.loading = false;
-                  });
-              });
-            }
-          });
+            });
+          }
+        });
       },
       // 页面显示时触发
       open() {

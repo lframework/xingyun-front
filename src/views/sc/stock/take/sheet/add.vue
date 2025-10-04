@@ -264,12 +264,8 @@
 
         return true;
       },
-      // 提交表单事件
-      submit() {
-        if (!this.validParams()) {
-          return;
-        }
-        const params = {
+      buildParams() {
+        return {
           planId: this.formData.takeStockPlanId,
           preSheetId: this.formData.preTakeStockSheetId || '',
           description: this.formData.description,
@@ -281,6 +277,13 @@
             };
           }),
         };
+      },
+      // 提交表单事件
+      submit() {
+        if (!this.validParams()) {
+          return;
+        }
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -300,18 +303,7 @@
         if (!this.validParams()) {
           return;
         }
-        const params = {
-          planId: this.formData.takeStockPlanId,
-          preSheetId: this.formData.preTakeStockSheetId || '',
-          description: this.formData.description,
-          products: this.tableData.map((item) => {
-            return {
-              productId: item.productId,
-              takeNum: item.takeNum,
-              description: item.description,
-            };
-          }),
-        };
+        const params = this.buildParams();
 
         this.loading = true;
         api

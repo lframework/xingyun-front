@@ -286,15 +286,10 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
+      buildParams() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        const params = {
+        return {
           customerId: this.formData.customerId,
           description: this.formData.description,
           startDate: this.$utils.dateTimeToDate(this.formData.startTime),
@@ -308,6 +303,14 @@
             };
           }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -328,22 +331,7 @@
           return;
         }
 
-        const records = this.$refs.grid.getCheckboxRecords();
-
-        const params = {
-          customerId: this.formData.customerId,
-          description: this.formData.description,
-          startDate: this.$utils.dateTimeToDate(this.formData.startTime),
-          endDate: this.$utils.dateTimeToDate(this.formData.endTime),
-          items: records.map((t) => {
-            return {
-              id: t.id,
-              bizType: t.bizType,
-              payAmount: t.payAmount,
-              description: t.description,
-            };
-          }),
-        };
+        const params = this.buildParams();
 
         this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;

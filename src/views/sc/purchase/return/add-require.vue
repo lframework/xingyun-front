@@ -612,13 +612,8 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
-        const params = {
+      buildParams() {
+        return {
           scId: this.formData.scId,
           supplierId: this.formData.supplierId,
           purchaserId: this.formData.purchaserId || '',
@@ -642,6 +637,14 @@
               return product;
             }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -701,30 +704,7 @@
           return false;
         }
 
-        const params = {
-          scId: this.formData.scId,
-          supplierId: this.formData.supplierId,
-          purchaserId: this.formData.purchaserId,
-          paymentDate: this.formData.paymentDate || '',
-          receiveSheetId: this.formData.receiveSheetId,
-          description: this.formData.description,
-          required: true,
-          products: this.tableData
-            .filter((t) => this.$utils.isFloatGtZero(t.returnNum))
-            .map((t) => {
-              const product = {
-                productId: t.productId,
-                returnNum: t.returnNum,
-                description: t.description,
-              };
-
-              if (t.isFixed) {
-                product.receiveSheetDetailId = t.id;
-              }
-
-              return product;
-            }),
-        };
+        const params = this.buildParams();
 
         this.$msg.createConfirm('对采购退货单执行审核通过操作？').then(() => {
           this.loading = true;

@@ -257,13 +257,8 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
-        const params = {
+      buildParams() {
+        return {
           supplierId: this.formData.supplierId,
           description: this.formData.description,
           items: this.tableData.map((t) => {
@@ -273,6 +268,14 @@
             };
           }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -293,16 +296,7 @@
           return;
         }
 
-        const params = {
-          supplierId: this.formData.supplierId,
-          description: this.formData.description,
-          items: this.tableData.map((t) => {
-            return {
-              id: t.item,
-              amount: t.amount,
-            };
-          }),
-        };
+        const params = this.buildParams();
 
         this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;

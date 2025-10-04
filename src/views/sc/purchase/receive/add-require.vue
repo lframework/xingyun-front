@@ -648,13 +648,8 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
-        const params = {
+      buildParams() {
+        return {
           scId: this.formData.scId,
           supplierId: this.formData.supplierId,
           purchaserId: this.formData.purchaserId || '',
@@ -679,6 +674,14 @@
               return product;
             }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -699,31 +702,7 @@
           return;
         }
 
-        const params = {
-          scId: this.formData.scId,
-          supplierId: this.formData.supplierId,
-          purchaserId: this.formData.purchaserId,
-          paymentDate: this.formData.paymentDate || '',
-          receiveDate: this.formData.receiveDate,
-          purchaseOrderId: this.formData.purchaseOrderId,
-          description: this.formData.description,
-          required: true,
-          products: this.tableData
-            .filter((t) => this.$utils.isFloatGtZero(t.receiveNum))
-            .map((t) => {
-              const product = {
-                productId: t.productId,
-                receiveNum: t.receiveNum,
-                description: t.description,
-              };
-
-              if (t.isFixed) {
-                product.purchaseOrderDetailId = t.id;
-              }
-
-              return product;
-            }),
-        };
+        const params = this.buildParams();
 
         this.$msg.createConfirm('对采购收货单执行审核通过操作？').then(() => {
           this.loading = true;

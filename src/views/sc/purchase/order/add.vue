@@ -172,7 +172,6 @@
   import * as api from '@/api/sc/purchase/order';
   import * as configApi from '@/api/sc/purchase/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
-  import {PATTERN_IS_FLOAT_GE_ZERO} from "@/utils/utils";
 
   export default defineComponent({
     name: 'AddPurchaseOrder',
@@ -401,8 +400,7 @@
         this.tableData
           .filter((t) => {
             return (
-              this.$utils.isFloatGeZero(t.purchasePrice) &&
-              this.$utils.isFloatGeZero(t.purchaseNum)
+              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.purchaseNum)
             );
           })
           .forEach((t) => {
@@ -591,13 +589,9 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
 
-        const params = {
+      buildParams() {
+        return {
           scId: this.formData.scId,
           supplierId: this.formData.supplierId,
           purchaserId: this.formData.purchaserId,
@@ -619,6 +613,14 @@
             };
           }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -639,28 +641,7 @@
           return;
         }
 
-        const params = {
-          scId: this.formData.scId,
-          supplierId: this.formData.supplierId,
-          purchaserId: this.formData.purchaserId,
-          expectArriveDate: this.formData.expectArriveDate,
-          description: this.formData.description,
-          payTypes: this.$refs.payType.getTableData().map((t) => {
-            return {
-              id: t.payTypeId,
-              payAmount: t.payAmount,
-              text: t.text,
-            };
-          }),
-          products: this.tableData.map((t) => {
-            return {
-              productId: t.productId,
-              purchasePrice: t.purchasePrice,
-              purchaseNum: t.purchaseNum,
-              description: t.description,
-            };
-          }),
-        };
+        const params = this.buildParams();
 
         this.$msg.createConfirm('对采购单据执行审核通过操作？').then(() => {
           this.loading = true;

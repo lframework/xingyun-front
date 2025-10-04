@@ -624,13 +624,8 @@
 
         return true;
       },
-      // 创建订单
-      createOrder() {
-        if (!this.validData()) {
-          return;
-        }
-
-        const params = {
+      buildParams() {
+        return {
           scId: this.formData.scId,
           customerId: this.formData.customerId,
           salerId: this.formData.salerId || '',
@@ -652,6 +647,14 @@
               return product;
             }),
         };
+      },
+      // 创建订单
+      createOrder() {
+        if (!this.validData()) {
+          return;
+        }
+
+        const params = this.buildParams();
 
         this.loading = true;
         api
@@ -709,28 +712,7 @@
           return false;
         }
 
-        const params = {
-          scId: this.formData.scId,
-          customerId: this.formData.customerId,
-          salerId: this.formData.salerId || '',
-          paymentDate: this.formData.paymentDate || '',
-          description: this.formData.description,
-          required: false,
-          products: this.tableData
-            .filter((t) => this.$utils.isFloatGtZero(t.outNum))
-            .map((t) => {
-              const product = {
-                productId: t.productId,
-                oriPrice: t.salePrice,
-                taxPrice: t.taxPrice,
-                discountRate: t.discountRate,
-                orderNum: t.outNum,
-                description: t.description,
-              };
-
-              return product;
-            }),
-        };
+        const params = this.buildParams();
 
         this.$msg.createConfirm('对销售出库单执行审核通过操作？').then(() => {
           this.loading = true;
