@@ -45,6 +45,8 @@
 <script>
   import { h, defineComponent } from 'vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, isFloat, isFloatGtZero, isNumberPrecision, uuid } from '@/utils/utils';
+  import { createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -119,7 +121,7 @@
       },
       emptyRow() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           payTypeId: '',
           payAmount: '',
           recText: false,
@@ -133,14 +135,14 @@
       // 删除商品
       delRow() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的支付方式！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的支付方式！');
           return;
         }
-        this.$msg.createConfirm('是否确定删除选中的支付方式？').then(() => {
+        createConfirm('是否确定删除选中的支付方式？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -150,7 +152,7 @@
       },
       changePayType(row, e) {
         row.recText = false;
-        if (!this.$utils.isEmpty(row.payTypeId)) {
+        if (!isEmpty(row.payTypeId)) {
           row.recText = e.recText;
         }
       },
@@ -159,34 +161,34 @@
         for (let i = 0; i < this.tableData.length; i++) {
           const row = this.tableData[i];
 
-          if (this.$utils.isEmpty(row.payTypeId)) {
-            this.$msg.createError('第' + (i + 1) + '行支付方式不允许为空！');
+          if (isEmpty(row.payTypeId)) {
+            createError('第' + (i + 1) + '行支付方式不允许为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(row.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行支付方式支付金额不允许为空！');
+          if (isEmpty(row.payAmount)) {
+            createError('第' + (i + 1) + '行支付方式支付金额不允许为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(row.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行支付方式支付金额必须是数字！');
+          if (!isFloat(row.payAmount)) {
+            createError('第' + (i + 1) + '行支付方式支付金额必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isFloatGtZero(row.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行支付方式支付金额必须大于0！');
+          if (!isFloatGtZero(row.payAmount)) {
+            createError('第' + (i + 1) + '行支付方式支付金额必须大于0！');
             return false;
           }
 
-          if (!this.$utils.isNumberPrecision(row.payAmount, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行支付方式支付金额最多允许2位小数！');
+          if (!isNumberPrecision(row.payAmount, 2)) {
+            createError('第' + (i + 1) + '行支付方式支付金额最多允许2位小数！');
             return false;
           }
 
           if (row.recText) {
-            if (this.$utils.isEmpty(row.text)) {
-              this.$msg.createError('第' + (i + 1) + '行支付方式支付记录不允许为空！');
+            if (isEmpty(row.text)) {
+              createError('第' + (i + 1) + '行支付方式支付记录不允许为空！');
               return false;
             }
           }
@@ -195,7 +197,7 @@
         return true;
       },
       setTableData(tableData) {
-        if (!this.$utils.isEmpty(tableData)) {
+        if (!isEmpty(tableData)) {
           this.tableData = tableData.map((item) => {
             return Object.assign({}, this.emptyRow(), item);
           });

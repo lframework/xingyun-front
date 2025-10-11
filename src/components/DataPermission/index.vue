@@ -38,6 +38,8 @@
   import DataPermissionDragger from '@/components/DataPermissionDragger/index.vue';
   import * as api from '@/api/system/data-permission';
   import * as modelDetailApi from '@/api/system/data-permission-model-detail';
+  import { eachTree, isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'DataPermission',
@@ -83,8 +85,8 @@
           const permissionType = permissionTypes[i];
           modelDetailApi.queryByBizId(this.bizId, this.bizType, permissionType.code).then((res) => {
             const model = res || [];
-            this.$utils.eachTree(model, (item) => {
-              if (!this.$utils.isEmpty(item.conditionTypes)) {
+            eachTree(model, (item) => {
+              if (!isEmpty(item.conditionTypes)) {
                 item.conditionTypes = item.conditionTypes.map((conditionType) => {
                   return this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.getByCode(
                     conditionType,
@@ -131,7 +133,7 @@
         api
           .save(datas)
           .then(() => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
             this.closeDialog();
           })
           .finally(() => {

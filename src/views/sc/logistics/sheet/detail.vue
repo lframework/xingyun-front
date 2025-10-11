@@ -159,6 +159,7 @@
   import DetailSaleOutSheet from '@/views/sc/sale/out/detail.vue';
   import DetailRetailOutSheet from '@/views/sc/retail/out/detail.vue';
   import * as api from '@/api/sc/logistics/sheet';
+  import { uuid } from '@/utils/utils';
 
   export default defineComponent({
     components: {
@@ -258,7 +259,7 @@
       },
       emptyRow() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
         };
       },
       // 加载数据

@@ -134,6 +134,8 @@
     StopOutlined,
     ThunderboltOutlined,
   } from '@ant-design/icons-vue';
+  import { isEmpty, buildSortPageVo } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'Supplier',
@@ -212,7 +214,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -236,8 +238,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的供应商！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的供应商！');
           return;
         }
 
@@ -252,8 +254,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的供应商！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的供应商！');
           return;
         }
 

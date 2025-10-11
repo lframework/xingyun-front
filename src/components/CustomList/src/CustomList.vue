@@ -24,7 +24,7 @@
           :export-config="{}"
           @cell-dblclick="onCellDblClick"
         >
-          <template v-if="!$utils.isEmpty(queryParams)" #form>
+          <template v-if="!isEmpty(queryParams)" #form>
             <j-border>
               <j-form bordered :label-width="listConfig.labelWidth + 'px'">
                 <j-form-item
@@ -56,7 +56,7 @@
                 @click="onExport"
                 >导出</a-button
               >
-              <template v-if="!$utils.isEmpty(toolbars)">
+              <template v-if="!isEmpty(toolbars)">
                 <div v-for="toolbar in toolbars" :key="toolbar.id">
                   <router-link
                     v-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(toolbar.btnType)"
@@ -75,7 +75,7 @@
                           toolbar.viewType,
                         )
                       "
-                      ><icon v-if="!$utils.isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
+                      ><icon v-if="!isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
                         toolbar.name
                       }}</a-button
                     >
@@ -91,7 +91,7 @@
                       $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
                     "
                     @click="onLoadExternal(toolbar)"
-                    ><icon v-if="!$utils.isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
+                    ><icon v-if="!isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
                       toolbar.name
                     }}</a-button
                   >
@@ -108,7 +108,7 @@
                       $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
                     "
                     @click="onExcuteScript(toolbar)"
-                    ><icon v-if="!$utils.isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
+                    ><icon v-if="!isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
                       toolbar.name
                     }}</a-button
                   >
@@ -138,7 +138,7 @@
                         handleColumn.viewType,
                       )
                     "
-                    ><icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
+                    ><icon v-if="!isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
                       handleColumn.name
                     }}</a-button
                   >
@@ -160,7 +160,7 @@
                     )
                   "
                   @click="onLoadExternal(handleColumn)"
-                  ><icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
+                  ><icon v-if="!isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
                     handleColumn.name
                   }}</a-button
                 >
@@ -181,7 +181,7 @@
                     )
                   "
                   @click="onExcuteScriptInHandleColumn(handleColumn)"
-                  ><icon v-if="!$utils.isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
+                  ><icon v-if="!isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
                     handleColumn.name
                   }}</a-button
                 >
@@ -200,6 +200,7 @@
   import { Icon } from '@/components/Icon';
   import { SearchOutlined, DownloadOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/development/gen/api';
+  import { isEmpty, toArrayTree, searchTree, keys, isArray } from '@/utils/utils';
 
   export default defineComponent({
     name: 'CustomList',
@@ -219,6 +220,8 @@
         h,
         SearchOutlined,
         DownloadOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -276,14 +279,14 @@
                     .customListQueryTree(this.customListId, this.buildQueryParams())
                     .then((res) => {
                       // 将带层级的列表转成树结构
-                      res = this.$utils.toArrayTree(res, {
+                      res = toArrayTree(res, {
                         key: this.listConfig.idColumn,
                         parentKey: this.listConfig.treePidColumn,
                         children: this.listConfig.treeChildrenKey,
                         strict: true,
                       });
 
-                      return this.$utils.searchTree(res, (item) => {
+                      return searchTree(res, (item) => {
                         return item['id@show'];
                       });
                     }),
@@ -338,7 +341,7 @@
     },
     methods: {
       async initConfig() {
-        if (this.$utils.isEmpty(this.customListId)) {
+        if (isEmpty(this.customListId)) {
           return;
         }
         const that = this;
@@ -382,7 +385,7 @@
                 return that.$enums[item.frontType].getDesc(cellValue);
               };
             } else {
-              if (!this.$utils.isEmpty(item.formatter)) {
+              if (!isEmpty(item.formatter)) {
                 column.formatter = function ({ cellValue, row }) {
                   const fn = new Function('cellValue', 'row', item.formatter);
                   return fn(cellValue, row);
@@ -417,7 +420,7 @@
 
           this.handleColumns = res.handleColumns || [];
 
-          if (!this.$utils.isEmpty(this.handleColumns)) {
+          if (!isEmpty(this.handleColumns)) {
             const totalWidth = this.handleColumns
               .map((item) => item.width)
               .reduce((prev, cur) => {
@@ -445,10 +448,7 @@
       onExport() {
         this.$refs.grid.exportData({
           columnFilterMethod: ({ column, $columnIndex }) => {
-            return (
-              !['radio', 'checkbox', 'seq'].includes(column.type) &&
-              !this.$utils.isEmpty(column.field)
-            );
+            return !['radio', 'checkbox', 'seq'].includes(column.type) && !isEmpty(column.field);
           },
         });
       },
@@ -464,16 +464,12 @@
       },
       // 查询前构建具体的查询参数
       buildSearchFormData() {
-        const keys = this.$utils.keys(this.searchFormData);
+        const keys = keys(this.searchFormData);
         const searchFormData = keys
           .map((key) => {
             return this.searchFormData[key];
           })
-          .filter(
-            (item) =>
-              !this.$utils.isEmpty(item) &&
-              (!this.$utils.isEmpty(item.value) || !this.$utils.isEmpty(item.values)),
-          );
+          .filter((item) => !isEmpty(item) && (!isEmpty(item.value) || !isEmpty(item.values)));
         return {
           conditions: searchFormData,
         };
@@ -501,7 +497,7 @@
       },
       async getRecordsByIds(ids) {
         let result = this.getEmptyRecords();
-        if (this.$utils.isEmpty(ids)) {
+        if (isEmpty(ids)) {
           return result;
         }
 
@@ -519,12 +515,12 @@
                 tableAlias: tableAlias,
                 columnName: columnName,
                 queryType: this.$enums.GEN_QUERY_TYPE.IN.code,
-                values: this.$utils.isArray(ids) ? ids : [ids],
+                values: isArray(ids) ? ids : [ids],
               },
             ],
           })
           .then((res) => {
-            if (!this.$utils.isEmpty(res)) {
+            if (!isEmpty(res)) {
               if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
                 result = res[0];
               } else if (
@@ -546,7 +542,7 @@
       },
       onLoadCustomForm(toolbar) {
         let form = this.$refs['toolbarCustomForm' + toolbar.id];
-        if (this.$utils.isArray(form)) {
+        if (isArray(form)) {
           form = form[0];
         }
 
@@ -554,14 +550,14 @@
       },
       onLoadCustomFormInHandleColumn(handleColumn) {
         let form = this.$refs['handleColumnCustomForm' + handleColumn.id];
-        if (this.$utils.isArray(form)) {
+        if (isArray(form)) {
           form = form[0];
         }
 
         form.openForm();
       },
       buildRequestParam(toolbar) {
-        if (this.$utils.isEmpty(toolbar.requestParam)) {
+        if (isEmpty(toolbar.requestParam)) {
           return {};
         }
 
@@ -570,7 +566,7 @@
         return fn(this) || {};
       },
       buildRequestParamInHandleColumn(row, handleColumn) {
-        if (this.$utils.isEmpty(handleColumn.requestParam)) {
+        if (isEmpty(handleColumn.requestParam)) {
           return {};
         }
 

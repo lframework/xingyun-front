@@ -65,6 +65,8 @@
   import { h, defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { DeleteOutlined, PlusOutlined, DragOutlined } from '@ant-design/icons-vue';
+  import { uuid, isEmpty, clearAll } from '@/utils/utils';
+  import { createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -141,54 +143,54 @@
     methods: {
       emptyLine() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           customName: '',
           customSql: '',
           customAlias: '',
         };
       },
       addLine() {
-        if (this.$utils.isEmpty(this.mainTableId)) {
-          this.$msg.createError('请先选择主表');
+        if (isEmpty(this.mainTableId)) {
+          createError('请先选择主表');
           return;
         }
         this.columns.push(this.emptyLine());
       },
       delLine() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的行！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的行！');
           return;
         }
-        this.$msg.createConfirm('是否确定删除选中的行？').then(() => {
+        createConfirm('是否确定删除选中的行？').then(() => {
           const columns = this.columns.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
-          this.$utils.clearAll(this.columns);
+          clearAll(this.columns);
           this.columns.push(...columns);
         });
       },
       validDate() {
-        if (this.$utils.isEmpty(this.columns)) {
+        if (isEmpty(this.columns)) {
           return true;
         }
         for (let i = 0; i < this.columns.length; i++) {
           const column = this.columns[i];
 
-          if (this.$utils.isEmpty(column.customName)) {
-            this.$msg.createError('第' + (i + 1) + '行字段显示名称不能为空！');
+          if (isEmpty(column.customName)) {
+            createError('第' + (i + 1) + '行字段显示名称不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.customSql)) {
-            this.$msg.createError('字段【' + column.customName + '】自定义SQL不能为空！');
+          if (isEmpty(column.customSql)) {
+            createError('字段【' + column.customName + '】自定义SQL不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.customAlias)) {
-            this.$msg.createError('字段【' + column.customName + '】别名不能为空！');
+          if (isEmpty(column.customAlias)) {
+            createError('字段【' + column.customName + '】别名不能为空！');
             return false;
           }
         }

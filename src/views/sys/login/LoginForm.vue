@@ -12,7 +12,7 @@
       <a-form-item
         name="tenantName"
         class="enter-x"
-        v-if="requireTenant.enable && $utils.isEmpty(requireTenant.tenantId)"
+        v-if="requireTenant.enable && isEmpty(requireTenant.tenantId)"
       >
         <a-input
           size="large"
@@ -69,7 +69,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useFormRules, useFormValid, useLoginState } from './useLogin';
   import { createSuccessTip } from '@/hooks/web/msg';
-  import { welcomeMsg } from '@/utils/utils';
+  import { welcomeMsg, isEmpty } from '@/utils/utils';
   import { TenantRequireBo } from '@/api/sys/model/tenantRequireBo';
 
   const userStore = useUserStore();
@@ -120,7 +120,7 @@
       loginCaptchaDialog.value.openDialog();
     } else {
       focusInput();
-      doLogin(data.tenantName, data.username, data.password);
+      doLogin(data.tenantName, data.username, data.password, undefined, undefined);
     }
   }
 

@@ -9,7 +9,7 @@
     :footer="null"
   >
     <div v-if="visible" v-loading="loading">
-      <div v-if="!$utils.isEmpty(description)" style="padding: 10px 10px 5px 10px">
+      <div v-if="!isEmpty(description)" style="padding: 10px 10px 5px 10px">
         <a-alert message="注意事项" :description="description" type="warning" show-icon />
       </div>
 
@@ -32,9 +32,16 @@
   import CodeMirror from 'codemirror/lib/codemirror';
   import 'codemirror/mode/javascript/javascript';
   import 'codemirror/mode/sql/sql';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     components: {},
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       value: {
         type: String,

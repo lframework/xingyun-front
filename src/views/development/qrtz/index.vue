@@ -75,6 +75,7 @@
   import Detail from './detail.vue';
   import * as api from '@/api/development/qrtz';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'Qrtz',
@@ -161,7 +162,7 @@
         return Object.assign({}, this.searchFormData);
       },
       deleteRow(row) {
-        this.$msg.createConfirm('是否确认删除此定时任务？').then(() => {
+        createConfirm('是否确认删除此定时任务？').then(() => {
           this.loading = true;
           api
             .deleteJob({
@@ -169,7 +170,7 @@
               group: row.group,
             })
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -178,7 +179,7 @@
         });
       },
       resumeRow(row) {
-        this.$msg.createConfirm('是否确认恢复此定时任务？').then(() => {
+        createConfirm('是否确认恢复此定时任务？').then(() => {
           this.loading = true;
           api
             .resume({
@@ -186,7 +187,7 @@
               group: row.group,
             })
             .then(() => {
-              this.$msg.createSuccess('恢复成功！');
+              createSuccess('恢复成功！');
               this.search();
             })
             .finally(() => {
@@ -195,7 +196,7 @@
         });
       },
       pauseRow(row) {
-        this.$msg.createConfirm('是否确认暂停此定时任务？').then(() => {
+        createConfirm('是否确认暂停此定时任务？').then(() => {
           this.loading = true;
           api
             .pause({
@@ -203,7 +204,7 @@
               group: row.group,
             })
             .then(() => {
-              this.$msg.createSuccess('暂停成功！');
+              createSuccess('暂停成功！');
               this.search();
             })
             .finally(() => {
@@ -212,7 +213,7 @@
         });
       },
       triggerRow(row) {
-        this.$msg.createConfirm('是否确认触发此定时任务？').then(() => {
+        createConfirm('是否确认触发此定时任务？').then(() => {
           this.loading = true;
           api
             .trigger({
@@ -220,7 +221,7 @@
               group: row.group,
             })
             .then(() => {
-              this.$msg.createSuccess('触发成功！');
+              createSuccess('触发成功！');
               this.search();
             })
             .finally(() => {

@@ -96,6 +96,8 @@
   import CategoryTree from './category-tree.vue';
   import { SearchOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/development/custom/page';
+  import { isEmpty, isEqualWithStr } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'CustomPage',
@@ -166,8 +168,8 @@
         this.$refs.grid.commitProxy('reload');
       },
       doSearch(categoryId) {
-        if (!this.$utils.isEmpty(categoryId)) {
-          if (this.$utils.isEqualWithStr(0, categoryId)) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
             this.searchFormData.categoryId = '';
           } else {
             this.searchFormData.categoryId = categoryId;
@@ -194,12 +196,12 @@
       },
       // 删除
       deleteRow(row) {
-        this.$msg.createConfirm('是否确定删除该自定义页面？').then(() => {
+        createConfirm('是否确定删除该自定义页面？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -214,8 +216,8 @@
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的自定义页面！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的自定义页面！');
           return;
         }
 

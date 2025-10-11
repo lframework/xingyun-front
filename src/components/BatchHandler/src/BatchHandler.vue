@@ -10,7 +10,7 @@
       :closable="false"
     >
       <div>
-        <div v-if="!$utils.isEmpty(tip)" class="tip-container">
+        <div v-if="!isEmpty(tip)" class="tip-container">
           <a-alert :message="tip" type="warning" show-icon />
         </div>
         <!-- 数据列表 -->
@@ -61,6 +61,8 @@
     ClockCircleOutlined,
   } from '@ant-design/icons-vue';
   import { ConcurrentPromise } from '@/utils/concurrentPromise';
+  import { isEmpty } from '@/utils/utils';
+  import { createConfirm, createErrorDialog } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -68,6 +70,12 @@
       CheckCircleFilled,
       CloseCircleFilled,
       ClockCircleOutlined,
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     props: {
       title: {
@@ -146,7 +154,7 @@
           return;
         }
 
-        this.$msg.createConfirm('当前任务正在执行，是否确认停止执行？').then(() => {
+        createConfirm('当前任务正在执行，是否确认停止执行？').then(() => {
           this.stopPromise();
           this.loading = false;
         });
@@ -157,7 +165,7 @@
         }
 
         if (this.copyedTableData.filter((item) => item.__status === 1).length > 0) {
-          this.$msg.createErrorDialog('部分任务正在执行，请稍后再重新开始！');
+          createErrorDialog('部分任务正在执行，请稍后再重新开始！');
           return;
         }
 
@@ -165,11 +173,11 @@
           this.copyedTableData.filter((item) => item.__status !== 2 && item.__status !== 3)
             .length === 0
         ) {
-          this.$msg.createErrorDialog('所有任务均已执行，请勿重复执行！');
+          createErrorDialog('所有任务均已执行，请勿重复执行！');
           return;
         }
 
-        this.$msg.createConfirm('是否确认开始执行？').then(() => {
+        createConfirm('是否确认开始执行？').then(() => {
           this.loading = true;
           this.concurrentPromise = new ConcurrentPromise(this.concurrency);
           this.copyedTableData.forEach((item, index) => {
@@ -219,11 +227,9 @@
       },
       onClose() {
         if (this.loading) {
-          this.$msg
-            .createConfirm('当前任务正在执行，关闭后会中断执行任务，是否确认关闭？')
-            .then(() => {
-              this.dialogVisible = false;
-            });
+          createConfirm('当前任务正在执行，关闭后会中断执行任务，是否确认关闭？').then(() => {
+            this.dialogVisible = false;
+          });
         } else {
           this.dialogVisible = false;
         }

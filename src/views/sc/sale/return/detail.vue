@@ -22,7 +22,7 @@
             {{ formData.paymentDate }}
           </j-form-item>
           <j-form-item label="销售出库单" :span="16">
-            <div v-if="!$utils.isEmpty(formData.outSheetCode)">
+            <div v-if="!isEmpty(formData.outSheetCode)">
               <a
                 v-permission="['sale:out:query']"
                 @click="(e) => $refs.viewOutSheetDetailDialog.openDialog()"
@@ -94,8 +94,8 @@
       >
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.returnNum)">{{
-            $utils.getNumber($utils.mul(row.taxPrice, row.returnNum), 2)
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.returnNum)">{{
+            getNumber(mul(row.taxPrice, row.returnNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -141,6 +141,7 @@
   import OutSheetDetail from '@/views/sc/sale/out/detail.vue';
   import * as api from '@/api/sc/sale/return';
   import { printMix } from '@/mixins/print';
+  import { isEmpty, isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
 
   export default defineComponent({
     components: {
@@ -152,6 +153,15 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+      };
     },
     data() {
       return {
@@ -189,7 +199,7 @@
             align: 'right',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           {
@@ -198,7 +208,7 @@
             align: 'right',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           { field: 'returnNum', title: '退货数量', align: 'right', width: 100 },
@@ -296,20 +306,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.returnNum);
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.returnNum);
           })
           .forEach((t) => {
             const num = parseFloat(t.returnNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(
-              totalAmount,
-              this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2),
-            );
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;

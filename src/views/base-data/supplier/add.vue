@@ -160,6 +160,8 @@
   import { validCode, isEmail } from '@/utils/validate';
   import * as api from '@/api/base-data/supplier';
   import { generateCode } from '@/api/components';
+  import { isEmpty, isInteger, isIntegerGtZero, getCamelCharsUpperCase } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -179,7 +181,7 @@
           email: [
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value) || isEmail(value)) {
+                if (isEmpty(value) || isEmail(value)) {
                   return Promise.resolve();
                 } else {
                   return Promise.reject('邮箱地址格式不正确');
@@ -191,15 +193,15 @@
           deliveryCycle: [
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value)) {
+                if (isEmpty(value)) {
                   return Promise.resolve();
                 }
 
-                if (!this.$utils.isInteger(value)) {
+                if (!isInteger(value)) {
                   return Promise.reject('送货周期（天）必须为整数');
                 }
 
-                if (!this.$utils.isIntegerGtZero(value)) {
+                if (!isIntegerGtZero(value)) {
                   return Promise.reject('送货周期（天）必须大于0');
                 }
 
@@ -257,28 +259,24 @@
       submit() {
         this.$refs.form.validate().then((valid) => {
           if (valid) {
-            this.$msg
-              .createConfirm('新增后结算方式不允许修改，请仔细核对结算方式是否正确')
-              .then(() => {
-                this.loading = true;
-                const params = Object.assign({}, this.formData);
-                params.cityId = this.$utils.isEmpty(params.city)
-                  ? ''
-                  : params.city[params.city.length - 1];
-                delete params.city;
-                api
-                  .create(params)
-                  .then(() => {
-                    this.$msg.createSuccess('新增成功！');
-                    // 初始化表单数据
-                    this.initFormData();
-                    this.$emit('confirm');
-                    this.visible = false;
-                  })
-                  .finally(() => {
-                    this.loading = false;
-                  });
-              });
+            createConfirm('新增后结算方式不允许修改，请仔细核对结算方式是否正确').then(() => {
+              this.loading = true;
+              const params = Object.assign({}, this.formData);
+              params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];
+              delete params.city;
+              api
+                .create(params)
+                .then(() => {
+                  createSuccess('新增成功！');
+                  // 初始化表单数据
+                  this.initFormData();
+                  this.$emit('confirm');
+                  this.visible = false;
+                })
+                .finally(() => {
+                  this.loading = false;
+                });
+            });
           }
         });
       },
@@ -291,7 +289,7 @@
       },
       // 名称改变
       changeName(e) {
-        this.formData.mnemonicCode = this.$utils.getCamelCharsUpperCase(e);
+        this.formData.mnemonicCode = getCamelCharsUpperCase(e);
       },
       onGenerateCode() {
         generateCode(this.$enums.GENERATE_CODE_TYPE.SUPPLIER.code).then((res) => {

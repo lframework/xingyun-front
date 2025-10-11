@@ -60,6 +60,7 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/notice';
   import { Tinymce } from '@/components/Tinymce';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -118,14 +119,12 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             if (this.formData.published && published) {
-              this.$msg
-                .createConfirm('重新发布后，会重置所有人的已读状态，是否确认继续执行？')
-                .then(() => {
-                  this.onPublish(published);
-                });
+              createConfirm('重新发布后，会重置所有人的已读状态，是否确认继续执行？').then(() => {
+                this.onPublish(published);
+              });
             } else {
               if (published) {
-                this.$msg.createConfirm('是否确认执行发布操作？').then(() => {
+                createConfirm('是否确认执行发布操作？').then(() => {
                   this.onPublish(published);
                 });
               } else {
@@ -140,7 +139,7 @@
         api
           .update(Object.assign(this.formData, { published: published }))
           .then(() => {
-            this.$msg.createSuccess(
+            createSuccess(
               published ? '发布成功，发布状态更新稍有延迟，请耐心等待！' : '修改成功！',
             );
             this.$emit('confirm');

@@ -18,6 +18,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/common/city';
+  import { toArrayTree, isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'CitySelector',
@@ -76,13 +77,13 @@
       },
       loadOptions() {
         this.getList(this._requestParams).then((data) => {
-          this.options = this.$utils.toArrayTree(data, {
+          this.options = toArrayTree(data, {
             strict: true,
           });
         });
       },
       onChange(e) {
-        if (this.$utils.isEmpty(e)) {
+        if (isEmpty(e)) {
           this.$emit('update:value', e);
           this.$emit('clear', e);
         } else {

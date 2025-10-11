@@ -42,13 +42,13 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="单据号">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="单据号">
               <a-input v-model:value="searchParams.code" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.scId)" label="仓库">
+            <j-form-item v-if="isEmpty(requestParams.scId)" label="仓库">
               <store-center-selector v-model:value="searchParams.scId" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.takeType)" label="盘点类别">
+            <j-form-item v-if="isEmpty(requestParams.takeType)" label="盘点类别">
               <a-select v-model:value="searchParams.takeType" placeholder="全部" allow-clear>
                 <a-select-option
                   v-for="item in $enums.TAKE_STOCK_PLAN_TYPE.values()"
@@ -59,7 +59,7 @@
               </a-select>
             </j-form-item>
             <j-form-item
-              v-if="$utils.isEmpty(requestParams.takeStatus) && !requestParams.taking"
+              v-if="isEmpty(requestParams.takeStatus) && !requestParams.taking"
               label="盘点状态"
             >
               <a-select v-model:value="searchParams.takeStatus" placeholder="全部" allow-clear>
@@ -109,10 +109,22 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import moment from 'moment';
   import * as api from '@/api/sc/stock/take/plan';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+  } from '@/utils/utils';
 
   export default defineComponent({
     name: 'TakeStockPlanSelector',
     components: { SearchOutlined },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       requestParams: {
         type: Object,
@@ -129,10 +141,8 @@
           takeType: undefined,
           takeStatus: undefined,
           taking: '',
-          createTimeStart: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createTimeStart: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createTimeEnd: formatDateTime(getDateTimeWithMaxTime(moment())),
         },
       };
     },

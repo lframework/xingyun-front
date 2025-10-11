@@ -84,6 +84,8 @@
   import CategoryTree from './category-tree.vue';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/dic';
+  import { isEmpty, isEqualWithStr, buildSortPageVo } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'SysDataDic',
@@ -150,8 +152,8 @@
         this.$refs.grid.commitProxy('reload');
       },
       doSearch(categoryId) {
-        if (!this.$utils.isEmpty(categoryId)) {
-          if (this.$utils.isEqualWithStr(0, categoryId)) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
             this.searchFormData.categoryId = '';
           } else {
             this.searchFormData.categoryId = categoryId;
@@ -165,7 +167,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -204,9 +206,9 @@
         ];
       },
       deleteRow(row) {
-        this.$msg.createConfirm('是否确认删除此数据字典？').then(() => {
+        createConfirm('是否确认删除此数据字典？').then(() => {
           api.deleteById(row.id).then(() => {
-            this.$msg.createSuccess('删除成功！');
+            createSuccess('删除成功！');
             this.search();
           });
         });

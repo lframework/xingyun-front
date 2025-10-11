@@ -1,7 +1,7 @@
 <template>
   <div>
-    <img v-if="disabled && !$utils.isEmpty(value)" :src="value" class="img-uploader-container" />
-    <span v-else-if="disabled && $utils.isEmpty(value)"></span>
+    <img v-if="disabled && !isEmpty(value)" :src="value" class="img-uploader-container" />
+    <span v-else-if="disabled && isEmpty(value)"></span>
     <a-upload
       v-else
       accept="image/png, image/jpeg, image/bmp, image/jpg, image/gif"
@@ -29,6 +29,7 @@
   import * as api from '@/api/components';
   import { ContentTypeEnum } from '@/enums/httpEnum';
   import { LoadingOutlined, PictureOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, uuid, readImg, isFunction } from '@/utils/utils';
 
   export default defineComponent({
     name: 'JImgUpload',
@@ -36,6 +37,12 @@
     components: {
       LoadingOutlined,
       PictureOutlined,
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     props: {
       value: {
@@ -86,11 +93,11 @@
     },
     methods: {
       loadImg() {
-        if (!this.$utils.isEmpty(this.value)) {
+        if (!isEmpty(this.value)) {
           this.fileList = [
             {
               url: this.value,
-              uid: this.$utils.uuid(),
+              uid: uuid(),
             },
           ];
         } else {
@@ -101,21 +108,21 @@
         this.previewVisible = false;
       },
       handleChange(e) {
-        if (this.$utils.isEmpty(e.fileList)) {
+        if (isEmpty(e.fileList)) {
           this.fileList = [];
           this.$emit('update:value', undefined);
         }
       },
       async handlePreview(file) {
         if (!file.url && !file.preview) {
-          file.preview = await this.$utils.readImg(file.originFileObj);
+          file.preview = await readImg(file.originFileObj);
         }
         this.previewImage = file.url || file.preview;
         this.previewVisible = true;
       },
       onRequest(e) {
         this.loading = true;
-        const requestPromise = this.$utils.isFunction(this.url) ? this.url : this.doRequest;
+        const requestPromise = isFunction(this.url) ? this.url : this.doRequest;
         requestPromise(
           {
             file: e.file,

@@ -26,6 +26,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/print-template';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -96,7 +97,7 @@
             templateJson: this.formData.templateJson,
           })
           .then(() => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
             this.$emit('confirm');
             this.visible = false;
           })

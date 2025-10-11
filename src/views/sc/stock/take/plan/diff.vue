@@ -83,6 +83,8 @@
   import { defineComponent } from 'vue';
   import * as constants from './constants';
   import * as api from '@/api/sc/stock/take/plan';
+  import { isEmpty, keys } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -169,9 +171,7 @@
           updateTime: '',
         };
 
-        this.checkedFilterType = this.$utils
-          .keys(this.filterType)
-          .map((item) => this.filterType[item].code);
+        this.checkedFilterType = keys(this.filterType).map((item) => this.filterType[item].code);
 
         this.tableData = [];
         this.oriTableData = [];
@@ -214,7 +214,7 @@
           }
 
           if (this.checkedFilterType.includes(this.filterType.NONE.code)) {
-            if (item.diffNum === 0 || this.$utils.isEmpty(item.diffNum)) {
+            if (item.diffNum === 0 || isEmpty(item.diffNum)) {
               return true;
             }
           }
@@ -223,26 +223,24 @@
         });
       },
       submit() {
-        const unTakeRecords = this.oriTableData.filter((item) =>
-          this.$utils.isEmpty(item.oriTakeNum),
-        );
-        if (!this.$utils.isEmpty(unTakeRecords)) {
-          this.$msg
-            .createConfirm('盘点任务中存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？')
-            .then(() => {
+        const unTakeRecords = this.oriTableData.filter((item) => isEmpty(item.oriTakeNum));
+        if (!isEmpty(unTakeRecords)) {
+          createConfirm('盘点任务中存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(
+            () => {
               this.doSubmit();
-            });
+            },
+          );
         } else {
           this.doSubmit();
         }
       },
       doSubmit() {
-        this.$msg.createConfirm('确认对此盘点任务进行差异生成？').then(() => {
+        createConfirm('确认对此盘点任务进行差异生成？').then(() => {
           this.loading = true;
           api
             .createDiff(this.id)
             .then(() => {
-              this.$msg.createSuccess('盘点任务完成差异生成！');
+              createSuccess('盘点任务完成差异生成！');
               this.$emit('confirm');
 
               this.closeDialog();

@@ -21,6 +21,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/bpm/flow/flow-category';
+  import { toArrayTree, eachTree, isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'FlowCategorySelector',
@@ -83,10 +84,10 @@
       },
       loadOptions() {
         this.getList().then((data) => {
-          const options = this.$utils.toArrayTree(data);
+          const options = toArrayTree(data);
           if (this.onlyFinal) {
-            this.$utils.eachTree(options, (item) => {
-              if (!this.$utils.isEmpty(item.children) || this.$utils.isEmpty(item.parentId)) {
+            eachTree(options, (item) => {
+              if (!isEmpty(item.children) || isEmpty(item.parentId)) {
                 item.disabled = true;
               }
             });
@@ -96,7 +97,7 @@
         });
       },
       onChange(e) {
-        if (this.$utils.isEmpty(e)) {
+        if (isEmpty(e)) {
           this.$emit('update:value', e);
           this.$emit('clear', e);
         } else {

@@ -131,7 +131,7 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
-  import { isEmpty, isPromise, uuid } from '@/utils/utils';
+  import { isEmpty, isPromise, uuid, toArrayTree, isArray } from '@/utils/utils';
   import { SearchOutlined } from '@ant-design/icons-vue';
 
   export default defineComponent({
@@ -232,7 +232,7 @@
             query: () =>
               this.request(this.requestParams).then((res) => {
                 // 将带层级的列表转成树结构
-                res = this.$utils.toArrayTree(res, {
+                res = toArrayTree(res, {
                   key: 'id',
                   parentKey: 'parentId',
                   children: 'children',
@@ -268,7 +268,7 @@
         if (this.onlyFinal) {
           config = {
             checkMethod: ({ row }) => {
-              return this.$utils.isEmpty(row.children);
+              return isEmpty(row.children);
             },
           };
         }
@@ -286,7 +286,7 @@
             trigger: 'row',
             highlight: true,
             checkMethod: ({ row }) => {
-              return this.$utils.isEmpty(row.children);
+              return isEmpty(row.children);
             },
           };
         }
@@ -449,7 +449,7 @@
             this.label = label.join('，');
             selectData = selectData.map((item) => item[this.option.value]);
 
-            if (!this.$utils.isEmpty(this.value) && this.$utils.isArray(this.value)) {
+            if (!isEmpty(this.value) && isArray(this.value)) {
               if (selectData.length === this.value.length) {
                 let isSame = true;
                 for (let i = 0; i < this.value.length; i++) {
@@ -472,7 +472,7 @@
             selectData = selectData[this.columnOption.value];
             this.selectValue = [selectData[this.columnOption.value]];
 
-            if (!this.$utils.isEmpty(this.value)) {
+            if (!isEmpty(this.value)) {
               if (selectData === this.value) {
                 this.handleClose();
                 return;

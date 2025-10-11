@@ -129,6 +129,14 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/pre';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    buildSortPageVo,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'PreTakeStockSheet',
@@ -156,10 +164,8 @@
           scId: '',
           takeStatus: undefined,
           updateBy: '',
-          updateTimeStart: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          updateTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          updateTimeStart: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          updateTimeEnd: formatDateTime(getDateTimeWithMaxTime(moment())),
         },
         // 工具栏配置
         toolbarConfig: {
@@ -214,7 +220,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -227,19 +233,19 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;
           });
       },
       deleteRow(row) {
-        this.$msg.createConfirm('对选中的预先盘点单执行删除操作？').then(() => {
+        createConfirm('对选中的预先盘点单执行删除操作？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -253,8 +259,8 @@
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的预先盘点单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的预先盘点单！');
           return;
         }
 

@@ -36,6 +36,8 @@
   import { defineComponent } from 'vue';
   import { isTelephone } from '@/utils/validate';
   import * as api from '@/api/sys/center';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -67,12 +69,12 @@
     },
     methods: {
       validTelephone(rule, value) {
-        if (this.$utils.isEmpty(value)) {
+        if (isEmpty(value)) {
           return Promise.resolve();
         }
 
         if (isTelephone(value)) {
-          if (!this.$utils.isEmpty(this.formData.confirmTelephone)) {
+          if (!isEmpty(this.formData.confirmTelephone)) {
             if (value !== this.formData.confirmTelephone) {
               return Promise.reject('两次联系电话输入不一致');
             }
@@ -84,12 +86,12 @@
         return Promise.resolve();
       },
       validConfirmTelephone(rule, value) {
-        if (this.$utils.isEmpty(value)) {
+        if (isEmpty(value)) {
           return Promise.resolve();
         }
 
         if (isTelephone(value)) {
-          if (!this.$utils.isEmpty(this.formData.newTelephone)) {
+          if (!isEmpty(this.formData.newTelephone)) {
             if (value !== this.formData.newTelephone) {
               return Promise.reject('两次联系电话输入不一致');
             }
@@ -126,7 +128,7 @@
             api
               .updateTelephone(this.formData)
               .then((res) => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.closeDialog();
               })

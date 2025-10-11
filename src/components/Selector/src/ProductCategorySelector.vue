@@ -12,10 +12,10 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="名称">
+            <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.available)" label="状态">
+            <j-form-item v-if="isEmpty(requestParams.available)" label="状态">
               <a-select v-model:value="searchParams.available" placeholder="全部" allow-clear>
                 <a-select-option
                   v-for="item in $enums.AVAILABLE.values()"
@@ -47,10 +47,24 @@
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/product/category';
+  import {
+    isEmpty,
+    toString,
+    searchTree,
+    toTreeArray,
+    isEqualWithStr,
+    toArrayTree,
+  } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ProductCategorySelector',
     components: { SearchOutlined },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       requestParams: {
         type: Object,
@@ -86,19 +100,19 @@
         return api.loadProductCategory(ids);
       },
       handleSearch(datas) {
-        const filterName = this.$utils.toString(this.searchParams.name).trim();
-        const isFilterName = !this.$utils.isEmpty(filterName);
-        const filterAvailable = this.$utils.toString(this.searchParams.available).trim();
-        const isFilterAvailable = !this.$utils.isEmpty(this.searchParams.available);
+        const filterName = toString(this.searchParams.name).trim();
+        const isFilterName = !isEmpty(filterName);
+        const filterAvailable = toString(this.searchParams.available).trim();
+        const isFilterAvailable = !isEmpty(this.searchParams.available);
         if (isFilterName || isFilterAvailable) {
           const options = { key: 'id', parentKey: 'parentId', children: 'children', strict: true };
-          let tableData = this.$utils.searchTree(
+          let tableData = searchTree(
             datas,
             (item) => {
               let filterResult = true;
 
               if (isFilterName) {
-                filterResult &= this.$utils.toString(item['name']).indexOf(filterName) > -1;
+                filterResult &= toString(item['name']).indexOf(filterName) > -1;
               }
 
               return filterResult;
@@ -107,11 +121,11 @@
           );
 
           if (isFilterAvailable) {
-            tableData = this.$utils.toTreeArray(tableData, options);
+            tableData = toTreeArray(tableData, options);
             tableData = tableData.filter((item) =>
-              this.$utils.isEqualWithStr(item['available'], filterAvailable),
+              isEqualWithStr(item['available'], filterAvailable),
             );
-            tableData = this.$utils.toArrayTree(tableData, options);
+            tableData = toArrayTree(tableData, options);
           }
 
           return tableData;

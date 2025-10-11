@@ -204,6 +204,14 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    buildSortPageVo,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'TakeStockSheet',
@@ -236,10 +244,8 @@
           takeStatus: undefined,
           status: undefined,
           updateBy: '',
-          updateTimeStart: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          updateTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          updateTimeStart: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          updateTimeEnd: formatDateTime(getDateTimeWithMaxTime(moment())),
           approveBy: '',
           approveTimeStart: '',
           approveTimeEnd: '',
@@ -317,7 +323,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -327,12 +333,12 @@
       },
       // 取消审核
       cancelApprove(id) {
-        this.$msg.createConfirm('确认对此库存盘点单进行取消审核操作？').then(() => {
+        createConfirm('确认对此库存盘点单进行取消审核操作？').then(() => {
           this.loading = true;
           api
             .cancelApprovePass(id)
             .then((res) => {
-              this.$msg.createSuccess('取消审核成功！');
+              createSuccess('取消审核成功！');
               this.search();
             })
             .finally(() => {
@@ -347,21 +353,21 @@
       },
       batchApprovePass() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的库存盘点单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的库存盘点单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           const record = records[i];
           if (this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
-            this.$msg.createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许继续执行审核！');
+            createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许继续执行审核！');
             return;
           }
 
           const takeStatus = this.$enums.TAKE_STOCK_PLAN_STATUS.getByCode(record.takeStatus);
           if (takeStatus !== this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED) {
-            this.$msg.createError(
+            createError(
               '第' +
                 (i + 1) +
                 '个库存盘点单的盘点状态为【' +
@@ -378,26 +384,26 @@
       },
       batchApproveRefuse() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的库存盘点单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的库存盘点单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           const record = records[i];
           if (this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
-            this.$msg.createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许继续执行审核！');
+            createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许继续执行审核！');
             return;
           }
 
           if (this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(record.status)) {
-            this.$msg.createError('第' + (i + 1) + '个库存盘点单已审核拒绝，不允许继续执行审核！');
+            createError('第' + (i + 1) + '个库存盘点单已审核拒绝，不允许继续执行审核！');
             return;
           }
 
           const takeStatus = this.$enums.TAKE_STOCK_PLAN_STATUS.getByCode(record.takeStatus);
           if (takeStatus !== this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED) {
-            this.$msg.createError(
+            createError(
               '第' +
                 (i + 1) +
                 '个库存盘点单的盘点状态为【' +
@@ -424,12 +430,12 @@
       },
       // 删除
       deleteRow(id) {
-        this.$msg.createConfirm('对选中的库存盘点单执行删除操作？').then(() => {
+        createConfirm('对选中的库存盘点单执行删除操作？').then(() => {
           this.loading = true;
           api
             .deleteById(id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -442,15 +448,15 @@
       },
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的库存盘点单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的库存盘点单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           const record = records[i];
           if (this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
-            this.$msg.createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许执行删除操作！');
+            createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许执行删除操作！');
             return;
           }
         }
@@ -464,7 +470,7 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;

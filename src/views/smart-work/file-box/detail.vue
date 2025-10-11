@@ -12,14 +12,14 @@
         <a-descriptions-item label="文件名" :span="4">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item v-if="!$utils.isEmpty(formData.recordId)" label="下载链接" :span="4">
+        <a-descriptions-item v-if="!isEmpty(formData.recordId)" label="下载链接" :span="4">
           <a @click="download">点此下载</a>
         </a-descriptions-item>
         <a-descriptions-item label="文件大小" :span="2">
-          {{ $utils.isEmpty(formData.fileSize) ? '-' : formData.fileSize }}
+          {{ isEmpty(formData.fileSize) ? '-' : formData.fileSize }}
         </a-descriptions-item>
         <a-descriptions-item label="上传类型" :span="2">
-          {{ $utils.isEmpty(formData.contentType) ? '-' : formData.contentType }}
+          {{ isEmpty(formData.contentType) ? '-' : formData.contentType }}
         </a-descriptions-item>
         <a-descriptions-item label="上传时间" :span="2">
           {{ formData.createTime }}
@@ -38,6 +38,7 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/smart-work/file-box';
   import * as securityDownloadApi from '@/api/security-download';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     // 使用组件
@@ -48,6 +49,12 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     data() {
       return {

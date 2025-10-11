@@ -19,19 +19,19 @@
           <template #overlay>
             <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
               <a-menu-item
-                v-if="$utils.isEqualWithStr(0, treeKey)"
+                v-if="isEqualWithStr(0, treeKey)"
                 key="1"
                 v-permission="['system:dic-category:add']"
                 >新增子项</a-menu-item
               >
               <a-menu-item
-                v-if="!$utils.isEqualWithStr(0, treeKey)"
+                v-if="!isEqualWithStr(0, treeKey)"
                 key="2"
                 v-permission="['system:dic-category:modify']"
                 >编辑</a-menu-item
               >
               <a-menu-item
-                v-if="!$utils.isEqualWithStr(0, treeKey)"
+                v-if="!isEqualWithStr(0, treeKey)"
                 key="3"
                 v-permission="['system:dic-category:delete']"
                 >删除</a-menu-item
@@ -50,6 +50,8 @@
   import AddCategory from './category/add.vue';
   import ModifyCategory from './category/modify.vue';
   import * as api from '@/api/system/dic-category';
+  import { isEqualWithStr } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -61,6 +63,12 @@
         type: Number,
         default: 100,
       },
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEqualWithStr,
+      };
     },
     data() {
       return {
@@ -87,9 +95,9 @@
           this.id = treeKey;
           this.$refs.updateCategoryDialog.openDialog();
         } else if (menuKey === '3') {
-          this.$msg.createConfirm('是否确认删除此分类？').then(() => {
+          createConfirm('是否确认删除此分类？').then(() => {
             api.deleteById(treeKey).then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.doSearch();
             });
           });

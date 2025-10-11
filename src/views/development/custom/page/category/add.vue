@@ -25,7 +25,7 @@
           <gen-custom-page-category-selector
             v-model:value="formData.parentId"
             :only-final="false"
-            :disabled="!$utils.isEmpty(parentId)"
+            :disabled="!isEmpty(parentId)"
           />
         </a-form-item>
         <div class="form-modal-footer">
@@ -44,9 +44,17 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/development/custom/page-category';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       parentId: {
         type: String,
@@ -101,7 +109,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

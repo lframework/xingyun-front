@@ -85,6 +85,7 @@
   import * as api from '@/api/system/mail-message';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import moment from 'moment/moment';
+  import { formatDateTime, getDateTimeWithMinTime, getDateTimeWithMaxTime } from '@/utils/utils';
 
   export default defineComponent({
     name: 'MailMessage',
@@ -106,10 +107,8 @@
         // 查询列表的查询条件
         searchFormData: {
           title: '',
-          createTimeStart: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createTimeStart: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createTimeEnd: formatDateTime(getDateTimeWithMaxTime(moment())),
           mail: '',
           sendStatus: undefined,
         },

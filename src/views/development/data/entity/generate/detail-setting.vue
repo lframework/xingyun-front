@@ -51,6 +51,8 @@
   import { defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, isInteger, isIntegerGtZero } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -113,21 +115,21 @@
     },
     methods: {
       validDate() {
-        if (!this.$utils.isEmpty(this.tableData)) {
+        if (!isEmpty(this.tableData)) {
           for (let i = 0; i < this.tableData.length; i++) {
             const obj = this.tableData[i];
-            if (!this.$utils.isInteger(obj.span)) {
-              this.$msg.createError('字段【' + obj.name + '】列宽必须是数字！');
+            if (!isInteger(obj.span)) {
+              createError('字段【' + obj.name + '】列宽必须是数字！');
               return false;
             }
 
-            if (!this.$utils.isIntegerGtZero(obj.span)) {
-              this.$msg.createError('字段【' + obj.name + '】列宽必须大于0！');
+            if (!isIntegerGtZero(obj.span)) {
+              createError('字段【' + obj.name + '】列宽必须大于0！');
               return false;
             }
 
             if (obj.span > 24) {
-              this.$msg.createError('字段【' + obj.name + '】列宽不能超过24！');
+              createError('字段【' + obj.name + '】列宽不能超过24！');
               return false;
             }
           }

@@ -29,16 +29,16 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="单据号">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="单据号">
               <a-input v-model:value="searchParams.code" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.scId)" label="仓库">
+            <j-form-item v-if="isEmpty(requestParams.scId)" label="仓库">
               <store-center-selector v-model:value="searchParams.scId" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.supplierId)" label="供应商">
+            <j-form-item v-if="isEmpty(requestParams.supplierId)" label="供应商">
               <supplier-selector v-model:value="searchParams.supplierId" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.createBy)" label="操作人">
+            <j-form-item v-if="isEmpty(requestParams.createBy)" label="操作人">
               <user-selector v-model:value="searchParams.createBy" />
             </j-form-item>
             <j-form-item label="操作日期" :content-nest="false">
@@ -56,7 +56,7 @@
                 />
               </div>
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.status)" label="状态">
+            <j-form-item v-if="isEmpty(requestParams.status)" label="状态">
               <a-select v-model:value="searchParams.status" placeholder="全部" allow-clear>
                 <a-select-option
                   v-for="item in $enums.RECEIVE_SHEET_STATUS.values()"
@@ -88,6 +88,13 @@
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/receive';
+  import moment from 'moment';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+  } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ReceiveSheetSelector',
@@ -100,6 +107,12 @@
         },
       },
     },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     data() {
       return {
         searchParams: {
@@ -107,10 +120,8 @@
           scId: '',
           supplierId: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createStartTime: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createEndTime: formatDateTime(getDateTimeWithMaxTime(moment())),
           status: undefined,
         },
       };

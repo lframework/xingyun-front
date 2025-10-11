@@ -36,6 +36,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/bpm/flow/flow-category';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -97,7 +98,7 @@
                 parentId: this.parentId,
               })
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

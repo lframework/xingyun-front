@@ -63,7 +63,7 @@
         </a-col>
         <a-col :span="8" :offset="1">
           <div class="generate-code-wrapper">
-            <a-card v-if="$utils.keys(formData).length > 3">
+            <a-card v-if="keys(formData).length > 3">
               <a-form
                 :label-col="{ span: 4 }"
                 :wrapper-col="{ span: 16 }"
@@ -149,6 +149,8 @@
   import clipboard from '@/utils/clipboard';
   import Draggable from 'vuedraggable';
   import * as constants from './constants';
+  import { keys, uuid, isEmpty, isIntegerGtZero } from '@/utils/utils';
+  import { createConfirm, createError, createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -163,6 +165,8 @@
       const { ruleList } = constants;
       return {
         ruleList,
+        // 工具函数 - 仅返回模板中需要使用的
+        keys,
       };
     },
     data() {
@@ -216,7 +220,7 @@
             const configArr = JSON.parse(configStr);
             this.list = configArr.map((item) => {
               return Object.assign({}, item, {
-                id: this.$utils.uuid(),
+                id: uuid(),
                 name: this.ruleList.filter((r) => {
                   return r.type === item.type;
                 })[0].name,
@@ -232,7 +236,7 @@
       },
       onClone(e) {
         let initConfig = {
-          id: this.$utils.uuid(),
+          id: uuid(),
         };
         if (e.type === '1') {
           initConfig.pattern = 'yyyyMMddHHmmss';
@@ -242,7 +246,7 @@
           initConfig.len = 1;
         }
         if (e.type === '3') {
-          initConfig.key = this.$utils.uuid();
+          initConfig.key = uuid();
           initConfig.len = 10;
           initConfig.step = 1;
           initConfig.expireType = 0;
@@ -281,7 +285,7 @@
             .preview({ configStr: JSON.stringify(this.getNodeRequestParams()) })
             .then((res) => {
               const msg = `示例编号：${res} 长度：${res.length}`;
-              this.$msg.createConfirm(msg, '预览', {
+              createConfirm(msg, '预览', {
                 icon: 'check-circle',
                 footer: null,
               });
@@ -292,85 +296,83 @@
         }
       },
       validNode() {
-        if (this.$utils.isEmpty(this.list)) {
-          this.$msg.createError('节点不能为空！');
+        if (isEmpty(this.list)) {
+          createError('节点不能为空！');
           return false;
         }
 
         for (let i = 0; i < this.list.length; i++) {
           const node = this.list[i];
           if (node.type === '2') {
-            if (this.$utils.isEmpty(node.pool)) {
-              this.$msg.createError('【' + node.name + '】' + '可选字符不能为空！');
+            if (isEmpty(node.pool)) {
+              createError('【' + node.name + '】' + '可选字符不能为空！');
               return false;
             }
 
-            if (this.$utils.isEmpty(node.len)) {
-              this.$msg.createError('【' + node.name + '】' + '随机个数不能为空！');
+            if (isEmpty(node.len)) {
+              createError('【' + node.name + '】' + '随机个数不能为空！');
               return false;
             }
 
-            if (!this.$utils.isIntegerGtZero(node.len)) {
-              this.$msg.createError('【' + node.name + '】' + '随机个数必须是数字类型并且大于0！');
+            if (!isIntegerGtZero(node.len)) {
+              createError('【' + node.name + '】' + '随机个数必须是数字类型并且大于0！');
               return false;
             }
           } else if (node.type === '3') {
-            if (this.$utils.isEmpty(node.key)) {
-              this.$msg.createError('【' + node.name + '】' + '唯一标识不能为空！');
+            if (isEmpty(node.key)) {
+              createError('【' + node.name + '】' + '唯一标识不能为空！');
               return false;
             }
 
-            if (this.$utils.isEmpty(node.len)) {
-              this.$msg.createError('【' + node.name + '】' + '最大长度不能为空！');
+            if (isEmpty(node.len)) {
+              createError('【' + node.name + '】' + '最大长度不能为空！');
               return false;
             }
 
-            if (!this.$utils.isIntegerGtZero(node.len)) {
-              this.$msg.createError('【' + node.name + '】' + '最大长度必须是数字类型并且大于0！');
+            if (!isIntegerGtZero(node.len)) {
+              createError('【' + node.name + '】' + '最大长度必须是数字类型并且大于0！');
               return false;
             }
 
-            if (this.$utils.isEmpty(node.step)) {
-              this.$msg.createError('【' + node.name + '】' + '步长不能为空！');
+            if (isEmpty(node.step)) {
+              createError('【' + node.name + '】' + '步长不能为空！');
               return false;
             }
 
-            if (!this.$utils.isIntegerGtZero(node.step)) {
-              this.$msg.createError('【' + node.name + '】' + '步长必须是数字类型并且大于0！');
+            if (!isIntegerGtZero(node.step)) {
+              createError('【' + node.name + '】' + '步长必须是数字类型并且大于0！');
               return false;
             }
 
-            if (this.$utils.isEmpty(node.expireType)) {
-              this.$msg.createError('【' + node.name + '】' + '滚动方式不能为空！');
+            if (isEmpty(node.expireType)) {
+              createError('【' + node.name + '】' + '滚动方式不能为空！');
               return false;
             }
 
             if (node.expireType === 1) {
-              if (this.$utils.isEmpty(node.expireSeconds)) {
-                this.$msg.createError('【' + node.name + '】' + '过期秒数不能为空！');
+              if (isEmpty(node.expireSeconds)) {
+                createError('【' + node.name + '】' + '过期秒数不能为空！');
                 return false;
               }
 
-              if (!this.$utils.isIntegerGtZero(node.expireSeconds)) {
-                this.$msg.createError(
-                  '【' + node.name + '】' + '过期秒数必须是数字类型并且大于0！',
-                );
+              if (!isIntegerGtZero(node.expireSeconds)) {
+                createError('【' + node.name + '】' + '过期秒数必须是数字类型并且大于0！');
                 return false;
               }
             }
           } else if (node.type === '4') {
-            if (this.$utils.isEmpty(node.len)) {
-              this.$msg.createError('【' + node.name + '】' + '随机个数不能为空！');
+            if (isEmpty(node.len)) {
+              createError('【' + node.name + '】' + '随机个数不能为空！');
               return false;
             }
 
-            if (!this.$utils.isIntegerGtZero(node.len)) {
-              this.$msg.createError('【' + node.name + '】' + '随机个数必须是数字类型并且大于0！');
+            if (!isIntegerGtZero(node.len)) {
+              createError('【' + node.name + '】' + '随机个数必须是数字类型并且大于0！');
               return false;
             }
           } else if (node.type === '6') {
-            if (this.$utils.isEmpty(node.val)) {
-              this.$msg.createError('【' + node.name + '】' + '字符不能为空！');
+            if (isEmpty(node.val)) {
+              createError('【' + node.name + '】' + '字符不能为空！');
               return false;
             }
           }
@@ -390,7 +392,7 @@
               configStr: JSON.stringify(this.getNodeRequestParams()),
             })
             .then(() => {
-              this.$msg.createSuccess('设置成功！');
+              createSuccess('设置成功！');
               this.$emit('confirm');
               this.closeDialog();
             })

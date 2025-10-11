@@ -88,6 +88,7 @@
   import Reset from './reset.vue';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/open-domain';
+  import { buildSortPageVo } from '@/utils/utils';
 
   export default defineComponent({
     name: 'OpenDomain',
@@ -157,7 +158,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },

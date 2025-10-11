@@ -143,6 +143,8 @@
     DeleteOutlined,
   } from '@ant-design/icons-vue';
   import StoreCenterSelector from '@/components/Selector/src/StoreCenterSelector.vue';
+  import { isEmpty, buildSortPageVo } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'SysGenerateCode',
@@ -160,6 +162,8 @@
         SettingOutlined,
         CloudUploadOutlined,
         DeleteOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -221,12 +225,12 @@
         this.$refs.grid.commitProxy('reload');
       },
       deleteRow(id) {
-        this.$msg.createConfirm('是否确定删除该库存预警？').then(() => {
+        createConfirm('是否确定删除该库存预警？').then(() => {
           this.loading = true;
           api
             .deleteById(id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -237,7 +241,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -270,8 +274,8 @@
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的库存预警信息！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的库存预警信息！');
           return;
         }
 

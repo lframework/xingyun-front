@@ -17,7 +17,7 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="预先盘点单">
-            <div v-if="!$utils.isEmpty(formData.preSheetId)">
+            <div v-if="!isEmpty(formData.preSheetId)">
               <a
                 v-permission="['stock:take:sheet:query']"
                 @click="(e) => $refs.viewPreTakeStockSheetDialog.openDialog()"
@@ -143,6 +143,8 @@
   import PreTakeStockSheetDetail from '@/views/sc/stock/take/pre/detail.vue';
   import * as api from '@/api/sc/stock/take/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, uuid } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ApproveStockTakeSheet',
@@ -152,6 +154,12 @@
       PreTakeStockSheetDetail,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -228,7 +236,7 @@
         api
           .approvePass(params)
           .then(() => {
-            this.$msg.createSuccess('审核通过！');
+            createSuccess('审核通过！');
             this.$emit('confirm');
 
             this.closeDialog();
@@ -248,7 +256,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -264,7 +272,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -288,7 +296,7 @@
         for (let i = 0; i < this.tableData.length; i++) {
           const data = this.tableData[i];
           if (data.productId === value.productId) {
-            this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
+            createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
             this.tableData[index] = Object.assign(this.tableData[index], this.emptyProduct());
             return;
           }
@@ -298,15 +306,15 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -319,9 +327,7 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (
-            this.$utils.isEmpty(this.tableData.filter((data) => item.productId === data.productId))
-          ) {
+          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
             filterProductList.push(item);
           }
         });

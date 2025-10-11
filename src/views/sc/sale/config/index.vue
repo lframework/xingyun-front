@@ -71,6 +71,7 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/sale/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'SaleConfig',
@@ -138,7 +139,7 @@
             api
               .update(this.formData)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
               })
               .finally(() => {
                 this.loading = false;

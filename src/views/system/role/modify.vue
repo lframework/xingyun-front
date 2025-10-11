@@ -56,6 +56,7 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/system/role';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -119,7 +120,7 @@
             api
               .update(this.formData)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

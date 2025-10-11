@@ -77,10 +77,9 @@
     >
       <!-- 采购含税金额 列自定义内容 -->
       <template #purchaseAmount_default="{ row }">
-        <span
-          v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.purchaseNum)"
-          >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.purchaseNum), 2) }}</span
-        >
+        <span v-if="isFloatGeZero(row.purchasePrice) && isFloatGeZero(row.purchaseNum)">{{
+          getNumber(mul(row.purchasePrice, row.purchaseNum), 2)
+        }}</span>
       </template>
     </vxe-grid>
 
@@ -115,6 +114,7 @@
   import { defineComponent } from 'vue';
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/purchase/order';
+  import { isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
 
   export default defineComponent({
     components: {
@@ -129,6 +129,14 @@
         type: Boolean,
         default: false,
       },
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isFloatGeZero,
+        getNumber,
+        mul,
+      };
     },
     data() {
       return {
@@ -242,21 +250,19 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.purchaseNum)
-            );
+            return isFloatGeZero(t.purchasePrice) && isFloatGeZero(t.purchaseNum);
           })
           .forEach((t) => {
             const num = parseFloat(t.purchaseNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
             // 先将每行的金额格式化成2位小数，然后再累加
-            const rowAmount = this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2);
-            totalAmount = this.$utils.add(totalAmount, rowAmount);
+            const rowAmount = getNumber(mul(num, t.purchasePrice), 2);
+            totalAmount = add(totalAmount, rowAmount);
           });
 
         this.formData.totalNum = totalNum;

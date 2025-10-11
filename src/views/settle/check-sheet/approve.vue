@@ -245,6 +245,8 @@
   import SettlePreSheetDetail from '@/views/settle/pre-sheet/detail.vue';
   import * as api from '@/api/settle/check';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isFloat, add } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ApproveSupplierSettleCheckSheet',
@@ -320,7 +322,7 @@
               !this.$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(res.status) &&
               !this.$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('单据已审核通过，无需重复审核！');
+              createError('单据已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -364,12 +366,12 @@
         let totalAmount = 0;
         let totalPayAmount = 0;
         this.tableData.forEach((item) => {
-          if (this.$utils.isFloat(item.totalAmount)) {
-            totalAmount = this.$utils.add(totalAmount, item.totalAmount);
+          if (isFloat(item.totalAmount)) {
+            totalAmount = add(totalAmount, item.totalAmount);
           }
 
-          if (this.$utils.isFloat(item.payAmount)) {
-            totalPayAmount = this.$utils.add(totalPayAmount, item.payAmount);
+          if (isFloat(item.payAmount)) {
+            totalPayAmount = add(totalPayAmount, item.payAmount);
           }
         });
 
@@ -378,7 +380,7 @@
       },
       // 审核通过
       approvePassOrder() {
-        this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
+        createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -386,7 +388,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -409,7 +411,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

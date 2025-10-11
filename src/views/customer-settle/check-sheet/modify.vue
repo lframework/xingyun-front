@@ -157,6 +157,8 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/customer-settle/check';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloat, add, isNumberPrecision, dateTimeToDate, uuid } from '@/utils/utils';
+  import { createError, createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ModifyCustomerSettleCheckSheet',
@@ -252,7 +254,7 @@
               !this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(res.status) &&
               !this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('单据已审核通过，无法修改！');
+              createError('单据已审核通过，无法修改！');
               this.closeDialog();
               return;
             }
@@ -298,7 +300,7 @@
       },
       emptyLine() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           bizCode: '',
           bizType: '',
           calcType: '',
@@ -316,14 +318,14 @@
         let totalAmount = 0;
         let totalPayAmount = 0;
         const records = this.$refs.grid.getCheckboxRecords();
-        if (!this.$utils.isEmpty(records)) {
+        if (!isEmpty(records)) {
           records.forEach((item) => {
-            if (this.$utils.isFloat(item.totalAmount)) {
-              totalAmount = this.$utils.add(totalAmount, item.totalAmount);
+            if (isFloat(item.totalAmount)) {
+              totalAmount = add(totalAmount, item.totalAmount);
             }
 
-            if (this.$utils.isFloat(item.payAmount)) {
-              totalPayAmount = this.$utils.add(totalPayAmount, item.payAmount);
+            if (isFloat(item.payAmount)) {
+              totalPayAmount = add(totalPayAmount, item.payAmount);
             }
           });
         }
@@ -333,60 +335,60 @@
       },
       // 校验数据
       validData() {
-        if (this.$utils.isEmpty(this.formData.customerId)) {
-          this.$msg.createError('客户不允许为空！');
+        if (isEmpty(this.formData.customerId)) {
+          createError('客户不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.startTime)) {
-          this.$msg.createError('审核起始日期不能为空！');
+        if (isEmpty(this.formData.startTime)) {
+          createError('审核起始日期不能为空！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.endTime)) {
-          this.$msg.createError('审核截止日期不能为空！');
+        if (isEmpty(this.formData.endTime)) {
+          createError('审核截止日期不能为空！');
           return;
         }
 
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择业务单据！');
+        if (isEmpty(records)) {
+          createError('请选择业务单据！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入项目！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入项目！');
           return false;
         }
 
         for (let i = 0; i < records.length; i++) {
           const item = records[i];
 
-          if (this.$utils.isEmpty(item.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行应收金额不能为空！');
+          if (isEmpty(item.payAmount)) {
+            createError('第' + (i + 1) + '行应收金额不能为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(item.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行应收金额必须是数字！');
+          if (!isFloat(item.payAmount)) {
+            createError('第' + (i + 1) + '行应收金额必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isNumberPrecision(item.payAmount, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行应收金额最多允许2位小数！');
+          if (!isNumberPrecision(item.payAmount, 2)) {
+            createError('第' + (i + 1) + '行应收金额最多允许2位小数！');
             return false;
           }
 
           if (this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.SUB.equalsCode(item.calcType)) {
             if (item.payAmount > 0) {
-              this.$msg.createError('第' + (i + 1) + '行应收金额不允许大于0！');
+              createError('第' + (i + 1) + '行应收金额不允许大于0！');
               return false;
             }
           }
 
           if (this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.ADD.equalsCode(item.calcType)) {
             if (item.payAmount < 0) {
-              this.$msg.createError('第' + (i + 1) + '行应收金额不允许小于0！');
+              createError('第' + (i + 1) + '行应收金额不允许小于0！');
               return false;
             }
           }
@@ -406,8 +408,8 @@
           id: this.id,
           customerId: this.formData.customerId,
           description: this.formData.description,
-          startDate: this.$utils.dateTimeToDate(this.formData.startTime),
-          endDate: this.$utils.dateTimeToDate(this.formData.endTime),
+          startDate: dateTimeToDate(this.formData.startTime),
+          endDate: dateTimeToDate(this.formData.endTime),
           items: records.map((t) => {
             return {
               id: t.bizId,
@@ -422,7 +424,7 @@
         api
           .update(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -432,18 +434,18 @@
           });
       },
       searchUnCheckItems() {
-        if (this.$utils.isEmpty(this.formData.customerId)) {
-          this.$msg.createError('请先选择客户！');
+        if (isEmpty(this.formData.customerId)) {
+          createError('请先选择客户！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.startTime)) {
-          this.$msg.createError('审核起始日期不能为空！');
+        if (isEmpty(this.formData.startTime)) {
+          createError('审核起始日期不能为空！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.endTime)) {
-          this.$msg.createError('审核截止日期不能为空！');
+        if (isEmpty(this.formData.endTime)) {
+          createError('审核截止日期不能为空！');
           return;
         }
 
@@ -456,11 +458,11 @@
           })
           .then((res) => {
             const tmpData = [];
-            if (!this.$utils.isEmpty(res)) {
+            if (!isEmpty(res)) {
               res.forEach((item) => {
                 item.bizCode = item.code;
                 item.bizId = item.id;
-                item.id = this.$utils.uuid();
+                item.id = uuid();
                 const obj = Object.assign(this.emptyLine(), item);
                 obj.payAmount = obj.totalAmount;
                 tmpData.push(obj);

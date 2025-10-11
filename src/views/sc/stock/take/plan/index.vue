@@ -135,6 +135,13 @@
   import moment from 'moment';
   import { SearchOutlined, PlusOutlined, DownloadOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/plan';
+  import {
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    buildSortPageVo,
+  } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'TakeStockPlan',
@@ -163,10 +170,8 @@
           scId: '',
           takeStatus: undefined,
           createBy: '',
-          createTimeStart: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createTimeStart: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createTimeEnd: formatDateTime(getDateTimeWithMaxTime(moment())),
           updateBy: '',
           updateTimeStart: '',
           updateTimeEnd: '',
@@ -234,7 +239,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -243,12 +248,12 @@
         return Object.assign({}, this.searchFormData);
       },
       cancelRow(row) {
-        this.$msg.createConfirm('对选中的盘点任务执行作废操作？').then(() => {
+        createConfirm('对选中的盘点任务执行作废操作？').then(() => {
           this.loading = true;
           api
             .cancel(row.id)
             .then((res) => {
-              this.$msg.createSuccess('作废成功！');
+              createSuccess('作废成功！');
               this.search();
             })
             .finally(() => {
@@ -257,27 +262,27 @@
         });
       },
       deleteRow(row) {
-        this.$msg
-          .createConfirm('对选中的预先盘点单执行删除操作？注：关联此盘点任务的库存盘点单均会删除。')
-          .then(() => {
-            this.loading = true;
-            api
-              .deleteById(row.id)
-              .then((res) => {
-                this.$msg.createSuccess('删除成功！');
-                this.search();
-              })
-              .finally(() => {
-                this.loading = false;
-              });
-          });
+        createConfirm(
+          '对选中的预先盘点单执行删除操作？注：关联此盘点任务的库存盘点单均会删除。',
+        ).then(() => {
+          this.loading = true;
+          api
+            .deleteById(row.id)
+            .then((res) => {
+              createSuccess('删除成功！');
+              this.search();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        });
       },
       exportList() {
         this.loading = true;
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;

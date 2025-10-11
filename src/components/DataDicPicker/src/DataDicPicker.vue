@@ -20,9 +20,16 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/dic-item';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'DataDicPicker',
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       code: {
         type: String,
@@ -49,7 +56,7 @@
     computed: {
       _value() {
         const filters = this.dicOptions.filter((item) => item.id === this.value);
-        if (this.$utils.isEmpty(filters)) {
+        if (isEmpty(filters)) {
           return undefined;
         }
 

@@ -66,6 +66,8 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/take/plan';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -88,7 +90,7 @@
                   return callback();
                 }
 
-                if (this.$utils.isEmpty(value)) {
+                if (isEmpty(value)) {
                   return callback(new Error('请选择商品分类'));
                 }
 
@@ -103,7 +105,7 @@
                   return callback();
                 }
 
-                if (this.$utils.isEmpty(value)) {
+                if (isEmpty(value)) {
                   return callback(new Error('请选择商品品牌'));
                 }
 
@@ -161,7 +163,7 @@
             api
               .create(params)
               .then(() => {
-                this.$msg.createSuccess('盘点任务生成！');
+                createSuccess('盘点任务生成！');
                 this.$emit('confirm');
                 this.visible = false;
               })

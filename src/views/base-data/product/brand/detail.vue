@@ -22,11 +22,7 @@
           <available-tag :available="formData.available" />
         </a-descriptions-item>
         <a-descriptions-item label="Logo" :span="4">
-          <img
-            v-if="!$utils.isEmpty(formData.logo)"
-            :src="formData.logo"
-            class="img-uploader-container"
-          />
+          <img v-if="!isEmpty(formData.logo)" :src="formData.logo" class="img-uploader-container" />
         </a-descriptions-item>
         <a-descriptions-item label="简介" :span="4">
           {{ formData.introduction }}
@@ -41,11 +37,17 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/product/brand';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       id: {
         type: String,

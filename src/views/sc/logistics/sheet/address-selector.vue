@@ -48,6 +48,7 @@
   import { h, defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/address';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     components: {},
@@ -163,7 +164,7 @@
       initFormData() {},
       submit() {
         const records = this.$refs.grid.getRadioRecord();
-        if (!this.$utils.isEmpty(records)) {
+        if (!isEmpty(records)) {
           this.$emit('confirm', records, this.addressType);
         }
         this.closeDialog();

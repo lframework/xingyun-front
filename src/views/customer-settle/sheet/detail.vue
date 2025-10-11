@@ -144,6 +144,7 @@
   import { defineComponent } from 'vue';
   import SettleCheckSheetDetail from '@/views/customer-settle/check-sheet/detail.vue';
   import * as api from '@/api/customer-settle/sheet';
+  import { add } from '@/utils/utils';
 
   export default defineComponent({
     components: {
@@ -274,9 +275,9 @@
         let totalDiscountAmount = 0;
 
         this.tableData.forEach((item) => {
-          totalAmount = this.$utils.add(totalAmount, item.payAmount);
-          totalDiscountAmount = this.$utils.add(totalDiscountAmount, item.totalDiscountAmount);
-          totalUnPayAmount = this.$utils.add(totalUnPayAmount, item.totalUnPayAmount);
+          totalAmount = add(totalAmount, item.payAmount);
+          totalDiscountAmount = add(totalDiscountAmount, item.totalDiscountAmount);
+          totalUnPayAmount = add(totalUnPayAmount, item.totalUnPayAmount);
         });
 
         this.formData.totalAmount = totalAmount;

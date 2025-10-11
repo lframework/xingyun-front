@@ -140,6 +140,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/development/qrtz';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -220,7 +221,7 @@
             api
               .update(params)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

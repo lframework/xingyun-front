@@ -58,9 +58,9 @@
               formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
             "
             >{{
-              $utils.sub(
-                $utils.isFloat(row.secondNum) ? row.secondNum : 0,
-                $utils.isFloat(row.firstNum) ? row.firstNum : 0,
+              sub(
+                isFloat(row.secondNum) ? row.secondNum : 0,
+                isFloat(row.firstNum) ? row.firstNum : 0,
               )
             }}</span
           >
@@ -69,10 +69,7 @@
         <!-- 抽盘复盘差异数量 列自定义内容 -->
         <template #randDiffNum_default="{ row }">
           <span v-if="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
-            $utils.sub(
-              $utils.isFloat(row.randNum) ? row.randNum : 0,
-              $utils.isFloat(row.secondNum) ? row.secondNum : 0,
-            )
+            sub(isFloat(row.randNum) ? row.randNum : 0, isFloat(row.secondNum) ? row.secondNum : 0)
           }}</span>
         </template>
       </vxe-grid>
@@ -82,6 +79,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/take/pre';
+  import { sub, isFloat, uuid } from '@/utils/utils';
 
   export default defineComponent({
     // 使用组件
@@ -91,6 +89,13 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        sub,
+        isFloat,
+      };
     },
     data() {
       return {
@@ -214,7 +219,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',

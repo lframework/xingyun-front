@@ -80,6 +80,8 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/logistics/company';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -141,14 +143,12 @@
           if (valid) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
-            params.cityId = this.$utils.isEmpty(params.city)
-              ? ''
-              : params.city[params.city.length - 1];
+            params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];
             delete params.city;
             api
               .update(params)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

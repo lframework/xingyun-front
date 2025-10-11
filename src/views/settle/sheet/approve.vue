@@ -104,16 +104,14 @@
 
         <!-- 已付款金额 列自定义内容 -->
         <template #totalPayedAmount_default="{ row }">
-          <span v-if="$utils.isFloat(row.payAmount)">{{
-            $utils.add(row.totalPayedAmount, row.payAmount)
-          }}</span>
+          <span v-if="isFloat(row.payAmount)">{{ add(row.totalPayedAmount, row.payAmount) }}</span>
           <span v-else>{{ row.totalPayedAmount }}</span>
         </template>
 
         <!-- 已优惠金额 列自定义内容 -->
         <template #totalDiscountAmount_default="{ row }">
-          <span v-if="$utils.isFloat(row.discountAmount)">{{
-            $utils.add(row.totalDiscountAmount, row.discountAmount)
+          <span v-if="isFloat(row.discountAmount)">{{
+            add(row.totalDiscountAmount, row.discountAmount)
           }}</span>
           <span v-else>{{ row.totalDiscountAmount }}</span>
         </template>
@@ -121,9 +119,9 @@
         <!-- 未付款金额 列自定义内容 -->
         <template #totalUnPayAmount_default="{ row }">
           <span>{{
-            $utils.sub(
-              $utils.sub(row.totalUnPayAmount, $utils.isFloat(row.payAmount) ? row.payAmount : 0),
-              $utils.isFloat(row.discountAmount) ? row.discountAmount : 0,
+            sub(
+              sub(row.totalUnPayAmount, isFloat(row.payAmount) ? row.payAmount : 0),
+              isFloat(row.discountAmount) ? row.discountAmount : 0,
             )
           }}</span>
         </template>
@@ -191,6 +189,8 @@
   import SettleCheckSheetDetail from '@/views/settle/check-sheet/detail.vue';
   import * as api from '@/api/settle/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isFloat, add, sub } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ApproveSupplierSettleSheet',
@@ -199,6 +199,14 @@
       SettleCheckSheetDetail,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isFloat,
+        add,
+        sub,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -286,7 +294,7 @@
               !this.$enums.SETTLE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
               !this.$enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('单据已审核通过，无需重复审核！');
+              createError('单据已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -336,27 +344,24 @@
         let totalDiscountAmount = 0;
 
         this.tableData.forEach((item) => {
-          if (this.$utils.isFloat(item.payAmount)) {
-            totalAmount = this.$utils.add(totalAmount, item.payAmount);
+          if (isFloat(item.payAmount)) {
+            totalAmount = add(totalAmount, item.payAmount);
           }
 
-          if (this.$utils.isFloat(item.discountAmount)) {
-            totalDiscountAmount = this.$utils.add(
+          if (isFloat(item.discountAmount)) {
+            totalDiscountAmount = add(
               totalDiscountAmount,
-              this.$utils.add(item.discountAmount, item.totalDiscountAmount),
+              add(item.discountAmount, item.totalDiscountAmount),
             );
           } else {
-            totalDiscountAmount = this.$utils.add(totalDiscountAmount, item.totalDiscountAmount);
+            totalDiscountAmount = add(totalDiscountAmount, item.totalDiscountAmount);
           }
 
-          totalUnPayAmount = this.$utils.add(
+          totalUnPayAmount = add(
             totalUnPayAmount,
-            this.$utils.sub(
-              this.$utils.sub(
-                item.totalUnPayAmount,
-                this.$utils.isFloat(item.payAmount) ? item.payAmount : 0,
-              ),
-              this.$utils.isFloat(item.discountAmount) ? item.discountAmount : 0,
+            sub(
+              sub(item.totalUnPayAmount, isFloat(item.payAmount) ? item.payAmount : 0),
+              isFloat(item.discountAmount) ? item.discountAmount : 0,
             ),
           );
         });
@@ -367,7 +372,7 @@
       },
       // 审核通过
       approvePassOrder() {
-        this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
+        createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -375,7 +380,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -398,7 +403,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

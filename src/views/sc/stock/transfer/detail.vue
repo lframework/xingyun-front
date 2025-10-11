@@ -83,7 +83,7 @@
       >
         <!-- 已收货数量 列自定义内容 -->
         <template #receiveNum_default="{ row }">
-          <span v-if="$utils.gt(row.receiveNum, 0)"
+          <span v-if="gt(row.receiveNum, 0)"
             ><a @click="detailReceive(row.id)">{{ row.receiveNum }}</a></span
           >
           <span v-else>{{ row.receiveNum }}</span>
@@ -119,10 +119,17 @@
   import { defineComponent } from 'vue';
   import DetailReceive from './detail-receive.vue';
   import * as api from '@/api/sc/stock/transfer-sc';
+  import { gt } from '@/utils/utils';
 
   export default defineComponent({
     components: {
       DetailReceive,
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        gt,
+      };
     },
     props: {
       id: {

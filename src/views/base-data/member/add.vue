@@ -117,6 +117,8 @@
   import { validCode, isEmail } from '@/utils/validate';
   import * as api from '@/api/base-data/member';
   import { generateCode } from '@/api/components';
+  import { isEmpty, formatDate, getCurrentDate } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -136,7 +138,7 @@
           email: [
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value) || isEmail(value)) {
+                if (isEmpty(value) || isEmail(value)) {
                   return Promise.resolve();
                 } else {
                   return Promise.reject('邮箱地址格式不正确');
@@ -180,7 +182,7 @@
           shopId: '',
           guiderId: '',
           birthday: '',
-          joinDay: this.$utils.formatDate(this.$utils.getCurrentDate()),
+          joinDay: formatDate(getCurrentDate()),
           description: '',
         };
       },
@@ -194,7 +196,7 @@
             api
               .create(params)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');

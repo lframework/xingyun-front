@@ -23,24 +23,24 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="销售单号" :span="6">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="销售单号" :span="6">
               <a-input v-model:value="searchParams.code" allow-clear />
             </j-form-item>
             <j-form-item label="仓库" :span="6">
               <store-center-selector
-                v-if="$utils.isEmpty(requestParams.scId)"
+                v-if="isEmpty(requestParams.scId)"
                 v-model:value="searchParams.scId"
               />
             </j-form-item>
             <j-form-item label="客户" :span="6">
               <customer-selector
-                v-if="$utils.isEmpty(requestParams.customerId)"
+                v-if="isEmpty(requestParams.customerId)"
                 v-model:value="searchParams.customerId"
               />
             </j-form-item>
             <j-form-item label="操作人" :span="6">
               <user-selector
-                v-if="$utils.isEmpty(requestParams.createBy)"
+                v-if="isEmpty(requestParams.createBy)"
                 v-model:value="searchParams.createBy"
               />
             </j-form-item>
@@ -82,6 +82,12 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/sale/order';
   import Moment from 'moment';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+  } from '@/utils/utils';
 
   export default defineComponent({
     name: 'SaleOrderSelectorWithOut',
@@ -98,6 +104,8 @@
       const moment = Moment;
       return {
         moment,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -107,12 +115,8 @@
           scId: '',
           customerId: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(this.moment().subtract(1, 'M')),
-          ),
-          createEndTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMaxTime(this.moment()),
-          ),
+          createStartTime: formatDateTime(getDateTimeWithMinTime(this.moment().subtract(1, 'M'))),
+          createEndTime: formatDateTime(getDateTimeWithMaxTime(this.moment())),
         },
       };
     },

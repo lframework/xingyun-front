@@ -128,6 +128,7 @@
   import * as api from '@/api/base-data/product/info';
   import { CloudUploadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons-vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { buildSortPageVo } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ProductInfo',
@@ -216,7 +217,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },

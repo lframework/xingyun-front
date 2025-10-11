@@ -36,6 +36,8 @@
   import { defineComponent } from 'vue';
   import { isEmail } from '@/utils/validate';
   import * as api from '@/api/sys/center';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -67,12 +69,12 @@
     },
     methods: {
       validEmail(rule, value) {
-        if (this.$utils.isEmpty(value)) {
+        if (isEmpty(value)) {
           return Promise.resolve();
         }
 
         if (isEmail(value)) {
-          if (!this.$utils.isEmpty(this.formData.confirmEmail)) {
+          if (!isEmpty(this.formData.confirmEmail)) {
             if (value !== this.formData.confirmEmail) {
               return Promise.reject('两次邮箱地址输入不一致');
             }
@@ -84,12 +86,12 @@
         return Promise.resolve();
       },
       validConfirmEmail(rule, value) {
-        if (this.$utils.isEmpty(value)) {
+        if (isEmpty(value)) {
           return Promise.resolve();
         }
 
         if (isEmail(value)) {
-          if (!this.$utils.isEmpty(this.formData.newEmail)) {
+          if (!isEmpty(this.formData.newEmail)) {
             if (value !== this.formData.newEmail) {
               return Promise.reject('两次邮箱地址输入不一致');
             }
@@ -126,7 +128,7 @@
             api
               .updateEmail(this.formData)
               .then((res) => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.closeDialog();
               })

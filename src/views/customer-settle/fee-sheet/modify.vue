@@ -7,7 +7,7 @@
             <customer-selector v-model:value="formData.customerId" />
           </j-form-item>
           <j-form-item label="收支方式" required>
-            <a-select v-model:value="formData.sheetType" :disabled="!$utils.isEmpty(tableData)">
+            <a-select v-model:value="formData.sheetType" :disabled="!isEmpty(tableData)">
               <a-select-option
                 v-for="item in $enums.CUSTOMER_SETTLE_FEE_SHEET_TYPE.values()"
                 :key="item.code"
@@ -155,6 +155,16 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/customer-settle/fee';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    isFloatGeZero,
+    add,
+    isFloat,
+    isFloatGtZero,
+    isNumberPrecision,
+    uuid,
+  } from '@/utils/utils';
+  import { createError, createConfirm, createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ModifyCustomerSettleFeeSheet',
@@ -165,6 +175,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -241,7 +253,7 @@
               !this.$enums.CUSTOMER_SETTLE_FEE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
               !this.$enums.CUSTOMER_SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('单据已审核通过，无法修改！');
+              createError('单据已审核通过，无法修改！');
               this.closeDialog();
               return;
             }
@@ -275,19 +287,19 @@
       },
       emptyLine() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           item: '',
           amount: '',
         };
       },
       // 新增项目
       addItem() {
-        if (this.$utils.isEmpty(this.formData.customerId)) {
-          this.$msg.createError('请先选择客户！');
+        if (isEmpty(this.formData.customerId)) {
+          createError('请先选择客户！');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.sheetType)) {
-          this.$msg.createError('请先选择收支方式！');
+        if (isEmpty(this.formData.sheetType)) {
+          createError('请先选择收支方式！');
           return;
         }
         this.tableData.push(this.emptyLine());
@@ -295,14 +307,14 @@
       // 删除项目
       delItem() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的数据！');
           return;
         }
-        this.$msg.createConfirm('是否确定删除选中的数据？').then(() => {
+        createConfirm('是否确定删除选中的数据？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -322,56 +334,56 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.amount) && !this.$utils.isEmpty(t.item);
+            return isFloatGeZero(t.amount) && !isEmpty(t.item);
           })
           .forEach((t) => {
-            totalAmount = this.$utils.add(totalAmount, t.amount);
+            totalAmount = add(totalAmount, t.amount);
           });
 
         this.formData.totalAmount = totalAmount;
       },
       // 校验数据
       validData() {
-        if (this.$utils.isEmpty(this.formData.customerId)) {
-          this.$msg.createError('客户不允许为空！');
+        if (isEmpty(this.formData.customerId)) {
+          createError('客户不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.sheetType)) {
-          this.$msg.createError('请选择收支方式！');
+        if (isEmpty(this.formData.sheetType)) {
+          createError('请选择收支方式！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入项目！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入项目！');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const item = this.tableData[i];
 
-          if (this.$utils.isEmpty(item.id)) {
-            this.$msg.createError('第' + (i + 1) + '行项目不允许为空！');
+          if (isEmpty(item.id)) {
+            createError('第' + (i + 1) + '行项目不允许为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(item.amount)) {
-            this.$msg.createError('第' + (i + 1) + '行金额不允许为空！');
+          if (isEmpty(item.amount)) {
+            createError('第' + (i + 1) + '行金额不允许为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(item.amount)) {
-            this.$msg.createError('第' + (i + 1) + '行金额必须是数字！');
+          if (!isFloat(item.amount)) {
+            createError('第' + (i + 1) + '行金额必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isFloatGtZero(item.amount)) {
-            this.$msg.createError('第' + (i + 1) + '行金额必须大于0！');
+          if (!isFloatGtZero(item.amount)) {
+            createError('第' + (i + 1) + '行金额必须大于0！');
             return false;
           }
 
-          if (!this.$utils.isNumberPrecision(item.amount, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行金额最多允许2位小数！');
+          if (!isNumberPrecision(item.amount, 2)) {
+            createError('第' + (i + 1) + '行金额最多允许2位小数！');
             return false;
           }
         }
@@ -401,7 +413,7 @@
         api
           .update(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();

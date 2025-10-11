@@ -23,7 +23,7 @@
         </a-form-item>
         <a-form-item label="Api密钥" name="apiSecret">
           <a-space>
-            <span v-if="!$utils.isEmpty(formData.apiSecret)">{{ formData.apiSecret }}</span>
+            <span v-if="!isEmpty(formData.apiSecret)">{{ formData.apiSecret }}</span>
             <a-button type="link" @click="generateApiSecret">点此生成</a-button>
           </a-space>
         </a-form-item>
@@ -45,9 +45,17 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/open-domain';
+  import { isEmpty, uuid } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     data() {
       return {
         // 是否可见
@@ -95,7 +103,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');
@@ -113,7 +121,7 @@
         this.initFormData();
       },
       generateApiSecret() {
-        this.formData.apiSecret = this.$utils.uuid().toUpperCase();
+        this.formData.apiSecret = uuid().toUpperCase();
       },
     },
   });

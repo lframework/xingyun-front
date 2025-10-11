@@ -122,6 +122,8 @@
   import ApproveRefuse from '@/components/ApproveRefuse';
   import * as api from '@/api/settle/pre';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloatGeZero, add } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ApproveSupplierSettlePreSheet',
@@ -187,7 +189,7 @@
               !this.$enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
               !this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('单据已审核通过，无需重复审核！');
+              createError('单据已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -227,17 +229,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.amount) && !this.$utils.isEmpty(t.item);
+            return isFloatGeZero(t.amount) && !isEmpty(t.item);
           })
           .forEach((t) => {
-            totalAmount = this.$utils.add(totalAmount, t.amount);
+            totalAmount = add(totalAmount, t.amount);
           });
 
         this.formData.totalAmount = totalAmount;
       },
       // 审核通过
       approvePassOrder() {
-        this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
+        createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -245,7 +247,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -268,7 +270,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

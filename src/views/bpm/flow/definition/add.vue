@@ -40,6 +40,7 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/bpm/flow/definition';
   import { validCode } from '@/utils/validate';
+  import { createConfirm, createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -92,12 +93,12 @@
       submit() {
         this.$refs.form.validate().then((valid) => {
           if (valid) {
-            this.$msg.createConfirm('新增后流程编号将不可修改，确定新增？').then(() => {
+            createConfirm('新增后流程编号将不可修改，确定新增？').then(() => {
               this.loading = true;
               api
                 .create(this.formData)
                 .then(() => {
-                  this.$msg.createSuccess('新增成功！');
+                  createSuccess('新增成功！');
                   this.$emit('confirm');
                   this.closeDialog();
                 })

@@ -36,6 +36,8 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/logistics/sheet';
+  import { isEmpty, isFloat, isFloatGeZero, isNumberPrecision } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -58,14 +60,14 @@
           totalAmount: [
             {
               validator: (rule, value, callback) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
                     return callback(new Error('物流费必须是数字类型'));
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return callback(new Error('物流费必须大于0'));
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return callback(new Error('物流费最多允许2位小数'));
                   }
                 }
@@ -109,7 +111,7 @@
             api
               .delivery(params)
               .then(() => {
-                this.$msg.createSuccess('发货成功！');
+                createSuccess('发货成功！');
                 this.$emit('confirm');
                 this.closeDialog();
               })

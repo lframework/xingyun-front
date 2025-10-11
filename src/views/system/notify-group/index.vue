@@ -89,6 +89,7 @@
   import Modify from './modify.vue';
   import * as api from '@/api/system/notify-group';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import { buildSortPageVo } from '@/utils/utils';
 
   export default defineComponent({
     name: 'SysNotifyGroup',
@@ -160,7 +161,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },

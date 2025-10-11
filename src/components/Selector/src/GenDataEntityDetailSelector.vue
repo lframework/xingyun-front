@@ -16,6 +16,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/development/data/entity-detail';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'GenDataEntityDetailSelector',
@@ -51,7 +52,7 @@
       },
       loadSelectOptions() {
         this.selectOptions = [];
-        if (!this.$utils.isEmpty(this.entityId)) {
+        if (!isEmpty(this.entityId)) {
           this.getList().then((res) => {
             this.selectOptions = res;
           });

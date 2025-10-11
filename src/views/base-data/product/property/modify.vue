@@ -106,6 +106,8 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/property';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -172,8 +174,8 @@
       // 提交表单事件
       submit() {
         if (this.$enums.PROPERTY_TYPE.APPOINT.equalsCode(this.formData.propertyType)) {
-          if (this.$utils.isEmpty(this.formData.categories)) {
-            this.$msg.createError('请选择商品分类');
+          if (isEmpty(this.formData.categories)) {
+            createError('请选择商品分类');
             return;
           }
         }
@@ -191,13 +193,13 @@
               available: this.formData.available,
               description: this.formData.description,
             };
-            if (!this.$utils.isEmpty(this.formData.categories)) {
+            if (!isEmpty(this.formData.categories)) {
               params.categoryIds = this.formData.categories;
             }
             api
               .update(params)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

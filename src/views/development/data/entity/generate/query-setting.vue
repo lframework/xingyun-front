@@ -71,6 +71,8 @@
   import { defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, isIntegerGtZero } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -148,30 +150,30 @@
     },
     methods: {
       validDate() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('查询功能必须配置');
+        if (isEmpty(this.tableData)) {
+          createError('查询功能必须配置');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
-          if (this.$utils.isEmpty(column.widthType)) {
-            this.$msg.createError('字段【' + column.name + '】宽度类型不能为空');
+          if (isEmpty(column.widthType)) {
+            createError('字段【' + column.name + '】宽度类型不能为空');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.width)) {
-            this.$msg.createError('字段【' + column.name + '】宽度不能为空');
+          if (isEmpty(column.width)) {
+            createError('字段【' + column.name + '】宽度不能为空');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.sortable)) {
-            this.$msg.createError('字段【' + column.name + '】是否页面排序不能为空');
+          if (isEmpty(column.sortable)) {
+            createError('字段【' + column.name + '】是否页面排序不能为空');
             return false;
           }
 
-          if (!this.$utils.isIntegerGtZero(column.width)) {
-            this.$msg.createError('字段【' + column.name + '】宽度必须是整数并且大于0');
+          if (!isIntegerGtZero(column.width)) {
+            createError('字段【' + column.name + '】宽度必须是整数并且大于0');
             return false;
           }
         }

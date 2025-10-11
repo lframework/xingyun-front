@@ -25,7 +25,7 @@
             >
           </a-select>
         </a-form-item>
-        <a-form-item v-if="!$utils.isEmpty(formData.entityType)" label="实体" name="entityId">
+        <a-form-item v-if="!isEmpty(formData.entityType)" label="实体" name="entityId">
           <store-center-selector
             v-if="$enums.ADDRESS_ENTITY_TYPE.SC.equalsCode(formData.entityType)"
             v-model:value="formData.entityId"
@@ -91,11 +91,18 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/address';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -153,14 +160,12 @@
           if (valid) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
-            params.cityId = this.$utils.isEmpty(params.city)
-              ? ''
-              : params.city[params.city.length - 1];
+            params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];
             delete params.city;
             api
               .update(params)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

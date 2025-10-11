@@ -641,6 +641,7 @@
 <script>
   import { defineComponent } from 'vue';
   import { ScheduleOutlined } from '@ant-design/icons-vue';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'CronModal',
@@ -1272,7 +1273,7 @@
         this.result.year = year;
       },
       onReserveParse() {
-        if (!this.$utils.isEmpty(this.reserveText)) {
+        if (!isEmpty(this.reserveText)) {
           this.secondsReverseExp(this.reserveText);
           this.minutesReverseExp(this.reserveText);
           this.hoursReverseExp(this.reserveText);

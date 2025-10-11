@@ -149,6 +149,8 @@
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/development/data/entity';
+  import { isEmpty, isEqualWithStr } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'DataEntity',
@@ -226,8 +228,8 @@
         this.$refs.grid.commitProxy('reload');
       },
       doSearch(categoryId) {
-        if (!this.$utils.isEmpty(categoryId)) {
-          if (this.$utils.isEqualWithStr(0, categoryId)) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
             this.searchFormData.categoryId = '';
           } else {
             this.searchFormData.categoryId = categoryId;
@@ -266,8 +268,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的数据实体！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的数据实体！');
           return;
         }
 
@@ -282,8 +284,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的数据实体！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的数据实体！');
           return;
         }
 
@@ -293,12 +295,12 @@
       },
       // 删除
       deleteRow(row) {
-        this.$msg.createConfirm('是否确定删除该数据实体？').then(() => {
+        createConfirm('是否确定删除该数据实体？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -313,8 +315,8 @@
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的数据实体！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的数据实体！');
           return;
         }
 
@@ -327,7 +329,7 @@
         api
           .download(id)
           .then(() => {
-            this.$msg.createSuccess('下载成功！');
+            createSuccess('下载成功！');
           })
           .finally(() => {
             this.loading = false;

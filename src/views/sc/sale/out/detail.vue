@@ -22,7 +22,7 @@
             {{ formData.paymentDate }}
           </j-form-item>
           <j-form-item label="销售订单" :span="16">
-            <div v-if="!$utils.isEmpty(formData.saleOrderCode)">
+            <div v-if="!isEmpty(formData.saleOrderCode)">
               <a
                 v-permission="['sale:order:query']"
                 @click="(e) => $refs.viewSaleOrderDetailDialog.openDialog()"
@@ -94,8 +94,8 @@
       >
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.outNum)">{{
-            $utils.getNumber($utils.mul(row.taxPrice, row.outNum), 2)
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.outNum)">{{
+            getNumber(mul(row.taxPrice, row.outNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -141,12 +141,22 @@
   import SaleOrderDetail from '@/views/sc/sale/order/detail.vue';
   import * as api from '@/api/sc/sale/out';
   import { printMix } from '@/mixins/print';
+  import { isEmpty, isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
 
   export default defineComponent({
     components: {
       SaleOrderDetail,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -190,7 +200,7 @@
             align: 'right',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           {
@@ -199,7 +209,7 @@
             align: 'right',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           { field: 'outNum', title: '出库数量', align: 'right', width: 100 },
@@ -297,20 +307,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.outNum);
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.outNum);
           })
           .forEach((t) => {
             const num = parseFloat(t.outNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(
-              totalAmount,
-              this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2),
-            );
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;

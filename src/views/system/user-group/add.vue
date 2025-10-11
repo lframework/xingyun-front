@@ -51,6 +51,7 @@
   import * as api from '@/api/system/user-group';
   import { generateCode } from '@/api/components';
   import { validCode } from '@/utils/validate';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -115,7 +116,7 @@
             api
               .create(params)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

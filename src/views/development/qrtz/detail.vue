@@ -41,9 +41,7 @@
           :span="4"
         >
           <span style="white-space: pre-wrap">
-            {{
-              $utils.isEmpty(formData.targetParamTypes) ? '' : formData.targetParamTypes.join('\n')
-            }}
+            {{ isEmpty(formData.targetParamTypes) ? '' : formData.targetParamTypes.join('\n') }}
           </span>
         </a-descriptions-item>
         <a-descriptions-item
@@ -52,7 +50,7 @@
           :span="4"
         >
           <span style="white-space: pre-wrap">
-            {{ $utils.isEmpty(formData.targetParams) ? '' : formData.targetParams.join('\n') }}
+            {{ isEmpty(formData.targetParams) ? '' : formData.targetParams.join('\n') }}
           </span>
         </a-descriptions-item>
         <a-descriptions-item
@@ -72,11 +70,17 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/development/qrtz';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       name: {
         type: String,

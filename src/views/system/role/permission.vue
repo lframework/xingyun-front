@@ -54,6 +54,8 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/role-menu';
+  import { isEmpty, toArrayTree, eachTree, union } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -109,14 +111,14 @@
       query() {
         this.loading = true;
         const params = {};
-        if (!this.$utils.isEmpty(this.ids) && this.ids.length === 1) {
+        if (!isEmpty(this.ids) && this.ids.length === 1) {
           params.roleId = this.ids[0];
         }
         api
           .menus(params.roleId)
           .then((res) => {
             // 将带层级的列表转成树结构
-            res = this.$utils.toArrayTree(res, {
+            res = toArrayTree(res, {
               key: 'id',
               parentKey: 'parentId',
               children: 'children',
@@ -126,7 +128,7 @@
             this.tableData = res;
 
             const selectedMenus = [];
-            this.$utils.eachTree(res, (item) => {
+            eachTree(res, (item) => {
               if (item.selected) {
                 selectedMenus.push(item.id);
               }
@@ -141,18 +143,18 @@
       // 提交数据
       submit() {
         this.loading = true;
-        const records = this.$utils.union(
+        const records = union(
           this.$refs.grid.getCheckboxRecords(true),
           this.$refs.grid.getCheckboxIndeterminateRecords(true),
         );
-        const menuIds = this.$utils.isEmpty(records) ? [] : records.map((item) => item.id);
+        const menuIds = isEmpty(records) ? [] : records.map((item) => item.id);
         api
           .setting({
             roleIds: this.ids,
             menuIds: menuIds,
           })
           .then(() => {
-            this.$msg.createSuccess('授权成功！');
+            createSuccess('授权成功！');
             this.$emit('confirm');
             this.visible = false;
           })

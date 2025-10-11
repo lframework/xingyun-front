@@ -96,6 +96,8 @@
   import Sortable from 'sortablejs';
   import CodeEditor from './code-editor.vue';
   import { PlusOutlined, DeleteOutlined, DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, uuid } from '@/utils/utils';
+  import { createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -165,22 +167,22 @@
     },
     methods: {
       validDate() {
-        if (this.$utils.isEmpty(this.tableData)) {
+        if (isEmpty(this.tableData)) {
           return true;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
-          if (this.$utils.isEmpty(column.name)) {
-            this.$msg.createError('第' + (i + 1) + '行显示名称不能为空');
+          if (isEmpty(column.name)) {
+            createError('第' + (i + 1) + '行显示名称不能为空');
             return false;
           }
-          if (this.$utils.isEmpty(column.viewType)) {
-            this.$msg.createError('第' + (i + 1) + '行显示类型不能为空');
+          if (isEmpty(column.viewType)) {
+            createError('第' + (i + 1) + '行显示类型不能为空');
             return false;
           }
-          if (this.$utils.isEmpty(column.btnType)) {
-            this.$msg.createError('第' + (i + 1) + '行按钮类型不能为空');
+          if (isEmpty(column.btnType)) {
+            createError('第' + (i + 1) + '行按钮类型不能为空');
             return false;
           }
 
@@ -189,8 +191,8 @@
             this.$enums.GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(column.btnType) ||
             this.$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(column.btnType)
           ) {
-            if (this.$utils.isEmpty(column.btnConfig)) {
-              this.$msg.createError('第' + (i + 1) + '行按钮配置不能为空');
+            if (isEmpty(column.btnConfig)) {
+              createError('第' + (i + 1) + '行按钮配置不能为空');
               return false;
             }
           }
@@ -199,7 +201,7 @@
       },
       emptyLine() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           customForm: '',
           orderNo: '',
           name: '',
@@ -237,12 +239,12 @@
       deleteRow() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的行！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的行！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选择的行？').then(() => {
+        createConfirm('是否确定删除选择的行？').then(() => {
           const ids = records.map((t) => t.id);
           this.tableData = this.tableData.filter((item) => !ids.includes(item.id));
         });

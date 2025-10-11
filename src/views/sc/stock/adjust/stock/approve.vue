@@ -124,6 +124,8 @@
   import ApproveRefuse from '@/components/ApproveRefuse';
   import * as api from '@/api/sc/stock/adjust/stock';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloatGeZero, add } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ApproveStockAdjustSheet',
@@ -197,11 +199,11 @@
         let productNum = 0;
         let diffStockNum = 0;
         this.tableData.forEach((item) => {
-          if (!this.$utils.isEmpty(item.productId)) {
+          if (!isEmpty(item.productId)) {
             productNum += 1;
 
-            if (this.$utils.isFloatGeZero(item.stockNum)) {
-              diffStockNum = this.$utils.add(item.stockNum, diffStockNum);
+            if (isFloatGeZero(item.stockNum)) {
+              diffStockNum = add(item.stockNum, diffStockNum);
             }
           }
         });
@@ -236,7 +238,7 @@
       },
       // 审核通过
       approvePass() {
-        this.$msg.createConfirm('对库存调整单执行审核通过操作？').then(() => {
+        createConfirm('对库存调整单执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -244,7 +246,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -267,7 +269,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

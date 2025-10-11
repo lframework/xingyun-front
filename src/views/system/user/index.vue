@@ -155,6 +155,7 @@
   import DataPermission from '@/components/DataPermission/index.vue';
   import BatchDataPermission from '@/components/DataPermission/batch.vue';
   import * as api from '@/api/system/user';
+  import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
   import {
     SearchOutlined,
     PlusOutlined,
@@ -164,6 +165,7 @@
     CheckOutlined,
     StopOutlined,
   } from '@ant-design/icons-vue';
+  import { isEmpty, buildSortPageVo } from '@/utils/utils';
 
   export default defineComponent({
     name: 'User',
@@ -185,6 +187,8 @@
         SettingOutlined,
         CheckOutlined,
         StopOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -265,7 +269,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -331,8 +335,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的用户！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的用户！');
           return;
         }
 
@@ -347,8 +351,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的用户！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的用户！');
           return;
         }
 
@@ -365,8 +369,8 @@
       batchSetting() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要授权的用户！');
+        if (isEmpty(records)) {
+          createError('请选择要授权的用户！');
           return;
         }
 
@@ -374,12 +378,12 @@
         this.$refs.permissionDialog.openDialog();
       },
       unlock(row) {
-        this.$msg.createConfirm('是否确定解锁该用户？').then(() => {
+        createConfirm('是否确定解锁该用户？').then(() => {
           this.loading = true;
           api
             .unlock(row.id)
             .then(() => {
-              this.$msg.createSuccess('解锁成功！');
+              createSuccess('解锁成功！');
               this.search();
             })
             .finally(() => {
@@ -390,8 +394,8 @@
       batchDataPermmission() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要设置数据权限的用户！');
+        if (isEmpty(records)) {
+          createError('请选择要设置数据权限的用户！');
           return;
         }
 

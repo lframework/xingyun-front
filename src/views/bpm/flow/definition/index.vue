@@ -118,6 +118,8 @@
   import CategoryTree from './category-tree.vue';
   import { SearchOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/bpm/flow/definition';
+  import { isEmpty, isEqualWithStr } from '@/utils/utils';
+  import { createConfirm, createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'DesignFlowDefinition',
@@ -208,8 +210,8 @@
         this.$refs.grid.commitProxy('reload');
       },
       doSearch(categoryId) {
-        if (!this.$utils.isEmpty(categoryId)) {
-          if (this.$utils.isEqualWithStr(0, categoryId)) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
             this.searchFormData.categoryId = '';
           } else {
             this.searchFormData.categoryId = categoryId;
@@ -236,12 +238,12 @@
       },
       // 删除
       deleteRow(row) {
-        this.$msg.createConfirm('是否确定删除该流程？').then(() => {
+        createConfirm('是否确定删除该流程？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -290,14 +292,14 @@
               return this.$enums.FLOW_DEFINITION_IS_PUBLISH.N.equalsCode(row.isPublish);
             },
             onClick: () => {
-              this.$msg.createConfirm('是否确定发布该流程？').then(() => {
+              createConfirm('是否确定发布该流程？').then(() => {
                 api
                   .setPublishStatus({
                     id: row.id,
                     isPublish: this.$enums.FLOW_DEFINITION_IS_PUBLISH.Y.code,
                   })
                   .then(() => {
-                    this.$msg.createSuccess('发布成功！');
+                    createSuccess('发布成功！');
 
                     this.search();
                   });
@@ -310,14 +312,14 @@
               return this.$enums.FLOW_DEFINITION_IS_PUBLISH.Y.equalsCode(row.isPublish);
             },
             onClick: () => {
-              this.$msg.createConfirm('是否确定取消发布该流程？').then(() => {
+              createConfirm('是否确定取消发布该流程？').then(() => {
                 api
                   .setPublishStatus({
                     id: row.id,
                     isPublish: this.$enums.FLOW_DEFINITION_IS_PUBLISH.N.code,
                   })
                   .then(() => {
-                    this.$msg.createSuccess('取消发布成功！');
+                    createSuccess('取消发布成功！');
 
                     this.search();
                   });
@@ -332,14 +334,14 @@
               );
             },
             onClick: () => {
-              this.$msg.createConfirm('是否确定激活该流程？').then(() => {
+              createConfirm('是否确定激活该流程？').then(() => {
                 api
                   .setActivityStatus({
                     id: row.id,
                     activityStatus: this.$enums.FLOW_DEFINITION_ACTIVITY_STATUS.ACTIVATE.code,
                   })
                   .then(() => {
-                    this.$msg.createSuccess('激活成功！');
+                    createSuccess('激活成功！');
 
                     this.search();
                   });
@@ -354,14 +356,14 @@
               );
             },
             onClick: () => {
-              this.$msg.createConfirm('是否确定挂起该流程？').then(() => {
+              createConfirm('是否确定挂起该流程？').then(() => {
                 api
                   .setActivityStatus({
                     id: row.id,
                     activityStatus: this.$enums.FLOW_DEFINITION_ACTIVITY_STATUS.DEACTIVATE.code,
                   })
                   .then(() => {
-                    this.$msg.createSuccess('挂起成功！');
+                    createSuccess('挂起成功！');
 
                     this.search();
                   });

@@ -81,8 +81,8 @@
       >
         <!-- 含税金额 列自定义内容 -->
         <template #orderAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.orderNum)">{{
-            $utils.getNumber($utils.mul(row.taxPrice, row.orderNum), 2)
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.orderNum)">{{
+            getNumber(mul(row.taxPrice, row.orderNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -130,12 +130,21 @@
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/sale/order';
   import { printMix } from '@/mixins/print';
+  import { isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
 
   export default defineComponent({
     components: {
       PayType,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isFloatGeZero,
+        getNumber,
+        mul,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -263,20 +272,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.orderNum);
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.orderNum);
           })
           .forEach((t) => {
             const num = parseFloat(t.orderNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(num, giftNum);
+              giftNum = add(num, giftNum);
             } else {
-              totalNum = this.$utils.add(num, totalNum);
+              totalNum = add(num, totalNum);
             }
 
-            totalAmount = this.$utils.add(
-              totalAmount,
-              this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2),
-            );
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;

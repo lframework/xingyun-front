@@ -102,6 +102,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/settle/fee';
+  import { isFloatGeZero, isEmpty, add } from '@/utils/utils';
 
   export default defineComponent({
     components: {},
@@ -213,10 +214,10 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.amount) && !this.$utils.isEmpty(t.item);
+            return isFloatGeZero(t.amount) && !isEmpty(t.item);
           })
           .forEach((t) => {
-            totalAmount = this.$utils.add(totalAmount, t.amount);
+            totalAmount = add(totalAmount, t.amount);
           });
 
         this.formData.totalAmount = totalAmount;

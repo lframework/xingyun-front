@@ -75,8 +75,8 @@
       >
         <!-- 含税金额 列自定义内容 -->
         <template #orderAmount_default="{ row }">
-          <span v-if="$utils.isFloatGeZero(row.taxPrice) && $utils.isFloatGeZero(row.orderNum)">{{
-            $utils.getNumber($utils.mul(row.taxPrice, row.orderNum), 2)
+          <span v-if="isFloatGeZero(row.taxPrice) && isFloatGeZero(row.orderNum)">{{
+            getNumber(mul(row.taxPrice, row.orderNum), 2)
           }}</span>
         </template>
       </vxe-grid>
@@ -145,6 +145,8 @@
   import PayType from '@/views/sc/pay-type/index.vue';
   import * as api from '@/api/sc/sale/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ApproveSaleOrder',
@@ -153,6 +155,14 @@
       PayType,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isFloatGeZero,
+        getNumber,
+        mul,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -236,7 +246,7 @@
               !this.$enums.SALE_ORDER_STATUS.CREATED.equalsCode(res.status) &&
               !this.$enums.SALE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('订单已审核通过，无需重复审核！');
+              createError('订单已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -272,20 +282,17 @@
 
         this.tableData
           .filter((t) => {
-            return this.$utils.isFloatGeZero(t.taxPrice) && this.$utils.isFloatGeZero(t.orderNum);
+            return isFloatGeZero(t.taxPrice) && isFloatGeZero(t.orderNum);
           })
           .forEach((t) => {
             const num = parseFloat(t.orderNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(num, giftNum);
+              giftNum = add(num, giftNum);
             } else {
-              totalNum = this.$utils.add(num, totalNum);
+              totalNum = add(num, totalNum);
             }
 
-            totalAmount = this.$utils.add(
-              totalAmount,
-              this.$utils.getNumber(this.$utils.mul(num, t.taxPrice), 2),
-            );
+            totalAmount = add(totalAmount, getNumber(mul(num, t.taxPrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -294,7 +301,7 @@
       },
       // 审核通过
       approvePassOrder() {
-        this.$msg.createConfirm('对销售单据执行审核通过操作？').then(() => {
+        createConfirm('对销售单据执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -302,7 +309,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -325,7 +332,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

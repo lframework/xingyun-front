@@ -16,7 +16,7 @@
             {{ formData.paymentDate }}
           </j-form-item>
           <j-form-item label="采购收货单" :span="16">
-            <div v-if="!$utils.isEmpty(formData.receiveSheetCode)">
+            <div v-if="!isEmpty(formData.receiveSheetCode)">
               <a
                 v-permission="['purchase:receive:query']"
                 @click="(e) => $refs.viewReceiveSheetDetailDialog.openDialog()"
@@ -96,10 +96,9 @@
 
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span
-            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.returnNum)"
-            >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.returnNum), 2) }}</span
-          >
+          <span v-if="isFloatGeZero(row.purchasePrice) && isFloatGeZero(row.returnNum)">{{
+            getNumber(mul(row.purchasePrice, row.returnNum), 2)
+          }}</span>
         </template>
       </vxe-grid>
 
@@ -167,6 +166,8 @@
   import ReceiveSheetDetail from '@/views/sc/purchase/receive/detail.vue';
   import * as api from '@/api/sc/purchase/return';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloatGeZero, isFloatGtZero, getNumber, mul, add } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ApprovePurchaseReturn',
@@ -175,6 +176,15 @@
       ReceiveSheetDetail,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -216,7 +226,7 @@
             align: 'right',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           {
@@ -225,7 +235,7 @@
             align: 'right',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           { field: 'returnNum', title: '退货数量', align: 'right', width: 100 },
@@ -285,7 +295,7 @@
               !this.$enums.PURCHASE_RETURN_STATUS.CREATED.equalsCode(res.status) &&
               !this.$enums.PURCHASE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('采购退货单已审核通过，无需重复审核！');
+              createError('采购退货单已审核通过，无需重复审核！');
               this.closeDialog();
               return;
             }
@@ -323,22 +333,17 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.returnNum)
-            );
+            return isFloatGeZero(t.purchasePrice) && isFloatGeZero(t.returnNum);
           })
           .forEach((t) => {
             const num = parseFloat(t.returnNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(
-              totalAmount,
-              this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2),
-            );
+            totalAmount = add(totalAmount, getNumber(mul(num, t.purchasePrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -349,13 +354,13 @@
       approvePassOrder() {
         const checkStockNumArr = [];
         this.tableData
-          .filter((item) => this.$utils.isFloatGtZero(item.returnNum))
+          .filter((item) => isFloatGtZero(item.returnNum))
           .forEach((item) => {
             if (checkStockNumArr.map((v) => item.productId).includes(item.productId)) {
               checkStockNumArr
                 .filter((v) => v.productId === item.productId)
                 .forEach((v) => {
-                  v.returnNum = this.$utils.add(v.returnNum, item.returnNum);
+                  v.returnNum = add(v.returnNum, item.returnNum);
                 });
             } else {
               checkStockNumArr.push({
@@ -371,8 +376,8 @@
         const unValidStockNumArr = checkStockNumArr.filter(
           (item) => item.stockNum < item.returnNum,
         );
-        if (!this.$utils.isEmpty(unValidStockNumArr)) {
-          this.$msg.createError(
+        if (!isEmpty(unValidStockNumArr)) {
+          createError(
             '商品（' +
               unValidStockNumArr[0].productCode +
               '）' +
@@ -386,7 +391,7 @@
           return false;
         }
 
-        this.$msg.createConfirm('对采购退货单执行审核通过操作？').then(() => {
+        createConfirm('对采购退货单执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -394,7 +399,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -417,7 +422,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -431,12 +436,12 @@
         const checkArr = this.tableData
           .filter((item) => item.productId === row.productId)
           .map((item) => item.returnNum);
-        if (this.$utils.isEmpty(checkArr)) {
+        if (isEmpty(checkArr)) {
           checkArr.push(0);
         }
         const totalReturnNum = checkArr.reduce((total, item) => {
-          const returnNum = this.$utils.isFloatGtZero(item) ? item : 0;
-          return this.$utils.add(total, returnNum);
+          const returnNum = isFloatGtZero(item) ? item : 0;
+          return add(total, returnNum);
         }, 0);
 
         return totalReturnNum <= row.stockNum;

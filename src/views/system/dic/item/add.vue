@@ -40,6 +40,8 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/system/dic-item';
+  import { isInteger } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -94,15 +96,15 @@
       submit() {
         this.$refs.form.validate().then((valid) => {
           if (valid) {
-            if (!this.$utils.isInteger(this.formData.orderNo)) {
-              this.$msg.createError('排序必须是数字');
+            if (!isInteger(this.formData.orderNo)) {
+              createError('排序必须是数字');
               return;
             }
             this.loading = true;
             api
               .create({ dicId: this.dicId, ...this.formData })
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');

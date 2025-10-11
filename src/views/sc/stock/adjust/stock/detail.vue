@@ -105,6 +105,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/adjust/stock';
+  import { isEmpty, isFloatGeZero, add } from '@/utils/utils';
 
   export default defineComponent({
     components: {},
@@ -187,11 +188,11 @@
         let productNum = 0;
         let diffStockNum = 0;
         this.tableData.forEach((item) => {
-          if (!this.$utils.isEmpty(item.productId)) {
+          if (!isEmpty(item.productId)) {
             productNum += 1;
 
-            if (this.$utils.isFloatGeZero(item.stockNum)) {
-              diffStockNum = this.$utils.add(item.stockNum, diffStockNum);
+            if (isFloatGeZero(item.stockNum)) {
+              diffStockNum = add(item.stockNum, diffStockNum);
             }
           }
         });

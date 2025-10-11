@@ -8,7 +8,7 @@
         :model="formData"
         :rules="rules"
       >
-        <a-row v-if="$utils.isEmpty(productType)">
+        <a-row v-if="isEmpty(productType)">
           <a-col :md="8" :sm="24">
             <a-form-item label="商品类型" required>
               <a-select v-model:value="productType">
@@ -344,6 +344,21 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { generateCode } from '@/api/components';
+  import {
+    isEmpty,
+    isFloat,
+    isFloatGeZero,
+    isNumberPrecision,
+    isInteger,
+    isIntegerGtZero,
+    isFloatGtZero,
+    add,
+    mul,
+    eq,
+    isArray,
+    uuid,
+  } from '@/utils/utils';
+  import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'AddProduct',
@@ -354,6 +369,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -379,14 +396,14 @@
           weight: [
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
                     return Promise.reject('重量（kg）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('重量（kg）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return Promise.reject('重量（kg）最多允许2位小数');
                   }
                 }
@@ -398,14 +415,14 @@
           volume: [
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
                     return Promise.reject('体积（cm³）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('体积（cm³）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return Promise.reject('体积（cm³）最多允许2位小数');
                   }
                 }
@@ -418,14 +435,14 @@
             { required: true, message: '请输入进项税率（%）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
                     return Promise.reject('进项税率（%）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('进项税率（%）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return Promise.reject('进项税率（%）最多允许2位小数');
                   }
                 }
@@ -438,14 +455,14 @@
             { required: true, message: '请输入销项税率（%）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
                     return Promise.reject('销项税率（%）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('销项税率（%）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 2)) {
+                  if (!isNumberPrecision(value, 2)) {
                     return Promise.reject('销项税率（%）最多允许2位小数');
                   }
                 }
@@ -458,14 +475,14 @@
             { required: true, message: '请输入采购价（元）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
                     return Promise.reject('采购价（元）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('采购价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 6)) {
+                  if (!isNumberPrecision(value, 6)) {
                     return Promise.reject('采购价（元）最多允许6位小数');
                   }
                 }
@@ -478,14 +495,14 @@
             { required: true, message: '请输入销售价（元）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
                     return Promise.reject('销售价（元）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('销售价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 6)) {
+                  if (!isNumberPrecision(value, 6)) {
                     return Promise.reject('销售价（元）最多允许6位小数');
                   }
                 }
@@ -498,14 +515,14 @@
             { required: true, message: '请输入零售价（元）' },
             {
               validator: (rule, value) => {
-                if (!this.$utils.isEmpty(value)) {
-                  if (!this.$utils.isFloat(value)) {
+                if (!isEmpty(value)) {
+                  if (!isFloat(value)) {
                     return Promise.reject('零售价（元）必须是数字');
                   }
-                  if (!this.$utils.isFloatGeZero(value)) {
+                  if (!isFloatGeZero(value)) {
                     return Promise.reject('零售价（元）不允许小于0');
                   }
-                  if (!this.$utils.isNumberPrecision(value, 6)) {
+                  if (!isNumberPrecision(value, 6)) {
                     return Promise.reject('零售价（元）最多允许6位小数');
                   }
                 }
@@ -549,8 +566,8 @@
         }
         if (this.$enums.PRODUCT_TYPE.BUNDLE.equalsCode(this.productType)) {
           // 如果是组合商品
-          if (this.$utils.isEmpty(this.productBundles)) {
-            this.$msg.createError('组合商品必须包含单品数据！');
+          if (isEmpty(this.productBundles)) {
+            createError('组合商品必须包含单品数据！');
             return;
           }
 
@@ -559,92 +576,86 @@
           let retailPrice = 0;
           for (let i = 0; i < this.productBundles.length; i++) {
             const bundleProduct = this.productBundles[i];
-            if (this.$utils.isEmpty(bundleProduct.productId)) {
-              this.$msg.createError('第' + (i + 1) + '行单品不能为空！');
+            if (isEmpty(bundleProduct.productId)) {
+              createError('第' + (i + 1) + '行单品不能为空！');
               return;
             }
 
-            if (this.$utils.isEmpty(bundleProduct.bundleNum)) {
-              this.$msg.createError('第' + (i + 1) + '行单品包含数量不能为空！');
+            if (isEmpty(bundleProduct.bundleNum)) {
+              createError('第' + (i + 1) + '行单品包含数量不能为空！');
               return;
             }
-            if (!this.$utils.isInteger(bundleProduct.bundleNum)) {
-              this.$msg.createError('第' + (i + 1) + '行单品包含数量必须为整数！');
+            if (!isInteger(bundleProduct.bundleNum)) {
+              createError('第' + (i + 1) + '行单品包含数量必须为整数！');
               return;
             }
-            if (!this.$utils.isIntegerGtZero(bundleProduct.bundleNum)) {
-              this.$msg.createError('第' + (i + 1) + '行单品包含数量必须大于0！');
-              return;
-            }
-
-            if (this.$utils.isEmpty(bundleProduct.purchasePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品采购价（元）不能为空！');
-              return;
-            }
-            if (!this.$utils.isFloat(bundleProduct.purchasePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品采购价（元）必须是数字！');
-              return;
-            }
-            if (!this.$utils.isFloatGtZero(bundleProduct.purchasePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品采购价（元）必须大于0！');
-              return;
-            }
-            if (!this.$utils.isNumberPrecision(bundleProduct.purchasePrice, 6)) {
-              this.$msg.createError('第' + (i + 1) + '行单品采购价（元）最多允许6位小数！');
+            if (!isIntegerGtZero(bundleProduct.bundleNum)) {
+              createError('第' + (i + 1) + '行单品包含数量必须大于0！');
               return;
             }
 
-            if (this.$utils.isEmpty(bundleProduct.salePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）不能为空！');
+            if (isEmpty(bundleProduct.purchasePrice)) {
+              createError('第' + (i + 1) + '行单品采购价（元）不能为空！');
               return;
             }
-            if (!this.$utils.isFloat(bundleProduct.salePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）必须是数字！');
+            if (!isFloat(bundleProduct.purchasePrice)) {
+              createError('第' + (i + 1) + '行单品采购价（元）必须是数字！');
               return;
             }
-            if (!this.$utils.isFloatGtZero(bundleProduct.salePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）必须大于0！');
+            if (!isFloatGtZero(bundleProduct.purchasePrice)) {
+              createError('第' + (i + 1) + '行单品采购价（元）必须大于0！');
               return;
             }
-            if (!this.$utils.isNumberPrecision(bundleProduct.salePrice, 6)) {
-              this.$msg.createError('第' + (i + 1) + '行单品销售价（元）最多允许6位小数！');
-              return;
-            }
-
-            if (this.$utils.isEmpty(bundleProduct.retailPrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）不能为空！');
-              return;
-            }
-            if (!this.$utils.isFloat(bundleProduct.retailPrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）必须是数字！');
-              return;
-            }
-            if (!this.$utils.isFloatGtZero(bundleProduct.retailPrice)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）必须大于0！');
-              return;
-            }
-            if (!this.$utils.isNumberPrecision(bundleProduct.retailPrice, 6)) {
-              this.$msg.createError('第' + (i + 1) + '行单品零售价（元）最多允许6位小数！');
+            if (!isNumberPrecision(bundleProduct.purchasePrice, 6)) {
+              createError('第' + (i + 1) + '行单品采购价（元）最多允许6位小数！');
               return;
             }
 
-            purchasePrice = this.$utils.add(
+            if (isEmpty(bundleProduct.salePrice)) {
+              createError('第' + (i + 1) + '行单品销售价（元）不能为空！');
+              return;
+            }
+            if (!isFloat(bundleProduct.salePrice)) {
+              createError('第' + (i + 1) + '行单品销售价（元）必须是数字！');
+              return;
+            }
+            if (!isFloatGtZero(bundleProduct.salePrice)) {
+              createError('第' + (i + 1) + '行单品销售价（元）必须大于0！');
+              return;
+            }
+            if (!isNumberPrecision(bundleProduct.salePrice, 6)) {
+              createError('第' + (i + 1) + '行单品销售价（元）最多允许6位小数！');
+              return;
+            }
+
+            if (isEmpty(bundleProduct.retailPrice)) {
+              createError('第' + (i + 1) + '行单品零售价（元）不能为空！');
+              return;
+            }
+            if (!isFloat(bundleProduct.retailPrice)) {
+              createError('第' + (i + 1) + '行单品零售价（元）必须是数字！');
+              return;
+            }
+            if (!isFloatGtZero(bundleProduct.retailPrice)) {
+              createError('第' + (i + 1) + '行单品零售价（元）必须大于0！');
+              return;
+            }
+            if (!isNumberPrecision(bundleProduct.retailPrice, 6)) {
+              createError('第' + (i + 1) + '行单品零售价（元）最多允许6位小数！');
+              return;
+            }
+
+            purchasePrice = add(
               purchasePrice,
-              this.$utils.mul(bundleProduct.bundleNum, bundleProduct.purchasePrice),
+              mul(bundleProduct.bundleNum, bundleProduct.purchasePrice),
             );
 
-            salePrice = this.$utils.add(
-              salePrice,
-              this.$utils.mul(bundleProduct.bundleNum, bundleProduct.salePrice),
-            );
-            retailPrice = this.$utils.add(
-              retailPrice,
-              this.$utils.mul(bundleProduct.bundleNum, bundleProduct.retailPrice),
-            );
+            salePrice = add(salePrice, mul(bundleProduct.bundleNum, bundleProduct.salePrice));
+            retailPrice = add(retailPrice, mul(bundleProduct.bundleNum, bundleProduct.retailPrice));
           }
 
-          if (!this.$utils.eq(purchasePrice, this.formData.purchasePrice)) {
-            this.$msg.createError(
+          if (!eq(purchasePrice, this.formData.purchasePrice)) {
+            createError(
               '当前所有单品的【包含数量】乘以【采购价（元）】的总和为' +
                 purchasePrice +
                 '元，组合商品的采购价为' +
@@ -654,8 +665,8 @@
             return;
           }
 
-          if (!this.$utils.eq(salePrice, this.formData.salePrice)) {
-            this.$msg.createError(
+          if (!eq(salePrice, this.formData.salePrice)) {
+            createError(
               '当前所有单品的【包含数量】乘以【销售价（元）】的总和为' +
                 salePrice +
                 '元，组合商品的销售价为' +
@@ -665,8 +676,8 @@
             return;
           }
 
-          if (!this.$utils.eq(retailPrice, this.formData.retailPrice)) {
-            this.$msg.createError(
+          if (!eq(retailPrice, this.formData.retailPrice)) {
+            createError(
               '当前所有单品的【包含数量】乘以【零售价（元）】的总和为' +
                 retailPrice +
                 '元，组合商品的零售价为' +
@@ -676,12 +687,12 @@
             return;
           }
         }
-        if (!this.$utils.isEmpty(this.modelorList)) {
+        if (!isEmpty(this.modelorList)) {
           this.modelorList
             .filter((item) => item.isRequired)
             .every((item) => {
-              if (that.$utils.isEmpty(item.text)) {
-                that.$msg.createError(item.name + '不能为空！');
+              if (isEmpty(item.text)) {
+                createError(item.name + '不能为空！');
                 valid = false;
                 return false;
               }
@@ -695,11 +706,11 @@
         }
 
         const properties = this.modelorList
-          .filter((item) => !this.$utils.isEmpty(item.text))
+          .filter((item) => !isEmpty(item.text))
           .map((item) => {
             return {
               id: item.id,
-              text: this.$utils.isArray(item.text) ? JSON.stringify(item.text) : item.text,
+              text: isArray(item.text) ? JSON.stringify(item.text) : item.text,
             };
           });
 
@@ -713,7 +724,7 @@
         api
           .create(params)
           .then((res) => {
-            this.$msg.createSuccess('新增成功！');
+            createSuccess('新增成功！');
             this.$emit('confirm');
             this.closeDialog();
           })
@@ -723,7 +734,7 @@
       },
       selectCategory(val) {
         this.modelorList = [];
-        if (!this.$utils.isEmpty(val)) {
+        if (!isEmpty(val)) {
           propertyApi.getModelorByCategory(val).then((res) => {
             this.modelorList = res;
           });
@@ -734,21 +745,21 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
         };
       },
       delRow() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           this.productBundles = this.productBundles.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
         });
       },

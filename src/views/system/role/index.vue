@@ -171,6 +171,8 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/system/role';
   import CategoryTree from './category-tree.vue';
+  import { isEmpty, isEqualWithStr, buildSortPageVo } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'Role',
@@ -193,6 +195,9 @@
         SettingOutlined,
         CheckOutlined,
         StopOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+        isEqualWithStr,
       };
     },
     data() {
@@ -254,7 +259,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -321,8 +326,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的角色！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的角色！');
           return;
         }
 
@@ -337,8 +342,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的角色！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的角色！');
           return;
         }
 
@@ -355,8 +360,8 @@
       batchSetting() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要授权的角色！');
+        if (isEmpty(records)) {
+          createError('请选择要授权的角色！');
           return;
         }
 
@@ -366,8 +371,8 @@
       batchDataPermmission() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要设置数据权限的角色！');
+        if (isEmpty(records)) {
+          createError('请选择要设置数据权限的角色！');
           return;
         }
 
@@ -375,8 +380,8 @@
         this.$nextTick(() => this.$refs.batchDataPermissionDialog.openDialog());
       },
       doSearch(categoryId) {
-        if (!this.$utils.isEmpty(categoryId)) {
-          if (this.$utils.isEqualWithStr(0, categoryId)) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
             this.searchFormData.categoryId = '';
           } else {
             this.searchFormData.categoryId = categoryId;

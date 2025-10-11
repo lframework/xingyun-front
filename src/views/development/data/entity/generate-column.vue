@@ -244,6 +244,8 @@
   import { defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { QuestionCircleOutlined, DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, isIntegerGtZero, isIntegerGeZero } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -354,86 +356,86 @@
     },
     methods: {
       validDate() {
-        if (this.$utils.isEmpty(this.columns)) {
-          this.$msg.createError('字段信息不能为空！');
+        if (isEmpty(this.columns)) {
+          createError('字段信息不能为空！');
           return false;
         }
         for (let i = 0; i < this.columns.length; i++) {
           const column = this.columns[i];
 
-          if (this.$utils.isEmpty(column.name)) {
-            this.$msg.createError('第' + (i + 1) + '行字段显示名称不能为空！');
+          if (isEmpty(column.name)) {
+            createError('第' + (i + 1) + '行字段显示名称不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.dataType)) {
-            this.$msg.createError('字段【' + column.name + '】数据类型不能为空！');
+          if (isEmpty(column.dataType)) {
+            createError('字段【' + column.name + '】数据类型不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.viewType)) {
-            this.$msg.createError('字段【' + column.name + '】显示类型不能为空！');
+          if (isEmpty(column.viewType)) {
+            createError('字段【' + column.name + '】显示类型不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.fixEnum)) {
-            this.$msg.createError('字段【' + column.name + '】是否内置枚举不能为空！');
+          if (isEmpty(column.fixEnum)) {
+            createError('字段【' + column.name + '】是否内置枚举不能为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(column.columnOrder)) {
-            this.$msg.createError('字段【' + column.name + '】字段排序不能为空！');
+          if (isEmpty(column.columnOrder)) {
+            createError('字段【' + column.name + '】字段排序不能为空！');
             return false;
           }
 
           if (column.fixEnum) {
-            if (this.$utils.isEmpty(column.enumBack)) {
-              this.$msg.createError('字段【' + column.name + '】后端枚举名不能为空！');
+            if (isEmpty(column.enumBack)) {
+              createError('字段【' + column.name + '】后端枚举名不能为空！');
               return false;
             }
 
-            if (this.$utils.isEmpty(column.enumFront)) {
-              this.$msg.createError('字段【' + column.name + '】前端枚举名不能为空！');
+            if (isEmpty(column.enumFront)) {
+              createError('字段【' + column.name + '】前端枚举名不能为空！');
               return false;
             }
           }
 
-          if (this.$utils.isEmpty(column.isOrder)) {
-            this.$msg.createError('字段【' + column.name + '】是否排序字段不能为空！');
+          if (isEmpty(column.isOrder)) {
+            createError('字段【' + column.name + '】是否排序字段不能为空！');
             return false;
           }
 
           if (column.isOrder) {
-            if (this.$utils.isEmpty(column.orderType)) {
-              this.$msg.createError('字段【' + column.name + '】排序类型不能为空！');
+            if (isEmpty(column.orderType)) {
+              createError('字段【' + column.name + '】排序类型不能为空！');
               return false;
             }
           }
 
-          if (!this.$utils.isEmpty(column.len)) {
-            if (!this.$utils.isIntegerGtZero(column.len)) {
-              this.$msg.createError('字段【' + column.name + '】长度的整数部分必须是大于0的整数！');
+          if (!isEmpty(column.len)) {
+            if (!isIntegerGtZero(column.len)) {
+              createError('字段【' + column.name + '】长度的整数部分必须是大于0的整数！');
               return false;
             }
           }
 
-          if (!this.$utils.isEmpty(column.decimals)) {
-            if (!this.$utils.isIntegerGeZero(column.decimals)) {
-              this.$msg.createError('字段【' + column.name + '】长度的小数部分必须是不小于0整数！');
+          if (!isEmpty(column.decimals)) {
+            if (!isIntegerGeZero(column.decimals)) {
+              createError('字段【' + column.name + '】长度的小数部分必须是不小于0整数！');
               return false;
             }
           }
 
           if (this.$enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(column.viewType)) {
-            if (this.$utils.isEmpty(column.dataDicId)) {
-              this.$msg.createError('字段【' + column.name + '】数据字典不能为空！');
+            if (isEmpty(column.dataDicId)) {
+              createError('字段【' + column.name + '】数据字典不能为空！');
               return false;
             }
           }
 
           if (this.$enums.GEN_VIEW_TYPE.CUSTOM_SELECTOR.equalsCode(column.viewType)) {
-            if (this.$utils.isEmpty(column.customSelectorId)) {
-              this.$msg.createError('字段【' + column.name + '】自定义选择器不能为空！');
+            if (isEmpty(column.customSelectorId)) {
+              createError('字段【' + column.name + '】自定义选择器不能为空！');
               return false;
             }
           }

@@ -41,6 +41,7 @@
   import QueryParamsSetting from './generate/query-params-setting.vue';
   import DetailSetting from './generate/detail-setting.vue';
   import * as api from '@/api/development/data/entity';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -162,7 +163,7 @@
           api
             .updateGenerate(params)
             .then(() => {
-              this.$msg.createSuccess('修改成功！');
+              createSuccess('修改成功！');
               this.$emit('confirm');
               this.closeDialog();
             })

@@ -116,6 +116,8 @@
   import ApproveRefuse from '@/components/ApproveRefuse';
   import * as api from '@/api/sc/stock/transfer-sc';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloatGeZero, add } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ApproveScTransferSheet',
@@ -188,9 +190,9 @@
       calcSum() {
         let totalNum = 0;
         this.tableData.forEach((item) => {
-          if (!this.$utils.isEmpty(item.productId)) {
-            if (this.$utils.isFloatGeZero(item.transferNum)) {
-              totalNum = this.$utils.add(item.transferNum, totalNum);
+          if (!isEmpty(item.productId)) {
+            if (isFloatGeZero(item.transferNum)) {
+              totalNum = add(item.transferNum, totalNum);
             }
           }
         });
@@ -223,7 +225,7 @@
       },
       // 审核通过
       approvePass() {
-        this.$msg.createConfirm('对仓库调拨单执行审核通过操作？').then(() => {
+        createConfirm('对仓库调拨单执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .approvePass({
@@ -231,7 +233,7 @@
               description: this.formData.description,
             })
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -254,7 +256,7 @@
             refuseReason: reason,
           })
           .then(() => {
-            this.$msg.createSuccess('审核拒绝！');
+            createSuccess('审核拒绝！');
 
             this.$emit('confirm');
             this.closeDialog();

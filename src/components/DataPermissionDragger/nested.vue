@@ -181,6 +181,7 @@
   import Draggable from 'vuedraggable';
   import { Empty } from 'ant-design-vue';
   import { defineComponent } from 'vue';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'DataPermissionNested',
@@ -215,7 +216,7 @@
               added.element.nodeType,
             )
           ) {
-            this.$msg.createError('此区域只允许添加运算节点');
+            createError('此区域只允许添加运算节点');
             this.removeNodes(added.element.id);
           }
 
@@ -226,7 +227,7 @@
               moved.element.nodeType,
             )
           ) {
-            this.$msg.createError('此区域只允许添加运算节点');
+            createError('此区域只允许添加运算节点');
             this.removeNodes(added.element.id);
           }
         }

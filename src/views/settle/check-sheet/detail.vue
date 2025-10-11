@@ -212,6 +212,7 @@
   import SettleFeeSheetDetail from '@/views/settle/fee-sheet/detail.vue';
   import SettlePreSheetDetail from '@/views/settle/pre-sheet/detail.vue';
   import * as api from '@/api/settle/check';
+  import { isFloat, add } from '@/utils/utils';
 
   export default defineComponent({
     components: {
@@ -336,12 +337,12 @@
         let totalAmount = 0;
         let totalPayAmount = 0;
         this.tableData.forEach((item) => {
-          if (this.$utils.isFloat(item.totalAmount)) {
-            totalAmount = this.$utils.add(totalAmount, item.totalAmount);
+          if (isFloat(item.totalAmount)) {
+            totalAmount = add(totalAmount, item.totalAmount);
           }
 
-          if (this.$utils.isFloat(item.payAmount)) {
-            totalPayAmount = this.$utils.add(totalPayAmount, item.payAmount);
+          if (isFloat(item.payAmount)) {
+            totalPayAmount = add(totalPayAmount, item.payAmount);
           }
         });
 

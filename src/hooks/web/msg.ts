@@ -1,20 +1,7 @@
-import { App, createVNode } from 'vue';
+import { createVNode } from 'vue';
 import { message as Message, Modal, Input } from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import * as utils from '@/utils/utils';
-
-export function install(app: App): void {
-  const msg = {
-    createError,
-    createErrorDialog,
-    createConfirm,
-    createSuccess,
-    createSuccessTip,
-    createPrompt,
-  };
-
-  app.config.globalProperties.$msg = msg;
-}
 
 export const createError = function (message: string): void {
   Message.error(message);
@@ -130,12 +117,5 @@ export const createPrompt = function (
         });
       },
     });
-  });
-};
-
-export const errorDialog = function (message: string, title: string): void {
-  Modal.error({
-    title: title || '提示信息',
-    content: message,
   });
 };

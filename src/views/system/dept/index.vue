@@ -98,7 +98,7 @@
         <a-col :span="10">
           <a-card>
             <modify
-              v-if="!$utils.isEmpty(id)"
+              v-if="!isEmpty(id)"
               :id="id"
               ref="updateDialog"
               @confirm="
@@ -161,6 +161,8 @@
     ShrinkOutlined,
     RestOutlined,
   } from '@ant-design/icons-vue';
+  import { isEmpty, toArrayTree, eachTree, toTreeArray } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'Dept',
@@ -181,6 +183,8 @@
         PlusOutlined,
         ReloadOutlined,
         SettingOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -217,21 +221,21 @@
         api
           .trees()
           .then((res) => {
-            if (!this.$utils.isEmpty(res)) {
-              let treeData = this.$utils.toArrayTree(res, {
+            if (!isEmpty(res)) {
+              let treeData = toArrayTree(res, {
                 key: 'id',
                 parentKey: 'parentId',
                 children: 'children',
                 strict: true,
               });
 
-              this.$utils.eachTree(treeData, (item) => {
-                if (this.$utils.isEmpty(item.children)) {
+              eachTree(treeData, (item) => {
+                if (isEmpty(item.children)) {
                   item.scopedSlots = { switcherIcon: 'child' };
                 }
               });
 
-              res = this.$utils.toTreeArray(treeData, {
+              res = toTreeArray(treeData, {
                 key: 'id',
                 parentKey: 'parentId',
                 children: 'children',
@@ -244,7 +248,7 @@
                 treeData = treeData.filter((item) => item.available);
               }
 
-              this.treeData = this.$utils.toArrayTree(treeData, {
+              this.treeData = toArrayTree(treeData, {
                 key: 'id',
                 parentKey: 'parentId',
                 children: 'children',
@@ -273,7 +277,7 @@
         } else if (key === 'allFold') {
           this.expandedKeys = [];
         } else if (key === 'allCheck') {
-          const treeData = this.$utils.toTreeArray(this.treeData, {
+          const treeData = toTreeArray(this.treeData, {
             key: 'id',
             parentKey: 'parentId',
             children: 'children',
@@ -289,7 +293,7 @@
             halfChecked: [],
           };
         } else if (key === 'reserveCheck') {
-          const treeData = this.$utils.toTreeArray(this.treeData, {
+          const treeData = toTreeArray(this.treeData, {
             key: 'id',
             parentKey: 'parentId',
             children: 'children',
@@ -314,12 +318,12 @@
       batchUnable() {
         const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked];
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的部门！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的部门！');
           return;
         }
 
-        let treeData = this.$utils.toTreeArray(this.treeData, {
+        let treeData = toTreeArray(this.treeData, {
           key: 'id',
           parentKey: 'parentId',
           children: 'children',
@@ -336,12 +340,12 @@
       },
       batchEnable() {
         const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked];
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的部门！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的部门！');
           return;
         }
 
-        let treeData = this.$utils.toTreeArray(this.treeData, {
+        let treeData = toTreeArray(this.treeData, {
           key: 'id',
           parentKey: 'parentId',
           children: 'children',
@@ -364,12 +368,12 @@
             halfChecked: this.checkedKeys.halfChecked.filter((item) => currentIds.includes(item)),
           };
         }
-        this.treeData = this.$utils.toArrayTree(treeData);
+        this.treeData = toArrayTree(treeData);
       },
       // 选中的部门发生改变
       currentChange(data) {
         this.id = '';
-        if (!this.$utils.isEmpty(data)) {
+        if (!isEmpty(data)) {
           this.$nextTick(() => {
             this.id = data[0];
           });
@@ -378,8 +382,8 @@
       batchDataPermmission() {
         const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked];
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要设置数据权限的部门！');
+        if (isEmpty(records)) {
+          createError('请选择要设置数据权限的部门！');
           return;
         }
 

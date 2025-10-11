@@ -21,7 +21,7 @@
         '&token=' +
         token +
         '&uuid=' +
-        $utils.uuid()
+        uuid()
       "
     ></iframe>
   </a-modal>
@@ -31,11 +31,17 @@
   import { useGlobSetting } from '/@/hooks/setting';
   import { getToken } from '@/utils/auth';
   import * as api from '@/api/bpm/flow/definition';
+  import { uuid } from '@/utils/utils';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        uuid,
+      };
+    },
     props: {
       id: {
         type: String,

@@ -82,6 +82,8 @@
   import Detail from './detail.vue';
   import * as api from '@/api/system/parameter';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import { buildSortPageVo } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'SysParameter',
@@ -149,27 +151,25 @@
         this.$refs.grid.commitProxy('reload');
       },
       deleteRow(id) {
-        this.$msg
-          .createConfirm(
-            '是否确定删除该系统参数？注：请确定没有使用该系统参数，否则删除后会导致异常',
-          )
-          .then(() => {
-            this.loading = true;
-            api
-              .deleteById(id)
-              .then(() => {
-                this.$msg.createSuccess('删除成功！');
-                this.search();
-              })
-              .finally(() => {
-                this.loading = false;
-              });
-          });
+        createConfirm(
+          '是否确定删除该系统参数？注：请确定没有使用该系统参数，否则删除后会导致异常',
+        ).then(() => {
+          this.loading = true;
+          api
+            .deleteById(id)
+            .then(() => {
+              createSuccess('删除成功！');
+              this.search();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        });
       },
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },

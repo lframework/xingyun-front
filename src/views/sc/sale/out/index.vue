@@ -153,7 +153,7 @@
 
           <!-- 销售订单号 列自定义内容 -->
           <template #saleOrderCode_default="{ row }">
-            <span v-if="$utils.isEmpty(row.saleOrderCode)">-</span>
+            <span v-if="isEmpty(row.saleOrderCode)">-</span>
             <span v-else>
               <a
                 v-permission="['sale:order:query']"
@@ -246,6 +246,14 @@
   import * as api from '@/api/sc/sale/out';
   import * as configApi from '@/api/sc/sale/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    buildSortPageVo,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'SaleOutSheet',
@@ -264,6 +272,8 @@
         CloseOutlined,
         DeleteOutlined,
         DownloadOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -278,10 +288,8 @@
           scId: '',
           customerId: '',
           createBy: '',
-          createStartTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          createEndTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          createStartTime: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          createEndTime: formatDateTime(getDateTimeWithMaxTime(moment())),
           approveBy: '',
           approveStartTime: '',
           approveEndTime: '',
@@ -366,7 +374,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -392,7 +400,7 @@
         });
       },
       openModifyDialog(row) {
-        if (!this.$utils.isEmpty(row.saleOrderId)) {
+        if (!isEmpty(row.saleOrderId)) {
           this.openChildPage('/sale/out/modify/require/' + row.id);
         } else {
           this.openChildPage('/sale/out/modify/un-require/' + row.id);
@@ -400,12 +408,12 @@
       },
       // 删除订单
       deleteOrder(row) {
-        this.$msg.createConfirm('对选中的销售出库单执行删除操作？').then(() => {
+        createConfirm('对选中的销售出库单执行删除操作？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -419,14 +427,14 @@
       // 批量删除
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的销售出库单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的销售出库单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (this.$enums.SALE_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个销售出库单已审核通过，不允许执行删除操作！');
+            createError('第' + (i + 1) + '个销售出库单已审核通过，不允许执行删除操作！');
             return;
           }
         }
@@ -443,14 +451,14 @@
       // 批量审核通过
       batchApprovePass() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的销售出库单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的销售出库单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (this.$enums.SALE_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个销售出库单已审核通过，不允许继续执行审核！');
+            createError('第' + (i + 1) + '个销售出库单已审核通过，不允许继续执行审核！');
             return;
           }
         }
@@ -462,19 +470,19 @@
       // 批量审核拒绝
       batchApproveRefuse() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要执行操作的销售出库单！');
+        if (isEmpty(records)) {
+          createError('请选择要执行操作的销售出库单！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (this.$enums.SALE_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个销售出库单已审核通过，不允许继续执行审核！');
+            createError('第' + (i + 1) + '个销售出库单已审核通过，不允许继续执行审核！');
             return;
           }
 
           if (this.$enums.SALE_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
-            this.$msg.createError('第' + (i + 1) + '个销售出库单已审核拒绝，不允许继续执行审核！');
+            createError('第' + (i + 1) + '个销售出库单已审核拒绝，不允许继续执行审核！');
             return;
           }
         }
@@ -498,7 +506,7 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;

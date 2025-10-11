@@ -67,6 +67,7 @@
   import ApproveDialog from './ApproveDialog.vue';
   import * as api from '@/api/bpm/flow/task';
   import * as instanceApi from '@/api/bpm/flow/instance';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'BpmApprove',
@@ -186,7 +187,7 @@
             })
             .then(() => {
               this.$emit('confirm');
-              this.$msg.createSuccess('通过成功！');
+              createSuccess('通过成功！');
               this.closeDialog();
             })
             .finally(() => {
@@ -202,7 +203,7 @@
             })
             .then(() => {
               this.$emit('confirm');
-              this.$msg.createSuccess('退回成功！');
+              createSuccess('退回成功！');
               this.closeDialog();
             })
             .finally(() => {
@@ -218,7 +219,7 @@
             })
             .then(() => {
               this.$emit('confirm');
-              this.$msg.createSuccess('撤回成功！');
+              createSuccess('撤回成功！');
               this.closeDialog();
             })
             .finally(() => {
@@ -234,7 +235,7 @@
             })
             .then(() => {
               this.$emit('confirm');
-              this.$msg.createSuccess('反对成功！');
+              createSuccess('反对成功！');
               this.closeDialog();
             })
             .finally(() => {

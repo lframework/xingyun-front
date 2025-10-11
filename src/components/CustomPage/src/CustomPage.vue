@@ -5,6 +5,7 @@
   import { getCurrentInstance, defineComponent } from 'vue';
 
   import * as api from '@/api/development/gen/api';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'CustomPage',
@@ -52,7 +53,7 @@
         this.initFormData();
       },
       async initConfig() {
-        if (this.$utils.isEmpty(this.pageId)) {
+        if (isEmpty(this.pageId)) {
           return;
         }
         await api.getCustomPageConfig(this.pageId).then((res) => {

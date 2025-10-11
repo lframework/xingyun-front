@@ -1,5 +1,5 @@
 <template>
-  <j-border v-show="!$utils.isEmpty(domLines)">
+  <j-border v-show="!isEmpty(domLines)">
     <div style="padding: 5px">
       <a-timeline>
         <transition-group enter-active-class="animated fadeIn">
@@ -48,6 +48,7 @@
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/components';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'OrderTimeLine',
@@ -57,6 +58,12 @@
       ClockCircleOutlined,
       UpOutlined,
       DownOutlined,
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     props: {
       id: {
@@ -72,10 +79,10 @@
     },
     computed: {
       showCollapse() {
-        return !this.$utils.isEmpty(this.lines) && this.lines.length > 1;
+        return !isEmpty(this.lines) && this.lines.length > 1;
       },
       domLines() {
-        if (this.$utils.isEmpty(this.lines)) {
+        if (isEmpty(this.lines)) {
           return [];
         }
         return this.collapseStatus ? this.lines : [this.lines[this.lines.length - 1]];

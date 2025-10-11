@@ -127,7 +127,7 @@ function getLodopObj(oOBJECT, oEMBED) {
         else {
           strAlertMessage = strCLodopInstallA + (CLodopIsLocal ? strCLodopInstallB : '');
         }
-        msg.errorDialog(
+        msg.createErrorDialog(
           h('div', {
             innerHTML: strAlertMessage + strInstallOK,
           }),
@@ -140,7 +140,7 @@ function getLodopObj(oOBJECT, oEMBED) {
         else if (CLODOP.CVERSION < '4.1.5.8') strAlertMessage = strCLodopUpdate;
 
         if (strAlertMessage) {
-          msg.errorDialog(
+          msg.createErrorDialog(
             h('div', {
               innerHTML: strAlertMessage + strInstallOK,
             }),
@@ -173,7 +173,7 @@ function getLodopObj(oOBJECT, oEMBED) {
       }
       // ==Lodop插件未安装时提示下载地址:==
       if (!LODOP || !LODOP.VERSION) {
-        msg.errorDialog(
+        msg.createErrorDialog(
           h('div', {
             innerHTML: (isWinIE64 ? strLodop64Install : strLodopInstall) + strInstallOK,
           }),
@@ -182,7 +182,7 @@ function getLodopObj(oOBJECT, oEMBED) {
         return LODOP;
       }
       if (LODOP.VERSION < '6.2.2.6') {
-        msg.errorDialog(
+        msg.createErrorDialog(
           h('div', {
             innerHTML: (isWinIE64 ? strLodop64Update : strLodopUpdate) + strInstallOK,
           }),
@@ -195,7 +195,7 @@ function getLodopObj(oOBJECT, oEMBED) {
     // ===============================================================================
     return LODOP;
   } catch (err) {
-    msg.errorDialog('getLodop出错:' + err, '打印插件出错');
+    msg.createErrorDialog('getLodop出错:' + err, '打印插件出错');
   }
 }
 

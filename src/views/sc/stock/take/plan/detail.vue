@@ -70,6 +70,7 @@
   import { defineComponent } from 'vue';
   import * as constants from './constants';
   import * as api from '@/api/sc/stock/take/plan';
+  import { isEmpty, keys } from '@/utils/utils';
 
   export default defineComponent({
     // 使用组件
@@ -157,9 +158,7 @@
           updateTime: '',
         };
 
-        this.checkedFilterType = this.$utils
-          .keys(this.filterType)
-          .map((item) => this.filterType[item].code);
+        this.checkedFilterType = keys(this.filterType).map((item) => this.filterType[item].code);
 
         this.tableData = [];
         this.oriTableData = [];
@@ -202,7 +201,7 @@
           }
 
           if (this.checkedFilterType.includes(this.filterType.NONE.code)) {
-            if (item.diffNum === 0 || this.$utils.isEmpty(item.diffNum)) {
+            if (item.diffNum === 0 || isEmpty(item.diffNum)) {
               return true;
             }
           }

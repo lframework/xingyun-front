@@ -17,7 +17,7 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="预先盘点单">
-            <div v-if="!$utils.isEmpty(formData.preSheetId)">
+            <div v-if="!isEmpty(formData.preSheetId)">
               <a
                 v-permission="['stock:take:sheet:query']"
                 @click="(e) => $refs.viewPreTakeStockSheetDialog.openDialog()"
@@ -115,7 +115,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="!row.isFixed && $utils.isEmpty(row.productId)"
+            v-if="!row.isFixed && isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
@@ -171,6 +171,8 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloat, isFloatGeZero, isNumberPrecision, uuid } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ModifyStockTakeSheet',
@@ -185,6 +187,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -283,34 +287,34 @@
       },
       // 提交表单事件
       submit() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
-          if (this.$utils.isEmpty(column.productId)) {
-            this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
+          if (isEmpty(column.productId)) {
+            createError('第' + (i + 1) + '行商品不允许为空！');
             return;
           }
-          if (this.$utils.isEmpty(column.takeNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
-            return;
-          }
-
-          if (!this.$utils.isFloat(column.takeNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
+          if (isEmpty(column.takeNum)) {
+            createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
             return;
           }
 
-          if (!this.$utils.isFloatGeZero(column.takeNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
+          if (!isFloat(column.takeNum)) {
+            createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
             return;
           }
 
-          if (!this.$utils.isNumberPrecision(column.takeNum, 8)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
+          if (!isFloatGeZero(column.takeNum)) {
+            createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
+            return;
+          }
+
+          if (!isNumberPrecision(column.takeNum, 8)) {
+            createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
             return;
           }
         }
@@ -331,7 +335,7 @@
         api
           .update(params)
           .then(() => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
             this.$emit('confirm');
 
             this.closeDialog();
@@ -347,7 +351,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -369,7 +373,7 @@
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -395,7 +399,7 @@
               this.tableData[index] = Object.assign(this.tableData[index], value);
               return;
             }
-            this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
+            createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
             this.tableData = this.tableData.filter((t) => {
               return t.id !== row.id;
             });
@@ -407,15 +411,15 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -428,9 +432,7 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (
-            this.$utils.isEmpty(this.tableData.filter((data) => item.productId === data.productId))
-          ) {
+          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
             filterProductList.push(item);
           }
         });

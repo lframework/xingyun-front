@@ -123,6 +123,8 @@
   import moment from 'moment';
   import { validCode, isEmail } from '@/utils/validate';
   import * as api from '@/api/base-data/member';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -150,7 +152,7 @@
           email: [
             {
               validator: (rule, value, callback) => {
-                if (this.$utils.isEmpty(value) || isEmail(value)) {
+                if (isEmpty(value) || isEmail(value)) {
                   return Promise.resolve();
                 } else {
                   return Promise.reject('邮箱地址格式不正确');
@@ -210,7 +212,7 @@
             api
               .update(params)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

@@ -19,6 +19,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/menu';
+  import { toArrayTree, eachTree, isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'SysMenuSelector',
@@ -77,12 +78,12 @@
       },
       loadOptions() {
         this.getList(this._requestParams).then((data) => {
-          const options = this.$utils.toArrayTree(data, {
+          const options = toArrayTree(data, {
             strict: true,
           });
           if (this.onlyFinal) {
-            this.$utils.eachTree(options, (item) => {
-              if (!this.$utils.isEmpty(item.children)) {
+            eachTree(options, (item) => {
+              if (!isEmpty(item.children)) {
                 item.disabled = true;
               }
             });
@@ -92,7 +93,7 @@
         });
       },
       onChange(e) {
-        if (this.$utils.isEmpty(e)) {
+        if (isEmpty(e)) {
           this.$emit('update:value', e);
           this.$emit('clear', e);
         } else {

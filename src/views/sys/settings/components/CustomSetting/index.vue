@@ -33,6 +33,7 @@
 <script>
   import { defineComponent } from 'vue';
   import { useAppStore } from '@/store/modules/app';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     setup() {
@@ -54,7 +55,7 @@
         const config = { lockTime: this.formData.autoLock };
         this.appStore.setProjectConfig(config);
 
-        this.$msg.createSuccess('保存成功');
+        createSuccess('保存成功');
       },
       reset() {
         this.formData = {

@@ -145,6 +145,8 @@
     StopOutlined,
     DownOutlined,
   } from '@ant-design/icons-vue';
+  import { isEmpty, isEqualWithStr } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'DataObj',
@@ -220,8 +222,8 @@
         this.$refs.grid.commitProxy('reload');
       },
       doSearch(categoryId) {
-        if (!this.$utils.isEmpty(categoryId)) {
-          if (this.$utils.isEqualWithStr(0, categoryId)) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
             this.searchFormData.categoryId = '';
           } else {
             this.searchFormData.categoryId = categoryId;
@@ -260,8 +262,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的数据对象！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的数据对象！');
           return;
         }
 
@@ -276,8 +278,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的数据对象！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的数据对象！');
           return;
         }
 
@@ -287,12 +289,12 @@
       },
       // 删除
       deleteRow(row) {
-        this.$msg.createConfirm('是否确定删除该数据对象？').then(() => {
+        createConfirm('是否确定删除该数据对象？').then(() => {
           this.loading = true;
           api
             .deleteById(row.id)
             .then(() => {
-              this.$msg.createSuccess('删除成功！');
+              createSuccess('删除成功！');
               this.search();
             })
             .finally(() => {
@@ -307,8 +309,8 @@
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的数据对象！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的数据对象！');
           return;
         }
 

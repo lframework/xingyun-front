@@ -116,7 +116,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="$utils.isEmpty(row.productId)"
+            v-if="isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
@@ -150,10 +150,9 @@
 
         <!-- 含税金额 列自定义内容 -->
         <template #taxAmount_default="{ row }">
-          <span
-            v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.receiveNum)"
-            >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.receiveNum), 2) }}</span
-          >
+          <span v-if="isFloatGeZero(row.purchasePrice) && isFloatGeZero(row.receiveNum)">{{
+            getNumber(mul(row.purchasePrice, row.receiveNum), 2)
+          }}</span>
         </template>
 
         <!-- 备注 列自定义内容 -->
@@ -220,7 +219,20 @@
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
-  import { PATTERN_IS_FLOAT_GE_ZERO } from '@/utils/utils';
+  import {
+    isEmpty,
+    isFloatGeZero,
+    getNumber,
+    mul,
+    add,
+    isFloat,
+    isFloatGtZero,
+    isNumberPrecision,
+    uuid,
+    PATTERN_IS_FLOAT_GT_ZERO,
+    PATTERN_IS_PRICE,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ModifyPurchaseReceiveSheetUnRequire',
@@ -236,6 +248,11 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
       };
     },
     data() {
@@ -364,7 +381,7 @@
               !this.$enums.RECEIVE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
               !this.$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
-              this.$msg.createError('采购收货单已审核通过，无法修改！');
+              createError('采购收货单已审核通过，无法修改！');
               this.closeDialog();
               return;
             }
@@ -404,7 +421,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -428,15 +445,15 @@
       },
       // 新增商品
       addProduct() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('请先选择仓库！');
+        if (isEmpty(this.formData.scId)) {
+          createError('请先选择仓库！');
           return;
         }
         this.tableData.push(this.emptyProduct());
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -467,15 +484,15 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
@@ -485,8 +502,8 @@
         });
       },
       openBatchAddProductDialog() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('请先选择仓库！');
+        if (isEmpty(this.formData.scId)) {
+          createError('请先选择仓库！');
           return;
         }
         this.$refs.batchAddProductDialog.openDialog();
@@ -505,22 +522,17 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.receiveNum)
-            );
+            return isFloatGeZero(t.purchasePrice) && isFloatGeZero(t.receiveNum);
           })
           .forEach((t) => {
             const num = parseFloat(t.receiveNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(
-              totalAmount,
-              this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2),
-            );
+            totalAmount = add(totalAmount, getNumber(mul(num, t.purchasePrice), 2));
           });
 
         this.formData.totalNum = totalNum;
@@ -530,61 +542,57 @@
       // 批量录入数量
       batchInputReceiveNum() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择商品数据！');
           return;
         }
 
-        this.$msg
-          .createPrompt('请输入收货数量', {
-            inputPattern: this.$utils.PATTERN_IS_FLOAT_GT_ZERO,
-            inputErrorMessage: '收货数量必须是数字并且大于0',
-            title: '批量录入数量',
-            required: true,
-          })
-          .then(({ value }) => {
-            records.forEach((t) => {
-              t.receiveNum = value;
+        createPrompt('请输入收货数量', {
+          inputPattern: PATTERN_IS_FLOAT_GT_ZERO,
+          inputErrorMessage: '收货数量必须是数字并且大于0',
+          title: '批量录入数量',
+          required: true,
+        }).then(({ value }) => {
+          records.forEach((t) => {
+            t.receiveNum = value;
 
-              this.receiveNumInput(value);
-            });
+            this.receiveNumInput(value);
           });
+        });
       },
       // 批量录入采购价
       batchInputPurchasePrice() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择商品数据！');
           return;
         }
 
         for (let i = 0; i < records.length; i++) {
           if (records[i].isGift) {
-            this.$msg.createError('第' + (i + 1) + '行商品为赠品，不允许录入采购价！');
+            createError('第' + (i + 1) + '行商品为赠品，不允许录入采购价！');
             return;
           }
         }
 
-        this.$msg
-          .createPrompt('请输入采购价（元）', {
-            inputPattern: this.$utils.PATTERN_IS_PRICE,
-            inputErrorMessage: '采购价（元）必须是数字并且不小于0，最多允许6位小数',
-            title: '批量调整采购价',
-            required: true,
-          })
-          .then(({ value }) => {
-            records.forEach((t) => {
-              t.purchasePrice = value;
+        createPrompt('请输入采购价（元）', {
+          inputPattern: PATTERN_IS_PRICE,
+          inputErrorMessage: '采购价（元）必须是数字并且不小于0，最多允许6位小数',
+          title: '批量调整采购价',
+          required: true,
+        }).then(({ value }) => {
+          records.forEach((t) => {
+            t.purchasePrice = value;
 
-              this.purchasePriceInput(t, value);
-            });
+            this.purchasePriceInput(t, value);
           });
+        });
       },
       // 设置赠品
       setGift() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要设置为赠品的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要设置为赠品的商品数据！');
           return;
         }
 
@@ -604,85 +612,85 @@
       },
       // 校验数据
       validData() {
-        if (this.$utils.isEmpty(this.formData.scId)) {
-          this.$msg.createError('仓库不允许为空！');
+        if (isEmpty(this.formData.scId)) {
+          createError('仓库不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.supplierId)) {
-          this.$msg.createError('供应商不允许为空！');
+        if (isEmpty(this.formData.supplierId)) {
+          createError('供应商不允许为空！');
           return false;
         }
 
         if (this.formData.allowModifyPaymentDate) {
-          if (this.$utils.isEmpty(this.formData.paymentDate)) {
-            this.$msg.createError('付款日期不允许为空！');
+          if (isEmpty(this.formData.paymentDate)) {
+            createError('付款日期不允许为空！');
             return false;
           }
         }
 
-        if (this.$utils.isEmpty(this.formData.receiveDate)) {
-          this.$msg.createError('实际到货日期不允许为空！');
+        if (isEmpty(this.formData.receiveDate)) {
+          createError('实际到货日期不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const product = this.tableData[i];
 
-          if (this.$utils.isEmpty(product.productId)) {
-            this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
+          if (isEmpty(product.productId)) {
+            createError('第' + (i + 1) + '行商品不允许为空！');
             return false;
           }
 
-          if (this.$utils.isEmpty(product.purchasePrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价不允许为空！');
+          if (isEmpty(product.purchasePrice)) {
+            createError('第' + (i + 1) + '行商品采购价不允许为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(product.purchasePrice)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价必须是数字！');
+          if (!isFloat(product.purchasePrice)) {
+            createError('第' + (i + 1) + '行商品采购价必须是数字！');
             return false;
           }
 
           if (product.isGift) {
             if (parseFloat(product.purchasePrice) !== 0) {
-              this.$msg.createError('第' + (i + 1) + '行商品采购价必须等于0！');
+              createError('第' + (i + 1) + '行商品采购价必须等于0！');
               return false;
             }
           } else {
-            if (!this.$utils.isFloatGtZero(product.purchasePrice)) {
-              this.$msg.createError('第' + (i + 1) + '行商品采购价必须大于0！');
+            if (!isFloatGtZero(product.purchasePrice)) {
+              createError('第' + (i + 1) + '行商品采购价必须大于0！');
               return false;
             }
           }
 
-          if (!this.$utils.isNumberPrecision(product.purchasePrice, 6)) {
-            this.$msg.createError('第' + (i + 1) + '行商品采购价最多允许6位小数！');
+          if (!isNumberPrecision(product.purchasePrice, 6)) {
+            createError('第' + (i + 1) + '行商品采购价最多允许6位小数！');
             return false;
           }
 
-          if (!this.$utils.isEmpty(product.receiveNum)) {
-            if (!this.$utils.isFloat(product.receiveNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品收货数量必须是数字！');
+          if (!isEmpty(product.receiveNum)) {
+            if (!isFloat(product.receiveNum)) {
+              createError('第' + (i + 1) + '行商品收货数量必须是数字！');
               return false;
             }
 
-            if (!this.$utils.isFloatGtZero(product.receiveNum)) {
-              this.$msg.createError('第' + (i + 1) + '行商品收货数量必须大于0！');
+            if (!isFloatGtZero(product.receiveNum)) {
+              createError('第' + (i + 1) + '行商品收货数量必须大于0！');
               return false;
             }
 
-            if (!this.$utils.isNumberPrecision(product.receiveNum, 8)) {
-              this.$msg.createError('第' + (i + 1) + '行商品收货数量最多允许8位小数！');
+            if (!isNumberPrecision(product.receiveNum, 8)) {
+              createError('第' + (i + 1) + '行商品收货数量最多允许8位小数！');
               return false;
             }
           } else {
-            this.$msg.createError('第' + (i + 1) + '行商品收货数量不允许为空！');
+            createError('第' + (i + 1) + '行商品收货数量不允许为空！');
             return false;
           }
         }
@@ -705,7 +713,7 @@
           allowModifyPaymentDate: true,
           description: this.formData.description,
           products: this.tableData
-            .filter((t) => this.$utils.isFloatGtZero(t.receiveNum))
+            .filter((t) => isFloatGtZero(t.receiveNum))
             .map((t) => {
               const product = {
                 productId: t.productId,
@@ -722,7 +730,7 @@
         api
           .update(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -733,12 +741,12 @@
       },
       // 供应商改变时触发
       supplierChange(supplierId, unModify) {
-        if (!this.$utils.isEmpty(supplierId)) {
+        if (!isEmpty(supplierId)) {
           api.getPaymentDate(supplierId).then((res) => {
             if (!unModify) {
               if (res.allowModify) {
                 // 如果允许修改付款日期
-                if (this.$utils.isEmpty(this.formData.paymentDate)) {
+                if (isEmpty(this.formData.paymentDate)) {
                   this.formData.paymentDate = res.paymentDate || '';
                 }
               } else {

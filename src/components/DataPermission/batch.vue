@@ -37,6 +37,7 @@
   import { defineComponent } from 'vue';
   import DataPermissionDragger from '@/components/DataPermissionDragger/index.vue';
   import * as api from '@/api/system/data-permission';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'BatchDataPermission',
@@ -118,7 +119,7 @@
         api
           .save(datas)
           .then(() => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
             this.closeDialog();
           })
           .finally(() => {

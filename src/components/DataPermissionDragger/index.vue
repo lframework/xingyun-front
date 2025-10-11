@@ -70,6 +70,8 @@
   import NestedDraggable from './nested.vue';
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/data-permission-model-detail';
+  import { uuid, isEmpty } from '@/utils/utils';
+  import { createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'DataPermissionDragger',
@@ -124,7 +126,7 @@
       },
       initFormData() {},
       onClone(e) {
-        return Object.assign({}, e, { id: this.$utils.uuid(), detailId: e.id, children: [] });
+        return Object.assign({}, e, { id: uuid(), detailId: e.id, children: [] });
       },
       removeNodes(e) {
         const ids = [e];
@@ -137,7 +139,7 @@
           });
       },
       buildChildren(children, ids) {
-        if (this.$utils.isEmpty(children)) {
+        if (isEmpty(children)) {
           return children;
         }
 
@@ -180,20 +182,20 @@
         this.nodes = model;
       },
       validModel() {
-        if (!this.$utils.isEmpty(this.nodes)) {
+        if (!isEmpty(this.nodes)) {
           let flag = true;
           for (let i = 0; i < this.nodes.length; i++) {
             const node = this.nodes[i];
             if (
               !this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(node.nodeType)
             ) {
-              this.$msg.createError('最外层必须是运算节点');
+              createError('最外层必须是运算节点');
               flag = false;
               break;
             }
 
-            if (this.$utils.isEmpty(node.children)) {
-              this.$msg.createError('运算节点必须包含子节点');
+            if (isEmpty(node.children)) {
+              createError('运算节点必须包含子节点');
               flag = false;
               break;
             }
@@ -210,7 +212,7 @@
         return true;
       },
       validChild(children) {
-        if (this.$utils.isEmpty(children)) {
+        if (isEmpty(children)) {
           return true;
         }
 
@@ -220,8 +222,8 @@
           if (
             this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(child.nodeType)
           ) {
-            if (this.$utils.isEmpty(child.children)) {
-              this.$msg.createError('运算节点必须包含子节点');
+            if (isEmpty(child.children)) {
+              createError('运算节点必须包含子节点');
               flag = false;
               break;
             }
@@ -243,15 +245,15 @@
                   child.inputType,
                 )
               ) {
-                if (this.$utils.isEmpty(child.values)) {
-                  this.$msg.createError('节点：【' + child.name + '】请输入值');
+                if (isEmpty(child.values)) {
+                  createError('节点：【' + child.name + '】请输入值');
                   flag = false;
                   break;
                 }
               }
             } else {
-              if (this.$utils.isEmpty(child.value)) {
-                this.$msg.createError('节点：【' + child.name + '】请输入值');
+              if (isEmpty(child.value)) {
+                createError('节点：【' + child.name + '】请输入值');
                 flag = false;
                 break;
               }
@@ -267,7 +269,7 @@
           api
             .preview(this.nodes)
             .then((res) => {
-              this.$msg.createConfirm(res, '数据权限SQL', {
+              createConfirm(res, '数据权限SQL', {
                 icon: 'check-circle',
                 footer: null,
               });
@@ -283,7 +285,7 @@
         }
       },
       convertNodeName(name) {
-        if (this.$utils.isEmpty(name)) {
+        if (isEmpty(name)) {
           return '';
         }
 

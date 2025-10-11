@@ -79,6 +79,12 @@
   import Moment from 'moment';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/op-log';
+  import {
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    getCurrentDate,
+  } from '@/utils/utils';
 
   export default defineComponent({
     name: 'Oplog',
@@ -101,12 +107,8 @@
           name: '',
           createBy: '',
           logType: undefined,
-          startTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(Moment().subtract(1, 'w').add(1, 'd')),
-          ),
-          endTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMaxTime(this.$utils.getCurrentDate()),
-          ),
+          startTime: formatDateTime(getDateTimeWithMinTime(Moment().subtract(1, 'w').add(1, 'd'))),
+          endTime: formatDateTime(getDateTimeWithMaxTime(getCurrentDate())),
         },
         // 列表数据配置
         tableColumn: [

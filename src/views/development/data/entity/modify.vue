@@ -76,6 +76,8 @@
   import GenerateColumn from './generate-column.vue';
   import * as api from '@/api/development/data/entity';
   import { ReloadOutlined } from '@ant-design/icons-vue';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError, createSuccessTip, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -169,12 +171,12 @@
           });
       },
       submit() {
-        if (this.$utils.isEmpty(this.formData.name)) {
-          this.$msg.createError('请输入名称');
+        if (isEmpty(this.formData.name)) {
+          createError('请输入名称');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.available)) {
-          this.$msg.createError('请选择状态');
+        if (isEmpty(this.formData.available)) {
+          createError('请选择状态');
           return;
         }
         if (!this.$refs.generateColumn.validDate()) {
@@ -192,7 +194,7 @@
         api
           .update(params)
           .then(() => {
-            this.$msg.createSuccess('修改成功！');
+            createSuccess('修改成功！');
             this.$emit('confirm');
             this.closeDialog();
           })
@@ -201,15 +203,13 @@
           });
       },
       syncTable() {
-        this.$msg
-          .createConfirm('是否确认同步表结构？注：同步表结构可能会丢失差异字段配置')
-          .then(() => {
-            this.loading = true;
-            api.syncTable(this.id).then(() => {
-              this.$msg.createSuccessTip('同步成功，正在重载数据...');
-              this.$nextTick(() => this.open());
-            });
+        createConfirm('是否确认同步表结构？注：同步表结构可能会丢失差异字段配置').then(() => {
+          this.loading = true;
+          api.syncTable(this.id).then(() => {
+            createSuccessTip('同步成功，正在重载数据...');
+            this.$nextTick(() => this.open());
           });
+        });
       },
     },
   });

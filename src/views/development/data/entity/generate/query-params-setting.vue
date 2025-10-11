@@ -58,6 +58,8 @@
   import { defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -122,14 +124,14 @@
     },
     methods: {
       validDate() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('查询功能参数必须配置');
+        if (isEmpty(this.tableData)) {
+          createError('查询功能参数必须配置');
           return false;
         }
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
-          if (this.$utils.isEmpty(column.queryType)) {
-            this.$msg.createError('字段【' + column.name + '】查询类型不能为空');
+          if (isEmpty(column.queryType)) {
+            createError('字段【' + column.name + '】查询类型不能为空');
             return false;
           }
         }

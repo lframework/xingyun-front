@@ -21,7 +21,7 @@
             </div>
           </j-form-item>
           <j-form-item label="预先盘点单">
-            <div v-if="!$utils.isEmpty(formData.preSheetId)">
+            <div v-if="!isEmpty(formData.preSheetId)">
               <a
                 v-permission="['stock:take:sheet:query']"
                 @click="(e) => $refs.viewPreTakeStockSheetDialog.openDialog()"
@@ -121,12 +121,19 @@
   import TakeStockPlanDetail from '@/views/sc/stock/take/plan/detail.vue';
   import PreTakeStockSheetDetail from '@/views/sc/stock/take/pre/detail.vue';
   import * as api from '@/api/sc/stock/take/sheet';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     // 使用组件
     components: {
       TakeStockPlanDetail,
       PreTakeStockSheetDetail,
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     props: {
       id: {

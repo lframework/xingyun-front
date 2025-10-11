@@ -45,6 +45,8 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/module';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -55,6 +57,12 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     data() {
       return {
@@ -113,8 +121,8 @@
         for (let i = 0; i < this.tableData.length; i++) {
           const item = this.tableData[i];
           if (item.enabled) {
-            if (this.$utils.isEmpty(item.expireTime)) {
-              this.$msg.createError(item.name + '过期时间不能为空');
+            if (isEmpty(item.expireTime)) {
+              createError(item.name + '过期时间不能为空');
               return;
             }
           }
@@ -134,7 +142,7 @@
             modules: modules,
           })
           .then(() => {
-            this.$msg.createSuccess('授权成功！');
+            createSuccess('授权成功！');
             this.$emit('confirm');
             this.closeDialog();
           })

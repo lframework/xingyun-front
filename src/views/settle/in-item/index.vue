@@ -130,6 +130,8 @@
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/settle/in-item';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'SettleInItem',
@@ -147,6 +149,8 @@
         DownloadOutlined,
         CheckOutlined,
         StopOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -231,8 +235,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的收入项目！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的收入项目！');
           return;
         }
 
@@ -247,8 +251,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的收入项目！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的收入项目！');
           return;
         }
 
@@ -261,7 +265,7 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;

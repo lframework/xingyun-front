@@ -36,6 +36,8 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/smart-work/file-box';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -59,7 +61,7 @@
             { required: true, message: '请输入文件夹名称' },
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value)) {
+                if (isEmpty(value)) {
                   return Promise.resolve();
                 }
 
@@ -111,7 +113,7 @@
                 parentPath: this.parentPath,
               })
               .then(() => {
-                this.$msg.createSuccess('创建成功！');
+                createSuccess('创建成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');

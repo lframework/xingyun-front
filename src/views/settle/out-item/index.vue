@@ -130,6 +130,8 @@
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/settle/out-item';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'SettleOutItem',
@@ -231,8 +233,8 @@
       batchUnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要停用的支出项目！');
+        if (isEmpty(records)) {
+          createError('请选择要停用的支出项目！');
           return;
         }
 
@@ -247,8 +249,8 @@
       batchEnable() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要启用的支出项目！');
+        if (isEmpty(records)) {
+          createError('请选择要启用的支出项目！');
           return;
         }
 
@@ -261,7 +263,7 @@
         api
           .exportList(this.buildQueryParams({}))
           .then(() => {
-            this.$msg.createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
+            createSuccess('创建导出任务成功，请前往“导出中心”进行下载。');
           })
           .finally(() => {
             this.loading = false;

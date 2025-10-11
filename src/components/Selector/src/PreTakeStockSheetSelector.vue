@@ -33,10 +33,10 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="单据号">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="单据号">
               <a-input v-model:value="searchParams.code" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.scId)" label="仓库">
+            <j-form-item v-if="isEmpty(requestParams.scId)" label="仓库">
               <store-center-selector v-model:value="searchParams.scId" />
             </j-form-item>
             <j-form-item label="操作日期" :content-nest="false">
@@ -54,7 +54,7 @@
                 />
               </div>
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.takeStatus)" label="盘点状态">
+            <j-form-item v-if="isEmpty(requestParams.takeStatus)" label="盘点状态">
               <a-select v-model:value="searchParams.takeStatus" placeholder="全部" allow-clear>
                 <a-select-option
                   v-for="item in $enums.PRE_TAKE_STOCK_SHEET_STATUS.values()"
@@ -87,10 +87,22 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import moment from 'moment';
   import * as api from '@/api/sc/stock/take/pre';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+  } from '@/utils/utils';
 
   export default defineComponent({
     name: 'PreTakeStockSheetSelector',
     components: { SearchOutlined },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       requestParams: {
         type: Object,
@@ -105,10 +117,8 @@
           code: '',
           scId: '',
           takeStatus: undefined,
-          updateTimeStart: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          updateTimeEnd: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          updateTimeStart: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          updateTimeEnd: formatDateTime(getDateTimeWithMaxTime(moment())),
         },
       };
     },

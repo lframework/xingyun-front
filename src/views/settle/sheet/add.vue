@@ -53,16 +53,14 @@
 
         <!-- 已付款金额 列自定义内容 -->
         <template #totalPayedAmount_default="{ row }">
-          <span v-if="$utils.isFloat(row.payAmount)">{{
-            $utils.add(row.totalPayedAmount, row.payAmount)
-          }}</span>
+          <span v-if="isFloat(row.payAmount)">{{ add(row.totalPayedAmount, row.payAmount) }}</span>
           <span v-else>{{ row.totalPayedAmount }}</span>
         </template>
 
         <!-- 已优惠金额 列自定义内容 -->
         <template #totalDiscountAmount_default="{ row }">
-          <span v-if="$utils.isFloat(row.discountAmount)">{{
-            $utils.add(row.totalDiscountAmount, row.discountAmount)
+          <span v-if="isFloat(row.discountAmount)">{{
+            add(row.totalDiscountAmount, row.discountAmount)
           }}</span>
           <span v-else>{{ row.totalDiscountAmount }}</span>
         </template>
@@ -70,9 +68,9 @@
         <!-- 未付款金额 列自定义内容 -->
         <template #totalUnPayAmount_default="{ row }">
           <span>{{
-            $utils.sub(
-              $utils.sub(row.totalUnPayAmount, $utils.isFloat(row.payAmount) ? row.payAmount : 0),
-              $utils.isFloat(row.discountAmount) ? row.discountAmount : 0,
+            sub(
+              sub(row.totalUnPayAmount, isFloat(row.payAmount) ? row.payAmount : 0),
+              isFloat(row.discountAmount) ? row.discountAmount : 0,
             )
           }}</span>
         </template>
@@ -152,6 +150,19 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/settle/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isFloat,
+    add,
+    sub,
+    isEmpty,
+    isNumberPrecision,
+    uuid,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    dateTimeToDate,
+  } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'AddSupplierSettleSheet',
@@ -161,6 +172,10 @@
       return {
         h,
         SearchOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isFloat,
+        add,
+        sub,
       };
     },
     data() {
@@ -254,10 +269,8 @@
       initFormData() {
         this.formData = {
           supplierId: '',
-          startTime: this.$utils.formatDateTime(
-            this.$utils.getDateTimeWithMinTime(moment().subtract(1, 'M')),
-          ),
-          endTime: this.$utils.formatDateTime(this.$utils.getDateTimeWithMaxTime(moment())),
+          startTime: formatDateTime(getDateTimeWithMinTime(moment().subtract(1, 'M'))),
+          endTime: formatDateTime(getDateTimeWithMaxTime(moment())),
           description: '',
           totalAmount: 0,
           totalUnPayAmount: 0,
@@ -268,7 +281,7 @@
       },
       emptyLine() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           code: '',
           bizType: '供应商对账单',
           totalPayAmount: '',
@@ -285,16 +298,13 @@
         this.calcSum();
       },
       discountAmountInput(row, value) {
-        const diff = this.$utils.sub(
-          this.$utils.sub(
-            row.totalUnPayAmount,
-            this.$utils.isFloat(row.payAmount) ? row.payAmount : 0,
-          ),
-          this.$utils.isFloat(value) ? value : 0,
+        const diff = sub(
+          sub(row.totalUnPayAmount, isFloat(row.payAmount) ? row.payAmount : 0),
+          isFloat(value) ? value : 0,
         );
         if (diff < 0) {
-          if (this.$utils.isFloat(row.payAmount)) {
-            row.payAmount = this.$utils.add(row.payAmount, diff);
+          if (isFloat(row.payAmount)) {
+            row.payAmount = add(row.payAmount, diff);
           }
         }
         this.calcSum();
@@ -305,29 +315,26 @@
         let totalUnPayAmount = 0;
         let totalDiscountAmount = 0;
         const records = this.$refs.grid.getCheckboxRecords();
-        if (!this.$utils.isEmpty(records)) {
+        if (!isEmpty(records)) {
           records.forEach((item) => {
-            if (this.$utils.isFloat(item.payAmount)) {
-              totalAmount = this.$utils.add(totalAmount, item.payAmount);
+            if (isFloat(item.payAmount)) {
+              totalAmount = add(totalAmount, item.payAmount);
             }
 
-            if (this.$utils.isFloat(item.discountAmount)) {
-              totalDiscountAmount = this.$utils.add(
+            if (isFloat(item.discountAmount)) {
+              totalDiscountAmount = add(
                 totalDiscountAmount,
-                this.$utils.add(item.discountAmount, item.totalDiscountAmount),
+                add(item.discountAmount, item.totalDiscountAmount),
               );
             } else {
-              totalDiscountAmount = this.$utils.add(totalDiscountAmount, item.totalDiscountAmount);
+              totalDiscountAmount = add(totalDiscountAmount, item.totalDiscountAmount);
             }
 
-            totalUnPayAmount = this.$utils.add(
+            totalUnPayAmount = add(
               totalUnPayAmount,
-              this.$utils.sub(
-                this.$utils.sub(
-                  item.totalUnPayAmount,
-                  this.$utils.isFloat(item.payAmount) ? item.payAmount : 0,
-                ),
-                this.$utils.isFloat(item.discountAmount) ? item.discountAmount : 0,
+              sub(
+                sub(item.totalUnPayAmount, isFloat(item.payAmount) ? item.payAmount : 0),
+                isFloat(item.discountAmount) ? item.discountAmount : 0,
               ),
             );
           });
@@ -339,105 +346,101 @@
       },
       // 校验数据
       validData() {
-        if (this.$utils.isEmpty(this.formData.supplierId)) {
-          this.$msg.createError('供应商不允许为空！');
+        if (isEmpty(this.formData.supplierId)) {
+          createError('供应商不允许为空！');
           return false;
         }
 
-        if (this.$utils.isEmpty(this.formData.startTime)) {
-          this.$msg.createError('审核起始日期不能为空！');
+        if (isEmpty(this.formData.startTime)) {
+          createError('审核起始日期不能为空！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.endTime)) {
-          this.$msg.createError('审核截止日期不能为空！');
+        if (isEmpty(this.formData.endTime)) {
+          createError('审核截止日期不能为空！');
           return;
         }
 
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择业务单据！');
+        if (isEmpty(records)) {
+          createError('请选择业务单据！');
           return false;
         }
 
         for (let i = 0; i < records.length; i++) {
           const item = records[i];
 
-          if (this.$utils.isEmpty(item.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行实付金额不能为空！');
+          if (isEmpty(item.payAmount)) {
+            createError('第' + (i + 1) + '行实付金额不能为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(item.payAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行实付金额必须是数字！');
+          if (!isFloat(item.payAmount)) {
+            createError('第' + (i + 1) + '行实付金额必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isNumberPrecision(item.payAmount, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行实付金额最多允许2位小数！');
+          if (!isNumberPrecision(item.payAmount, 2)) {
+            createError('第' + (i + 1) + '行实付金额最多允许2位小数！');
             return false;
           }
 
-          if (this.$utils.isEmpty(item.discountAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行优惠金额不能为空！');
+          if (isEmpty(item.discountAmount)) {
+            createError('第' + (i + 1) + '行优惠金额不能为空！');
             return false;
           }
 
-          if (!this.$utils.isFloat(item.discountAmount)) {
-            this.$msg.createError('第' + (i + 1) + '行优惠金额必须是数字！');
+          if (!isFloat(item.discountAmount)) {
+            createError('第' + (i + 1) + '行优惠金额必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isNumberPrecision(item.discountAmount, 2)) {
-            this.$msg.createError('第' + (i + 1) + '行优惠金额最多允许2位小数！');
+          if (!isNumberPrecision(item.discountAmount, 2)) {
+            createError('第' + (i + 1) + '行优惠金额最多允许2位小数！');
             return false;
           }
 
           if (item.totalPayAmount > 0) {
             if (item.payAmount < 0) {
-              this.$msg.createError('第' + (i + 1) + '行实付金额不允许小于0！');
+              createError('第' + (i + 1) + '行实付金额不允许小于0！');
               return false;
             }
 
             if (item.discountAmount < 0) {
-              this.$msg.createError('第' + (i + 1) + '行优惠金额不允许小于0！');
+              createError('第' + (i + 1) + '行优惠金额不允许小于0！');
               return false;
             }
 
-            if (this.$utils.add(item.payAmount, item.discountAmount) === 0) {
-              this.$msg.createError('第' + (i + 1) + '行实付金额、优惠金额不允许同时等于0！');
+            if (add(item.payAmount, item.discountAmount) === 0) {
+              createError('第' + (i + 1) + '行实付金额、优惠金额不允许同时等于0！');
               return false;
             }
-            if (item.totalUnPayAmount < this.$utils.add(item.payAmount, item.discountAmount)) {
-              this.$msg.createError(
-                '第' + (i + 1) + '行实付金额与优惠金额相加不允许大于未付款金额！',
-              );
+            if (item.totalUnPayAmount < add(item.payAmount, item.discountAmount)) {
+              createError('第' + (i + 1) + '行实付金额与优惠金额相加不允许大于未付款金额！');
               return false;
             }
           } else if (item.totalPayAmount < 0) {
             if (item.payAmount > 0) {
-              this.$msg.createError('第' + (i + 1) + '行实付金额不允许大于0！');
+              createError('第' + (i + 1) + '行实付金额不允许大于0！');
               return false;
             }
 
             if (item.discountAmount > 0) {
-              this.$msg.createError('第' + (i + 1) + '行优惠金额不允许大于0！');
+              createError('第' + (i + 1) + '行优惠金额不允许大于0！');
               return false;
             }
 
-            if (this.$utils.add(item.payAmount, item.discountAmount) === 0) {
-              this.$msg.createError('第' + (i + 1) + '行实付金额、优惠金额不允许同时等于0！');
+            if (add(item.payAmount, item.discountAmount) === 0) {
+              createError('第' + (i + 1) + '行实付金额、优惠金额不允许同时等于0！');
               return false;
             }
-            if (item.totalUnPayAmount > this.$utils.add(item.payAmount, item.discountAmount)) {
-              this.$msg.createError(
-                '第' + (i + 1) + '行实付金额与优惠金额相加不允许小于未付款金额！',
-              );
+            if (item.totalUnPayAmount > add(item.payAmount, item.discountAmount)) {
+              createError('第' + (i + 1) + '行实付金额与优惠金额相加不允许小于未付款金额！');
               return false;
             }
           } else {
-            if (this.$utils.add(item.payAmount, item.discountAmount) !== 0) {
-              this.$msg.createError('第' + (i + 1) + '行实付金额、优惠金额必须同时等于0！');
+            if (add(item.payAmount, item.discountAmount) !== 0) {
+              createError('第' + (i + 1) + '行实付金额、优惠金额必须同时等于0！');
               return false;
             }
           }
@@ -451,8 +454,8 @@
         return {
           supplierId: this.formData.supplierId,
           description: this.formData.description,
-          startDate: this.$utils.dateTimeToDate(this.formData.startTime),
-          endDate: this.$utils.dateTimeToDate(this.formData.endTime),
+          startDate: dateTimeToDate(this.formData.startTime),
+          endDate: dateTimeToDate(this.formData.endTime),
           items: records.map((t) => {
             return {
               id: t.id,
@@ -475,7 +478,7 @@
         api
           .create(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();
@@ -492,12 +495,12 @@
 
         const params = this.buildParams();
 
-        this.$msg.createConfirm('确定执行审核通过操作？').then(() => {
+        createConfirm('确定执行审核通过操作？').then(() => {
           this.loading = true;
           api
             .directApprovePass(params)
             .then((res) => {
-              this.$msg.createSuccess('审核通过！');
+              createSuccess('审核通过！');
 
               this.$emit('confirm');
               this.closeDialog();
@@ -508,18 +511,18 @@
         });
       },
       searchUnSettleItems() {
-        if (this.$utils.isEmpty(this.formData.supplierId)) {
-          this.$msg.createError('请先选择供应商！');
+        if (isEmpty(this.formData.supplierId)) {
+          createError('请先选择供应商！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.startTime)) {
-          this.$msg.createError('审核起始日期不能为空！');
+        if (isEmpty(this.formData.startTime)) {
+          createError('审核起始日期不能为空！');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.endTime)) {
-          this.$msg.createError('审核截止日期不能为空！');
+        if (isEmpty(this.formData.endTime)) {
+          createError('审核截止日期不能为空！');
           return;
         }
 
@@ -532,7 +535,7 @@
           })
           .then((res) => {
             const tableData = [];
-            if (!this.$utils.isEmpty(res)) {
+            if (!isEmpty(res)) {
               res.forEach((item) => {
                 const obj = Object.assign(this.emptyLine(), item);
                 obj.payAmount = obj.totalUnPayAmount;

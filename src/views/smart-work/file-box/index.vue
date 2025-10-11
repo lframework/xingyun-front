@@ -119,6 +119,8 @@
   import Detail from './detail.vue';
   import * as api from '@/api/smart-work/file-box';
   import Icon from '@/components/Icon/Icon.vue';
+  import { isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'FileBox',
@@ -237,8 +239,8 @@
       batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
 
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的文件或目录！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的文件或目录！');
           return;
         }
 

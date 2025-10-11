@@ -11,13 +11,13 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="编号">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="编号">
               <a-input v-model:value="searchParams.code" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="名称">
+            <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.available)" label="状态">
+            <j-form-item v-if="isEmpty(requestParams.available)" label="状态">
               <a-select v-model:value="searchParams.available" placeholder="全部" allow-clear>
                 <a-select-option
                   v-for="item in $enums.AVAILABLE.values()"
@@ -49,10 +49,17 @@
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/product/brand';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ProductBrandSelector',
     components: { SearchOutlined },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       requestParams: {
         type: Object,

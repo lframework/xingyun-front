@@ -56,6 +56,8 @@
   import { defineComponent } from 'vue';
   import GenerateColumn from './generate-column.vue';
   import * as api from '@/api/development/data/entity';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -107,7 +109,7 @@
       },
       changeTable(e) {
         this.columns = [];
-        if (this.$utils.isEmpty(e)) {
+        if (isEmpty(e)) {
           return;
         }
         this.loading = true;
@@ -142,8 +144,8 @@
           });
       },
       submit() {
-        if (this.$utils.isEmpty(this.formData.name)) {
-          this.$msg.createError('请输入名称');
+        if (isEmpty(this.formData.name)) {
+          createError('请输入名称');
           return;
         }
         if (!this.$refs.generateColumn.validDate()) {
@@ -166,7 +168,7 @@
         api
           .create(params)
           .then(() => {
-            this.$msg.createSuccess('新增成功！');
+            createSuccess('新增成功！');
             this.$emit('confirm');
             this.closeDialog();
           })

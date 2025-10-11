@@ -53,6 +53,7 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/category';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -118,21 +119,21 @@
               this.$enums.AVAILABLE.ENABLE.equalsCode(this.oriAvailable)
             ) {
               // 如果是停用，子节点全部停用
-              this.$msg
-                .createConfirm('是否确认修改分类信息，以及停用当前分类以及该分类的所有子级分类？')
-                .then(() => {
-                  this.doSubmit();
-                });
+              createConfirm(
+                '是否确认修改分类信息，以及停用当前分类以及该分类的所有子级分类？',
+              ).then(() => {
+                this.doSubmit();
+              });
             } else if (
               this.$enums.AVAILABLE.ENABLE.equalsCode(this.formData.available) &&
               this.$enums.AVAILABLE.UNABLE.equalsCode(this.oriAvailable)
             ) {
               // 如果是启用，父节点全部启用
-              this.$msg
-                .createConfirm('是否确认修改分类信息，以及启用当前分类以及该分类的所有父级分类？')
-                .then(() => {
-                  this.doSubmit();
-                });
+              createConfirm(
+                '是否确认修改分类信息，以及启用当前分类以及该分类的所有父级分类？',
+              ).then(() => {
+                this.doSubmit();
+              });
             } else {
               this.doSubmit();
             }
@@ -165,7 +166,7 @@
         api
           .update(this.formData)
           .then(() => {
-            this.$msg.createSuccess('修改成功！');
+            createSuccess('修改成功！');
             this.$emit('confirm');
             this.visible = false;
           })

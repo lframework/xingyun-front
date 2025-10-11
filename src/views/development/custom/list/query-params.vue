@@ -114,6 +114,8 @@
   import { defineComponent } from 'vue';
   import Sortable from 'sortablejs';
   import { DragOutlined } from '@ant-design/icons-vue';
+  import { isEmpty, isIntegerGeZero } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -178,7 +180,7 @@
       _columns() {
         const columns = [];
         this.columns
-          .map((item) => (this.$utils.isEmpty(item.columns) ? [] : item.columns))
+          .map((item) => (isEmpty(item.columns) ? [] : item.columns))
           .forEach((item) => {
             columns.push(...item);
           });
@@ -196,45 +198,43 @@
     },
     methods: {
       validDate() {
-        if (this.$utils.isEmpty(this.tableData)) {
+        if (isEmpty(this.tableData)) {
           return true;
         }
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
           column.name = this.convertToColumn(column.id)?.name;
-          if (this.$utils.isEmpty(column.queryType)) {
-            this.$msg.createError('字段【' + column.name + '】查询类型不能为空');
+          if (isEmpty(column.queryType)) {
+            createError('字段【' + column.name + '】查询类型不能为空');
             return false;
           }
-          if (this.$utils.isEmpty(column.frontShow)) {
-            this.$msg.createError('字段【' + column.name + '】前端显示不能为空');
+          if (isEmpty(column.frontShow)) {
+            createError('字段【' + column.name + '】前端显示不能为空');
             return false;
           }
 
           if (this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(column.viewType)) {
-            if (!this.$utils.isEmpty(column.defaultValue)) {
-              if (this.$utils.isEmpty(column.defaultValue.dateType)) {
-                this.$msg.createError('字段【' + column.name + '】默认值请选择日期类型');
+            if (!isEmpty(column.defaultValue)) {
+              if (isEmpty(column.defaultValue.dateType)) {
+                createError('字段【' + column.name + '】默认值请选择日期类型');
                 return false;
               }
               if (column.defaultValue.dateType === 1) {
-                if (this.$utils.isEmpty(column.defaultValue.dateNum)) {
-                  this.$msg.createError('字段【' + column.name + '】默认值天数不能为空');
+                if (isEmpty(column.defaultValue.dateNum)) {
+                  createError('字段【' + column.name + '】默认值天数不能为空');
                   return false;
                 }
-                if (!this.$utils.isIntegerGeZero(column.defaultValue.dateNum)) {
-                  this.$msg.createError(
-                    '字段【' + column.name + '】默认值天数必须为大于或等于0的整数',
-                  );
+                if (!isIntegerGeZero(column.defaultValue.dateNum)) {
+                  createError('字段【' + column.name + '】默认值天数必须为大于或等于0的整数');
                   return false;
                 }
-                if (this.$utils.isEmpty(column.defaultValue.dateUnit)) {
-                  this.$msg.createError('字段【' + column.name + '】默认值日期单位不能为空');
+                if (isEmpty(column.defaultValue.dateUnit)) {
+                  createError('字段【' + column.name + '】默认值日期单位不能为空');
                   return false;
                 }
               } else if (column.defaultValue.dateType === 2) {
-                if (this.$utils.isEmpty(column.defaultValue.dateRange)) {
-                  this.$msg.createError('字段【' + column.name + '】默认值日期范围不能为空');
+                if (isEmpty(column.defaultValue.dateRange)) {
+                  createError('字段【' + column.name + '】默认值日期范围不能为空');
                   return false;
                 }
               }
@@ -288,7 +288,7 @@
             return this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(item.viewType);
           })
           .forEach((item) => {
-            if (this.$utils.isEmpty(item.defaultValue)) {
+            if (isEmpty(item.defaultValue)) {
               item.defaultValue = {};
             } else {
               item.defaultValue = JSON.parse(item.defaultValue);
@@ -300,9 +300,7 @@
         const tableData = this.tableData.map((item) => {
           if (this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(item.viewType)) {
             return Object.assign({}, item, {
-              defaultValue: this.$utils.isEmpty(item.defaultValue)
-                ? ''
-                : JSON.stringify(item.defaultValue),
+              defaultValue: isEmpty(item.defaultValue) ? '' : JSON.stringify(item.defaultValue),
             });
           } else {
             return Object.assign({}, item);

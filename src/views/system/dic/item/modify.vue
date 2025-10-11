@@ -49,6 +49,8 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/system/dic-item';
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+  import { isInteger } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -106,15 +108,15 @@
       submit() {
         this.$refs.form.validate().then((valid) => {
           if (valid) {
-            if (!this.$utils.isInteger(this.formData.orderNo)) {
-              this.$msg.createError('排序必须是数字');
+            if (!isInteger(this.formData.orderNo)) {
+              createError('排序必须是数字');
               return;
             }
             this.loading = true;
             api
               .update({ ...this.formData })
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

@@ -55,6 +55,7 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/tenant';
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: { QuestionCircleOutlined },
@@ -104,7 +105,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');

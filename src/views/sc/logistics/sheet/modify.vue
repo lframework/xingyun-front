@@ -102,7 +102,7 @@
 
           <!-- 收件人 列自定义内容 -->
           <template #receiverName_default="{ row }">
-            <a v-if="!$utils.isEmpty(row.receiverName)" @click="(e) => setReceiver(row)">{{
+            <a v-if="!isEmpty(row.receiverName)" @click="(e) => setReceiver(row)">{{
               row.receiverName
             }}</a>
           </template>
@@ -220,6 +220,8 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/logistics/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, uuid, isFloat, isFloatGeZero, isNumberPrecision } from '@/utils/utils';
+  import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ModifyLogisticsSheet',
@@ -231,7 +233,13 @@
     },
     mixins: [multiplePageMix],
     setup() {
-      return { h, PlusOutlined, DeleteOutlined };
+      return {
+        h,
+        PlusOutlined,
+        DeleteOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     data() {
       return {
@@ -339,7 +347,7 @@
       },
       emptyRow() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
         };
       },
       // 加载数据
@@ -349,7 +357,7 @@
           .get(this.id)
           .then((res) => {
             if (!this.$enums.LOGISTICS_SHEET_STATUS.CREATED.equalsCode(res.status)) {
-              this.$msg.createError('物流单已发货，无法修改！');
+              createError('物流单已发货，无法修改！');
               this.closeDialog();
               return;
             }
@@ -387,7 +395,7 @@
         this.$refs.queryBizOrderDialog.openDialog();
       },
       confirmAddBizOrder(datas) {
-        if (!this.$utils.isEmpty(datas)) {
+        if (!isEmpty(datas)) {
           datas
             .map((item) => {
               return Object.assign({}, this.emptyRow(), item);
@@ -402,32 +410,32 @@
       },
       delRow() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的业务单据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的业务单据！');
           return;
         }
-        this.$msg.createConfirm('是否确定删除选中的业务单据？').then(() => {
+        createConfirm('是否确定删除选中的业务单据？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
         });
       },
       async calcWeight() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请先选择业务单据');
+        if (isEmpty(this.tableData)) {
+          createError('请先选择业务单据');
           return;
         }
 
-        let flag = this.$utils.isEmpty(this.formData.totalWeight);
-        if (!this.$utils.isEmpty(this.formData.totalWeight)) {
-          await this.$msg
-            .createConfirm('您当前已录入总重量，重新计算会覆盖录入值，是否确认继续？')
-            .then(() => {
+        let flag = isEmpty(this.formData.totalWeight);
+        if (!isEmpty(this.formData.totalWeight)) {
+          await createConfirm('您当前已录入总重量，重新计算会覆盖录入值，是否确认继续？').then(
+            () => {
               flag = true;
-            });
+            },
+          );
         }
 
         if (flag) {
@@ -445,18 +453,18 @@
         }
       },
       async calcVolume() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请先选择业务单据');
+        if (isEmpty(this.tableData)) {
+          createError('请先选择业务单据');
           return;
         }
 
-        let flag = this.$utils.isEmpty(this.formData.totalVolume);
-        if (!this.$utils.isEmpty(this.formData.totalVolume)) {
-          await this.$msg
-            .createConfirm('您当前已录入总体积，重新计算会覆盖录入值，是否确认继续？')
-            .then(() => {
+        let flag = isEmpty(this.formData.totalVolume);
+        if (!isEmpty(this.formData.totalVolume)) {
+          await createConfirm('您当前已录入总体积，重新计算会覆盖录入值，是否确认继续？').then(
+            () => {
               flag = true;
-            });
+            },
+          );
         }
 
         if (flag) {
@@ -474,7 +482,7 @@
         }
       },
       setSender(row) {
-        this.$msg.createConfirm('选择地址后，会覆盖寄件人信息，是否确认继续？').then(() => {
+        createConfirm('选择地址后，会覆盖寄件人信息，是否确认继续？').then(() => {
           this.entityId = row.scId;
           this.entityType = this.$enums.ADDRESS_ENTITY_TYPE.SC.code;
           this.addressType = this.$enums.ADDRESS_TYPE.DELIVERY.code;
@@ -483,7 +491,7 @@
         });
       },
       setReceiver(row) {
-        this.$msg.createConfirm('选择地址后，会覆盖收件人信息，是否确认继续？').then(() => {
+        createConfirm('选择地址后，会覆盖收件人信息，是否确认继续？').then(() => {
           this.entityId = row.scId;
           if (this.$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.SALE_OUT_SHEET.equalsCode(row.bizType)) {
             this.entityType = this.$enums.ADDRESS_ENTITY_TYPE.CUSTOMER.code;
@@ -514,8 +522,8 @@
       },
       // 校验数据
       async validData() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请先选择业务单据');
+        if (isEmpty(this.tableData)) {
+          createError('请先选择业务单据');
           return false;
         }
         let flag = true;
@@ -540,47 +548,47 @@
           return false;
         }
 
-        if (!this.$utils.isEmpty(this.formData.totalWeight)) {
-          if (!this.$utils.isFloat(this.formData.totalWeight)) {
-            this.$msg.createError('总重量必须是数字');
+        if (!isEmpty(this.formData.totalWeight)) {
+          if (!isFloat(this.formData.totalWeight)) {
+            createError('总重量必须是数字');
             return false;
           }
-          if (!this.$utils.isFloatGeZero(this.formData.totalWeight)) {
-            this.$msg.createError('总重量必须大于0');
+          if (!isFloatGeZero(this.formData.totalWeight)) {
+            createError('总重量必须大于0');
             return false;
           }
-          if (!this.$utils.isNumberPrecision(this.formData.totalWeight, 2)) {
-            this.$msg.createError('总重量最多允许2位小数');
-            return false;
-          }
-        }
-
-        if (!this.$utils.isEmpty(this.formData.totalVolume)) {
-          if (!this.$utils.isFloat(this.formData.totalVolume)) {
-            this.$msg.createError('总体积必须是数字');
-            return false;
-          }
-          if (!this.$utils.isFloatGeZero(this.formData.totalVolume)) {
-            this.$msg.createError('总体积必须大于0');
-            return false;
-          }
-          if (!this.$utils.isNumberPrecision(this.formData.totalVolume, 2)) {
-            this.$msg.createError('总体积最多允许2位小数');
+          if (!isNumberPrecision(this.formData.totalWeight, 2)) {
+            createError('总重量最多允许2位小数');
             return false;
           }
         }
 
-        if (!this.$utils.isEmpty(this.formData.totalAmount)) {
-          if (!this.$utils.isFloat(this.formData.totalAmount)) {
-            this.$msg.createError('物流费必须是数字');
+        if (!isEmpty(this.formData.totalVolume)) {
+          if (!isFloat(this.formData.totalVolume)) {
+            createError('总体积必须是数字');
             return false;
           }
-          if (!this.$utils.isFloatGeZero(this.formData.totalAmount)) {
-            this.$msg.createError('物流费必须大于0');
+          if (!isFloatGeZero(this.formData.totalVolume)) {
+            createError('总体积必须大于0');
             return false;
           }
-          if (!this.$utils.isNumberPrecision(this.formData.totalAmount, 2)) {
-            this.$msg.createError('物流费最多允许2位小数');
+          if (!isNumberPrecision(this.formData.totalVolume, 2)) {
+            createError('总体积最多允许2位小数');
+            return false;
+          }
+        }
+
+        if (!isEmpty(this.formData.totalAmount)) {
+          if (!isFloat(this.formData.totalAmount)) {
+            createError('物流费必须是数字');
+            return false;
+          }
+          if (!isFloatGeZero(this.formData.totalAmount)) {
+            createError('物流费必须大于0');
+            return false;
+          }
+          if (!isNumberPrecision(this.formData.totalAmount, 2)) {
+            createError('物流费最多允许2位小数');
             return false;
           }
         }
@@ -593,26 +601,22 @@
           if (valid) {
             const scIds = this.tableData.map((item) => item.scId);
             const receiverIds = this.tableData
-              .filter((item) => !this.$utils.isEmpty(item.receiverId))
+              .filter((item) => !isEmpty(item.receiverId))
               .map((item) => item.receiverId);
             if (scIds.length > 1 && receiverIds.length > 1) {
-              this.$msg
-                .createConfirm('选择的业务单据包含不同的仓库和收件人，是否确认修改物流单？')
-                .then(() => {
+              createConfirm('选择的业务单据包含不同的仓库和收件人，是否确认修改物流单？').then(
+                () => {
                   this.doUpdateOrder();
-                });
+                },
+              );
             } else if (scIds.length > 1) {
-              this.$msg
-                .createConfirm('选择的业务单据包含不同的仓库，是否确认修改物流单？')
-                .then(() => {
-                  this.doUpdateOrder();
-                });
+              createConfirm('选择的业务单据包含不同的仓库，是否确认修改物流单？').then(() => {
+                this.doUpdateOrder();
+              });
             } else if (receiverIds.length > 1) {
-              this.$msg
-                .createConfirm('选择的业务单据包含不同的收件人，是否确认修改物流单？')
-                .then(() => {
-                  this.doUpdateOrder();
-                });
+              createConfirm('选择的业务单据包含不同的收件人，是否确认修改物流单？').then(() => {
+                this.doUpdateOrder();
+              });
             } else {
               this.doUpdateOrder();
             }
@@ -652,7 +656,7 @@
         api
           .update(params)
           .then((res) => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
 
             this.$emit('confirm');
             this.closeDialog();

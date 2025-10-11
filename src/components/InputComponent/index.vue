@@ -104,6 +104,14 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
+  import {
+    isEmpty,
+    formatDateTime,
+    getDateTimeWithMinTime,
+    getDateTimeWithMaxTime,
+    getCurrentDate,
+    parseDate,
+  } from '@/utils/utils';
 
   export default defineComponent({
     name: 'InputComponent',
@@ -148,27 +156,25 @@
     },
     mounted() {
       if (!this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(this.queryParam.viewType)) {
-        if (!this.$utils.isEmpty(this.queryParam.defaultValue)) {
+        if (!isEmpty(this.queryParam.defaultValue)) {
           this.formData = this.queryParam.defaultValue;
         }
       } else {
-        if (!this.$utils.isEmpty(this.queryParam.defaultValue)) {
+        if (!isEmpty(this.queryParam.defaultValue)) {
           const defaultValue = JSON.parse(this.queryParam.defaultValue);
           if (defaultValue.dateType === 1) {
-            this.formDataStart = this.$utils.formatDateTime(
-              this.$utils.getDateTimeWithMinTime(
-                this.$utils.getCurrentDate().add(-defaultValue.dateNum, defaultValue.dateUnit),
+            this.formDataStart = formatDateTime(
+              getDateTimeWithMinTime(
+                getCurrentDate().add(-defaultValue.dateNum, defaultValue.dateUnit),
               ),
             );
-            this.formDataEnd = this.$utils.formatDateTime(
-              this.$utils.getDateTimeWithMaxTime(this.$utils.getCurrentDate()),
-            );
+            this.formDataEnd = formatDateTime(getDateTimeWithMaxTime(getCurrentDate()));
           } else if (defaultValue.dateType === 2) {
-            this.formDataStart = this.$utils.formatDateTime(
-              this.$utils.getDateTimeWithMinTime(this.$utils.parseDate(defaultValue.dateRange[0])),
+            this.formDataStart = formatDateTime(
+              getDateTimeWithMinTime(parseDate(defaultValue.dateRange[0])),
             );
-            this.formDataEnd = this.$utils.formatDateTime(
-              this.$utils.getDateTimeWithMaxTime(this.$utils.parseDate(defaultValue.dateRange[1])),
+            this.formDataEnd = formatDateTime(
+              getDateTimeWithMaxTime(parseDate(defaultValue.dateRange[1])),
             );
           }
         }

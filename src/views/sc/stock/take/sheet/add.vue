@@ -68,7 +68,7 @@
         <!-- 商品名称 列自定义内容 -->
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
-            v-if="!row.isFixed && $utils.isEmpty(row.productId)"
+            v-if="!row.isFixed && isEmpty(row.productId)"
             v-model:value="row.productName"
             style="width: 100%"
             placeholder=""
@@ -127,6 +127,8 @@
   import * as preApi from '@/api/sc/stock/take/pre';
   import * as api from '@/api/sc/stock/take/sheet';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import { isEmpty, isFloat, isFloatGeZero, isNumberPrecision, uuid } from '@/utils/utils';
+  import { createSuccess, createConfirm, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'AddStockTakeSheet',
@@ -139,6 +141,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
       };
     },
     data() {
@@ -226,38 +230,38 @@
         this.tableData = [];
       },
       validParams() {
-        if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          this.$msg.createError('请选择关联盘点任务！');
+        if (isEmpty(this.formData.takeStockPlanId)) {
+          createError('请选择关联盘点任务！');
           return false;
         }
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
-          if (this.$utils.isEmpty(column.productId)) {
-            this.$msg.createError('第' + (i + 1) + '行商品不允许为空！');
+          if (isEmpty(column.productId)) {
+            createError('第' + (i + 1) + '行商品不允许为空！');
             return false;
           }
-          if (this.$utils.isEmpty(column.takeNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
-            return false;
-          }
-
-          if (!this.$utils.isFloat(column.takeNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
+          if (isEmpty(column.takeNum)) {
+            createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
             return false;
           }
 
-          if (!this.$utils.isFloatGeZero(column.takeNum)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
+          if (!isFloat(column.takeNum)) {
+            createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
             return false;
           }
 
-          if (!this.$utils.isNumberPrecision(column.takeNum, 8)) {
-            this.$msg.createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
+          if (!isFloatGeZero(column.takeNum)) {
+            createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
+            return false;
+          }
+
+          if (!isNumberPrecision(column.takeNum, 8)) {
+            createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
             return false;
           }
         }
@@ -289,7 +293,7 @@
         api
           .create(params)
           .then(() => {
-            this.$msg.createSuccess('保存成功！');
+            createSuccess('保存成功！');
             this.$emit('confirm');
 
             this.closeDialog();
@@ -309,7 +313,7 @@
         api
           .directApprovePass(params)
           .then(() => {
-            this.$msg.createSuccess('审核通过！');
+            createSuccess('审核通过！');
             this.$emit('confirm');
 
             this.closeDialog();
@@ -325,7 +329,7 @@
       },
       emptyProduct() {
         return {
-          id: this.$utils.uuid(),
+          id: uuid(),
           productId: '',
           productCode: '',
           productName: '',
@@ -343,8 +347,8 @@
       },
       // 新增商品
       addProduct() {
-        if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          this.$msg.createError('请先选择关联盘点任务！');
+        if (isEmpty(this.formData.takeStockPlanId)) {
+          createError('请先选择关联盘点任务！');
           return;
         }
 
@@ -352,7 +356,7 @@
       },
       // 搜索商品
       queryProduct(queryString, row) {
-        if (this.$utils.isEmpty(queryString)) {
+        if (isEmpty(queryString)) {
           row.products = [];
           row.productOptions = [];
           return;
@@ -378,7 +382,7 @@
               this.tableData[index] = Object.assign(this.tableData[index], value);
               return;
             }
-            this.$msg.createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
+            createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
             this.tableData = this.tableData.filter((t) => {
               return t.id !== row.id;
             });
@@ -390,23 +394,23 @@
       // 删除商品
       delProduct() {
         const records = this.$refs.grid.getCheckboxRecords();
-        if (this.$utils.isEmpty(records)) {
-          this.$msg.createError('请选择要删除的商品数据！');
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品数据！');
           return;
         }
 
-        this.$msg.createConfirm('是否确定删除选中的商品？').then(() => {
+        createConfirm('是否确定删除选中的商品？').then(() => {
           const tableData = this.tableData.filter((t) => {
             const tmp = records.filter((item) => item.id === t.id);
-            return this.$utils.isEmpty(tmp);
+            return isEmpty(tmp);
           });
 
           this.tableData = tableData;
         });
       },
       openBatchAddProductDialog() {
-        if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          this.$msg.createError('请先选择关联盘点任务！');
+        if (isEmpty(this.formData.takeStockPlanId)) {
+          createError('请先选择关联盘点任务！');
           return;
         }
         this.$refs.batchAddProductDialog.openDialog();
@@ -415,9 +419,7 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (
-            this.$utils.isEmpty(this.tableData.filter((data) => item.productId === data.productId))
-          ) {
+          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
             filterProductList.push(item);
           }
         });
@@ -428,13 +430,13 @@
         });
       },
       beforeSelectPreTakeStockSheet() {
-        if (this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          this.$msg.createError('请先选择关联盘点任务');
+        if (isEmpty(this.formData.takeStockPlanId)) {
+          createError('请先选择关联盘点任务');
           return false;
         }
 
-        if (!this.$utils.isEmpty(this.formData.preTakeStockSheetId)) {
-          return this.$msg.createConfirm(
+        if (!isEmpty(this.formData.preTakeStockSheetId)) {
+          return createConfirm(
             '更改关联盘点任务，不会清除已加载的预先盘点单的商品数据，是否确认更改？',
           );
         }
@@ -442,8 +444,8 @@
         return true;
       },
       beforeSelectTakeStockPlan() {
-        if (!this.$utils.isEmpty(this.formData.takeStockPlanId)) {
-          return this.$msg.createConfirm('更改关联盘点任务，会清空商品数据，是否确认更改？');
+        if (!isEmpty(this.formData.takeStockPlanId)) {
+          return createConfirm('更改关联盘点任务，会清空商品数据，是否确认更改？');
         } else {
           return true;
         }
@@ -457,7 +459,7 @@
         this.formData.takeStatus = '';
         this.formData.bizName = '';
 
-        if (!this.$utils.isEmpty(e)) {
+        if (!isEmpty(e)) {
           this.loading = true;
           planApi.get(e).then((res) => {
             this.formData.scId = res.scId;
@@ -488,7 +490,7 @@
           .then((products) => {
             products.forEach((item) => {
               const tableData = this.tableData.filter((obj) => obj.productId === item.productId);
-              if (!this.$utils.isEmpty(tableData)) {
+              if (!isEmpty(tableData)) {
                 tableData.forEach((obj) => {
                   obj.takeNum = item.takeNum;
                 });

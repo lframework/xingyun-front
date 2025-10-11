@@ -22,22 +22,22 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="编号">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="编号">
               <a-input v-model:value="searchParams.code" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="名称">
+            <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.shortName)" label="简称">
+            <j-form-item v-if="isEmpty(requestParams.shortName)" label="简称">
               <a-input v-model:value="searchParams.shortName" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.skuCode)" label="SKU编号">
+            <j-form-item v-if="isEmpty(requestParams.skuCode)" label="SKU编号">
               <a-input v-model:value="searchParams.skuCode" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.categoryId)" label="分类">
+            <j-form-item v-if="isEmpty(requestParams.categoryId)" label="分类">
               <product-category-selector v-model:value="searchParams.categoryId" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.brandId)" label="品牌">
+            <j-form-item v-if="isEmpty(requestParams.brandId)" label="品牌">
               <product-brand-selector v-model:value="searchParams.brandId" />
             </j-form-item>
             <j-form-item label="创建日期" :content-nest="false">
@@ -55,7 +55,7 @@
                 />
               </div>
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.productType)" label="商品类型">
+            <j-form-item v-if="isEmpty(requestParams.productType)" label="商品类型">
               <a-select v-model:value="searchParams.productType" placeholder="全部" allow-clear>
                 <a-select-option
                   v-for="item in $enums.PRODUCT_TYPE.values()"
@@ -65,7 +65,7 @@
                 >
               </a-select>
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.available)" label="状态">
+            <j-form-item v-if="isEmpty(requestParams.available)" label="状态">
               <a-select v-model:value="searchParams.available" placeholder="全部" allow-clear>
                 <a-select-option
                   v-for="item in $enums.AVAILABLE.values()"
@@ -97,6 +97,7 @@
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/product/info';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ProductSelector',
@@ -108,6 +109,12 @@
           return {};
         },
       },
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     data() {
       return {

@@ -47,6 +47,7 @@
     PhoneOutlined,
     AlertOutlined,
   } from '@ant-design/icons-vue';
+  import { createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ProfileIndex',
@@ -100,7 +101,7 @@
         this[type] = key;
       },
       logout() {
-        this.$msg.createConfirm('确定退出登录？').then(() => {
+        createConfirm('确定退出登录？').then(() => {
           this.userStore.logout(true);
         });
       },

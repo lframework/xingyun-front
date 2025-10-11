@@ -40,6 +40,7 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/parameter';
   import { validKey } from './constants';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -90,7 +91,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

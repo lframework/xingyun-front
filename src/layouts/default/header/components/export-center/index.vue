@@ -39,10 +39,7 @@
                             :percent="
                               item.totalCount === 0
                                 ? 0
-                                : $utils.getNumber(
-                                    $utils.mul($utils.div(item.curCount, item.totalCount), 100),
-                                    2,
-                                  )
+                                : getNumber(mul(div(item.curCount, item.totalCount), 100), 2)
                             "
                             status="active"
                           />
@@ -88,7 +85,7 @@
   import { useDesign } from '@/hooks/web/useDesign';
   import eventBus from '@/events/eventBus';
   import * as api from '@/api/export-task';
-  import { uuid, isEmpty } from '@/utils/utils';
+  import { uuid, isEmpty, getNumber, mul, div } from '@/utils/utils';
   import { ExportingExportTaskBo } from '@/api/export-task/model/exportingExportTaskBo';
   import projectSetting from '@/settings/projectSetting';
   import SuccessList from './SuccessList.vue';
@@ -188,6 +185,10 @@
         exportingDataList,
         projectSetting,
         activeKey,
+        // 工具函数 - 仅返回模板中需要使用的
+        getNumber,
+        mul,
+        div,
       };
     },
     mounted() {},

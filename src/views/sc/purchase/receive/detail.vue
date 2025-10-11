@@ -26,7 +26,7 @@
               {{ formData.receiveDate }}
             </j-form-item>
             <j-form-item label="采购订单">
-              <div v-if="!$utils.isEmpty(formData.purchaseOrderCode)">
+              <div v-if="!isEmpty(formData.purchaseOrderCode)">
                 <a
                   v-permission="['purchase:order:query']"
                   @click="(e) => $refs.viewPurchaseOrderDetailDialog.openDialog()"
@@ -100,10 +100,9 @@
         >
           <!-- 含税金额 列自定义内容 -->
           <template #taxAmount_default="{ row }">
-            <span
-              v-if="$utils.isFloatGeZero(row.purchasePrice) && $utils.isFloatGeZero(row.receiveNum)"
-              >{{ $utils.getNumber($utils.mul(row.purchasePrice, row.receiveNum), 2) }}</span
-            >
+            <span v-if="isFloatGeZero(row.purchasePrice) && isFloatGeZero(row.receiveNum)">{{
+              getNumber(mul(row.purchasePrice, row.receiveNum), 2)
+            }}</span>
           </template>
         </vxe-grid>
 
@@ -149,12 +148,22 @@
   import PurchaseOrderDetail from '@/views/sc/purchase/order/detail.vue';
   import * as api from '@/api/sc/purchase/receive';
   import { printMix } from '@/mixins/print';
+  import { isEmpty, isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
 
   export default defineComponent({
     components: {
       PurchaseOrderDetail,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -195,7 +204,7 @@
             align: 'right',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           {
@@ -204,7 +213,7 @@
             align: 'right',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$utils.isEmpty(cellValue) ? '-' : cellValue;
+              return isEmpty(cellValue) ? '-' : cellValue;
             },
           },
           { field: 'receiveNum', title: '收货数量', align: 'right', width: 100 },
@@ -304,22 +313,17 @@
 
         this.tableData
           .filter((t) => {
-            return (
-              this.$utils.isFloatGeZero(t.purchasePrice) && this.$utils.isFloatGeZero(t.receiveNum)
-            );
+            return isFloatGeZero(t.purchasePrice) && isFloatGeZero(t.receiveNum);
           })
           .forEach((t) => {
             const num = parseFloat(t.receiveNum);
             if (t.isGift) {
-              giftNum = this.$utils.add(giftNum, num);
+              giftNum = add(giftNum, num);
             } else {
-              totalNum = this.$utils.add(totalNum, num);
+              totalNum = add(totalNum, num);
             }
 
-            totalAmount = this.$utils.add(
-              totalAmount,
-              this.$utils.getNumber(this.$utils.mul(num, t.purchasePrice), 2),
-            );
+            totalAmount = add(totalAmount, getNumber(mul(num, t.purchasePrice), 2));
           });
 
         this.formData.totalNum = totalNum;

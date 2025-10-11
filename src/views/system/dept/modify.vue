@@ -62,6 +62,7 @@
   import { validCode } from '@/utils/validate';
   import DataPermission from '@/components/DataPermission/index.vue';
   import * as api from '@/api/system/dept';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -119,7 +120,7 @@
               api
                 .update(this.formData)
                 .then(() => {
-                  this.$msg.createSuccess('修改成功！');
+                  createSuccess('修改成功！');
                   // 初始化表单数据
                   this.initFormData();
                   this.$emit('confirm');

@@ -76,8 +76,6 @@ export async function registerGlobComp(app: App) {
     },
   });
 
-  app.config.globalProperties.$utils = utils;
-  app.config.globalProperties.$msg = msg;
   app.config.globalProperties.$defHttp = defHttp;
   app.config.globalProperties.$vh =
     (document.documentElement.clientHeight || document.body.clientHeight) / 100;

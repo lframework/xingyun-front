@@ -80,8 +80,8 @@
         <template #transferNum_default="{ row }">
           <span
             v-if="
-              $utils.isFloatGeZero(row.curReceiveNum) &&
-              $utils.sub($utils.sub(row.transferNum, row.curReceiveNum), row.receiveNum) < 0
+              isFloatGeZero(row.curReceiveNum) &&
+              sub(sub(row.transferNum, row.curReceiveNum), row.receiveNum) < 0
             "
             style="color: #ff4d4f"
             >{{ row.transferNum }}</span
@@ -93,8 +93,8 @@
         <template #receiveNum_default="{ row }">
           <span
             v-if="
-              $utils.isFloatGeZero(row.curReceiveNum) &&
-              $utils.sub($utils.sub(row.transferNum, row.curReceiveNum), row.receiveNum) < 0
+              isFloatGeZero(row.curReceiveNum) &&
+              sub(sub(row.transferNum, row.curReceiveNum), row.receiveNum) < 0
             "
             style="color: #ff4d4f"
             >{{ row.receiveNum }}</span
@@ -141,11 +141,29 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/transfer-sc';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    isEmpty,
+    isFloatGeZero,
+    isFloat,
+    isFloatGtZero,
+    isNumberPrecision,
+    sub,
+    add,
+    eq,
+  } from '@/utils/utils';
+  import { createSuccess, createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'ReceiveScTransferSheet',
     components: {},
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isFloatGeZero,
+        sub,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,
@@ -237,31 +255,31 @@
       },
       // 提交表单事件
       submit() {
-        if (this.$utils.isEmpty(this.tableData)) {
-          this.$msg.createError('请录入商品！');
+        if (isEmpty(this.tableData)) {
+          createError('请录入商品！');
           return;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const data = this.tableData[i];
-          if (this.$utils.isEmpty(data.curReceiveNum)) {
+          if (isEmpty(data.curReceiveNum)) {
             continue;
           }
-          if (!this.$utils.isFloat(data.curReceiveNum)) {
-            this.$msg.createError('第' + (i + 1) + '行本次调拨数量必须是数字！');
+          if (!isFloat(data.curReceiveNum)) {
+            createError('第' + (i + 1) + '行本次调拨数量必须是数字！');
             return false;
           }
-          if (!this.$utils.isFloatGtZero(data.curReceiveNum)) {
-            this.$msg.createError('第' + (i + 1) + '行本次调拨数量必须大于0！');
+          if (!isFloatGtZero(data.curReceiveNum)) {
+            createError('第' + (i + 1) + '行本次调拨数量必须大于0！');
             return false;
           }
-          if (!this.$utils.isNumberPrecision(data.curReceiveNum, 8)) {
-            this.$msg.createError('第' + (i + 1) + '行本次调拨数量最多允许8位小数！');
+          if (!isNumberPrecision(data.curReceiveNum, 8)) {
+            createError('第' + (i + 1) + '行本次调拨数量最多允许8位小数！');
             return false;
           }
 
-          if (this.$utils.sub(data.transferNum, data.receiveNum) < data.curReceiveNum) {
-            this.$msg.createError(
+          if (sub(data.transferNum, data.receiveNum) < data.curReceiveNum) {
+            createError(
               '第' +
                 (i + 1) +
                 '行调拨数量为' +
@@ -269,7 +287,7 @@
                 '，已收货数量为' +
                 data.receiveNum +
                 '，本次收货数量不能大于' +
-                this.$utils.sub(data.transferNum, data.receiveNum) +
+                sub(data.transferNum, data.receiveNum) +
                 '！',
             );
             return false;
@@ -280,10 +298,7 @@
           id: this.id,
           products: this.tableData
             .filter((data) => {
-              return (
-                !this.$utils.isEmpty(data.curReceiveNum) &&
-                this.$utils.isFloatGtZero(data.curReceiveNum)
-              );
+              return !isEmpty(data.curReceiveNum) && isFloatGtZero(data.curReceiveNum);
             })
             .map((item) => {
               return {
@@ -292,15 +307,15 @@
               };
             }),
         };
-        if (this.$utils.isEmpty(params.products)) {
-          this.$msg.createError('不允许所有的商品均不进行收货操作！');
+        if (isEmpty(params.products)) {
+          createError('不允许所有的商品均不进行收货操作！');
           return false;
         }
         this.loading = true;
         api
           .receive(params)
           .then(() => {
-            this.$msg.createSuccess('收货成功！');
+            createSuccess('收货成功！');
             this.$emit('confirm');
 
             this.closeDialog();
@@ -317,9 +332,9 @@
       calcSum() {
         let totalNum = 0;
         this.tableData.forEach((item) => {
-          if (!this.$utils.isEmpty(item.productId)) {
-            if (this.$utils.isFloatGeZero(item.curReceiveNum)) {
-              totalNum = this.$utils.add(item.curReceiveNum, totalNum);
+          if (!isEmpty(item.productId)) {
+            if (isFloatGeZero(item.curReceiveNum)) {
+              totalNum = add(item.curReceiveNum, totalNum);
             }
           }
         });
@@ -348,8 +363,8 @@
             });
 
             this.tableData = res.details.map((item) => {
-              item.curReceiveNum = that.$utils.sub(item.transferNum, item.receiveNum);
-              if (that.$utils.eq(item.curReceiveNum, 0)) {
+              item.curReceiveNum = sub(item.transferNum, item.receiveNum);
+              if (eq(item.curReceiveNum, 0)) {
                 item.curReceiveNum = '';
               }
               return item;

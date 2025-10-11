@@ -87,6 +87,8 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/store-center';
+  import { isEmpty, isIntegerGeZero, isInteger } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -113,14 +115,14 @@
           peopleNum: [
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value) || this.$utils.isIntegerGeZero(value)) {
+                if (isEmpty(value) || isIntegerGeZero(value)) {
                   return Promise.resolve();
                 } else {
-                  if (!this.$utils.isInteger(value)) {
+                  if (!isInteger(value)) {
                     return Promise.reject('仓库人数必须为整数');
                   }
 
-                  if (!this.$utils.isIntegerGeZero(value)) {
+                  if (!isIntegerGeZero(value)) {
                     return Promise.reject('仓库人数不允许小于0');
                   }
 
@@ -168,15 +170,13 @@
           if (valid) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
-            params.cityId = this.$utils.isEmpty(params.city)
-              ? ''
-              : params.city[params.city.length - 1];
+            params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];
             delete params.city;
 
             api
               .update(params)
               .then(() => {
-                this.$msg.createSuccess('修改成功！');
+                createSuccess('修改成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

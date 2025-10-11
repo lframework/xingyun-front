@@ -65,6 +65,7 @@
   import * as api from '@/api/bpm/flow/task';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { getSysFlowComponentPath } from '@/views/bpm/flow/task/common';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'FlowInstanceManage',
@@ -182,12 +183,12 @@
             onClick: () => {
               this.instanceId = row.instanceId;
               this.businessId = row.businessId;
-              this.$msg.createConfirm('是否确定终止该流程？').then(() => {
+              createConfirm('是否确定终止该流程？').then(() => {
                 this.loading = true;
                 api
                   .termination(this.instanceId)
                   .then(() => {
-                    this.$msg.createSuccess('终止成功！');
+                    createSuccess('终止成功！');
                     this.search();
                   })
                   .finally(() => {

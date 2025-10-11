@@ -54,6 +54,7 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/system/role';
   import { generateCode } from '@/api/components';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -109,7 +110,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 // 初始化表单数据
                 this.initFormData();
                 this.$emit('confirm');

@@ -59,7 +59,7 @@
         </a-form-item>
         <div
           v-if="
-            !$utils.isEmpty(formData.display) &&
+            !isEmpty(formData.display) &&
             !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
           "
         >
@@ -192,12 +192,20 @@
   import JsonEditor from './json-editor.vue';
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/menu';
+  import { isEmpty } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
       IconPicker,
       JsonEditor,
       QuestionCircleOutlined,
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     props: {
       id: {
@@ -274,17 +282,15 @@
       // 提交表单事件
       submit() {
         if (this.formData.isSpecial) {
-          this.$msg
-            .createConfirm(
-              '当前菜单为内置菜单，是否确定修改？注：修改内置菜单可能会导致系统功能异常，请谨慎操作',
-            )
-            .then(() => {
-              this.$refs.form.validate().then((valid) => {
-                if (valid) {
-                  this.doSubmit();
-                }
-              });
+          createConfirm(
+            '当前菜单为内置菜单，是否确定修改？注：修改内置菜单可能会导致系统功能异常，请谨慎操作',
+          ).then(() => {
+            this.$refs.form.validate().then((valid) => {
+              if (valid) {
+                this.doSubmit();
+              }
             });
+          });
         } else {
           this.doSubmit();
         }
@@ -302,7 +308,7 @@
         api
           .update(params)
           .then(() => {
-            this.$msg.createSuccess('修改成功！');
+            createSuccess('修改成功！');
             // 初始化表单数据
             this.initFormData();
             this.$emit('confirm');

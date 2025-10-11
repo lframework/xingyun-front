@@ -120,6 +120,7 @@
     ThunderboltOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/shop';
+  import { buildSortPageVo } from '@/utils/utils';
 
   export default defineComponent({
     name: 'Shop',
@@ -205,7 +206,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },

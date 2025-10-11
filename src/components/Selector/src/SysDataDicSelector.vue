@@ -15,13 +15,13 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.code)" label="编号">
+            <j-form-item v-if="isEmpty(requestParams.code)" label="编号">
               <a-input v-model:value="searchParams.code" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="名称">
+            <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
-            <j-form-item v-if="$utils.isEmpty(requestParams.categoryId)" label="分类">
+            <j-form-item v-if="isEmpty(requestParams.categoryId)" label="分类">
               <sys-data-dic-category-selector v-model:value="searchParams.categoryId" />
             </j-form-item>
           </j-form>
@@ -46,10 +46,17 @@
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/dic';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'SysDataDicSelector',
     components: { SearchOutlined },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       requestParams: {
         type: Object,

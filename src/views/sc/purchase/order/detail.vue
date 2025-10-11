@@ -11,13 +11,10 @@
         <a-tab-pane key="detail" tab="详情"
           ><viewer :id="id" @load-data-complete="(e) => (formData = e)"
         /></a-tab-pane>
-        <a-tab-pane
-          key="orderTimeLine"
-          v-if="$utils.isEmpty(formData.flowInstanceId)"
-          tab="变动记录"
+        <a-tab-pane key="orderTimeLine" v-if="isEmpty(formData.flowInstanceId)" tab="变动记录"
           ><order-time-line :id="id"
         /></a-tab-pane>
-        <a-tab-pane key="approveHis" v-if="!$utils.isEmpty(formData.flowInstanceId)" tab="审批历史"
+        <a-tab-pane key="approveHis" v-if="!isEmpty(formData.flowInstanceId)" tab="审批历史"
           ><bpm-approve-his :business-id="formData.id"
         /></a-tab-pane>
       </a-tabs>
@@ -37,12 +34,19 @@
   import * as api from '@/api/sc/purchase/order';
   import { printMix } from '@/mixins/print';
   import Viewer from './viewer.vue';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     components: {
       Viewer,
     },
     mixins: [printMix],
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       id: {
         type: String,

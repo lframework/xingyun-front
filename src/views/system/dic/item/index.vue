@@ -71,6 +71,8 @@
   import Modify from './modify.vue';
   import * as api from '@/api/system/dic-item';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
+  import { buildSortPageVo } from '@/utils/utils';
+  import { createSuccess, createConfirm } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -155,7 +157,7 @@
       // 查询前构建查询参数结构
       buildQueryParams(page, sorts) {
         return {
-          ...this.$utils.buildSortPageVo(page, sorts),
+          ...buildSortPageVo(page, sorts),
           ...this.buildSearchFormData(),
         };
       },
@@ -186,9 +188,9 @@
       // 页面显示时触发
       open() {},
       deleteRow(row) {
-        this.$msg.createConfirm('是否确认删除此数据字典值？').then(() => {
+        createConfirm('是否确认删除此数据字典值？').then(() => {
           api.deleteById(row.id).then(() => {
-            this.$msg.createSuccess('删除成功！');
+            createSuccess('删除成功！');
             this.search();
           });
         });

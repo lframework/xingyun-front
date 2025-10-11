@@ -22,6 +22,7 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/components';
+  import { isEmpty } from '@/utils/utils';
 
   let map, marker;
 
@@ -105,7 +106,7 @@
           return;
         }
         this.$nextTick(() => {
-          if (!this.$utils.isEmpty(this.model.lng) && !this.$utils.isEmpty(this.model.lat)) {
+          if (!isEmpty(this.model.lng) && !isEmpty(this.model.lat)) {
             this.createMarker(this.model.lng, this.model.lat, true);
           } else {
             this.removeMarker();
@@ -137,13 +138,13 @@
         });
       },
       removeMarker() {
-        if (!this.$utils.isEmpty(marker)) {
+        if (!isEmpty(marker)) {
           marker.setMap(null);
           marker = null;
         }
       },
       onSearch(e) {
-        if (!this.$utils.isEmpty(e)) {
+        if (!isEmpty(e)) {
           this.loading = true;
           api
             .getMapLocation(e)

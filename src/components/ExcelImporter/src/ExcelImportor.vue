@@ -27,7 +27,7 @@
           <slot name="form"></slot>
           <div style="padding: 0 5px">
             <span
-              v-if="!$utils.isEmpty(tipMsg)"
+              v-if="!isEmpty(tipMsg)"
               style="font-size: 12px; color: #999999; white-space: pre-wrap"
               >{{ tipMsg }}</span
             >
@@ -48,7 +48,7 @@
               style="margin-bottom: 5px"
             />
           </a-tooltip>
-          <a-list v-if="!$utils.isEmpty(tipMsgs)" size="small" bordered :data-source="tipMsgs">
+          <a-list v-if="!isEmpty(tipMsgs)" size="small" bordered :data-source="tipMsgs">
             <template #renderItem="{ item }">
               <a-list-item>
                 <span style="color: #ff4d4f">{{ item }}</span>
@@ -67,11 +67,18 @@
   import { defineComponent } from 'vue';
   import { InboxOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/components';
+  import { isEmpty, uuid } from '@/utils/utils';
 
   export default defineComponent({
     name: 'ExcelImporter',
     components: {
       InboxOutlined,
+    },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
     },
     props: {
       // 下载模板url，传入request
@@ -121,7 +128,7 @@
         this.process = 0;
         this.tipMsgs = [];
         this.clearTimer();
-        this.taskId = this.$utils.uuid();
+        this.taskId = uuid();
         this.successProcess = 0;
         this.status = 'active';
         this.reqId = '';
@@ -161,10 +168,10 @@
         this.timer = setInterval(this.doTimer, 500);
       },
       doTimer() {
-        if (!this.$utils.isEmpty(this.reqId)) {
+        if (!isEmpty(this.reqId)) {
           return;
         }
-        this.reqId = this.$utils.uuid();
+        this.reqId = uuid();
         this.getTask()
           .then((res) => {
             this.process = Math.max(this.process, res.process);

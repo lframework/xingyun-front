@@ -20,7 +20,7 @@
         }}</a-descriptions-item>
         <a-descriptions-item label="补充信息" :span="4"
           ><a-textarea
-            v-if="!$utils.isEmpty(formData.extra)"
+            v-if="!isEmpty(formData.extra)"
             v-model:value="formData.extra"
             readonly
             @click="handleClipboard(formData.extra, $event)"
@@ -33,10 +33,18 @@
   import { defineComponent } from 'vue';
   import clipboard from '@/utils/clipboard';
   import * as api from '@/api/system/op-log';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     // 使用组件
     components: {},
+
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
 
     props: {
       id: {

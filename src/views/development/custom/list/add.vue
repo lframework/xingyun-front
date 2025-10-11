@@ -179,6 +179,8 @@
   import HandleColumn from './handle-column.vue';
   import * as api from '@/api/development/custom/list';
   import * as dataObjApi from '@/api/development/data/obj';
+  import { isEmpty } from '@/utils/utils';
+  import { createError, createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {
@@ -262,24 +264,24 @@
         });
       },
       submit() {
-        if (this.$utils.isEmpty(this.formData.name)) {
-          this.$msg.createError('请输入名称');
+        if (isEmpty(this.formData.name)) {
+          createError('请输入名称');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.dataObjId)) {
-          this.$msg.createError('请选择数据对象');
+        if (isEmpty(this.formData.dataObjId)) {
+          createError('请选择数据对象');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.listType)) {
-          this.$msg.createError('请选择列表类型');
+        if (isEmpty(this.formData.listType)) {
+          createError('请选择列表类型');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.labelWidth)) {
-          this.$msg.createError('请输入表单Label宽度');
+        if (isEmpty(this.formData.labelWidth)) {
+          createError('请输入表单Label宽度');
           return;
         }
-        if (this.$utils.isEmpty(this.formData.idColumn)) {
-          this.$msg.createError('请选择ID字段');
+        if (isEmpty(this.formData.idColumn)) {
+          createError('请选择ID字段');
           return;
         }
 
@@ -293,27 +295,27 @@
           (item) => item.id === this.formData.idColumn,
         )[0].relaId;
 
-        if (this.$utils.isEmpty(this.formData.allowExport)) {
-          this.$msg.createError('请选择是否允许导出');
+        if (isEmpty(this.formData.allowExport)) {
+          createError('请选择是否允许导出');
           return;
         }
 
-        if (this.$utils.isEmpty(this.formData.treeData)) {
-          this.$msg.createError('请选择是否树形列表');
+        if (isEmpty(this.formData.treeData)) {
+          createError('请选择是否树形列表');
           return;
         }
         if (this.formData.treeData) {
           this.formData.hasPage = false;
-          if (this.$utils.isEmpty(this.formData.treePidColumn)) {
-            this.$msg.createError('请选择父级ID字段');
+          if (isEmpty(this.formData.treePidColumn)) {
+            createError('请选择父级ID字段');
             return;
           }
-          if (this.$utils.isEmpty(this.formData.treeNodeColumn)) {
-            this.$msg.createError('请选择树形节点字段');
+          if (isEmpty(this.formData.treeNodeColumn)) {
+            createError('请选择树形节点字段');
             return;
           }
-          if (this.$utils.isEmpty(this.formData.treeChildrenKey)) {
-            this.$msg.createError('请输入子节点Key值');
+          if (isEmpty(this.formData.treeChildrenKey)) {
+            createError('请输入子节点Key值');
             return;
           }
 
@@ -324,8 +326,8 @@
             (item) => item.id === this.formData.treeNodeColumn,
           )[0].relaId;
         } else {
-          if (this.$utils.isEmpty(this.formData.hasPage)) {
-            this.$msg.createError('请选择是否分页');
+          if (isEmpty(this.formData.hasPage)) {
+            createError('请选择是否分页');
             return;
           }
         }
@@ -354,7 +356,7 @@
         api
           .create(params)
           .then(() => {
-            this.$msg.createSuccess('新增成功！');
+            createSuccess('新增成功！');
             this.$emit('confirm');
             this.closeDialog();
           })

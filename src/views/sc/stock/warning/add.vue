@@ -42,6 +42,8 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/warning';
+  import { isEmpty, isFloat, isFloatGtZero, isNumberPrecision } from '@/utils/utils';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     components: {},
@@ -61,16 +63,16 @@
             { required: true, message: '请输入预警下限' },
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value)) {
+                if (isEmpty(value)) {
                   return Promise.resolve();
                 }
-                if (!this.$utils.isFloat(value)) {
+                if (!isFloat(value)) {
                   return Promise.reject('预警下限必须是数字');
                 }
-                if (!this.$utils.isFloatGtZero(value)) {
+                if (!isFloatGtZero(value)) {
                   return Promise.reject('预警下限必须大于0');
                 }
-                if (!this.$utils.isNumberPrecision(value, 8)) {
+                if (!isNumberPrecision(value, 8)) {
                   return Promise.reject('预警下限最多允许8位小数');
                 }
                 return Promise.resolve();
@@ -81,22 +83,19 @@
             { required: true, message: '请输入预警上限' },
             {
               validator: (rule, value) => {
-                if (this.$utils.isEmpty(value)) {
+                if (isEmpty(value)) {
                   return Promise.resolve();
                 }
-                if (!this.$utils.isFloat(value)) {
+                if (!isFloat(value)) {
                   return Promise.reject('预警上限必须是数字');
                 }
-                if (!this.$utils.isFloatGtZero(value)) {
+                if (!isFloatGtZero(value)) {
                   return Promise.reject('预警上限必须大于0');
                 }
-                if (!this.$utils.isNumberPrecision(value, 8)) {
+                if (!isNumberPrecision(value, 8)) {
                   return Promise.reject('预警上限最多允许8位小数');
                 }
-                if (
-                  this.$utils.isFloatGtZero(value) &&
-                  this.$utils.isFloatGtZero(this.formData.minLimit)
-                ) {
+                if (isFloatGtZero(value) && isFloatGtZero(this.formData.minLimit)) {
                   if (Number(value) < Number(this.formData.minLimit)) {
                     return Promise.reject('预警上限必须大于预警下限');
                   }
@@ -142,7 +141,7 @@
             api
               .create(this.formData)
               .then(() => {
-                this.$msg.createSuccess('新增成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })

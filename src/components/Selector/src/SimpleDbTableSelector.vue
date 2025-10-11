@@ -20,7 +20,7 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-            <j-form-item v-if="$utils.isEmpty(requestParams.name)" label="表名">
+            <j-form-item v-if="isEmpty(requestParams.name)" label="表名">
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
           </j-form>
@@ -45,10 +45,17 @@
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/development/gen/simple-db';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'SimpleDbTableSelector',
     components: { SearchOutlined },
+    setup() {
+      return {
+        // 工具函数 - 仅返回模板中需要使用的
+        isEmpty,
+      };
+    },
     props: {
       requestParams: {
         type: Object,
