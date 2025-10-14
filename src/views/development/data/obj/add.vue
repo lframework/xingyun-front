@@ -71,11 +71,15 @@
   import * as api from '@/api/development/data/obj';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenDataEntitySelector from '@/components/Selector/GenDataEntitySelector.vue';
+  import GenDataObjCategorySelector from '@/components/Selector/GenDataObjCategorySelector.vue';
 
   export default defineComponent({
     components: {
       RelaTable,
       CustomQuery,
+      GenDataEntitySelector,
+      GenDataObjCategorySelector,
     },
     data() {
       return {

@@ -34,10 +34,10 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
+            {{ TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
+            {{ TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="分类/品牌">
             {{ formData.bizName }}
@@ -47,17 +47,17 @@
           </j-form-item>
           <j-form-item label="状态" :span="24">
             <span
-              v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ TAKE_STOCK_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.TAKE_STOCK_SHEET_STATUS.getDesc(formData.status)
+              TAKE_STOCK_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="操作人">
@@ -68,8 +68,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -77,8 +77,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -87,7 +87,7 @@
           </j-form-item>
           <j-form-item label="拒绝理由" :span="24" :content-nest="false">
             <a-input
-              v-if="$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -122,17 +122,24 @@
   import PreTakeStockSheetDetail from '@/views/sc/stock/take/pre/detail.vue';
   import * as api from '@/api/sc/stock/take/sheet';
   import { isEmpty } from '@/utils/utils';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
+  import { TAKE_STOCK_SHEET_STATUS } from '@/enums/biz/takeStockSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     // 使用组件
     components: {
       TakeStockPlanDetail,
       PreTakeStockSheetDetail,
+      OrderTimeLine,
     },
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
+        TAKE_STOCK_SHEET_STATUS,
       };
     },
     props: {

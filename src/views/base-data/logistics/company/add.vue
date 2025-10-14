@@ -68,9 +68,12 @@
   import * as api from '@/api/base-data/logistics/company';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      CitySelector,
+    },
     data() {
       return {
         // 是否可见

@@ -7,7 +7,7 @@
             <supplier-selector
               v-model:value="formData.supplierId"
               :request-params="{
-                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code,
+                manageType: MANAGE_TYPE.DISTRIBUTION.code,
               }"
             />
           </j-form-item>
@@ -125,15 +125,22 @@
     dateTimeToDate,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import { MANAGE_TYPE } from '@/enums/biz/manageType';
+  import { SETTLE_CHECK_SHEET_BIZ_TYPE } from '@/enums/biz/settleCheckSheetBizType';
+  import { SETTLE_CHECK_SHEET_CALC_TYPE } from '@/enums/biz/settleCheckSheetCalcType';
 
   export default defineComponent({
     name: 'AddSupplierSettleCheckSheet',
-    components: {},
+    components: {
+      SupplierSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {
         h,
         SearchOutlined,
+        MANAGE_TYPE,
       };
     },
     data() {
@@ -159,7 +166,7 @@
             title: '单据类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
+              return SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170 },
@@ -284,14 +291,14 @@
             return false;
           }
 
-          if (this.$enums.SETTLE_CHECK_SHEET_CALC_TYPE.SUB.equalsCode(item.calcType)) {
+          if (SETTLE_CHECK_SHEET_CALC_TYPE.SUB.equalsCode(item.calcType)) {
             if (item.payAmount > 0) {
               createError('第' + (i + 1) + '行应付金额不允许大于0！');
               return false;
             }
           }
 
-          if (this.$enums.SETTLE_CHECK_SHEET_CALC_TYPE.ADD.equalsCode(item.calcType)) {
+          if (SETTLE_CHECK_SHEET_CALC_TYPE.ADD.equalsCode(item.calcType)) {
             if (item.payAmount < 0) {
               createError('第' + (i + 1) + '行应付金额不允许小于0！');
               return false;

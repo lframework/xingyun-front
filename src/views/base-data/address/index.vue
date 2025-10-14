@@ -24,7 +24,7 @@
               <j-form-item label="实体类型">
                 <a-select v-model:value="searchFormData.entityType" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.ADDRESS_ENTITY_TYPE.values()"
+                    v-for="item in ADDRESS_ENTITY_TYPE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -34,7 +34,7 @@
               <j-form-item label="地址类型">
                 <a-select v-model:value="searchFormData.addressType" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.ADDRESS_TYPE.values()"
+                    v-for="item in ADDRESS_TYPE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -125,6 +125,11 @@
   } from '@ant-design/icons-vue';
   import { buildSortPageVo } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import AddressImporter from '@/components/Importor/AddressImporter.vue';
+  import { ADDRESS_ENTITY_TYPE } from '@/enums/biz/addressEntityType';
+  import { ADDRESS_TYPE } from '@/enums/biz/addressType';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'Address',
@@ -132,6 +137,8 @@
       Add,
       Modify,
       Detail,
+      AddressImporter,
+      AvailableTag,
     },
     setup() {
       return {
@@ -140,6 +147,8 @@
         DownloadOutlined,
         PlusOutlined,
         SearchOutlined,
+        ADDRESS_ENTITY_TYPE,
+        ADDRESS_TYPE,
       };
     },
     data() {
@@ -150,7 +159,7 @@
         ids: [],
         // 查询列表的查询条件
         searchFormData: {
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -167,7 +176,7 @@
             title: '实体类型',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.ADDRESS_ENTITY_TYPE.getDesc(cellValue);
+              return ADDRESS_ENTITY_TYPE.getDesc(cellValue);
             },
           },
           { field: 'entityName', title: '实体名称', width: 120 },
@@ -176,7 +185,7 @@
             title: '地址类型',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.ADDRESS_TYPE.getDesc(cellValue);
+              return ADDRESS_TYPE.getDesc(cellValue);
             },
           },
           { field: 'name', title: '姓名', width: 100 },

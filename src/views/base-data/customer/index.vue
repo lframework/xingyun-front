@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -136,6 +136,10 @@
   import * as api from '@/api/base-data/customer';
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import CustomerImporter from '@/components/Importor/CustomerImporter.vue';
+  import BatchHandler from '@/components/BatchHandler';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'Customer',
@@ -144,6 +148,9 @@
       Modify,
       Detail,
       DownOutlined,
+      CustomerImporter,
+      BatchHandler,
+      AvailableTag,
     },
     setup() {
       return {
@@ -155,6 +162,7 @@
         CheckOutlined,
         StopOutlined,
         CloudUploadOutlined,
+        AVAILABLE,
       };
     },
     data() {

@@ -58,9 +58,11 @@
   import * as api from '@/api/base-data/product/brand';
   import { generateCode } from '@/api/components';
   import { createSuccess } from '@/hooks/web/msg';
+  import JImgUpload from '@/components/JImgUpload';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: { JImgUpload },
     data() {
       return {
         // 是否可见
@@ -132,7 +134,7 @@
         this.onGenerateCode();
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.BRAND.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.BRAND.code).then((res) => {
           this.formData.code = res;
         });
       },

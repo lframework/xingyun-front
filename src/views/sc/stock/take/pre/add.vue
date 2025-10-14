@@ -12,22 +12,18 @@
           </j-form-item>
           <j-form-item label="预先盘点状态" required :span="16">
             <a-checkbox-group v-model:value="checkedStatus" @change="changeCheckedStatus">
-              <a-checkbox :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{
-                $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc
+              <a-checkbox :value="PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code" disabled>{{
+                PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.desc
               }}</a-checkbox>
               <a-checkbox
-                :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code"
-                :disabled="
-                  formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
-                "
-                >{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</a-checkbox
+                :value="PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code"
+                :disabled="formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code"
+                >{{ PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.desc }}</a-checkbox
               >
               <a-checkbox
-                :value="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code"
-                :disabled="
-                  formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code
-                "
-                >{{ $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</a-checkbox
+                :value="PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code"
+                :disabled="formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code"
+                >{{ PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.desc }}</a-checkbox
               >
             </a-checkbox-group>
           </j-form-item>
@@ -79,7 +75,7 @@
         <!-- 初盘数量 列自定义内容 -->
         <template #firstNum_default="{ row }">
           <a-input
-            v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.equalsCode(formData.takeStatus)"
+            v-if="PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.equalsCode(formData.takeStatus)"
             v-model:value="row.firstNum"
             class="number-input"
           />
@@ -89,20 +85,19 @@
         <!-- 复盘数量 列自定义内容 -->
         <template #secondNum_default="{ row }">
           <a-input
-            v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.equalsCode(formData.takeStatus)"
+            v-if="PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.equalsCode(formData.takeStatus)"
             v-model:value="row.secondNum"
             class="number-input"
           />
-          <span
-            v-else-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)"
-            >{{ row.secondNum }}</span
-          >
+          <span v-else-if="PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)">{{
+            row.secondNum
+          }}</span>
         </template>
 
         <!-- 抽盘数量 列自定义内容 -->
         <template #randNum_default="{ row }">
           <a-input
-            v-if="$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)"
+            v-if="PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.equalsCode(formData.takeStatus)"
             v-model:value="row.randNum"
             class="number-input"
           />
@@ -112,8 +107,8 @@
         <template #secondDiffNum_default="{ row }">
           <span
             v-if="
-              formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code ||
-              formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
+              formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code ||
+              formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
             "
             >{{
               sub(
@@ -126,7 +121,7 @@
 
         <!-- 抽盘复盘差异数量 列自定义内容 -->
         <template #randDiffNum_default="{ row }">
-          <span v-if="formData.takeStatus === $enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
+          <span v-if="formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code">{{
             sub(isFloat(row.randNum) ? row.randNum : 0, isFloat(row.secondNum) ? row.secondNum : 0)
           }}</span>
         </template>
@@ -154,14 +149,17 @@
   import BatchAddProduct from '@/views/sc/stock/take/pre/batch-add-product.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/pre';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { isEmpty, isFloat, isFloatGeZero, isNumberPrecision, sub, uuid } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { PRE_TAKE_STOCK_SHEET_STATUS } from '@/enums/biz/preTakeStockSheetStatus';
 
   export default defineComponent({
     name: 'AddPreTakeStockSheet',
     components: {
       BatchAddProduct,
+      StoreCenterSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -169,10 +167,10 @@
         h,
         PlusOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         sub,
         isFloat,
+        PRE_TAKE_STOCK_SHEET_STATUS,
       };
     },
     data() {
@@ -270,10 +268,10 @@
         this.formData = {
           scId: '',
           description: '',
-          takeStatus: this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code,
+          takeStatus: PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code,
         };
 
-        this.checkedStatus = [this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code];
+        this.checkedStatus = [PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code];
 
         this.tableData = [];
       },
@@ -287,7 +285,7 @@
           createError('请录入商品！');
           return;
         }
-        if (this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code) {
+        if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code) {
           // 初盘
           for (let i = 0; i < this.tableData.length; i++) {
             const data = this.tableData[i];
@@ -315,9 +313,7 @@
               return;
             }
           }
-        } else if (
-          this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code
-        ) {
+        } else if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code) {
           // 复盘
           for (let i = 0; i < this.tableData.length; i++) {
             const data = this.tableData[i];
@@ -341,9 +337,7 @@
               return;
             }
           }
-        } else if (
-          this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
-        ) {
+        } else if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code) {
           // 抽盘
           for (let i = 0; i < this.tableData.length; i++) {
             const data = this.tableData[i];
@@ -403,34 +397,28 @@
       changeCheckedStatus() {
         if (
           this.checkedStatus.length === 1 &&
-          this.checkedStatus.includes(this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code)
+          this.checkedStatus.includes(PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code)
         ) {
-          this.formData.takeStatus = this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code;
-        } else if (
-          this.checkedStatus.includes(this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code)
-        ) {
-          this.formData.takeStatus = this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code;
+          this.formData.takeStatus = PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code;
+        } else if (this.checkedStatus.includes(PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code)) {
+          this.formData.takeStatus = PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code;
         } else {
-          this.formData.takeStatus = this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code;
+          this.formData.takeStatus = PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code;
         }
 
-        if (this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code) {
+        if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.FIRST_TAKE.code) {
           this.tableData.forEach((item) => {
             item.secondNum = '';
             item.randNum = '';
           });
-        } else if (
-          this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code
-        ) {
+        } else if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.SECOND_TAKE.code) {
           this.tableData.forEach((item) => {
             if (isEmpty(item.secondNum)) {
               item.secondNum = item.firstNum;
             }
             item.randNum = '';
           });
-        } else if (
-          this.formData.takeStatus === this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code
-        ) {
+        } else if (this.formData.takeStatus === PRE_TAKE_STOCK_SHEET_STATUS.RAND_TAKE.code) {
           this.tableData.forEach((item) => {
             item.randNum = item.secondNum;
           });

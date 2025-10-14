@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.state" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.TRIGGER_STATE.values()"
+                    v-for="item in TRIGGER_STATE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -76,6 +76,7 @@
   import * as api from '@/api/development/qrtz';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { TRIGGER_STATE } from '@/enums/biz/triggerState';
 
   export default defineComponent({
     name: 'Qrtz',
@@ -89,6 +90,7 @@
         h,
         SearchOutlined,
         PlusOutlined,
+        TRIGGER_STATE,
       };
     },
     data() {
@@ -119,7 +121,7 @@
             title: '状态',
             width: 80,
             formatter: ({ cellValue }) => {
-              return this.$enums.TRIGGER_STATE.getDesc(cellValue);
+              return TRIGGER_STATE.getDesc(cellValue);
             },
           },
           { title: '操作', width: 280, fixed: 'right', slots: { default: 'action_default' } },
@@ -252,10 +254,10 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.TRIGGER_STATE.WAITING.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.ACQUIRED.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.ERROR.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.COMPLETE.equalsCode(row.state)
+                TRIGGER_STATE.WAITING.equalsCode(row.state) ||
+                TRIGGER_STATE.ACQUIRED.equalsCode(row.state) ||
+                TRIGGER_STATE.ERROR.equalsCode(row.state) ||
+                TRIGGER_STATE.COMPLETE.equalsCode(row.state)
               );
             },
             onClick: () => {
@@ -265,7 +267,7 @@
           {
             label: '恢复',
             ifShow: () => {
-              return this.$enums.TRIGGER_STATE.PAUSED.equalsCode(row.state);
+              return TRIGGER_STATE.PAUSED.equalsCode(row.state);
             },
             onClick: () => {
               this.resumeRow(row);
@@ -275,9 +277,9 @@
             label: '触发',
             ifShow: () => {
               return (
-                this.$enums.TRIGGER_STATE.WAITING.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.PAUSED.equalsCode(row.state) ||
-                this.$enums.TRIGGER_STATE.COMPLETE.equalsCode(row.state)
+                TRIGGER_STATE.WAITING.equalsCode(row.state) ||
+                TRIGGER_STATE.PAUSED.equalsCode(row.state) ||
+                TRIGGER_STATE.COMPLETE.equalsCode(row.state)
               );
             },
             onClick: () => {

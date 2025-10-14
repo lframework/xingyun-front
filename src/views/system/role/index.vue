@@ -41,7 +41,7 @@
                       allow-clear
                     >
                       <a-select-option
-                        v-for="item in $enums.AVAILABLE.values()"
+                        v-for="item in AVAILABLE.values()"
                         :key="item.code"
                         :value="item.code"
                         >{{ item.desc }}</a-select-option
@@ -115,12 +115,12 @@
           <data-permission
             ref="dataPermissionDialog"
             :biz-id="id"
-            :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
+            :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
           />
           <batch-data-permission
             ref="batchDataPermissionDialog"
             :biz-ids="ids"
-            :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
+            :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.ROLE.code"
           />
         </page-wrapper>
       </a-col>
@@ -173,6 +173,10 @@
   import CategoryTree from './category-tree.vue';
   import { isEmpty, isEqualWithStr, buildSortPageVo } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import { SYS_DATA_PERMISSION_DATA_BIZ_TYPE } from '@/enums/biz/sysDataPermissionDataBizType';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'Role',
@@ -185,6 +189,8 @@
       DataPermission,
       BatchDataPermission,
       DownOutlined,
+      AvailableTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -195,9 +201,10 @@
         SettingOutlined,
         CheckOutlined,
         StopOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isEqualWithStr,
+        AVAILABLE,
+        SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
       };
     },
     data() {

@@ -35,7 +35,7 @@
                     allow-clear
                   >
                     <a-select-option
-                      v-for="item in $enums.PRE_TAKE_STOCK_SHEET_STATUS.values()"
+                      v-for="item in PRE_TAKE_STOCK_SHEET_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -127,6 +127,7 @@
     DeleteOutlined,
     DownloadOutlined,
   } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import * as api from '@/api/sc/stock/take/pre';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
@@ -137,11 +138,17 @@
     buildSortPageVo,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { PRE_TAKE_STOCK_SHEET_STATUS } from '@/enums/biz/preTakeStockSheetStatus';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'PreTakeStockSheet',
     components: {
       Detail,
+      StoreCenterSelector,
+      UserSelector,
+      BatchHandler,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -151,6 +158,7 @@
         PlusOutlined,
         DeleteOutlined,
         DownloadOutlined,
+        PRE_TAKE_STOCK_SHEET_STATUS,
       };
     },
     data() {
@@ -185,7 +193,7 @@
             title: '预先盘点状态',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.PRE_TAKE_STOCK_SHEET_STATUS.getDesc(cellValue);
+              return PRE_TAKE_STOCK_SHEET_STATUS.getDesc(cellValue);
             },
           },
           { field: 'updateTime', title: '操作时间', width: 170, sortable: true },

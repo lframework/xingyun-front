@@ -83,9 +83,13 @@
   import { generateCode } from '@/api/components';
   import { isEmpty, isIntegerGeZero, isInteger } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      CitySelector,
+    },
     data() {
       return {
         // 是否可见
@@ -181,7 +185,7 @@
         this.onGenerateCode();
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.SC.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.SC.code).then((res) => {
           this.formData.code = res;
         });
       },

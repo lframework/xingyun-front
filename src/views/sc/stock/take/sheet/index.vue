@@ -38,7 +38,7 @@
                     allow-clear
                   >
                     <a-select-option
-                      v-for="item in $enums.TAKE_STOCK_PLAN_STATUS.values()"
+                      v-for="item in TAKE_STOCK_PLAN_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -48,7 +48,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.status" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.TAKE_STOCK_SHEET_STATUS.values()"
+                      v-for="item in TAKE_STOCK_SHEET_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -194,6 +194,7 @@
   import Detail from './detail.vue';
   import moment from 'moment';
   import ApproveRefuse from '@/components/ApproveRefuse';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import {
     SearchOutlined,
     PlusOutlined,
@@ -212,12 +213,20 @@
     buildSortPageVo,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
+  import { TAKE_STOCK_SHEET_STATUS } from '@/enums/biz/takeStockSheetStatus';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'TakeStockSheet',
     components: {
       Detail,
       ApproveRefuse,
+      StoreCenterSelector,
+      UserSelector,
+      BatchHandler,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -229,6 +238,8 @@
         CloseOutlined,
         DeleteOutlined,
         DownloadOutlined,
+        TAKE_STOCK_PLAN_STATUS,
+        TAKE_STOCK_SHEET_STATUS,
       };
     },
     data() {
@@ -267,7 +278,7 @@
             title: '盘点状态',
             width: 110,
             formatter: ({ cellValue }) => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.getDesc(cellValue);
+              return TAKE_STOCK_PLAN_STATUS.getDesc(cellValue);
             },
           },
           { field: 'scCode', title: '仓库编号', width: 100 },
@@ -277,7 +288,7 @@
             title: '盘点类别',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.TAKE_STOCK_PLAN_TYPE.getDesc(cellValue);
+              return TAKE_STOCK_PLAN_TYPE.getDesc(cellValue);
             },
           },
           {
@@ -285,7 +296,7 @@
             title: '状态',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.TAKE_STOCK_SHEET_STATUS.getDesc(cellValue);
+              return TAKE_STOCK_SHEET_STATUS.getDesc(cellValue);
             },
           },
           { field: 'updateTime', title: '操作时间', width: 170, sortable: true },
@@ -360,13 +371,13 @@
 
         for (let i = 0; i < records.length; i++) {
           const record = records[i];
-          if (this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
+          if (TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
             createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许继续执行审核！');
             return;
           }
 
-          const takeStatus = this.$enums.TAKE_STOCK_PLAN_STATUS.getByCode(record.takeStatus);
-          if (takeStatus !== this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED) {
+          const takeStatus = TAKE_STOCK_PLAN_STATUS.getByCode(record.takeStatus);
+          if (takeStatus !== TAKE_STOCK_PLAN_STATUS.CREATED) {
             createError(
               '第' +
                 (i + 1) +
@@ -391,18 +402,18 @@
 
         for (let i = 0; i < records.length; i++) {
           const record = records[i];
-          if (this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
+          if (TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
             createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许继续执行审核！');
             return;
           }
 
-          if (this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(record.status)) {
+          if (TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(record.status)) {
             createError('第' + (i + 1) + '个库存盘点单已审核拒绝，不允许继续执行审核！');
             return;
           }
 
-          const takeStatus = this.$enums.TAKE_STOCK_PLAN_STATUS.getByCode(record.takeStatus);
-          if (takeStatus !== this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED) {
+          const takeStatus = TAKE_STOCK_PLAN_STATUS.getByCode(record.takeStatus);
+          if (takeStatus !== TAKE_STOCK_PLAN_STATUS.CREATED) {
             createError(
               '第' +
                 (i + 1) +
@@ -455,7 +466,7 @@
 
         for (let i = 0; i < records.length; i++) {
           const record = records[i];
-          if (this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
+          if (TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(record.status)) {
             createError('第' + (i + 1) + '个库存盘点单已审核通过，不允许执行删除操作！');
             return;
           }
@@ -490,9 +501,9 @@
             label: '修改',
             ifShow: () => {
               return (
-                (this.$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                  this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)) &&
-                this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)
+                (TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                  TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)) &&
+                TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)
               );
             },
             onClick: () => {
@@ -504,9 +515,9 @@
             label: '审核',
             ifShow: () => {
               return (
-                (this.$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                  this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)) &&
-                this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)
+                (TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                  TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)) &&
+                TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)
               );
             },
             onClick: () => {
@@ -518,8 +529,8 @@
             label: '取消审核',
             ifShow: () => {
               return (
-                this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(row.status) &&
-                this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)
+                TAKE_STOCK_SHEET_STATUS.APPROVE_PASS.equalsCode(row.status) &&
+                TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus)
               );
             },
             onClick: () => {
@@ -532,8 +543,8 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                TAKE_STOCK_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                TAKE_STOCK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {

@@ -41,7 +41,7 @@
       <template #relaType_default="{ row }">
         <a-select v-model:value="row.relaType" allow-clear>
           <a-select-option
-            v-for="item in $enums.GEN_RELA_TYPE.values()"
+            v-for="item in GEN_RELA_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -53,7 +53,7 @@
       <template #relaMode_default="{ row }">
         <a-select v-model:value="row.relaMode" allow-clear>
           <a-select-option
-            v-for="item in $enums.GEN_RELA_MODE.values()"
+            v-for="item in GEN_RELA_MODE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -91,11 +91,17 @@
   import { DeleteOutlined, PlusOutlined, DragOutlined } from '@ant-design/icons-vue';
   import { isEmpty, uuid, clearAll } from '@/utils/utils';
   import { createError, createConfirm } from '@/hooks/web/msg';
+  import GenDataEntityDetailSelector from '@/components/Selector/GenDataEntityDetailSelector.vue';
+  import GenDataEntitySelector from '@/components/Selector/GenDataEntitySelector.vue';
+  import { GEN_RELA_TYPE } from '@/enums/biz/genRelaType';
+  import { GEN_RELA_MODE } from '@/enums/biz/genRelaMode';
 
   export default defineComponent({
     // 使用组件
     components: {
       DragOutlined,
+      GenDataEntityDetailSelector,
+      GenDataEntitySelector,
     },
 
     props: {
@@ -113,8 +119,9 @@
         h,
         DeleteOutlined,
         PlusOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        GEN_RELA_TYPE,
+        GEN_RELA_MODE,
       };
     },
     data() {

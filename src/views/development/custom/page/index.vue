@@ -98,6 +98,7 @@
   import * as api from '@/api/development/custom/page';
   import { isEmpty, isEqualWithStr } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'CustomPage',
@@ -107,6 +108,7 @@
       Modify,
       Detail,
       CategoryTree,
+      BatchHandler,
     },
     setup() {
       return {

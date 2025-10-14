@@ -56,10 +56,13 @@
   import * as api from '@/api/base-data/shop';
   import { generateCode } from '@/api/components';
   import { createSuccess } from '@/hooks/web/msg';
+  import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
     components: {
       LocationMap,
+      SysDeptSelector,
     },
     data() {
       return {
@@ -134,7 +137,7 @@
         this.onGenerateCode();
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.SHOP.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.SHOP.code).then((res) => {
           this.formData.code = res;
         });
       },

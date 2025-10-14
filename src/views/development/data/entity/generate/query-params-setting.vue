@@ -37,7 +37,7 @@
           <template #queryType_default="{ row }">
             <a-select v-model:value="row.queryType">
               <a-select-option
-                v-for="item in $enums.GEN_QUERY_TYPE.values()"
+                v-for="item in GEN_QUERY_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -60,13 +60,18 @@
   import { DragOutlined } from '@ant-design/icons-vue';
   import { isEmpty } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import { GEN_QUERY_TYPE } from '@/enums/biz/genQueryType';
 
   export default defineComponent({
     // 使用组件
     components: {
       DragOutlined,
     },
-
+    setup() {
+      return {
+        GEN_QUERY_TYPE,
+      };
+    },
     props: {
       columns: {
         type: Array,
@@ -140,7 +145,7 @@
       emptyLine() {
         return {
           id: '',
-          queryType: this.$enums.GEN_QUERY_TYPE.EQ.code,
+          queryType: GEN_QUERY_TYPE.EQ.code,
           orderNo: '',
         };
       },

@@ -13,10 +13,10 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
+            {{ TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
+            {{ TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="备注" :span="24">
             <a-textarea v-model:value.trim="formData.description" maxlength="200" />
@@ -115,6 +115,8 @@
     keys,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
 
   export default defineComponent({
     // 使用组件
@@ -127,9 +129,10 @@
     },
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isFloat,
         sub,
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
       };
     },
     data() {

@@ -24,7 +24,7 @@
             <a-form-item label="性别" name="gender">
               <a-select v-model:value="formData.gender" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.GENDER.values()"
+                  v-for="item in GENDER.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -90,7 +90,7 @@
             <a-form-item label="状态" name="available">
               <a-select v-model:value="formData.available" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.AVAILABLE.values()"
+                  v-for="item in AVAILABLE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -125,11 +125,23 @@
   import * as api from '@/api/base-data/member';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import ShopSelector from '@/components/Selector/ShopSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { GENDER } from '@/enums/biz/gender';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
-    components: {},
-
+    components: {
+      ShopSelector,
+      UserSelector,
+    },
+    setup() {
+      return {
+        GENDER,
+        AVAILABLE,
+      };
+    },
     props: {
       id: {
         type: String,

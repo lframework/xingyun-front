@@ -35,22 +35,22 @@
           <j-form-item />
           <j-form-item label="状态">
             <span
-              v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status)
+              RECEIVE_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item :span="16" :content-nest="false" label="拒绝理由">
             <a-input
-              v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -63,8 +63,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -72,8 +72,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -216,6 +216,9 @@
     EditOutlined,
     AlertOutlined,
   } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
@@ -233,11 +236,17 @@
     PATTERN_IS_PRICE,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
+  import { RECEIVE_SHEET_STATUS } from '@/enums/biz/receiveSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ModifyPurchaseReceiveSheetUnRequire',
     components: {
       BatchAddProduct,
+      StoreCenterSelector,
+      SupplierSelector,
+      UserSelector,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -248,11 +257,11 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,
         mul,
+        RECEIVE_SHEET_STATUS,
       };
     },
     data() {
@@ -378,8 +387,8 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.RECEIVE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !RECEIVE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
+              !RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
               createError('采购收货单已审核通过，无法修改！');
               this.closeDialog();

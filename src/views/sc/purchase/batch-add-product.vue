@@ -86,10 +86,15 @@
   import * as api from '@/api/sc/purchase/order';
   import { isEmpty } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      ProductBrandSelector,
+      ProductCategorySelector,
+    },
     props: {
       scId: {
         type: String,

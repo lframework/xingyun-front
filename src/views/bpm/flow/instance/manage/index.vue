@@ -66,6 +66,8 @@
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { getSysFlowComponentPath } from '@/views/bpm/flow/task/common';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { FLOW_INSTANCE_STATUS } from '@/enums/biz/flowInstanceStatus';
+  import { FLOW_DEFINITION_EXT_BIZ_TYPE } from '@/enums/biz/flowDefinitionExtBizType';
 
   export default defineComponent({
     name: 'FlowInstanceManage',
@@ -113,7 +115,7 @@
             field: 'flowStatus',
             title: '流程状态',
             width: 100,
-            formatter: ({ cellValue }) => this.$enums.FLOW_INSTANCE_STATUS.getDesc(cellValue),
+            formatter: ({ cellValue }) => FLOW_INSTANCE_STATUS.getDesc(cellValue),
           },
           { field: 'startBy', title: '发起人', width: 100 },
           { field: 'startTime', title: '发起时间', width: 170 },
@@ -168,7 +170,7 @@
               this.instanceId = row.instanceId;
               this.businessId = row.businessId;
               const ext = JSON.parse(row.ext || '{}');
-              if (this.$enums.FLOW_DEFINITION_EXT_BIZ_TYPE.SYSTEM.equalsCode(ext.bizType)) {
+              if (FLOW_DEFINITION_EXT_BIZ_TYPE.SYSTEM.equalsCode(ext.bizType)) {
                 this.componentPath = getSysFlowComponentPath(ext.bizFlag);
                 this.$refs.systemApproveDialog.openDialog();
               }
@@ -178,7 +180,7 @@
             label: '终止',
             danger: true,
             ifShow: () => {
-              return this.$enums.FLOW_INSTANCE_STATUS.APPROVING.equalsCode(row.flowStatus);
+              return FLOW_INSTANCE_STATUS.APPROVING.equalsCode(row.flowStatus);
             },
             onClick: () => {
               this.instanceId = row.instanceId;

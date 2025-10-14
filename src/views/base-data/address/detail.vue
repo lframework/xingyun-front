@@ -10,13 +10,13 @@
     <div v-if="visible" v-permission="['base-data:address:query']" v-loading="loading">
       <a-descriptions :column="4" bordered>
         <a-descriptions-item label="实体类型" :span="2">
-          {{ $enums.ADDRESS_ENTITY_TYPE.getDesc(formData.entityType) }}
+          {{ ADDRESS_ENTITY_TYPE.getDesc(formData.entityType) }}
         </a-descriptions-item>
         <a-descriptions-item label="实体" :span="2">
           {{ formData.entityName }}
         </a-descriptions-item>
         <a-descriptions-item label="地址类型" :span="2">
-          {{ $enums.ADDRESS_TYPE.getDesc(formData.addressType) }}
+          {{ ADDRESS_TYPE.getDesc(formData.addressType) }}
         </a-descriptions-item>
         <a-descriptions-item label="姓名" :span="2">
           {{ formData.name }}
@@ -40,11 +40,18 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/address';
+  import { ADDRESS_ENTITY_TYPE } from '@/enums/biz/addressEntityType';
+  import { ADDRESS_TYPE } from '@/enums/biz/addressType';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        ADDRESS_ENTITY_TYPE,
+        ADDRESS_TYPE,
+      };
+    },
     props: {
       id: {
         type: String,

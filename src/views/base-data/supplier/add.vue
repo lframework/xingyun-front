@@ -86,7 +86,7 @@
             <a-form-item label="经营方式" name="manageType">
               <a-select v-model:value="formData.manageType" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.MANAGE_TYPE.values()"
+                  v-for="item in MANAGE_TYPE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -127,7 +127,7 @@
             <a-form-item label="结算方式" name="settleType">
               <a-select v-model:value="formData.settleType" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.SETTLE_TYPE.values()"
+                  v-for="item in SETTLE_TYPE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -162,9 +162,21 @@
   import { generateCode } from '@/api/components';
   import { isEmpty, isInteger, isIntegerGtZero, getCamelCharsUpperCase } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
+  import { MANAGE_TYPE } from '@/enums/biz/manageType';
+  import { SETTLE_TYPE } from '@/enums/biz/settleType';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      CitySelector,
+    },
+    setup() {
+      return {
+        MANAGE_TYPE,
+        SETTLE_TYPE,
+      };
+    },
     data() {
       return {
         // 是否可见
@@ -245,7 +257,7 @@
           address: '',
           sendAddress: '',
           deliveryCycle: '',
-          manageType: this.$enums.MANAGE_TYPE.DISTRIBUTION.code,
+          manageType: MANAGE_TYPE.DISTRIBUTION.code,
           settleType: '',
           creditCode: '',
           taxIdentifyNo: '',
@@ -292,7 +304,7 @@
         this.formData.mnemonicCode = getCamelCharsUpperCase(e);
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.SUPPLIER.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.SUPPLIER.code).then((res) => {
           this.formData.code = res;
         });
       },

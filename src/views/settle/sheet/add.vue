@@ -7,7 +7,7 @@
             <supplier-selector
               v-model:value="formData.supplierId"
               :request-params="{
-                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code,
+                manageType: MANAGE_TYPE.DISTRIBUTION.code,
               }"
             />
           </j-form-item>
@@ -163,19 +163,23 @@
     dateTimeToDate,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import { MANAGE_TYPE } from '@/enums/biz/manageType';
 
   export default defineComponent({
     name: 'AddSupplierSettleSheet',
-    components: {},
+    components: {
+      SupplierSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {
         h,
         SearchOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isFloat,
         add,
         sub,
+        MANAGE_TYPE,
       };
     },
     data() {

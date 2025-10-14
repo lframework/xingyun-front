@@ -84,11 +84,14 @@
   import * as api from '@/api/sc/purchase/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { createSuccess } from '@/hooks/web/msg';
+  import FlowDefinitionSelector from '@/components/Selector/FlowDefinitionSelector.vue';
 
   export default defineComponent({
     name: 'PurchaseConfig',
     // 使用组件
-    components: {},
+    components: {
+      FlowDefinitionSelector,
+    },
     mixins: [multiplePageMix],
     props: {},
     data() {

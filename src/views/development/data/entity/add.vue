@@ -58,10 +58,14 @@
   import * as api from '@/api/development/data/entity';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenDataEntityCategorySelector from '@/components/Selector/GenDataEntityCategorySelector.vue';
+  import SimpleDbTableSelector from '@/components/Selector/SimpleDbTableSelector.vue';
 
   export default defineComponent({
     components: {
       GenerateColumn,
+      GenDataEntityCategorySelector,
+      SimpleDbTableSelector,
     },
     data() {
       return {

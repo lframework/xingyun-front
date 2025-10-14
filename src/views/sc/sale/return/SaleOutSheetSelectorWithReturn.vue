@@ -79,16 +79,24 @@
   import moment from 'moment';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/sale/out';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import {
     isEmpty,
     formatDateTime,
     getDateTimeWithMinTime,
     getDateTimeWithMaxTime,
   } from '@/utils/utils';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
 
   export default defineComponent({
     name: 'SaleOutSheetSelectorWithReturn',
-    components: { DialogTable },
+    components: {
+      DialogTable,
+      CustomerSelector,
+      StoreCenterSelector,
+      UserSelector,
+    },
     props: {
       value: { type: [Object, Array], required: true },
       multiple: { type: Boolean, default: false },
@@ -120,7 +128,6 @@
       return {
         h,
         SearchOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
       };
     },

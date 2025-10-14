@@ -177,6 +177,8 @@
   import BatchAddProduct from '@/views/sc/retail/batch-add-product.vue';
   import Moment from 'moment';
   import PayType from '@/views/sc/pay-type/index.vue';
+  import MemberSelector from '@/components/Selector/MemberSelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import {
     PlusOutlined,
     DeleteOutlined,
@@ -204,12 +206,16 @@
     PATTERN_IS_PRICE,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
 
   export default defineComponent({
     name: 'AddRetailOutSheet',
     components: {
       BatchAddProduct,
       PayType,
+      MemberSelector,
+      StoreCenterSelector,
+      UserSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -220,7 +226,6 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,

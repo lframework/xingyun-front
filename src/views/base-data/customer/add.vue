@@ -81,7 +81,7 @@
             <a-form-item label="结算方式" name="settleType">
               <a-select v-model:value="formData.settleType" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.SETTLE_TYPE.values()"
+                  v-for="item in SETTLE_TYPE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -145,9 +145,19 @@
   import { generateCode } from '@/api/components';
   import { isEmpty, getCamelCharsUpperCase } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
+  import { SETTLE_TYPE } from '@/enums/biz/settleType';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      CitySelector,
+    },
+    setup() {
+      return {
+        SETTLE_TYPE,
+      };
+    },
     data() {
       return {
         // 是否可见
@@ -255,7 +265,7 @@
         this.formData.mnemonicCode = getCamelCharsUpperCase(e);
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.CUSTOMER.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.CUSTOMER.code).then((res) => {
           this.formData.code = res;
         });
       },

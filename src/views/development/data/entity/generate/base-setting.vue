@@ -11,7 +11,7 @@
       <a-form-item label="生成模板类型" name="templateType">
         <a-select v-model:value="formData.templateType" placeholder="" allow-clear>
           <a-select-option
-            v-for="item in $enums.GEN_TEMPLATE_TYPE.values()"
+            v-for="item in GEN_TEMPLATE_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -30,7 +30,7 @@
       <a-form-item label="主键类型" name="keyType">
         <a-select v-model:value="formData.keyType" placeholder="" allow-clear>
           <a-select-option
-            v-for="item in $enums.GEN_KEY_TYPE.values()"
+            v-for="item in GEN_KEY_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -57,7 +57,7 @@
           v-model:value="formData.parentMenuId"
           :only-final="false"
           :request-params="{
-            display: $enums.MENU_DISPLAY.CATALOG.code,
+            display: MENU_DISPLAY.CATALOG.code,
           }"
         />
       </a-form-item>
@@ -105,11 +105,24 @@
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
   import { isEmpty, isIntegerGtZero } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import SysMenuSelector from '@/components/Selector/SysMenuSelector.vue';
+  import { GEN_TEMPLATE_TYPE } from '@/enums/biz/genTemplateType';
+  import { GEN_KEY_TYPE } from '@/enums/biz/genKeyType';
+  import { MENU_DISPLAY } from '@/enums/biz/menuDisplay';
 
   export default defineComponent({
     // 使用组件
-    components: { QuestionCircleOutlined },
-
+    components: {
+      QuestionCircleOutlined,
+      SysMenuSelector,
+    },
+    setup() {
+      return {
+        GEN_TEMPLATE_TYPE,
+        GEN_KEY_TYPE,
+        MENU_DISPLAY,
+      };
+    },
     props: {
       formData: {
         type: Object,

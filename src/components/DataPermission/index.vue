@@ -9,7 +9,7 @@
   >
     <j-form bordered :enable-collapse="false">
       <j-form-item
-        v-for="item in $enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE.values()"
+        v-for="item in SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE.values()"
         :key="item.code"
         :label="item.desc + '数据权限'"
         :span="24"
@@ -26,7 +26,7 @@
       </a-space>
     </div>
     <data-permission-dragger
-      v-for="item in $enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values()"
+      v-for="item in SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values()"
       :key="item.code"
       :ref="item.desc + 'DataPermission'"
       :model-id="item.code"
@@ -40,11 +40,22 @@
   import * as modelDetailApi from '@/api/system/data-permission-model-detail';
   import { eachTree, isEmpty } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import {
+    SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE,
+    SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME,
+  } from '@/enums/biz/sysDataPermissionDataPermissionType';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE } from '@/enums/biz/sysDataPermissionModelDetailConditionType';
 
   export default defineComponent({
     name: 'DataPermission',
     components: {
       DataPermissionDragger,
+    },
+    setup() {
+      return {
+        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE,
+        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME,
+      };
     },
     props: {
       bizId: {
@@ -80,7 +91,7 @@
       },
       initFormData() {},
       loadData() {
-        const permissionTypes = this.$enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values();
+        const permissionTypes = SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values();
         for (let i = 0; i < permissionTypes.length; i++) {
           const permissionType = permissionTypes[i];
           modelDetailApi.queryByBizId(this.bizId, this.bizType, permissionType.code).then((res) => {
@@ -88,9 +99,7 @@
             eachTree(model, (item) => {
               if (!isEmpty(item.conditionTypes)) {
                 item.conditionTypes = item.conditionTypes.map((conditionType) => {
-                  return this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.getByCode(
-                    conditionType,
-                  );
+                  return SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.getByCode(conditionType);
                 });
               }
             });
@@ -106,12 +115,12 @@
       },
       openDraggerDialog(permissionType) {
         this.$refs[
-          this.$enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.getDesc(permissionType.code) +
+          SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.getDesc(permissionType.code) +
             'DataPermission'
         ][0].openDialog();
       },
       submit() {
-        const permissionTypes = this.$enums.SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values();
+        const permissionTypes = SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME.values();
         const datas = [];
         for (let i = 0; i < permissionTypes.length; i++) {
           const permissionType = permissionTypes[i];

@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -132,6 +132,9 @@
   import * as api from '@/api/settle/out-item';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createError } from '@/hooks/web/msg';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'SettleOutItem',
@@ -140,6 +143,8 @@
       Modify,
       Detail,
       DownOutlined,
+      AvailableTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -149,6 +154,7 @@
         DownloadOutlined,
         CheckOutlined,
         StopOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -159,7 +165,7 @@
         ids: [],
         // 查询列表的查询条件
         searchFormData: {
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {

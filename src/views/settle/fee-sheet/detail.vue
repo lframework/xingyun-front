@@ -19,22 +19,22 @@
           <j-form-item />
           <j-form-item label="状态">
             <span
-              v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status)
+              SETTLE_FEE_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -47,8 +47,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -56,8 +56,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -103,9 +103,19 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/settle/fee';
   import { isFloatGeZero, isEmpty, add } from '@/utils/utils';
+  import { SETTLE_FEE_SHEET_STATUS } from '@/enums/biz/settleFeeSheetStatus';
+  import { SETTLE_FEE_SHEET_TYPE } from '@/enums/biz/settleFeeSheetType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
-    components: {},
+    components: {
+      OrderTimeLine,
+    },
+    setup() {
+      return {
+        SETTLE_FEE_SHEET_STATUS,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -172,7 +182,7 @@
           .then((res) => {
             this.formData = {
               supplierName: res.supplierName,
-              sheetType: this.$enums.SETTLE_FEE_SHEET_TYPE.getDesc(res.sheetType),
+              sheetType: SETTLE_FEE_SHEET_TYPE.getDesc(res.sheetType),
               description: res.description,
               status: res.status,
               createBy: res.createBy,

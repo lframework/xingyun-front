@@ -118,7 +118,7 @@
       <batch-data-permission
         ref="batchDataPermissionDialog"
         :biz-ids="ids"
-        :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.DEPT.code"
+        :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.DEPT.code"
       />
 
       <!-- 批量操作 -->
@@ -163,6 +163,8 @@
   } from '@ant-design/icons-vue';
   import { isEmpty, toArrayTree, eachTree, toTreeArray } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import { SYS_DATA_PERMISSION_DATA_BIZ_TYPE } from '@/enums/biz/sysDataPermissionDataBizType';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'Dept',
@@ -176,6 +178,7 @@
       ExpandAltOutlined,
       ShrinkOutlined,
       RestOutlined,
+      BatchHandler,
     },
     setup() {
       return {
@@ -183,8 +186,8 @@
         PlusOutlined,
         ReloadOutlined,
         SettingOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
       };
     },
     data() {

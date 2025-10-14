@@ -25,9 +25,7 @@
 
           <!-- 业务单据号 列自定义内容 -->
           <template #bizCode_default="{ row }">
-            <div
-              v-if="$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.SALE_OUT_SHEET.equalsCode(row.bizType)"
-            >
+            <div v-if="LOGISTICS_SHEET_DETAIL_BIZ_TYPE.SALE_OUT_SHEET.equalsCode(row.bizType)">
               <a
                 v-permission="['sale:out:query']"
                 @click="
@@ -41,9 +39,7 @@
               <span v-no-permission="['sale:out:query']">{{ row.bizCode }}</span>
             </div>
             <div
-              v-else-if="
-                $enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.RETAIL_OUT_SHEET.equalsCode(row.bizType)
-              "
+              v-else-if="LOGISTICS_SHEET_DETAIL_BIZ_TYPE.RETAIL_OUT_SHEET.equalsCode(row.bizType)"
             >
               <a
                 v-permission="['retail:out:query']"
@@ -186,6 +182,11 @@
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { isEmpty, isFloat, isFloatGeZero, isNumberPrecision, uuid } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
+  import LogisticsCompanySelector from '@/components/Selector/LogisticsCompanySelector.vue';
+  import { LOGISTICS_SHEET_DETAIL_BIZ_TYPE } from '@/enums/biz/logisticsSheetDetailBizType';
+  import { ADDRESS_ENTITY_TYPE } from '@/enums/biz/addressEntityType';
+  import { ADDRESS_TYPE } from '@/enums/biz/addressType';
 
   export default defineComponent({
     name: 'AddLogisticsSheet',
@@ -194,6 +195,8 @@
       DetailSaleOutSheet,
       DetailRetailOutSheet,
       AddressSelector,
+      CitySelector,
+      LogisticsCompanySelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -201,8 +204,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        LOGISTICS_SHEET_DETAIL_BIZ_TYPE,
       };
     },
     data() {
@@ -253,7 +256,7 @@
             title: '业务类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.getDesc(cellValue);
+              return LOGISTICS_SHEET_DETAIL_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'scName', title: '仓库名称', width: 100, slots: { default: 'scName_default' } },
@@ -405,8 +408,8 @@
       setSender(row) {
         createConfirm('选择地址后，会覆盖寄件人信息，是否确认继续？').then(() => {
           this.entityId = row.scId;
-          this.entityType = this.$enums.ADDRESS_ENTITY_TYPE.SC.code;
-          this.addressType = this.$enums.ADDRESS_TYPE.DELIVERY.code;
+          this.entityType = ADDRESS_ENTITY_TYPE.SC.code;
+          this.addressType = ADDRESS_TYPE.DELIVERY.code;
 
           this.$refs.addressDialog.openDialog();
         });
@@ -414,20 +417,18 @@
       setReceiver(row) {
         createConfirm('选择地址后，会覆盖收件人信息，是否确认继续？').then(() => {
           this.entityId = row.receiverId;
-          if (this.$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.SALE_OUT_SHEET.equalsCode(row.bizType)) {
-            this.entityType = this.$enums.ADDRESS_ENTITY_TYPE.CUSTOMER.code;
-          } else if (
-            this.$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.RETAIL_OUT_SHEET.equalsCode(row.bizType)
-          ) {
-            this.entityType = this.$enums.ADDRESS_ENTITY_TYPE.MEMBER.code;
+          if (LOGISTICS_SHEET_DETAIL_BIZ_TYPE.SALE_OUT_SHEET.equalsCode(row.bizType)) {
+            this.entityType = ADDRESS_ENTITY_TYPE.CUSTOMER.code;
+          } else if (LOGISTICS_SHEET_DETAIL_BIZ_TYPE.RETAIL_OUT_SHEET.equalsCode(row.bizType)) {
+            this.entityType = ADDRESS_ENTITY_TYPE.MEMBER.code;
           }
-          this.addressType = this.$enums.ADDRESS_TYPE.RECEIVE.code;
+          this.addressType = ADDRESS_TYPE.RECEIVE.code;
 
           this.$refs.addressDialog.openDialog();
         });
       },
       confirmAddress(addr, addrType) {
-        if (this.$enums.ADDRESS_TYPE.RECEIVE.equalsCode(addrType)) {
+        if (ADDRESS_TYPE.RECEIVE.equalsCode(addrType)) {
           // 收货地址
           this.formData.receiverName = addr.name;
           this.formData.receiverTelephone = addr.telephone;

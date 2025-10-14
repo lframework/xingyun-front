@@ -165,7 +165,6 @@
       const { ruleList } = constants;
       return {
         ruleList,
-        // 工具函数 - 仅返回模板中需要使用的
         keys,
       };
     },

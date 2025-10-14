@@ -186,6 +186,7 @@
     EditOutlined,
     AlertOutlined,
   } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import * as api from '@/api/sc/sale/out';
   import * as saleApi from '@/api/sc/sale/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
@@ -206,12 +207,17 @@
     PATTERN_IS_PRICE,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
 
   export default defineComponent({
     name: 'AddSaleOutSheetUnRequire',
     components: {
       SaleOrderSelectorWithOut,
       BatchAddProduct,
+      CustomerSelector,
+      StoreCenterSelector,
+      UserSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -222,7 +228,6 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,

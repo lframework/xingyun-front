@@ -21,7 +21,7 @@
         <a-form-item label="接收者类型" name="receiverType">
           <a-select v-model:value="formData.receiverType" allow-clear>
             <a-select-option
-              v-for="item in $enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.values()"
+              v-for="item in SYS_NOTIFY_GROUP_RECEIVER_TYPE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -29,7 +29,7 @@
           </a-select>
         </a-form-item>
         <a-form-item
-          v-if="$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(formData.receiverType)"
+          v-if="SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(formData.receiverType)"
           label="部门"
           name="deptIds"
         >
@@ -40,21 +40,21 @@
           />
         </a-form-item>
         <a-form-item
-          v-if="$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.ROLE.equalsCode(formData.receiverType)"
+          v-if="SYS_NOTIFY_GROUP_RECEIVER_TYPE.ROLE.equalsCode(formData.receiverType)"
           label="角色"
           name="roleIds"
         >
           <sys-role-selector v-model:value="formData.roleIds" :multiple="true" />
         </a-form-item>
         <a-form-item
-          v-if="$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER.equalsCode(formData.receiverType)"
+          v-if="SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER.equalsCode(formData.receiverType)"
           label="用户"
           name="userIds"
         >
           <user-selector v-model:value="formData.userIds" :multiple="true" />
         </a-form-item>
         <a-form-item
-          v-if="$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(formData.receiverType)"
+          v-if="SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(formData.receiverType)"
           label="用户组"
           name="userGroupIds"
         >
@@ -82,9 +82,25 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/notify-group';
   import { createSuccess } from '@/hooks/web/msg';
+  import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
+  import SysRoleSelector from '@/components/Selector/SysRoleSelector.vue';
+  import UserGroupSelector from '@/components/Selector/UserGroupSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { SYS_NOTIFY_GROUP_RECEIVER_TYPE } from '@/enums/biz/sysNotifyReceiverType';
+  import { SYS_NOTIFY_GROUP_MESSAGE_TYPE } from '@/enums/biz/sysNotifyMessageType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      SysDeptSelector,
+      SysRoleSelector,
+      UserGroupSelector,
+      UserSelector,
+    },
+    setup() {
+      return {
+        SYS_NOTIFY_GROUP_RECEIVER_TYPE,
+      };
+    },
     data() {
       return {
         // 是否可见
@@ -107,7 +123,7 @@
     },
     computed: {
       messageTypeOptions() {
-        return this.$enums.SYS_NOTIFY_GROUP_MESSAGE_TYPE.values().map((item) => {
+        return SYS_NOTIFY_GROUP_MESSAGE_TYPE.values().map((item) => {
           return {
             label: item.desc,
             value: item.code,
@@ -157,22 +173,14 @@
               description: this.formData.description,
             };
 
-            if (
-              this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER.equalsCode(this.formData.receiverType)
-            ) {
+            if (SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER.equalsCode(this.formData.receiverType)) {
               params.receiverIds = this.formData.userIds;
-            } else if (
-              this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.ROLE.equalsCode(this.formData.receiverType)
-            ) {
+            } else if (SYS_NOTIFY_GROUP_RECEIVER_TYPE.ROLE.equalsCode(this.formData.receiverType)) {
               params.receiverIds = this.formData.roleIds;
-            } else if (
-              this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(this.formData.receiverType)
-            ) {
+            } else if (SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(this.formData.receiverType)) {
               params.receiverIds = this.formData.deptIds;
             } else if (
-              this.$enums.SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(
-                this.formData.receiverType,
-              )
+              SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(this.formData.receiverType)
             ) {
               params.receiverIds = this.formData.userGroupIds;
             }

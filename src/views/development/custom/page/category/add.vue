@@ -46,12 +46,14 @@
   import * as api from '@/api/development/custom/page-category';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import GenCustomPageCategorySelector from '@/components/Selector/GenCustomPageCategorySelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      GenCustomPageCategorySelector,
+    },
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
       };
     },

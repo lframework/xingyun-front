@@ -57,7 +57,7 @@
               <j-form-item label="业务类型">
                 <a-select v-model:value="searchFormData.bizType" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.PRODUCT_STOCK_BIZ_TYPE.values()"
+                    v-for="item in PRODUCT_STOCK_BIZ_TYPE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -70,7 +70,7 @@
 
         <!-- 单据号 列自定义内容 -->
         <template #bizCode_default="{ row }">
-          <div v-if="$enums.PRODUCT_STOCK_BIZ_TYPE.PURCHASE.equalsCode(row.bizType)">
+          <div v-if="PRODUCT_STOCK_BIZ_TYPE.PURCHASE.equalsCode(row.bizType)">
             <a
               v-permission="['purchase:receive:query']"
               @click="
@@ -83,7 +83,7 @@
             >
             <span v-no-permission="['purchase:receive:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)">
             <a
               v-permission="['purchase:return:query']"
               @click="
@@ -96,7 +96,7 @@
             >
             <span v-no-permission="['purchase:return:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.SALE.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.SALE.equalsCode(row.bizType)">
             <a
               v-permission="['sale:out:query']"
               @click="
@@ -109,7 +109,7 @@
             >
             <span v-no-permission="['sale:out:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.SALE_RETURN.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.SALE_RETURN.equalsCode(row.bizType)">
             <a
               v-permission="['sale:return:query']"
               @click="
@@ -122,7 +122,7 @@
             >
             <span v-no-permission="['sale:return:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.RETAIL.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.RETAIL.equalsCode(row.bizType)">
             <a
               v-permission="['retail:out:query']"
               @click="
@@ -135,7 +135,7 @@
             >
             <span v-no-permission="['retail:out:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.RETAIL_RETURN.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.RETAIL_RETURN.equalsCode(row.bizType)">
             <a
               v-permission="['retail:return:query']"
               @click="
@@ -148,7 +148,7 @@
             >
             <span v-no-permission="['retail:return:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.TAKE_STOCK_IN.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.TAKE_STOCK_IN.equalsCode(row.bizType)">
             <a
               v-permission="['stock:take:plan:query']"
               @click="
@@ -161,7 +161,7 @@
             >
             <span v-no-permission="['stock:take:plan:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.TAKE_STOCK_OUT.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.TAKE_STOCK_OUT.equalsCode(row.bizType)">
             <a
               v-permission="['stock:take:plan:query']"
               @click="
@@ -174,7 +174,7 @@
             >
             <span v-no-permission="['stock:take:plan:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.STOCK_ADJUST.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.STOCK_ADJUST.equalsCode(row.bizType)">
             <a
               v-permission="['stock:adjust:query']"
               @click="
@@ -187,7 +187,7 @@
             >
             <span v-no-permission="['stock:adjust:query']">{{ row.bizCode }}</span>
           </div>
-          <div v-else-if="$enums.PRODUCT_STOCK_BIZ_TYPE.SC_TRANSFER.equalsCode(row.bizType)">
+          <div v-else-if="PRODUCT_STOCK_BIZ_TYPE.SC_TRANSFER.equalsCode(row.bizType)">
             <a
               v-permission="['stock:sc-transfer:query']"
               @click="
@@ -255,6 +255,10 @@
     buildSortPageVo,
   } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import { PRODUCT_STOCK_BIZ_TYPE } from '@/enums/biz/productStockBizType';
 
   export default defineComponent({
     name: 'ProductStockLog',
@@ -268,12 +272,16 @@
       TakeStockPlanDetail,
       StockAdjustDetail,
       ScTransferOrderDetail,
+      ProductBrandSelector,
+      ProductCategorySelector,
+      StoreCenterSelector,
     },
     setup() {
       return {
         h,
         SearchOutlined,
         DownloadOutlined,
+        PRODUCT_STOCK_BIZ_TYPE,
       };
     },
     data() {
@@ -352,7 +360,7 @@
             title: '业务类型',
             width: 140,
             formatter: ({ cellValue }) => {
-              return this.$enums.PRODUCT_STOCK_BIZ_TYPE.getDesc(cellValue);
+              return PRODUCT_STOCK_BIZ_TYPE.getDesc(cellValue);
             },
             sortable: true,
           },

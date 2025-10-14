@@ -39,7 +39,7 @@
                         allow-clear
                       >
                         <a-select-option
-                          v-for="item in $enums.AVAILABLE.values()"
+                          v-for="item in AVAILABLE.values()"
                           :key="item.code"
                           :value="item.code"
                           >{{ item.desc }}</a-select-option
@@ -151,6 +151,10 @@
   import * as api from '@/api/development/data/entity';
   import { isEmpty, isEqualWithStr } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import { GEN_STATUS } from '@/enums/biz/genStatus';
+  import BatchHandler from '@/components/BatchHandler';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'DataEntity',
@@ -165,6 +169,8 @@
       CheckOutlined,
       StopOutlined,
       DownOutlined,
+      BatchHandler,
+      AvailableTag,
     },
     setup() {
       return {
@@ -172,6 +178,7 @@
         SearchOutlined,
         PlusOutlined,
         DeleteOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -183,7 +190,7 @@
         visible: true,
         // 查询列表的查询条件
         searchFormData: {
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -357,8 +364,8 @@
             label: '配置',
             ifShow: () => {
               return (
-                row.genStatus === this.$enums.GEN_STATUS.SET_TABLE.code ||
-                row.genStatus === this.$enums.GEN_STATUS.SET_GEN.code
+                row.genStatus === GEN_STATUS.SET_TABLE.code ||
+                row.genStatus === GEN_STATUS.SET_GEN.code
               );
             },
             onClick: () => {
@@ -370,7 +377,7 @@
           {
             label: '预览',
             ifShow: () => {
-              return row.genStatus === this.$enums.GEN_STATUS.SET_GEN.code;
+              return row.genStatus === GEN_STATUS.SET_GEN.code;
             },
             onClick: () => {
               this.id = row.id;
@@ -381,7 +388,7 @@
           {
             label: '下载',
             ifShow: () => {
-              return row.genStatus === this.$enums.GEN_STATUS.SET_GEN.code;
+              return row.genStatus === GEN_STATUS.SET_GEN.code;
             },
             onClick: () => {
               this.download(row.id);

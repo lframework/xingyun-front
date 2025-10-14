@@ -16,18 +16,15 @@
         </a-form-item>
         <a-form-item label="类型" name="display">
           <a-radio-group v-model:value="formData.display" @change="displayChange">
-            <a-radio
-              v-for="item in $enums.MENU_DISPLAY.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-radio
-            >
+            <a-radio v-for="item in MENU_DISPLAY.values()" :key="item.code" :value="item.code">{{
+              item.desc
+            }}</a-radio>
           </a-radio-group>
         </a-form-item>
         <a-form-item
           v-if="
-            $enums.MENU_DISPLAY.CATALOG.equalsCode(formData.display) ||
-            $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)
+            MENU_DISPLAY.CATALOG.equalsCode(formData.display) ||
+            MENU_DISPLAY.FUNCTION.equalsCode(formData.display)
           "
           label="图标"
           name="icon"
@@ -39,8 +36,8 @@
         </a-form-item>
         <a-form-item
           v-if="
-            $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) ||
-            $enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
+            MENU_DISPLAY.FUNCTION.equalsCode(formData.display) ||
+            MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
           "
           label="权限"
           name="permission"
@@ -51,14 +48,11 @@
           <a-textarea v-model:value.trim="formData.description" />
         </a-form-item>
         <div
-          v-if="
-            !isEmpty(formData.display) &&
-            !$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
-          "
+          v-if="!isEmpty(formData.display) && !MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
         >
           <a-divider>以下均为前端配置项</a-divider>
           <a-form-item
-            v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
+            v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
             label="路由名称"
             name="name"
           >
@@ -69,13 +63,13 @@
             />
           </a-form-item>
           <a-form-item
-            v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
+            v-if="MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
             label="组件类型"
             name="componentType"
           >
             <a-select v-model:value="formData.componentType" allow-clear>
               <a-select-option
-                v-for="item in $enums.MENU_COMPONENT_TYPE.values()"
+                v-for="item in MENU_COMPONENT_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -84,8 +78,8 @@
           </a-form-item>
           <a-form-item
             v-if="
-              $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
-              $enums.MENU_COMPONENT_TYPE.NORMAL.equalsCode(formData.componentType)
+              MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
+              MENU_COMPONENT_TYPE.NORMAL.equalsCode(formData.componentType)
             "
             name="component"
           >
@@ -105,8 +99,8 @@
           </a-form-item>
           <a-form-item
             v-if="
-              $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
-              $enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)
+              MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
+              MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)
             "
             label="自定义列表"
             name="customListId"
@@ -118,18 +112,15 @@
           </a-form-item>
           <a-form-item
             v-if="
-              $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
-              $enums.MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(formData.componentType)
+              MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
+              MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(formData.componentType)
             "
             label="自定义页面"
             name="customPageId"
           >
             <gen-custom-page-selector v-model:value="formData.customPageId" />
           </a-form-item>
-          <a-form-item
-            v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
-            name="path"
-          >
+          <a-form-item v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" name="path">
             <template #label>
               <a-space>
                 <span>路由路径</span>
@@ -146,14 +137,14 @@
             />
           </a-form-item>
           <a-form-item
-            v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
+            v-if="MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
             label="是否不缓存"
             name="noCache"
           >
             <a-switch v-model:checked="formData.noCache" />
           </a-form-item>
           <a-form-item
-            v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
+            v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
             label="是否隐藏"
             name="hidden"
           >
@@ -187,17 +178,26 @@
   import * as api from '@/api/system/menu';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import GenCustomListSelector from '@/components/Selector/GenCustomListSelector.vue';
+  import GenCustomPageSelector from '@/components/Selector/GenCustomPageSelector.vue';
+  import SysMenuSelector from '@/components/Selector/SysMenuSelector.vue';
+  import { MENU_DISPLAY } from '@/enums/biz/menuDisplay';
+  import { MENU_COMPONENT_TYPE } from '@/enums/biz/menuComponentType';
 
   export default defineComponent({
     components: {
       IconPicker,
       JsonEditor,
       QuestionCircleOutlined,
+      GenCustomListSelector,
+      GenCustomPageSelector,
+      SysMenuSelector,
     },
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        MENU_DISPLAY,
+        MENU_COMPONENT_TYPE,
       };
     },
     data() {
@@ -270,14 +270,10 @@
           if (valid) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
-            if (this.$enums.MENU_DISPLAY.FUNCTION.equalsCode(params.display)) {
-              if (
-                this.$enums.MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)
-              ) {
+            if (MENU_DISPLAY.FUNCTION.equalsCode(params.display)) {
+              if (MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)) {
                 params.component = params.customListId;
-              } else if (
-                this.$enums.MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(this.formData.componentType)
-              ) {
+              } else if (MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(this.formData.componentType)) {
                 params.component = params.customPageId;
               }
             }
@@ -303,13 +299,13 @@
       },
       // 类型选择器发生改变时
       displayChange(val) {
-        if (this.$enums.MENU_DISPLAY.CATALOG.equalsCode(val)) {
+        if (MENU_DISPLAY.CATALOG.equalsCode(val)) {
           this.formData = Object.assign(this.formData, {
             componentType: undefined,
             component: '',
             noCache: true,
           });
-        } else if (this.$enums.MENU_DISPLAY.PERMISSION.equalsCode(val)) {
+        } else if (MENU_DISPLAY.PERMISSION.equalsCode(val)) {
           this.formData = Object.assign(this.formData, {
             name: '',
             path: '',

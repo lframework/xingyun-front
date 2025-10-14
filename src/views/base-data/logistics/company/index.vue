@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -125,6 +125,9 @@
   } from '@ant-design/icons-vue';
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import BatchHandler from '@/components/BatchHandler';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'LogisticsCompany',
@@ -133,6 +136,8 @@
       Modify,
       Detail,
       DownOutlined,
+      BatchHandler,
+      AvailableTag,
     },
     setup() {
       return {
@@ -141,6 +146,7 @@
         CheckOutlined,
         SearchOutlined,
         PlusOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -151,7 +157,7 @@
         ids: [],
         // 查询列表的查询条件
         searchFormData: {
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {

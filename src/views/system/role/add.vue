@@ -55,9 +55,13 @@
   import * as api from '@/api/system/role';
   import { generateCode } from '@/api/components';
   import { createSuccess } from '@/hooks/web/msg';
+  import SysRoleCategorySelector from '@/components/Selector/SysRoleCategorySelector.vue';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      SysRoleCategorySelector,
+    },
     data() {
       return {
         // 是否可见
@@ -130,7 +134,7 @@
         this.onGenerateCode();
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.ROLE.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.ROLE.code).then((res) => {
           this.formData.code = res;
         });
       },

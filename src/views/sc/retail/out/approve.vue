@@ -17,22 +17,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ RETAIL_OUT_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.RETAIL_OUT_SHEET_STATUS.getDesc(formData.status)
+              RETAIL_OUT_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
             <a-input
-              v-if="$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -45,8 +45,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -54,8 +54,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              RETAIL_OUT_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -120,8 +120,8 @@
 
       <div
         v-if="
-          $enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
-          $enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+          RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
+          RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
         "
         style="text-align: center; background-color: #ffffff; padding: 8px 0"
       >
@@ -134,7 +134,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['retail:out:approve']"
             danger
             :loading="loading"
@@ -156,21 +156,24 @@
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { isEmpty, isFloatGeZero, isFloatGtZero, getNumber, mul, add } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { RETAIL_OUT_SHEET_STATUS } from '@/enums/biz/retailOutSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApproveRetailOutSheet',
     components: {
       ApproveRefuse,
       PayType,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,
         mul,
+        RETAIL_OUT_SHEET_STATUS,
       };
     },
     data() {
@@ -269,8 +272,8 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !RETAIL_OUT_SHEET_STATUS.CREATED.equalsCode(res.status) &&
+              !RETAIL_OUT_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
               createError('零售出库单已审核通过，无需重复审核！');
               this.closeDialog();

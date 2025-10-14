@@ -22,7 +22,7 @@
           <j-form-item label="业务类型" required>
             <a-select v-model:value="formData.bizType">
               <a-select-option
-                v-for="item in $enums.STOCK_ADJUST_SHEET_BIZ_TYPE.values()"
+                v-for="item in STOCK_ADJUST_SHEET_BIZ_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -136,6 +136,7 @@
   import BatchAddProduct from '@/views/sc/stock/adjust/stock/batch-add-product.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/adjust/stock';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
     isEmpty,
@@ -147,11 +148,15 @@
     add,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import StockAdjustReasonSelector from '@/components/Selector/StockAdjustReasonSelector.vue';
+  import { STOCK_ADJUST_SHEET_BIZ_TYPE } from '@/enums/biz/stockAdjustSheetBizType';
 
   export default defineComponent({
     name: 'AddStockAdjustSheet',
     components: {
       BatchAddProduct,
+      StockAdjustReasonSelector,
+      StoreCenterSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -159,8 +164,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        STOCK_ADJUST_SHEET_BIZ_TYPE,
       };
     },
     data() {

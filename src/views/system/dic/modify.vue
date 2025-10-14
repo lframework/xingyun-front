@@ -51,11 +51,14 @@
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createError } from '@/hooks/web/msg';
+  import SysDataDicCategorySelector from '@/components/Selector/SysDataDicCategorySelector.vue';
+  import { PROPERTY_TYPE } from '@/enums/biz/propertyType';
 
   export default defineComponent({
     // 使用组件
     components: {
       QuestionCircleOutlined,
+      SysDataDicCategorySelector,
     },
     props: {
       id: {
@@ -106,7 +109,7 @@
       },
       // 提交表单事件
       submit() {
-        if (this.$enums.PROPERTY_TYPE.APPOINT.equalsCode(this.formData.propertyType)) {
+        if (PROPERTY_TYPE.APPOINT.equalsCode(this.formData.propertyType)) {
           if (isEmpty(this.formData.categories)) {
             createError('请选择商品分类');
             return;

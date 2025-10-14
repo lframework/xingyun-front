@@ -47,11 +47,13 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/development/gen/api';
   import { isEmpty, isPromise, isArray } from '@/utils/utils';
+  import CustomList from '@/components/CustomList';
 
   export default defineComponent({
     name: 'CustomSelector',
     components: {
       SearchOutlined,
+      CustomList,
     },
     props: {
       customSelectorId: {

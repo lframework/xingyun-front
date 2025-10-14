@@ -47,9 +47,12 @@
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import { isEmpty, isFloat, isFloatGtZero, isNumberPrecision, uuid } from '@/utils/utils';
   import { createError, createConfirm } from '@/hooks/web/msg';
+  import PayTypeSelector from '@/components/Selector/PayTypeSelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      PayTypeSelector,
+    },
     props: {
       disabled: {
         type: Boolean,

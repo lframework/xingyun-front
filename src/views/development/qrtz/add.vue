@@ -30,7 +30,7 @@
         <a-form-item label="任务类型" name="jobType">
           <a-select v-model:value="formData.jobType" allow-clear>
             <a-select-option
-              v-for="item in $enums.QRTZ_JOB_TYPE.values()"
+              v-for="item in QRTZ_JOB_TYPE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -38,7 +38,7 @@
           </a-select>
         </a-form-item>
         <a-form-item
-          v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
           label="类名"
           name="targetClassName"
         >
@@ -55,7 +55,7 @@
           </a-row>
         </a-form-item>
         <a-form-item
-          v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
           label="方法名"
           name="targetMethodName"
         >
@@ -71,7 +71,7 @@
           </a-row>
         </a-form-item>
         <a-form-item
-          v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
           label="参数类型"
           name="targetParamTypes"
         >
@@ -99,7 +99,7 @@
           </a-row>
         </a-form-item>
         <a-form-item
-          v-if="$enums.QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.EXCUTE_CLASS.equalsCode(formData.jobType)"
           label="参数值"
           name="targetParams"
         >
@@ -116,7 +116,7 @@
           </a-row>
         </a-form-item>
         <a-form-item
-          v-if="$enums.QRTZ_JOB_TYPE.GROOVY.equalsCode(formData.jobType)"
+          v-if="QRTZ_JOB_TYPE.GROOVY.equalsCode(formData.jobType)"
           label="脚本"
           name="script"
         >
@@ -141,9 +141,20 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/development/qrtz';
   import { createSuccess } from '@/hooks/web/msg';
+  import CronPicker from '@/components/CronPicker';
+  import SysTenantSelector from '@/components/Selector/SysTenantSelector.vue';
+  import { QRTZ_JOB_TYPE } from '@/enums/biz/qrtzJobType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      CronPicker,
+      SysTenantSelector,
+    },
+    setup() {
+      return {
+        QRTZ_JOB_TYPE,
+      };
+    },
     data() {
       return {
         // 是否可见

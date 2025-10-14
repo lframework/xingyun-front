@@ -26,24 +26,22 @@
           <j-form-item />
           <j-form-item label="状态">
             <span
-              v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="
-                $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
-              "
+              v-else-if="SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status)
+              SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -56,8 +54,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -65,8 +63,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -90,12 +88,12 @@
         <!-- 单据号 列自定义内容 -->
         <template #bizCode_default="{ row }">
           <span
-            v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)"
+            v-if="SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)"
             v-no-permission="['purchase:receive:query']"
             >{{ row.bizCode }}</span
           >
           <a
-            v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)"
+            v-if="SETTLE_CHECK_SHEET_BIZ_TYPE.RECEIVE_SHEET.equalsCode(row.bizType)"
             v-permission="['purchase:receive:query']"
             type="link"
             @click="
@@ -109,12 +107,12 @@
           </a>
 
           <span
-            v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)"
+            v-if="SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)"
             v-no-permission="['purchase:return:query']"
             >{{ row.bizCode }}</span
           >
           <a
-            v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)"
+            v-if="SETTLE_CHECK_SHEET_BIZ_TYPE.PURCHASE_RETURN.equalsCode(row.bizType)"
             v-permission="['purchase:return:query']"
             type="link"
             @click="
@@ -128,12 +126,12 @@
           </a>
 
           <span
-            v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)"
+            v-if="SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)"
             v-no-permission="['settle:fee-sheet:query']"
             >{{ row.bizCode }}</span
           >
           <a
-            v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)"
+            v-if="SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)"
             v-permission="['settle:fee-sheet:query']"
             type="link"
             @click="
@@ -147,12 +145,12 @@
           </a>
 
           <span
-            v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)"
+            v-if="SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)"
             v-no-permission="['settle:pre-sheet:query']"
             >{{ row.bizCode }}</span
           >
           <a
-            v-if="$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)"
+            v-if="SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)"
             v-permission="['settle:pre-sheet:query']"
             type="link"
             @click="
@@ -200,8 +198,8 @@
 
       <div
         v-if="
-          $enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
-          $enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+          SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(formData.status) ||
+          SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
         "
         style="text-align: center; background-color: #ffffff; padding: 8px 0"
       >
@@ -214,7 +212,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['settle:check-sheet:approve']"
             danger
             :loading="loading"
@@ -247,6 +245,9 @@
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { isFloat, add } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { SETTLE_CHECK_SHEET_STATUS } from '@/enums/biz/settleCheckSheetStatus';
+  import { SETTLE_CHECK_SHEET_BIZ_TYPE } from '@/enums/biz/settleCheckSheetBizType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApproveSupplierSettleCheckSheet',
@@ -256,6 +257,13 @@
       PurchaseReturnDetail,
       SettleFeeSheetDetail,
       SettlePreSheetDetail,
+      OrderTimeLine,
+    },
+    setup() {
+      return {
+        SETTLE_CHECK_SHEET_STATUS,
+        SETTLE_CHECK_SHEET_BIZ_TYPE,
+      };
     },
     mixins: [multiplePageMix],
     data() {
@@ -274,7 +282,7 @@
             title: '单据类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
+              return SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170 },
@@ -319,8 +327,8 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !SETTLE_CHECK_SHEET_STATUS.CREATED.equalsCode(res.status) &&
+              !SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
               createError('单据已审核通过，无需重复审核！');
               this.closeDialog();

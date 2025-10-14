@@ -47,7 +47,7 @@
                     allow-clear
                   >
                     <a-select-option
-                      v-for="item in $enums.PRODUCT_TYPE.values()"
+                      v-for="item in PRODUCT_TYPE.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -72,7 +72,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.AVAILABLE.values()"
+                      v-for="item in AVAILABLE.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -129,11 +129,21 @@
   import { CloudUploadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons-vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { buildSortPageVo } from '@/utils/utils';
+  import ProductImporter from '@/components/Importor/ProductImporter.vue';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
+  import { PRODUCT_TYPE } from '@/enums/biz/productType';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'ProductInfo',
     components: {
       Detail,
+      ProductImporter,
+      ProductBrandSelector,
+      ProductCategorySelector,
+      AvailableTag,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -142,6 +152,8 @@
         CloudUploadOutlined,
         PlusOutlined,
         SearchOutlined,
+        PRODUCT_TYPE,
+        AVAILABLE,
       };
     },
     data() {
@@ -160,7 +172,7 @@
           brandId: '',
           startTime: '',
           endTime: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -183,7 +195,7 @@
             title: '商品类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.PRODUCT_TYPE.getDesc(cellValue);
+              return PRODUCT_TYPE.getDesc(cellValue);
             },
           },
           { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },

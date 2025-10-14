@@ -35,7 +35,7 @@
                     allow-clear
                   >
                     <a-select-option
-                      v-for="item in $enums.TAKE_STOCK_PLAN_STATUS.values()"
+                      v-for="item in TAKE_STOCK_PLAN_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -133,6 +133,7 @@
   import Handle from './handle.vue';
   import Detail from './detail.vue';
   import moment from 'moment';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import { SearchOutlined, PlusOutlined, DownloadOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/take/plan';
   import {
@@ -142,6 +143,9 @@
     buildSortPageVo,
   } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
 
   export default defineComponent({
     name: 'TakeStockPlan',
@@ -150,6 +154,8 @@
       Diff,
       Handle,
       Detail,
+      StoreCenterSelector,
+      UserSelector,
     },
     setup() {
       return {
@@ -157,6 +163,7 @@
         SearchOutlined,
         PlusOutlined,
         DownloadOutlined,
+        TAKE_STOCK_PLAN_STATUS,
       };
     },
     data() {
@@ -194,7 +201,7 @@
             title: '盘点类别',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.TAKE_STOCK_PLAN_TYPE.getDesc(cellValue);
+              return TAKE_STOCK_PLAN_TYPE.getDesc(cellValue);
             },
           },
           { field: 'bizName', title: '盘点内容', width: 120 },
@@ -203,7 +210,7 @@
             title: '盘点状态',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.getDesc(cellValue);
+              return TAKE_STOCK_PLAN_STATUS.getDesc(cellValue);
             },
           },
           { field: 'createTime', title: '创建时间', width: 170, sortable: true },
@@ -301,7 +308,7 @@
             permission: ['stock:take:plan:create-diff'],
             label: '差异生成',
             ifShow: () => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus);
+              return TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus);
             },
             onClick: () => {
               this.id = row.id;
@@ -312,7 +319,7 @@
             permission: ['stock:take:plan:handle-diff'],
             label: '差异处理',
             ifShow: () => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus);
+              return TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus);
             },
             onClick: () => {
               this.id = row.id;
@@ -325,8 +332,8 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) ||
-                this.$enums.TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)
+                TAKE_STOCK_PLAN_STATUS.CREATED.equalsCode(row.takeStatus) ||
+                TAKE_STOCK_PLAN_STATUS.DIFF_CREATED.equalsCode(row.takeStatus)
               );
             },
             onClick: () => {
@@ -338,7 +345,7 @@
             label: '作废',
             danger: true,
             ifShow: () => {
-              return this.$enums.TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus);
+              return TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus);
             },
             onClick: () => {
               this.deleteRow(row);

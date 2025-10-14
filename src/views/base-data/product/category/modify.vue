@@ -27,7 +27,7 @@
         <a-form-item label="状态" name="available">
           <a-select v-model:value.trim="formData.available" allow-clear>
             <a-select-option
-              v-for="item in $enums.AVAILABLE.values()"
+              v-for="item in AVAILABLE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -54,11 +54,16 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/category';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        AVAILABLE,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -115,8 +120,8 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             if (
-              this.$enums.AVAILABLE.UNABLE.equalsCode(this.formData.available) &&
-              this.$enums.AVAILABLE.ENABLE.equalsCode(this.oriAvailable)
+              AVAILABLE.UNABLE.equalsCode(this.formData.available) &&
+              AVAILABLE.ENABLE.equalsCode(this.oriAvailable)
             ) {
               // 如果是停用，子节点全部停用
               createConfirm(
@@ -125,8 +130,8 @@
                 this.doSubmit();
               });
             } else if (
-              this.$enums.AVAILABLE.ENABLE.equalsCode(this.formData.available) &&
-              this.$enums.AVAILABLE.UNABLE.equalsCode(this.oriAvailable)
+              AVAILABLE.ENABLE.equalsCode(this.formData.available) &&
+              AVAILABLE.UNABLE.equalsCode(this.oriAvailable)
             ) {
               // 如果是启用，父节点全部启用
               createConfirm(

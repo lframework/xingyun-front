@@ -180,6 +180,9 @@
     EditOutlined,
     AlertOutlined,
   } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
@@ -204,6 +207,9 @@
     components: {
       BatchAddProduct,
       PurchaseOrderSelectorWithReceive,
+      StoreCenterSelector,
+      SupplierSelector,
+      UserSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -214,7 +220,6 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,

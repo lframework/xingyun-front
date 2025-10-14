@@ -38,13 +38,15 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/product/brand';
   import { isEmpty } from '@/utils/utils';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      AvailableTag,
+    },
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
       };
     },

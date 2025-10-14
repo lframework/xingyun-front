@@ -48,10 +48,10 @@
       <template #dataType_default="{ row }">
         <a-select
           v-model:value="row.dataType"
-          :disabled="row.viewType === $enums.GEN_VIEW_TYPE.DATA_DIC.code"
+          :disabled="row.viewType === GEN_VIEW_TYPE.DATA_DIC.code"
         >
           <a-select-option
-            v-for="item in $enums.GEN_DATA_TYPE.values()"
+            v-for="item in GEN_DATA_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -67,6 +67,8 @@
   import { DeleteOutlined, PlusOutlined, DragOutlined } from '@ant-design/icons-vue';
   import { uuid, isEmpty, clearAll } from '@/utils/utils';
   import { createError, createConfirm } from '@/hooks/web/msg';
+  import { GEN_VIEW_TYPE } from '@/enums/biz/genViewType';
+  import { GEN_DATA_TYPE } from '@/enums/biz/genDataType';
 
   export default defineComponent({
     // 使用组件
@@ -88,6 +90,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        GEN_VIEW_TYPE,
+        GEN_DATA_TYPE,
       };
     },
     data() {

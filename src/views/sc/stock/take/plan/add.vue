@@ -21,7 +21,7 @@
         <a-form-item label="盘点类别" name="takeType">
           <a-select v-model:value="formData.takeType" @change="changeTakeType">
             <a-select-option
-              v-for="item in $enums.TAKE_STOCK_PLAN_TYPE.values()"
+              v-for="item in TAKE_STOCK_PLAN_TYPE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -29,7 +29,7 @@
           </a-select>
         </a-form-item>
         <a-form-item
-          v-if="$enums.TAKE_STOCK_PLAN_TYPE.CATEGORY.equalsCode(formData.takeType)"
+          v-if="TAKE_STOCK_PLAN_TYPE.CATEGORY.equalsCode(formData.takeType)"
           label="分类"
           required
           name="category"
@@ -41,7 +41,7 @@
           />
         </a-form-item>
         <a-form-item
-          v-if="$enums.TAKE_STOCK_PLAN_TYPE.BRAND.equalsCode(formData.takeType)"
+          v-if="TAKE_STOCK_PLAN_TYPE.BRAND.equalsCode(formData.takeType)"
           label="品牌"
           required
           name="brand"
@@ -68,9 +68,22 @@
   import * as api from '@/api/sc/stock/take/plan';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      ProductBrandSelector,
+      ProductCategorySelector,
+      StoreCenterSelector,
+    },
+    setup() {
+      return {
+        TAKE_STOCK_PLAN_TYPE,
+      };
+    },
     data() {
       return {
         // 是否可见
@@ -86,7 +99,7 @@
           category: [
             {
               validator: (rule, value, callback) => {
-                if (!this.$enums.TAKE_STOCK_PLAN_TYPE.CATEGORY.equalsCode(this.formData.takeType)) {
+                if (!TAKE_STOCK_PLAN_TYPE.CATEGORY.equalsCode(this.formData.takeType)) {
                   return callback();
                 }
 
@@ -101,7 +114,7 @@
           brand: [
             {
               validator: (rule, value, callback) => {
-                if (!this.$enums.TAKE_STOCK_PLAN_TYPE.BRAND.equalsCode(this.formData.takeType)) {
+                if (!TAKE_STOCK_PLAN_TYPE.BRAND.equalsCode(this.formData.takeType)) {
                   return callback();
                 }
 
@@ -137,7 +150,7 @@
       initFormData() {
         this.formData = {
           scId: '',
-          takeType: this.$enums.TAKE_STOCK_PLAN_TYPE.ALL.code,
+          takeType: TAKE_STOCK_PLAN_TYPE.ALL.code,
           description: '',
           category: [],
           brand: [],
@@ -153,9 +166,9 @@
               description: this.formData.description,
             };
 
-            if (this.$enums.TAKE_STOCK_PLAN_TYPE.CATEGORY.equalsCode(this.formData.takeType)) {
+            if (TAKE_STOCK_PLAN_TYPE.CATEGORY.equalsCode(this.formData.takeType)) {
               params.bizIds = this.formData.category;
-            } else if (this.$enums.TAKE_STOCK_PLAN_TYPE.BRAND.equalsCode(this.formData.takeType)) {
+            } else if (TAKE_STOCK_PLAN_TYPE.BRAND.equalsCode(this.formData.takeType)) {
               params.bizIds = this.formData.brand;
             }
 

@@ -67,7 +67,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.status" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.SETTLE_PRE_SHEET_STATUS.values()"
+                      v-for="item in SETTLE_PRE_SHEET_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -81,7 +81,7 @@
                     allow-clear
                   >
                     <a-select-option
-                      v-for="item in $enums.SETTLE_STATUS.values()"
+                      v-for="item in SETTLE_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -206,12 +206,20 @@
     buildSortPageVo,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { SETTLE_PRE_SHEET_STATUS } from '@/enums/biz/settlePreSheetStatus';
+  import { SETTLE_STATUS } from '@/enums/biz/settleStatus';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'SettlePreSheet',
     components: {
       Detail,
       ApproveRefuse,
+      SupplierSelector,
+      UserSelector,
+      BatchHandler,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -223,8 +231,9 @@
         CloseOutlined,
         DeleteOutlined,
         DownloadOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        SETTLE_PRE_SHEET_STATUS,
+        SETTLE_STATUS,
       };
     },
     data() {
@@ -265,7 +274,7 @@
             title: '状态',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.SETTLE_PRE_SHEET_STATUS.getDesc(cellValue);
+              return SETTLE_PRE_SHEET_STATUS.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170, sortable: true },
@@ -275,7 +284,7 @@
             title: '结算状态',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.SETTLE_STATUS.getDesc(cellValue);
+              return SETTLE_STATUS.getDesc(cellValue);
             },
           },
           { field: 'description', title: '备注', width: 200 },
@@ -355,7 +364,7 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个预付款单已审核通过，不允许执行删除操作！');
             return;
           }
@@ -379,7 +388,7 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个预付款单已审核通过，不允许继续执行审核！');
             return;
           }
@@ -398,12 +407,12 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (SETTLE_PRE_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个预付款单已审核通过，不允许继续执行审核！');
             return;
           }
 
-          if (this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
+          if (SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个预付款单已审核拒绝，不允许继续执行审核！');
             return;
           }
@@ -449,8 +458,8 @@
             label: '审核',
             ifShow: () => {
               return (
-                this.$enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {
@@ -462,8 +471,8 @@
             label: '修改',
             ifShow: () => {
               return (
-                this.$enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {
@@ -476,8 +485,8 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                SETTLE_PRE_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                SETTLE_PRE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {

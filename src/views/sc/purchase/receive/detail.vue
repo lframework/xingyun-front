@@ -39,22 +39,22 @@
             </j-form-item>
             <j-form-item label="状态">
               <span
-                v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+                v-if="RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
                 style="color: #52c41a"
-                >{{ $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span
+                >{{ RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span
               >
               <span
-                v-else-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+                v-else-if="RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
                 style="color: #f5222d"
-                >{{ $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span
+                >{{ RECEIVE_SHEET_STATUS.getDesc(formData.status) }}</span
               >
               <span v-else style="color: #303133">{{
-                $enums.RECEIVE_SHEET_STATUS.getDesc(formData.status)
+                RECEIVE_SHEET_STATUS.getDesc(formData.status)
               }}</span>
             </j-form-item>
             <j-form-item label="拒绝理由" :span="16" :content-nest="false">
               <a-input
-                v-if="$enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+                v-if="RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
                 v-model:value="formData.refuseReason"
                 readonly
               />
@@ -67,8 +67,8 @@
             </j-form-item>
             <j-form-item
               v-if="
-                $enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-                $enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+                RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+                RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
               "
               label="审核人"
             >
@@ -76,8 +76,8 @@
             </j-form-item>
             <j-form-item
               v-if="
-                $enums.RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-                $enums.RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+                RECEIVE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+                RECEIVE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
               "
               label="审核时间"
               :span="16"
@@ -149,19 +149,23 @@
   import * as api from '@/api/sc/purchase/receive';
   import { printMix } from '@/mixins/print';
   import { isEmpty, isFloatGeZero, getNumber, mul, add } from '@/utils/utils';
+  import { RECEIVE_SHEET_STATUS } from '@/enums/biz/receiveSheetStatus';
+  import { PRINT_TYPE } from '@/enums/biz/printType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
       PurchaseOrderDetail,
+      OrderTimeLine,
     },
     mixins: [printMix],
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,
         mul,
+        RECEIVE_SHEET_STATUS,
       };
     },
     props: {
@@ -335,7 +339,7 @@
         api
           .print(this.id)
           .then((res) => {
-            this.lodopPreview(this.$enums.PRINT_TYPE.RECEIVE_SHEET.code, res);
+            this.lodopPreview(PRINT_TYPE.RECEIVE_SHEET.code, res);
           })
           .finally(() => {
             this.loading = false;

@@ -37,7 +37,7 @@
           <template #widthType_default="{ row }">
             <a-select v-model:value="row.widthType" placeholder="">
               <a-select-option
-                v-for="item in $enums.GEN_QUERY_WIDTH_TYPE.values()"
+                v-for="item in GEN_QUERY_WIDTH_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -73,13 +73,18 @@
   import { DragOutlined } from '@ant-design/icons-vue';
   import { isEmpty, isIntegerGtZero } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import { GEN_QUERY_WIDTH_TYPE } from '@/enums/biz/genQueryWidthType';
 
   export default defineComponent({
     // 使用组件
     components: {
       DragOutlined,
     },
-
+    setup() {
+      return {
+        GEN_QUERY_WIDTH_TYPE,
+      };
+    },
     props: {
       columns: {
         type: Array,
@@ -182,7 +187,7 @@
       emptyLine() {
         return {
           id: '',
-          widthType: this.$enums.GEN_QUERY_WIDTH_TYPE.FIX.code,
+          widthType: GEN_QUERY_WIDTH_TYPE.FIX.code,
           width: 100,
           sortable: false,
           orderNo: '',

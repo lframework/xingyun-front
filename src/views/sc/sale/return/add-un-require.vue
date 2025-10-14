@@ -181,6 +181,7 @@
     EditOutlined,
     AlertOutlined,
   } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import * as api from '@/api/sc/sale/return';
   import * as saleApi from '@/api/sc/sale/order';
   import * as outApi from '@/api/sc/sale/out';
@@ -202,12 +203,17 @@
     PATTERN_IS_PRICE,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
 
   export default defineComponent({
     name: 'AddSaleReturnSheetUnRequire',
     components: {
       SaleOutSheetSelectorWithReturn,
       BatchAddProduct,
+      CustomerSelector,
+      StoreCenterSelector,
+      UserSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -218,7 +224,6 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,

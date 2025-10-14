@@ -19,7 +19,7 @@
           <j-form-item :span="12" label="状态" :required="true">
             <a-select v-model:value="formData.available" allow-clear>
               <a-select-option
-                v-for="item in $enums.AVAILABLE.values()"
+                v-for="item in AVAILABLE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -55,7 +55,7 @@
           <j-form-item :span="8" label="列表类型" :required="true">
             <a-select v-model:value="formData.listType" allow-clear>
               <a-select-option
-                v-for="item in $enums.GEN_CUSTOM_LIST_TYPE.values()"
+                v-for="item in GEN_CUSTOM_LIST_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -187,6 +187,9 @@
   import * as dataObjApi from '@/api/development/data/obj';
   import { isEmpty } from '@/utils/utils';
   import { createError, createSuccess } from '@/hooks/web/msg';
+  import GenCustomListCategorySelector from '@/components/Selector/GenCustomListCategorySelector.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import { GEN_CUSTOM_LIST_TYPE } from '@/enums/biz/genCustomListType';
 
   export default defineComponent({
     components: {
@@ -194,6 +197,13 @@
       QueryParams,
       Toolbar,
       HandleColumn,
+      GenCustomListCategorySelector,
+    },
+    setup() {
+      return {
+        AVAILABLE,
+        GEN_CUSTOM_LIST_TYPE,
+      };
     },
     props: {
       id: {

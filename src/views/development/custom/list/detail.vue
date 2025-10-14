@@ -28,10 +28,13 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/development/custom/list';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      AvailableTag,
+    },
 
     props: {
       id: {

@@ -11,7 +11,7 @@
       <a-descriptions bordered :xs="4" :sm="2" :md="2">
         <a-descriptions-item label="日志名称" :span="4">{{ formData.name }}</a-descriptions-item>
         <a-descriptions-item label="日志类型" :span="2">{{
-          $enums.OP_LOG_TYPE.getDesc(formData.logType)
+          OP_LOG_TYPE.getDesc(formData.logType)
         }}</a-descriptions-item>
         <a-descriptions-item label="IP地址" :span="2">{{ formData.ip }}</a-descriptions-item>
         <a-descriptions-item label="创建人" :span="2">{{ formData.createBy }}</a-descriptions-item>
@@ -34,6 +34,7 @@
   import clipboard from '@/utils/clipboard';
   import * as api from '@/api/system/op-log';
   import { isEmpty } from '@/utils/utils';
+  import { OP_LOG_TYPE } from '@/enums/biz/opLogType';
 
   export default defineComponent({
     // 使用组件
@@ -41,8 +42,8 @@
 
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        OP_LOG_TYPE,
       };
     },
 

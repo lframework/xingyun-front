@@ -42,7 +42,7 @@
       <template #viewType_default="{ row }">
         <a-select v-model:value="row.viewType" placeholder="">
           <a-select-option
-            v-for="item in $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.values()"
+            v-for="item in GEN_CUSTOM_LIST_BTN_VIEW_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -54,7 +54,7 @@
       <template #btnType_default="{ row }">
         <a-select v-model:value="row.btnType" placeholder="">
           <a-select-option
-            v-for="item in $enums.GEN_CUSTOM_LIST_BTN_TYPE.values()"
+            v-for="item in GEN_CUSTOM_LIST_BTN_TYPE.values()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -65,22 +65,22 @@
       <!-- 按钮配置 列自定义内容 -->
       <template #btnConfig_default="{ row }">
         <a-input
-          v-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(row.btnType)"
+          v-if="GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(row.btnType)"
           v-model:value="row.btnConfig"
         />
         <a-input
-          v-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(row.btnType)"
+          v-if="GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(row.btnType)"
           v-model:value="row.btnConfig"
         />
         <a
-          v-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(row.btnType)"
+          v-if="GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(row.btnType)"
           @click="(e) => $refs['excuteScriptEditor' + row.id].openDialog()"
           >编辑脚本</a
         >
         <code-editor
           :ref="'excuteScriptEditor' + row.id"
           v-model:value="row.btnConfig"
-          if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(row.btnType)"
+          v-if="GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(row.btnType)"
           mode="javascript"
           :description="`点击按钮后执行的JS代码，脚本会填充在function excute(_this){}中。`"
         />
@@ -98,6 +98,8 @@
   import { PlusOutlined, DeleteOutlined, DragOutlined } from '@ant-design/icons-vue';
   import { isEmpty, uuid } from '@/utils/utils';
   import { createError, createConfirm } from '@/hooks/web/msg';
+  import { GEN_CUSTOM_LIST_BTN_TYPE } from '@/enums/biz/genCustomListBtnType';
+  import { GEN_CUSTOM_LIST_BTN_VIEW_TYPE } from '@/enums/biz/genCustomListBtnViewType';
 
   export default defineComponent({
     // 使用组件
@@ -110,6 +112,8 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        GEN_CUSTOM_LIST_BTN_TYPE,
+        GEN_CUSTOM_LIST_BTN_VIEW_TYPE,
       };
     },
     data() {
@@ -187,9 +191,9 @@
           }
 
           if (
-            this.$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(column.btnType) ||
-            this.$enums.GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(column.btnType) ||
-            this.$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(column.btnType)
+            GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(column.btnType) ||
+            GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(column.btnType) ||
+            GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(column.btnType)
           ) {
             if (isEmpty(column.btnConfig)) {
               createError('第' + (i + 1) + '行按钮配置不能为空');

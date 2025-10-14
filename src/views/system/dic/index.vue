@@ -86,6 +86,8 @@
   import * as api from '@/api/system/dic';
   import { isEmpty, isEqualWithStr, buildSortPageVo } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { COLUMN_TYPE } from '@/enums/biz/columnType';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'SysDataDic',
@@ -94,6 +96,7 @@
       Modify,
       Item,
       CategoryTree,
+      AvailableTag,
     },
     setup() {
       return {
@@ -181,7 +184,7 @@
         return [
           {
             label: '字典值管理',
-            ifShow: !this.$enums.COLUMN_TYPE.CUSTOM.equalsCode(row.columnType),
+            ifShow: !COLUMN_TYPE.CUSTOM.equalsCode(row.columnType),
             onClick: () => {
               this.id = row.id;
               this.$nextTick(() => this.$refs.itemDialog.openDialog());

@@ -7,7 +7,7 @@
             <supplier-selector
               v-model:value="formData.supplierId"
               :request-params="{
-                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code,
+                manageType: MANAGE_TYPE.DISTRIBUTION.code,
               }"
             />
           </j-form-item>
@@ -31,22 +31,22 @@
           <j-form-item />
           <j-form-item label="状态">
             <span
-              v-if="$enums.SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SETTLE_SHEET_STATUS.getDesc(formData.status)
+              SETTLE_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -59,8 +59,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -68,8 +68,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -204,19 +204,27 @@
     dateTimeToDate,
   } from '@/utils/utils';
   import { createSuccess, createError } from '@/hooks/web/msg';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import { MANAGE_TYPE } from '@/enums/biz/manageType';
+  import { SETTLE_SHEET_STATUS } from '@/enums/biz/settleSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ModifySupplierSettleSheet',
-    components: {},
+    components: {
+      SupplierSelector,
+      OrderTimeLine,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {
         h,
         SearchOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isFloat,
         add,
         sub,
+        MANAGE_TYPE,
+        SETTLE_SHEET_STATUS,
       };
     },
     data() {
@@ -329,8 +337,8 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.SETTLE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !SETTLE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
+              !SETTLE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
               createError('单据已审核通过，无法修改！');
               this.closeDialog();

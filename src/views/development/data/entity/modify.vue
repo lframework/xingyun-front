@@ -19,7 +19,7 @@
           <j-form-item :span="12" label="状态" :required="true">
             <a-select v-model:value="formData.available" allow-clear>
               <a-select-option
-                v-for="item in $enums.AVAILABLE.values()"
+                v-for="item in AVAILABLE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -78,10 +78,13 @@
   import { ReloadOutlined } from '@ant-design/icons-vue';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createError, createSuccessTip, createConfirm } from '@/hooks/web/msg';
+  import GenDataEntityCategorySelector from '@/components/Selector/GenDataEntityCategorySelector.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     components: {
       GenerateColumn,
+      GenDataEntityCategorySelector,
     },
     props: {
       id: {
@@ -93,6 +96,7 @@
       return {
         h,
         ReloadOutlined,
+        AVAILABLE,
       };
     },
     data() {

@@ -22,7 +22,7 @@
           <j-form-item label="业务类型" required>
             <a-select v-model:value="formData.bizType">
               <a-select-option
-                v-for="item in $enums.STOCK_ADJUST_SHEET_BIZ_TYPE.values()"
+                v-for="item in STOCK_ADJUST_SHEET_BIZ_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -37,24 +37,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="
-                $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
-              "
+              v-else-if="STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status)
+              STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
             <a-input
-              v-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -67,8 +65,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -76,8 +74,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -180,6 +178,7 @@
   import BatchAddProduct from '@/views/sc/stock/adjust/stock/batch-add-product.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/adjust/stock';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
     isEmpty,
@@ -191,11 +190,18 @@
     add,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import StockAdjustReasonSelector from '@/components/Selector/StockAdjustReasonSelector.vue';
+  import { STOCK_ADJUST_SHEET_BIZ_TYPE } from '@/enums/biz/stockAdjustSheetBizType';
+  import { STOCK_ADJUST_SHEET_STATUS } from '@/enums/biz/stockAdjustSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ModifyStockAdjustSheet',
     components: {
       BatchAddProduct,
+      StockAdjustReasonSelector,
+      StoreCenterSelector,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -203,8 +209,9 @@
         h,
         PlusOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        STOCK_ADJUST_SHEET_BIZ_TYPE,
+        STOCK_ADJUST_SHEET_STATUS,
       };
     },
     data() {

@@ -52,10 +52,12 @@
   import * as api from '@/api/development/custom/page';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenCustomPageCategorySelector from '@/components/Selector/GenCustomPageCategorySelector.vue';
 
   export default defineComponent({
     components: {
       MonacoEditor,
+      GenCustomPageCategorySelector,
     },
     data() {
       return {

@@ -133,10 +133,12 @@
   import { defineComponent } from 'vue';
   import { isEmpty, isPromise, uuid, toArrayTree, isArray } from '@/utils/utils';
   import { SearchOutlined } from '@ant-design/icons-vue';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     components: {
       SearchOutlined,
+      AvailableTag,
     },
     props: {
       value: { type: [String, Array], required: true },

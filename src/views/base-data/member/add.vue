@@ -31,7 +31,7 @@
             <a-form-item label="性别" name="gender">
               <a-select v-model:value="formData.gender" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.GENDER.values()"
+                  v-for="item in GENDER.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -119,9 +119,22 @@
   import { generateCode } from '@/api/components';
   import { isEmpty, formatDate, getCurrentDate } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import ShopSelector from '@/components/Selector/ShopSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { GENDER } from '@/enums/biz/gender';
+  import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
 
   export default defineComponent({
-    components: {},
+    components: {
+      UserSelector,
+      ShopSelector,
+    },
+    setup() {
+      return {
+        GENDER,
+        GENERATE_CODE_TYPE,
+      };
+    },
     data() {
       return {
         // 是否可见
@@ -176,7 +189,7 @@
         this.formData = {
           code: '',
           name: '',
-          gender: this.$enums.GENDER.MAN.code,
+          gender: GENDER.MAN.code,
           telephone: '',
           email: '',
           shopId: '',
@@ -216,7 +229,7 @@
         this.onGenerateCode();
       },
       onGenerateCode() {
-        generateCode(this.$enums.GENERATE_CODE_TYPE.MEMBER.code).then((res) => {
+        generateCode(GENERATE_CODE_TYPE.MEMBER.code).then((res) => {
           this.formData.code = res;
         });
       },

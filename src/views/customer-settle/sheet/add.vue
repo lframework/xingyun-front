@@ -158,16 +158,18 @@
     dateTimeToDate,
   } from '@/utils/utils';
   import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
 
   export default defineComponent({
     name: 'AddCustomerSettleSheet',
-    components: {},
+    components: {
+      CustomerSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {
         h,
         SearchOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isFloat,
         add,
         sub,

@@ -113,6 +113,7 @@
   import { h, defineComponent } from 'vue';
   import BatchAddProduct from '@/views/sc/stock/transfer/batch-add-product.vue';
   import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import * as api from '@/api/sc/stock/transfer-sc';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
@@ -131,6 +132,7 @@
     name: 'AddScTransferSheet',
     components: {
       BatchAddProduct,
+      StoreCenterSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -138,7 +140,6 @@
         h,
         PlusOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
       };
     },

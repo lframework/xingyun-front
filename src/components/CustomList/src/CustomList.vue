@@ -34,10 +34,10 @@
                   :label="queryParam.name"
                   :span="queryParam.formWidth"
                   :content-nest="
-                    $enums.GEN_VIEW_TYPE.INPUT.equalsCode(queryParam.viewType) ||
-                    $enums.GEN_VIEW_TYPE.TEXTAREA.equalsCode(queryParam.viewType) ||
-                    $enums.GEN_VIEW_TYPE.SELECT.equalsCode(queryParam.viewType) ||
-                    $enums.GEN_VIEW_TYPE.DATA_DIC.equalsCode(queryParam.viewType)
+                    GEN_VIEW_TYPE.INPUT.equalsCode(queryParam.viewType) ||
+                    GEN_VIEW_TYPE.TEXTAREA.equalsCode(queryParam.viewType) ||
+                    GEN_VIEW_TYPE.SELECT.equalsCode(queryParam.viewType) ||
+                    GEN_VIEW_TYPE.DATA_DIC.equalsCode(queryParam.viewType)
                   "
                 >
                   <input-component :query-param="queryParam" :search-condition="searchFormData" />
@@ -59,21 +59,17 @@
               <template v-if="!isEmpty(toolbars)">
                 <div v-for="toolbar in toolbars" :key="toolbar.id">
                   <router-link
-                    v-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(toolbar.btnType)"
+                    v-if="GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(toolbar.btnType)"
                     :to="toolbar.btnConfig"
                   >
                     <a-button
                       :type="
-                        $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
-                          toolbar.viewType,
-                        )
-                          ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
+                        GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
+                          ? GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                           : toolbar.viewType
                       "
                       :danger="
-                        $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
-                          toolbar.viewType,
-                        )
+                        GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
                       "
                       ><icon v-if="!isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
                         toolbar.name
@@ -81,32 +77,26 @@
                     >
                   </router-link>
                   <a-button
-                    v-else-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(toolbar.btnType)"
+                    v-else-if="GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(toolbar.btnType)"
                     :type="
-                      $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
-                        ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
+                      GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
+                        ? GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                         : toolbar.viewType
                     "
-                    :danger="
-                      $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
-                    "
+                    :danger="GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)"
                     @click="onLoadExternal(toolbar)"
                     ><icon v-if="!isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
                       toolbar.name
                     }}</a-button
                   >
                   <a-button
-                    v-else-if="
-                      $enums.GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(toolbar.btnType)
-                    "
+                    v-else-if="GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(toolbar.btnType)"
                     :type="
-                      $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
-                        ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
+                      GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
+                        ? GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                         : toolbar.viewType
                     "
-                    :danger="
-                      $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)
-                    "
+                    :danger="GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(toolbar.viewType)"
                     @click="onExcuteScript(toolbar)"
                     ><icon v-if="!isEmpty(toolbar.icon)" :icon="toolbar.icon" />{{
                       toolbar.name
@@ -122,21 +112,17 @@
             <a-space>
               <div v-for="handleColumn in handleColumns" :key="handleColumn.id">
                 <router-link
-                  v-if="$enums.GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(handleColumn.btnType)"
+                  v-if="GEN_CUSTOM_LIST_BTN_TYPE.ROUTE.equalsCode(handleColumn.btnType)"
                   :to="handleColumn.btnConfig"
                 >
                   <a-button
                     :type="
-                      $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
-                        handleColumn.viewType,
-                      )
-                        ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
+                      GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType)
+                        ? GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                         : handleColumn.viewType
                     "
                     :danger="
-                      $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
-                        handleColumn.viewType,
-                      )
+                      GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType)
                     "
                     ><icon v-if="!isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
                       handleColumn.name
@@ -144,20 +130,14 @@
                   >
                 </router-link>
                 <a-button
-                  v-else-if="
-                    $enums.GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(handleColumn.btnType)
-                  "
+                  v-else-if="GEN_CUSTOM_LIST_BTN_TYPE.EXTERNAL.equalsCode(handleColumn.btnType)"
                   :type="
-                    $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
-                      handleColumn.viewType,
-                    )
-                      ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
+                    GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType)
+                      ? GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                       : handleColumn.viewType
                   "
                   :danger="
-                    $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
-                      handleColumn.viewType,
-                    )
+                    GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType)
                   "
                   @click="onLoadExternal(handleColumn)"
                   ><icon v-if="!isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
@@ -166,19 +146,15 @@
                 >
                 <a-button
                   v-else-if="
-                    $enums.GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(handleColumn.btnType)
+                    GEN_CUSTOM_LIST_BTN_TYPE.EXCUTE_SCRIPT.equalsCode(handleColumn.btnType)
                   "
                   :type="
-                    $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
-                      handleColumn.viewType,
-                    )
-                      ? $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
+                    GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType)
+                      ? GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK.code
                       : handleColumn.viewType
                   "
                   :danger="
-                    $enums.GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(
-                      handleColumn.viewType,
-                    )
+                    GEN_CUSTOM_LIST_BTN_VIEW_TYPE.LINK_DANGER.equalsCode(handleColumn.viewType)
                   "
                   @click="onExcuteScriptInHandleColumn(handleColumn)"
                   ><icon v-if="!isEmpty(handleColumn.icon)" :icon="handleColumn.icon" />{{
@@ -201,6 +177,13 @@
   import { SearchOutlined, DownloadOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/development/gen/api';
   import { isEmpty, toArrayTree, searchTree, keys, isArray } from '@/utils/utils';
+  import { getEnumDesc } from '@/utils/enumUtil';
+  import { GEN_VIEW_TYPE } from '@/enums/biz/genViewType';
+  import { GEN_CUSTOM_LIST_BTN_TYPE } from '@/enums/biz/genCustomListBtnType';
+  import { GEN_CUSTOM_LIST_BTN_VIEW_TYPE } from '@/enums/biz/genCustomListBtnViewType';
+  import { GEN_CUSTOM_LIST_TYPE } from '@/enums/biz/genCustomListType';
+  import { GEN_QUERY_WIDTH_TYPE } from '@/enums/biz/genQueryWidthType';
+  import { GEN_QUERY_TYPE } from '@/enums/biz/genQueryType';
 
   export default defineComponent({
     name: 'CustomList',
@@ -220,8 +203,10 @@
         h,
         SearchOutlined,
         DownloadOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        GEN_VIEW_TYPE,
+        GEN_CUSTOM_LIST_BTN_TYPE,
+        GEN_CUSTOM_LIST_BTN_VIEW_TYPE,
       };
     },
     data() {
@@ -305,14 +290,14 @@
         }
       },
       _rowConfig() {
-        if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
+        if (GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
           return { isCurrent: true, isHover: true };
         }
 
         return {};
       },
       _radioConfig() {
-        if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+        if (GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
           return {
             trigger: 'row',
             highlight: true,
@@ -321,7 +306,7 @@
         return {};
       },
       _checkboxConfig() {
-        if (this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
+        if (GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
           return {
             trigger: 'row',
             highlight: true,
@@ -356,7 +341,7 @@
               sortable: item.sortable,
             };
 
-            if (this.$enums.GEN_QUERY_WIDTH_TYPE.FIX.equalsCode(item.widthType)) {
+            if (GEN_QUERY_WIDTH_TYPE.FIX.equalsCode(item.widthType)) {
               column.width = item.width;
             } else {
               column.minWidth = item.width;
@@ -382,7 +367,7 @@
 
             if (item.fixEnum) {
               column.formatter = function ({ cellValue }) {
-                return that.$enums[item.frontType].getDesc(cellValue);
+                return getEnumDesc(item.frontType, cellValue);
               };
             } else {
               if (!isEmpty(item.formatter)) {
@@ -404,11 +389,9 @@
             type: 'seq',
             width: 50,
           };
-          if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+          if (GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
             firstColumn.type = 'radio';
-          } else if (
-            this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)
-          ) {
+          } else if (GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
             firstColumn.type = 'checkbox';
           }
           this.tableColumn = [firstColumn, ...tableColumn];
@@ -464,8 +447,8 @@
       },
       // 查询前构建具体的查询参数
       buildSearchFormData() {
-        const keys = keys(this.searchFormData);
-        const searchFormData = keys
+        const formDataKeys = keys(this.searchFormData);
+        const searchFormData = formDataKeys
           .map((key) => {
             return this.searchFormData[key];
           })
@@ -478,20 +461,20 @@
         this.$emit('cellDblClick', row);
       },
       getSelectedRecords() {
-        if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
+        if (GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
           return this.$refs.grid.getCurrentRecord();
-        } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+        } else if (GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
           return this.$refs.grid.getRadioRecord();
-        } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
+        } else if (GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
           return this.$refs.grid.getCheckboxRecords();
         }
       },
       getEmptyRecords() {
-        if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
+        if (GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
           return;
-        } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
+        } else if (GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
           return;
-        } else if (this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
+        } else if (GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
           return [];
         }
       },
@@ -514,22 +497,18 @@
               {
                 tableAlias: tableAlias,
                 columnName: columnName,
-                queryType: this.$enums.GEN_QUERY_TYPE.IN.code,
+                queryType: GEN_QUERY_TYPE.IN.code,
                 values: isArray(ids) ? ids : [ids],
               },
             ],
           })
           .then((res) => {
             if (!isEmpty(res)) {
-              if (this.$enums.GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
+              if (GEN_CUSTOM_LIST_TYPE.SEQ.equalsCode(this.listConfig.listType)) {
                 result = res[0];
-              } else if (
-                this.$enums.GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)
-              ) {
+              } else if (GEN_CUSTOM_LIST_TYPE.SINGLE.equalsCode(this.listConfig.listType)) {
                 result = res[0];
-              } else if (
-                this.$enums.GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)
-              ) {
+              } else if (GEN_CUSTOM_LIST_TYPE.MULTIPLE.equalsCode(this.listConfig.listType)) {
                 result = res;
               }
             }

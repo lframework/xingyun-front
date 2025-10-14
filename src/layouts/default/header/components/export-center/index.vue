@@ -33,7 +33,7 @@
                         {{ item.name }}
                       </template>
                       <template #description>
-                        <div v-if="$enums.EXPORT_TASK_STATUS.EXPORTING.equalsCode(item.status)">
+                        <div v-if="EXPORT_TASK_STATUS.EXPORTING.equalsCode(item.status)">
                           <a-progress
                             :stroke-color="projectSetting.themeColor"
                             :percent="
@@ -44,7 +44,7 @@
                             status="active"
                           />
                         </div>
-                        <div v-else> {{ $enums.EXPORT_TASK_STATUS.CREATED.desc }} </div>
+                        <div v-else> {{ EXPORT_TASK_STATUS.CREATED.desc }} </div>
                       </template>
                     </a-list-item-meta>
                   </a-list-item>
@@ -90,6 +90,7 @@
   import projectSetting from '@/settings/projectSetting';
   import SuccessList from './SuccessList.vue';
   import FailList from './FailList.vue';
+  import { EXPORT_TASK_STATUS } from '@/enums/biz/exportTaskStatus';
 
   export default defineComponent({
     components: {
@@ -185,10 +186,10 @@
         exportingDataList,
         projectSetting,
         activeKey,
-        // 工具函数 - 仅返回模板中需要使用的
         getNumber,
         mul,
         div,
+        EXPORT_TASK_STATUS,
       };
     },
     mounted() {},

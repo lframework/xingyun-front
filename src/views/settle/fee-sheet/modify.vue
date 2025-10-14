@@ -7,14 +7,14 @@
             <supplier-selector
               v-model:value="formData.supplierId"
               :request-params="{
-                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code,
+                manageType: MANAGE_TYPE.DISTRIBUTION.code,
               }"
             />
           </j-form-item>
           <j-form-item label="收支方式" required>
             <a-select v-model:value="formData.sheetType" :disabled="!isEmpty(tableData)">
               <a-select-option
-                v-for="item in $enums.SETTLE_FEE_SHEET_TYPE.values()"
+                v-for="item in SETTLE_FEE_SHEET_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -24,22 +24,22 @@
           <j-form-item />
           <j-form-item label="状态">
             <span
-              v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ SETTLE_FEE_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SETTLE_FEE_SHEET_STATUS.getDesc(formData.status)
+              SETTLE_FEE_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -52,8 +52,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -61,8 +61,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SETTLE_FEE_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -95,12 +95,12 @@
         <!-- 项目 列自定义内容 -->
         <template #item_default="{ row }">
           <settle-in-item-selector
-            v-if="$enums.SETTLE_FEE_SHEET_TYPE.RECEIVE.equalsCode(formData.sheetType)"
+            v-if="SETTLE_FEE_SHEET_TYPE.RECEIVE.equalsCode(formData.sheetType)"
             v-model:value="row.item"
             @update:value="itemInput"
           />
           <settle-out-item-selector
-            v-if="$enums.SETTLE_FEE_SHEET_TYPE.PAY.equalsCode(formData.sheetType)"
+            v-if="SETTLE_FEE_SHEET_TYPE.PAY.equalsCode(formData.sheetType)"
             v-model:value="row.item"
             @update:value="itemInput"
           />
@@ -164,18 +164,32 @@
     isNumberPrecision,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import SettleInItemSelector from '@/components/Selector/SettleInItemSelector.vue';
+  import SettleOutItemSelector from '@/components/Selector/SettleOutItemSelector.vue';
+  import { MANAGE_TYPE } from '@/enums/biz/manageType';
+  import { SETTLE_FEE_SHEET_TYPE } from '@/enums/biz/settleFeeSheetType';
+  import { SETTLE_FEE_SHEET_STATUS } from '@/enums/biz/settleFeeSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ModifySupplierSettleFeeSheet',
-    components: {},
+    components: {
+      SettleInItemSelector,
+      SettleOutItemSelector,
+      SupplierSelector,
+      OrderTimeLine,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {
         h,
         PlusOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        MANAGE_TYPE,
+        SETTLE_FEE_SHEET_TYPE,
+        SETTLE_FEE_SHEET_STATUS,
       };
     },
     data() {
@@ -249,8 +263,8 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.SETTLE_FEE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !SETTLE_FEE_SHEET_STATUS.CREATED.equalsCode(res.status) &&
+              !SETTLE_FEE_SHEET_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
               createError('单据已审核通过，无法修改！');
               this.closeDialog();

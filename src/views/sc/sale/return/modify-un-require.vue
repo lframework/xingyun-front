@@ -28,22 +28,22 @@
           <j-form-item :span="16" />
           <j-form-item label="状态">
             <span
-              v-if="$enums.SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.SALE_RETURN_STATUS.getDesc(formData.status) }}</span
+              >{{ SALE_RETURN_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="$enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-else-if="SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.SALE_RETURN_STATUS.getDesc(formData.status) }}</span
+              >{{ SALE_RETURN_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.SALE_RETURN_STATUS.getDesc(formData.status)
+              SALE_RETURN_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item :span="16" :content-nest="false" label="拒绝理由">
             <a-input
-              v-if="$enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -56,8 +56,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -65,8 +65,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              SALE_RETURN_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -215,6 +215,8 @@
     EditOutlined,
     AlertOutlined,
   } from '@ant-design/icons-vue';
+  import { SALE_RETURN_STATUS } from '@/enums/biz/saleReturnStatus';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import * as api from '@/api/sc/sale/return';
   import * as saleApi from '@/api/sc/sale/order';
   import * as outApi from '@/api/sc/sale/out';
@@ -235,11 +237,18 @@
     PATTERN_IS_PRICE,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ModifySaleReturnSheetUnRequire',
     components: {
       BatchAddProduct,
+      CustomerSelector,
+      StoreCenterSelector,
+      UserSelector,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -250,12 +259,12 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,
         mul,
         getCurrentDateTime,
+        SALE_RETURN_STATUS,
       };
     },
     data() {
@@ -381,8 +390,8 @@
           .get(this.id)
           .then((res) => {
             if (
-              !this.$enums.SALE_RETURN_STATUS.CREATED.equalsCode(res.status) &&
-              !this.$enums.SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(res.status)
+              !SALE_RETURN_STATUS.CREATED.equalsCode(res.status) &&
+              !SALE_RETURN_STATUS.APPROVE_REFUSE.equalsCode(res.status)
             ) {
               createError('销售退货单已审核通过，无法修改！');
               this.closeDialog();

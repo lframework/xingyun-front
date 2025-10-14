@@ -11,13 +11,13 @@
           >
             <template #dot>
               <ExclamationCircleOutlined
-                v-if="$enums.ORDER_TIME_LINE_BIZ_TYPE.APPROVE_RETURN.equalsCode(item.bizType)"
+                v-if="ORDER_TIME_LINE_BIZ_TYPE.APPROVE_RETURN.equalsCode(item.bizType)"
               />
               <ExclamationCircleOutlined
-                v-else-if="$enums.ORDER_TIME_LINE_BIZ_TYPE.CANCEL_APPROVE.equalsCode(item.bizType)"
+                v-else-if="ORDER_TIME_LINE_BIZ_TYPE.CANCEL_APPROVE.equalsCode(item.bizType)"
               />
               <CheckCircleOutlined
-                v-else-if="$enums.ORDER_TIME_LINE_BIZ_TYPE.APPROVE_PASS.equalsCode(item.bizType)"
+                v-else-if="ORDER_TIME_LINE_BIZ_TYPE.APPROVE_PASS.equalsCode(item.bizType)"
               />
               <ClockCircleOutlined v-else />
             </template>
@@ -49,6 +49,7 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/components';
   import { isEmpty } from '@/utils/utils';
+  import { ORDER_TIME_LINE_BIZ_TYPE } from '@/enums/biz/orderTimeLineBizType';
 
   export default defineComponent({
     name: 'OrderTimeLine',
@@ -61,8 +62,8 @@
     },
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        ORDER_TIME_LINE_BIZ_TYPE,
       };
     },
     props: {
@@ -98,15 +99,15 @@
         return api.getOrderTimeLine(this.id);
       },
       color(item) {
-        if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.NORMAL.equalsCode(item.bizType)) {
+        if (ORDER_TIME_LINE_BIZ_TYPE.NORMAL.equalsCode(item.bizType)) {
           return 'gray';
-        } else if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.CREATE.equalsCode(item.bizType)) {
+        } else if (ORDER_TIME_LINE_BIZ_TYPE.CREATE.equalsCode(item.bizType)) {
           return 'gray';
-        } else if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.APPROVE_PASS.equalsCode(item.bizType)) {
+        } else if (ORDER_TIME_LINE_BIZ_TYPE.APPROVE_PASS.equalsCode(item.bizType)) {
           return 'green';
-        } else if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.APPROVE_RETURN.equalsCode(item.bizType)) {
+        } else if (ORDER_TIME_LINE_BIZ_TYPE.APPROVE_RETURN.equalsCode(item.bizType)) {
           return 'red';
-        } else if (this.$enums.ORDER_TIME_LINE_BIZ_TYPE.CANCEL_APPROVE.equalsCode(item.bizType)) {
+        } else if (ORDER_TIME_LINE_BIZ_TYPE.CANCEL_APPROVE.equalsCode(item.bizType)) {
           return 'red';
         }
 

@@ -43,7 +43,7 @@
           <template #queryType_default="{ row }">
             <a-select v-model:value="row.queryType">
               <a-select-option
-                v-for="item in $enums.GEN_QUERY_TYPE.values()"
+                v-for="item in GEN_QUERY_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -65,7 +65,7 @@
           <!-- 默认值 列自定义内容 -->
           <template #defaultValue_default="{ row }">
             <a-input
-              v-if="!$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(row.viewType)"
+              v-if="!GEN_VIEW_TYPE.DATE_RANGE.equalsCode(row.viewType)"
               v-model:value="row.defaultValue"
               allow-clear
             />
@@ -116,13 +116,20 @@
   import { DragOutlined } from '@ant-design/icons-vue';
   import { isEmpty, isIntegerGeZero } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import { GEN_QUERY_TYPE } from '@/enums/biz/genQueryType';
+  import { GEN_VIEW_TYPE } from '@/enums/biz/genViewType';
 
   export default defineComponent({
     // 使用组件
     components: {
       DragOutlined,
     },
-
+    setup() {
+      return {
+        GEN_QUERY_TYPE,
+        GEN_VIEW_TYPE,
+      };
+    },
     props: {
       columns: {
         type: Array,
@@ -213,7 +220,7 @@
             return false;
           }
 
-          if (this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(column.viewType)) {
+          if (GEN_VIEW_TYPE.DATE_RANGE.equalsCode(column.viewType)) {
             if (!isEmpty(column.defaultValue)) {
               if (isEmpty(column.defaultValue.dateType)) {
                 createError('字段【' + column.name + '】默认值请选择日期类型');
@@ -246,7 +253,7 @@
       emptyLine() {
         return {
           id: '',
-          queryType: this.$enums.GEN_QUERY_TYPE.EQ.code,
+          queryType: GEN_QUERY_TYPE.EQ.code,
           frontShow: true,
           formWidth: 6,
           orderNo: '',
@@ -266,9 +273,7 @@
                   type: data.type,
                   relaId: data.relaId,
                   viewType: data.viewType,
-                  defaultValue: this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(data.viewType)
-                    ? {}
-                    : '',
+                  defaultValue: GEN_VIEW_TYPE.DATE_RANGE.equalsCode(data.viewType) ? {} : '',
                 }),
               );
             });
@@ -285,7 +290,7 @@
         this.tableData = datas || [];
         this.tableData
           .filter((item) => {
-            return this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(item.viewType);
+            return GEN_VIEW_TYPE.DATE_RANGE.equalsCode(item.viewType);
           })
           .forEach((item) => {
             if (isEmpty(item.defaultValue)) {
@@ -298,7 +303,7 @@
       },
       getTableData() {
         const tableData = this.tableData.map((item) => {
-          if (this.$enums.GEN_VIEW_TYPE.DATE_RANGE.equalsCode(item.viewType)) {
+          if (GEN_VIEW_TYPE.DATE_RANGE.equalsCode(item.viewType)) {
             return Object.assign({}, item, {
               defaultValue: isEmpty(item.defaultValue) ? '' : JSON.stringify(item.defaultValue),
             });

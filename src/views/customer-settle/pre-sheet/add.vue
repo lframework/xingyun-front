@@ -97,10 +97,15 @@
     uuid,
   } from '@/utils/utils';
   import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import SettleInItemSelector from '@/components/Selector/SettleInItemSelector.vue';
 
   export default defineComponent({
     name: 'AddCustomerSettlePreSheet',
-    components: {},
+    components: {
+      CustomerSelector,
+      SettleInItemSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {

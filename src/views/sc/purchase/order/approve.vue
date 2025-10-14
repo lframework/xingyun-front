@@ -14,8 +14,8 @@
       </a-tabs>
       <div
         v-if="
-          $enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(formData.status) ||
-          $enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+          PURCHASE_ORDER_STATUS.CREATED.equalsCode(formData.status) ||
+          PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
         "
         style="text-align: center; background-color: #ffffff; padding: 8px 0"
       >
@@ -28,7 +28,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="PURCHASE_ORDER_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['purchase:order:approve']"
             danger
             :loading="loading"
@@ -50,18 +50,21 @@
   import Viewer from './viewer.vue';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { PURCHASE_ORDER_STATUS } from '@/enums/biz/purchaseOrderStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApprovePurchaseOrder',
     components: {
       Viewer,
       ApproveRefuse,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        PURCHASE_ORDER_STATUS,
       };
     },
     data() {

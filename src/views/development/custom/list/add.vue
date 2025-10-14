@@ -49,7 +49,7 @@
           <j-form-item :span="8" label="列表类型" :required="true">
             <a-select v-model:value="formData.listType" allow-clear>
               <a-select-option
-                v-for="item in $enums.GEN_CUSTOM_LIST_TYPE.values()"
+                v-for="item in GEN_CUSTOM_LIST_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -181,6 +181,9 @@
   import * as dataObjApi from '@/api/development/data/obj';
   import { isEmpty } from '@/utils/utils';
   import { createError, createSuccess } from '@/hooks/web/msg';
+  import GenCustomListCategorySelector from '@/components/Selector/GenCustomListCategorySelector.vue';
+  import GenDataObjSelector from '@/components/Selector/GenDataObjSelector.vue';
+  import { GEN_CUSTOM_LIST_TYPE } from '@/enums/biz/genCustomListType';
 
   export default defineComponent({
     components: {
@@ -188,6 +191,13 @@
       QueryParams,
       Toolbar,
       HandleColumn,
+      GenCustomListCategorySelector,
+      GenDataObjSelector,
+    },
+    setup() {
+      return {
+        GEN_CUSTOM_LIST_TYPE,
+      };
     },
     data() {
       return {

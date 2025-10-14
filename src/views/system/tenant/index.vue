@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -89,6 +89,8 @@
   import * as api from '@/api/system/tenant';
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { buildSortPageVo } from '@/utils/utils';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'SysTenant',
@@ -97,12 +99,14 @@
       Modify,
       Detail,
       SetModule,
+      AvailableTag,
     },
     setup() {
       return {
         h,
         SearchOutlined,
         PlusOutlined,
+        AVAILABLE,
       };
     },
     data() {

@@ -161,6 +161,9 @@
   import BatchAddProduct from '@/views/sc/purchase/batch-add-product.vue';
   import Moment from 'moment';
   import PayType from '@/views/sc/pay-type/index.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
   import {
     PlusOutlined,
     DeleteOutlined,
@@ -193,6 +196,9 @@
     components: {
       BatchAddProduct,
       PayType,
+      StoreCenterSelector,
+      SupplierSelector,
+      UserSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -203,7 +209,6 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,

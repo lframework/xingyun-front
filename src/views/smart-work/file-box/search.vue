@@ -43,7 +43,7 @@
         <a @click="() => clickRow(row)">
           <a-space>
             <icon
-              v-if="$enums.FILE_BOX_FILE_TYPE.DIR.equalsCode(row.fileType)"
+              v-if="FILE_BOX_FILE_TYPE.DIR.equalsCode(row.fileType)"
               icon="flat-color-icons:folder"
             />
             <icon v-else icon="flat-color-icons:file" />
@@ -79,6 +79,7 @@
   import Modify from './modify.vue';
   import Detail from './detail.vue';
   import * as api from '@/api/smart-work/file-box';
+  import { FILE_BOX_FILE_TYPE } from '@/enums/biz/fileBoxFileType';
 
   export default defineComponent({
     components: {
@@ -96,6 +97,7 @@
       return {
         h,
         SearchOutlined,
+        FILE_BOX_FILE_TYPE,
       };
     },
     data() {

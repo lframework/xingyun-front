@@ -19,7 +19,7 @@
           <j-form-item :span="12" label="状态" :required="true">
             <a-select v-model:value="formData.available" allow-clear>
               <a-select-option
-                v-for="item in $enums.AVAILABLE.values()"
+                v-for="item in AVAILABLE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -77,11 +77,19 @@
   import * as api from '@/api/development/data/obj';
   import { isEmpty, clearAll } from '@/utils/utils';
   import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenDataObjCategorySelector from '@/components/Selector/GenDataObjCategorySelector.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     components: {
       RelaTable,
       CustomQuery,
+      GenDataObjCategorySelector,
+    },
+    setup() {
+      return {
+        AVAILABLE,
+      };
     },
     props: {
       id: {

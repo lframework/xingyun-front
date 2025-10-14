@@ -10,8 +10,8 @@
       >
         <a-row
           v-if="
-            $enums.PRODUCT_TYPE.NORMAL.equalsCode(productType) ||
-            $enums.PRODUCT_TYPE.BUNDLE.equalsCode(productType)
+            PRODUCT_TYPE.NORMAL.equalsCode(productType) ||
+            PRODUCT_TYPE.BUNDLE.equalsCode(productType)
           "
         >
           <a-col :md="8" :sm="24">
@@ -66,22 +66,22 @@
               <a-input v-model:value="formData.unit" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-item label="重量（kg）" name="weight">
               <a-input v-model:value="formData.weight" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-item label="体积（cm³）" name="volume">
               <a-input v-model:value="formData.volume" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-item label="进项税率（%）" name="taxRate">
               <a-input v-model:value="formData.taxRate" allow-clear />
             </a-form-item>
           </a-col>
-          <a-col v-if="$enums.PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
+          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
             <a-form-item label="销项税率（%）" name="saleTaxRate">
               <a-input v-model:value="formData.saleTaxRate" allow-clear />
             </a-form-item>
@@ -105,7 +105,7 @@
             <a-form-item label="状态" name="available">
               <a-select v-model:value="formData.available" allow-clear>
                 <a-select-option
-                  v-for="item in $enums.AVAILABLE.values()"
+                  v-for="item in AVAILABLE.values()"
                   :key="item.code"
                   :value="item.code"
                   >{{ item.desc }}</a-select-option
@@ -114,7 +114,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-        <a-row v-if="$enums.PRODUCT_TYPE.BUNDLE.equalsCode(productType)">
+        <a-row v-if="PRODUCT_TYPE.BUNDLE.equalsCode(productType)">
           <a-col :span="24">
             <vxe-grid
               ref="grid"
@@ -187,7 +187,7 @@
               <template #product_default="{ row }">
                 <product-selector
                   v-model:value="row.productId"
-                  :request-params="{ productType: $enums.PRODUCT_TYPE.NORMAL.code }"
+                  :request-params="{ productType: PRODUCT_TYPE.NORMAL.code }"
                 />
               </template>
 
@@ -260,7 +260,7 @@
           <a-col v-for="modelor in modelorList" :key="modelor.id" :md="8" :sm="24">
             <a-form-item :label="modelor.name" :required="modelor.isRequired">
               <a-select
-                v-if="$enums.COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)"
+                v-if="COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)"
                 v-model:value="modelor.text"
                 mode="multiple"
                 placeholder="请选择"
@@ -270,7 +270,7 @@
                 }}</a-select-option>
               </a-select>
               <a-select
-                v-if="$enums.COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)"
+                v-if="COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)"
                 v-model:value="modelor.text"
                 placeholder="请选择"
               >
@@ -278,36 +278,36 @@
                   item.name
                 }}</a-select-option>
               </a-select>
-              <div v-else-if="$enums.COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
+              <div v-else-if="COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
                 <a-input-number
-                  v-if="$enums.COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)"
+                  v-if="COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   class="number-input"
                 />
                 <a-input-number
-                  v-else-if="$enums.COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   :precision="2"
                   class="number-input"
                 />
                 <a-input
-                  v-else-if="$enums.COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                 />
                 <a-date-picker
-                  v-else-if="$enums.COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   placeholder=""
                   value-format="YYYY-MM-DD"
                 />
                 <a-time-picker
-                  v-else-if="$enums.COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   placeholder=""
                   value-format="HH:mm:ss"
                 />
                 <a-date-picker
-                  v-else-if="$enums.COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)"
+                  v-else-if="COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)"
                   v-model:value="modelor.text"
                   placeholder=""
                   show-time
@@ -349,11 +349,22 @@
     uuid,
   } from '@/utils/utils';
   import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
+  import ProductSelector from '@/components/Selector/ProductSelector.vue';
+  import { PRODUCT_TYPE } from '@/enums/biz/productType';
+  import { COLUMN_TYPE } from '@/enums/biz/columnType';
+  import { COLUMN_DATA_TYPE } from '@/enums/biz/columnDataType';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     name: 'ModifyProduct',
     // 使用组件
-    components: {},
+    components: {
+      ProductBrandSelector,
+      ProductCategorySelector,
+      ProductSelector,
+    },
     mixins: [multiplePageMix],
     props: {},
     setup() {
@@ -361,6 +372,10 @@
         h,
         PlusOutlined,
         DeleteOutlined,
+        PRODUCT_TYPE,
+        COLUMN_TYPE,
+        COLUMN_DATA_TYPE,
+        AVAILABLE,
       };
     },
     data() {
@@ -552,7 +567,7 @@
         if (!valid) {
           return;
         }
-        if (this.$enums.PRODUCT_TYPE.BUNDLE.equalsCode(this.productType)) {
+        if (PRODUCT_TYPE.BUNDLE.equalsCode(this.productType)) {
           // 如果是组合商品
           if (isEmpty(this.productBundles)) {
             createError('组合商品必须包含单品数据！');
@@ -740,7 +755,7 @@
               const properties = formData.properties || [];
               modelorList.forEach((item) => {
                 item.text = (properties.filter((p) => p.id === item.id)[0] || {}).text;
-                if (this.$enums.COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
+                if (COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
                   item.text = isEmpty(item.text) ? [] : item.text.split(',');
                 }
               });
@@ -749,7 +764,7 @@
             modelorList
               .filter((item) => isEmpty(item.text))
               .forEach((item) => {
-                if (this.$enums.COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
+                if (COLUMN_TYPE.MULTIPLE.equalsCode(item.columnType)) {
                   item.text = [];
                 } else {
                   item.text = '';

@@ -43,10 +43,10 @@
           {{ formData.deliveryCycle }}
         </a-descriptions-item>
         <a-descriptions-item label="经营方式" :span="2">
-          {{ $enums.MANAGE_TYPE.getDesc(formData.manageType) }}
+          {{ MANAGE_TYPE.getDesc(formData.manageType) }}
         </a-descriptions-item>
         <a-descriptions-item label="结算方式" :span="2">
-          {{ $enums.SETTLE_TYPE.getDesc(formData.settleType) }}
+          {{ SETTLE_TYPE.getDesc(formData.settleType) }}
         </a-descriptions-item>
         <a-descriptions-item label="统一社会信用代码" :span="2">
           {{ formData.creditCode }}
@@ -76,11 +76,21 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/supplier';
+  import { MANAGE_TYPE } from '@/enums/biz/manageType';
+  import { SETTLE_TYPE } from '@/enums/biz/settleType';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
-
+    components: {
+      AvailableTag,
+    },
+    setup() {
+      return {
+        MANAGE_TYPE,
+        SETTLE_TYPE,
+      };
+    },
     props: {
       id: {
         type: String,

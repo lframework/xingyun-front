@@ -18,7 +18,7 @@
         <a-form-item label="实体类型" name="entityType">
           <a-select v-model:value="formData.entityType" allow-clear @change="changeEntityType">
             <a-select-option
-              v-for="item in $enums.ADDRESS_ENTITY_TYPE.values()"
+              v-for="item in ADDRESS_ENTITY_TYPE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -27,30 +27,30 @@
         </a-form-item>
         <a-form-item v-if="!isEmpty(formData.entityType)" label="实体" name="entityId">
           <store-center-selector
-            v-if="$enums.ADDRESS_ENTITY_TYPE.SC.equalsCode(formData.entityType)"
+            v-if="ADDRESS_ENTITY_TYPE.SC.equalsCode(formData.entityType)"
             v-model:value="formData.entityId"
           />
           <supplier-selector
-            v-else-if="$enums.ADDRESS_ENTITY_TYPE.SUPPLIER.equalsCode(formData.entityType)"
+            v-else-if="ADDRESS_ENTITY_TYPE.SUPPLIER.equalsCode(formData.entityType)"
             v-model:value="formData.entityId"
           />
           <customer-selector
-            v-else-if="$enums.ADDRESS_ENTITY_TYPE.CUSTOMER.equalsCode(formData.entityType)"
+            v-else-if="ADDRESS_ENTITY_TYPE.CUSTOMER.equalsCode(formData.entityType)"
             v-model:value="formData.entityId"
           />
           <member-selector
-            v-else-if="$enums.ADDRESS_ENTITY_TYPE.MEMBER.equalsCode(formData.entityType)"
+            v-else-if="ADDRESS_ENTITY_TYPE.MEMBER.equalsCode(formData.entityType)"
             v-model:value="formData.entityId"
           />
           <shop-selector
-            v-else-if="$enums.ADDRESS_ENTITY_TYPE.SHOP.equalsCode(formData.entityType)"
+            v-else-if="ADDRESS_ENTITY_TYPE.SHOP.equalsCode(formData.entityType)"
             v-model:value="formData.entityId"
           />
         </a-form-item>
         <a-form-item label="地址类型" name="addressType">
           <a-select v-model:value="formData.addressType" allow-clear>
             <a-select-option
-              v-for="item in $enums.ADDRESS_TYPE.values()"
+              v-for="item in ADDRESS_TYPE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -93,14 +93,30 @@
   import * as api from '@/api/base-data/address';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import MemberSelector from '@/components/Selector/MemberSelector.vue';
+  import ShopSelector from '@/components/Selector/ShopSelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import { ADDRESS_ENTITY_TYPE } from '@/enums/biz/addressEntityType';
+  import { ADDRESS_TYPE } from '@/enums/biz/addressType';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      CitySelector,
+      CustomerSelector,
+      MemberSelector,
+      ShopSelector,
+      StoreCenterSelector,
+      SupplierSelector,
+    },
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        ADDRESS_ENTITY_TYPE,
+        ADDRESS_TYPE,
       };
     },
     props: {

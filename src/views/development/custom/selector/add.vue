@@ -96,9 +96,14 @@
   import * as dataObjApi from '@/api/development/data/obj';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createError } from '@/hooks/web/msg';
+  import GenCustomListSelector from '@/components/Selector/GenCustomListSelector.vue';
+  import GenCustomSelectorCategorySelector from '@/components/Selector/GenCustomSelectorCategorySelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      GenCustomListSelector,
+      GenCustomSelectorCategorySelector,
+    },
     data() {
       return {
         // 是否可见

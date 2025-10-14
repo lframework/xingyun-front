@@ -45,10 +45,13 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/development/custom/page-category';
   import { createSuccess } from '@/hooks/web/msg';
+  import GenCustomPageCategorySelector from '@/components/Selector/GenCustomPageCategorySelector.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      GenCustomPageCategorySelector,
+    },
 
     props: {
       id: {

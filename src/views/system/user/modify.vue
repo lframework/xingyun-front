@@ -39,12 +39,9 @@
         </a-form-item>
         <a-form-item label="性别" name="gender">
           <a-select v-model:value="formData.gender">
-            <a-select-option
-              v-for="item in $enums.GENDER.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-select-option
-            >
+            <a-select-option v-for="item in GENDER.values()" :key="item.code" :value="item.code">{{
+              item.desc
+            }}</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="邮箱" name="email">
@@ -56,7 +53,7 @@
         <a-form-item label="状态" name="available">
           <a-select v-model:value="formData.available">
             <a-select-option
-              v-for="item in $enums.AVAILABLE.values()"
+              v-for="item in AVAILABLE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -84,11 +81,23 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/system/user';
   import { createSuccess } from '@/hooks/web/msg';
+  import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
+  import SysRoleSelector from '@/components/Selector/SysRoleSelector.vue';
+  import { GENDER } from '@/enums/biz/gender';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
-    components: {},
-
+    components: {
+      SysDeptSelector,
+      SysRoleSelector,
+    },
+    setup() {
+      return {
+        GENDER,
+        AVAILABLE,
+      };
+    },
     props: {
       id: {
         type: String,
@@ -141,7 +150,7 @@
           depts: [],
           modifyPassword: false,
           password: '',
-          gender: this.$enums.GENDER.UNKNOWN.code,
+          gender: GENDER.UNKNOWN.code,
           email: '',
           telephone: '',
           description: '',

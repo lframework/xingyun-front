@@ -82,6 +82,9 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import Moment from 'moment';
   import * as api from '@/api/sc/purchase/order';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
   import {
     isEmpty,
     formatDateTime,
@@ -91,7 +94,12 @@
 
   export default defineComponent({
     name: 'PurchaseOrderSelectorWithReceive',
-    components: { SearchOutlined },
+    components: {
+      SearchOutlined,
+      StoreCenterSelector,
+      SupplierSelector,
+      UserSelector,
+    },
     props: {
       requestParams: {
         type: Object,
@@ -104,7 +112,6 @@
       const moment = Moment;
       return {
         moment,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
       };
     },

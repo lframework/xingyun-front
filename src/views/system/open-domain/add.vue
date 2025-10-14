@@ -47,12 +47,14 @@
   import * as api from '@/api/system/open-domain';
   import { isEmpty, uuid } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import SysTenantSelector from '@/components/Selector/SysTenantSelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      SysTenantSelector,
+    },
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
       };
     },

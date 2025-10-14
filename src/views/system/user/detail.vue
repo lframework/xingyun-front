@@ -19,7 +19,7 @@
           {{ formData.name }}
         </a-descriptions-item>
         <a-descriptions-item label="性别" :span="2">
-          {{ $enums.GENDER.getDesc(formData.gender) }}
+          {{ getEnumDesc('GENDER', formData.gender) }}
         </a-descriptions-item>
         <a-descriptions-item label="部门" :span="4">
           {{ formData.deptName }}
@@ -49,11 +49,21 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/user';
+  import { getEnumDesc } from '@/utils/enumUtil';
+  import { GENDER } from '@/enums/biz/gender';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
-
+    components: {
+      AvailableTag,
+    },
+    setup() {
+      return {
+        getEnumDesc,
+        GENDER,
+      };
+    },
     props: {
       id: {
         type: String,

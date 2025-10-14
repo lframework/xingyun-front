@@ -26,7 +26,6 @@
     name: 'DataDicPicker',
     setup() {
       return {
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
       };
     },

@@ -178,6 +178,8 @@
     EditOutlined,
     AlertOutlined,
   } from '@ant-design/icons-vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
   import * as api from '@/api/sc/purchase/return';
   import * as purchaseApi from '@/api/sc/purchase/order';
   import * as receiveApi from '@/api/sc/purchase/receive';
@@ -197,12 +199,16 @@
     PATTERN_IS_PRICE,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
 
   export default defineComponent({
     name: 'AddPurchaseReturnUnRequire',
     components: {
       ReceiveSheetSelectorWithReturn,
       BatchAddProduct,
+      StoreCenterSelector,
+      SupplierSelector,
+      UserSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -213,7 +219,6 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
         isFloatGeZero,
         getNumber,

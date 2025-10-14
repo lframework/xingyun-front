@@ -31,7 +31,7 @@
         <a-form-item label="状态" name="available">
           <a-select v-model:value="formData.available" allow-clear>
             <a-select-option
-              v-for="item in $enums.AVAILABLE.values()"
+              v-for="item in AVAILABLE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -58,16 +58,21 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/pay-type';
   import { createSuccess } from '@/hooks/web/msg';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        AVAILABLE,
+      };
     },
     data() {
       return {

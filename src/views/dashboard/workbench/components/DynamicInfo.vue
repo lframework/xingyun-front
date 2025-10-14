@@ -22,7 +22,7 @@
             </template>
             <template #avatar>
               <div style="width: 80px; text-align: right">
-                <a-tag :color="colors[index]">{{ $enums.OP_LOG_TYPE.getDesc(item.logType) }}</a-tag>
+                <a-tag :color="colors[index]">{{ OP_LOG_TYPE.getDesc(item.logType) }}</a-tag>
               </div>
             </template>
           </ListItemMeta>
@@ -34,8 +34,9 @@
 <script setup>
   import { onMounted, ref } from 'vue';
   import { Card, List } from 'ant-design-vue';
-  import { RelativeTime } from '@/components/RelativeTime';
+  import RelativeTime from '@/components/RelativeTime';
   import * as api from '@/api/sys/center';
+  import { OP_LOG_TYPE } from '@/enums/biz/opLogType';
 
   const ListItem = List.Item;
   const ListItemMeta = List.Item.Meta;

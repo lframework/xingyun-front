@@ -33,7 +33,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -112,12 +112,12 @@
     <data-permission
       ref="dataPermissionDialog"
       :biz-id="id"
-      :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code"
+      :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code"
     />
     <batch-data-permission
       ref="batchDataPermissionDialog"
       :biz-ids="ids"
-      :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code"
+      :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.USER.code"
     />
 
     <!-- 批量操作 -->
@@ -166,6 +166,11 @@
     StopOutlined,
   } from '@ant-design/icons-vue';
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import { SYS_DATA_PERMISSION_DATA_BIZ_TYPE } from '@/enums/biz/sysDataPermissionDataBizType';
+  import { GENDER } from '@/enums/biz/gender';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'User',
@@ -177,6 +182,8 @@
       DataPermission,
       BatchDataPermission,
       DownOutlined,
+      AvailableTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -187,8 +194,9 @@
         SettingOutlined,
         CheckOutlined,
         StopOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        AVAILABLE,
+        SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
       };
     },
     data() {
@@ -223,7 +231,7 @@
             title: '性别',
             width: 80,
             formatter: ({ cellValue }) => {
-              return this.$enums.GENDER.getDesc(cellValue);
+              return GENDER.getDesc(cellValue);
             },
           },
           { field: 'description', title: '备注', minWidth: 200 },

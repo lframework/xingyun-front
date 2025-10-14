@@ -30,7 +30,7 @@
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.AVAILABLE.values()"
+                    v-for="item in AVAILABLE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -125,6 +125,9 @@
   import * as api from '@/api/sc/stock/adjust/reason';
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import BatchHandler from '@/components/BatchHandler';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'StockAdjustReason',
@@ -133,9 +136,11 @@
       Modify,
       Detail,
       DownOutlined,
+      BatchHandler,
+      AvailableTag,
     },
     setup() {
-      return { h, SearchOutlined, PlusOutlined, CheckOutlined, StopOutlined };
+      return { h, SearchOutlined, PlusOutlined, CheckOutlined, StopOutlined, AVAILABLE };
     },
     data() {
       return {
@@ -145,7 +150,7 @@
         ids: [],
         // 查询列表的查询条件
         searchFormData: {
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {

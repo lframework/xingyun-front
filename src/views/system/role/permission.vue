@@ -56,10 +56,15 @@
   import * as api from '@/api/system/role-menu';
   import { isEmpty, toArrayTree, eachTree, union } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import MenuDisplayTag from '@/components/Tag/MenuDisplayTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      AvailableTag,
+      MenuDisplayTag,
+    },
 
     props: {
       ids: {

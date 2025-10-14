@@ -33,28 +33,24 @@
           <j-form-item />
           <j-form-item label="状态">
             <span
-              v-if="
-                $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)
-              "
+              v-if="CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ CUSTOMER_SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
               v-else-if="
-                $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+                CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
               "
               style="color: #f5222d"
-              >{{ $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ CUSTOMER_SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status)
+              CUSTOMER_SETTLE_CHECK_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :content-nest="false" :span="16">
             <a-input
-              v-if="
-                $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
-              "
+              v-if="CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -67,8 +63,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -76,8 +72,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              CUSTOMER_SETTLE_CHECK_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -101,12 +97,12 @@
         <!-- 单据号 列自定义内容 -->
         <template #bizCode_default="{ row }">
           <span
-            v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.OUT_SHEET.equalsCode(row.bizType)"
+            v-show="CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.OUT_SHEET.equalsCode(row.bizType)"
             v-no-permission="['purchase:receive:query']"
             >{{ row.bizCode }}</span
           >
           <a
-            v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.OUT_SHEET.equalsCode(row.bizType)"
+            v-show="CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.OUT_SHEET.equalsCode(row.bizType)"
             v-permission="['purchase:receive:query']"
             type="link"
             @click="
@@ -120,12 +116,12 @@
           </a>
 
           <span
-            v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SALE_RETURN.equalsCode(row.bizType)"
+            v-show="CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SALE_RETURN.equalsCode(row.bizType)"
             v-no-permission="['purchase:return:query']"
             >{{ row.bizCode }}</span
           >
           <a
-            v-show="$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SALE_RETURN.equalsCode(row.bizType)"
+            v-show="CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SALE_RETURN.equalsCode(row.bizType)"
             v-permission="['purchase:return:query']"
             type="link"
             @click="
@@ -139,16 +135,12 @@
           </a>
 
           <span
-            v-show="
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)
-            "
+            v-show="CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)"
             v-no-permission="['customer-settle:fee-sheet:query']"
             >{{ row.bizCode }}</span
           >
           <a
-            v-show="
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)
-            "
+            v-show="CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_FEE_SHEET.equalsCode(row.bizType)"
             v-permission="['customer-settle:fee-sheet:query']"
             type="link"
             @click="
@@ -162,16 +154,12 @@
           </a>
 
           <span
-            v-show="
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)
-            "
+            v-show="CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)"
             v-no-permission="['customer-settle:pre-sheet:query']"
             >{{ row.bizCode }}</span
           >
           <a
-            v-show="
-              $enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)
-            "
+            v-show="CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.SETTLE_PRE_SHEET.equalsCode(row.bizType)"
             v-permission="['customer-settle:pre-sheet:query']"
             type="link"
             @click="
@@ -225,6 +213,9 @@
   import SettlePreSheetDetail from '@/views/customer-settle/pre-sheet/detail.vue';
   import * as api from '@/api/customer-settle/check';
   import { isFloat, add } from '@/utils/utils';
+  import { CUSTOMER_SETTLE_CHECK_SHEET_STATUS } from '@/enums/biz/customerSettleCheckSheetStatus';
+  import { CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE } from '@/enums/biz/customerSettleCheckSheetBizType';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     components: {
@@ -232,6 +223,13 @@
       SaleReturnDetail,
       SettleFeeSheetDetail,
       SettlePreSheetDetail,
+      OrderTimeLine,
+    },
+    setup() {
+      return {
+        CUSTOMER_SETTLE_CHECK_SHEET_STATUS,
+        CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE,
+      };
     },
     props: {
       id: {
@@ -256,7 +254,7 @@
             title: '单据类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
+              return CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170 },

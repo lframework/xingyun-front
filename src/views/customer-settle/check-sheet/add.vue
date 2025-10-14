@@ -120,15 +120,21 @@
     dateTimeToDate,
   } from '@/utils/utils';
   import { createError, createSuccess, createConfirm } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import { CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE } from '@/enums/biz/customerSettleCheckSheetBizType';
+  import { CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE } from '@/enums/biz/customerSettleCheckSheetCalcType';
 
   export default defineComponent({
     name: 'AddCustomerSettleCheckSheet',
-    components: {},
+    components: {
+      CustomerSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {
         h,
         SearchOutlined,
+        CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE,
       };
     },
     data() {
@@ -154,7 +160,7 @@
             title: '单据类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
+              return CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170 },
@@ -279,14 +285,14 @@
             return false;
           }
 
-          if (this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.SUB.equalsCode(item.calcType)) {
+          if (CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.SUB.equalsCode(item.calcType)) {
             if (item.payAmount > 0) {
               createError('第' + (i + 1) + '行应收金额不允许大于0！');
               return false;
             }
           }
 
-          if (this.$enums.CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.ADD.equalsCode(item.calcType)) {
+          if (CUSTOMER_SETTLE_CHECK_SHEET_CALC_TYPE.ADD.equalsCode(item.calcType)) {
             if (item.payAmount < 0) {
               createError('第' + (i + 1) + '行应收金额不允许小于0！');
               return false;

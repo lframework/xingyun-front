@@ -9,7 +9,7 @@
           <j-form-item label="收支方式" required>
             <a-select v-model:value="formData.sheetType" :disabled="!isEmpty(tableData)">
               <a-select-option
-                v-for="item in $enums.CUSTOMER_SETTLE_FEE_SHEET_TYPE.values()"
+                v-for="item in CUSTOMER_SETTLE_FEE_SHEET_TYPE.values()"
                 :key="item.code"
                 :value="item.code"
                 >{{ item.desc }}</a-select-option
@@ -42,12 +42,12 @@
         <!-- 项目 列自定义内容 -->
         <template #item_default="{ row }">
           <settle-in-item-selector
-            v-if="$enums.CUSTOMER_SETTLE_FEE_SHEET_TYPE.RECEIVE.equalsCode(formData.sheetType)"
+            v-if="CUSTOMER_SETTLE_FEE_SHEET_TYPE.RECEIVE.equalsCode(formData.sheetType)"
             v-model:value="row.item"
             @update:value="itemInput"
           />
           <settle-out-item-selector
-            v-if="$enums.CUSTOMER_SETTLE_FEE_SHEET_TYPE.PAY.equalsCode(formData.sheetType)"
+            v-if="CUSTOMER_SETTLE_FEE_SHEET_TYPE.PAY.equalsCode(formData.sheetType)"
             v-model:value="row.item"
             @update:value="itemInput"
           />
@@ -116,18 +116,26 @@
     isNumberPrecision,
   } from '@/utils/utils';
   import { createError, createConfirm, createSuccess } from '@/hooks/web/msg';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import SettleInItemSelector from '@/components/Selector/SettleInItemSelector.vue';
+  import SettleOutItemSelector from '@/components/Selector/SettleOutItemSelector.vue';
+  import { CUSTOMER_SETTLE_FEE_SHEET_TYPE } from '@/enums/biz/customerSettleFeeSheetType';
 
   export default defineComponent({
     name: 'AddCustomerSettleFeeSheet',
-    components: {},
+    components: {
+      CustomerSelector,
+      SettleInItemSelector,
+      SettleOutItemSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
       return {
         h,
         PlusOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        CUSTOMER_SETTLE_FEE_SHEET_TYPE,
       };
     },
     data() {

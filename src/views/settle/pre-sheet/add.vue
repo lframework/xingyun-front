@@ -7,7 +7,7 @@
             <supplier-selector
               v-model:value="formData.supplierId"
               :request-params="{
-                manageType: $enums.MANAGE_TYPE.DISTRIBUTION.code,
+                manageType: MANAGE_TYPE.DISTRIBUTION.code,
               }"
             />
           </j-form-item>
@@ -102,13 +102,19 @@
     isNumberPrecision,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import SettleOutItemSelector from '@/components/Selector/SettleOutItemSelector.vue';
+  import { MANAGE_TYPE } from '@/enums/biz/manageType';
 
   export default defineComponent({
     name: 'AddSupplierSettlePreSheet',
-    components: {},
+    components: {
+      SettleOutItemSelector,
+      SupplierSelector,
+    },
     mixins: [multiplePageMix],
     setup() {
-      return { h, PlusOutlined, DeleteOutlined };
+      return { h, PlusOutlined, DeleteOutlined, MANAGE_TYPE };
     },
     data() {
       return {

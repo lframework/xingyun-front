@@ -28,8 +28,8 @@
           <icon
             v-if="
               !isEmpty(row.icon) &&
-              ($enums.MENU_DISPLAY.CATALOG.equalsCode(row.display) ||
-                $enums.MENU_DISPLAY.FUNCTION.equalsCode(row.display))
+              (MENU_DISPLAY.CATALOG.equalsCode(row.display) ||
+                MENU_DISPLAY.FUNCTION.equalsCode(row.display))
             "
             :icon="row.icon"
           />
@@ -55,8 +55,8 @@
               </j-form-item>
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option :value="$enums.AVAILABLE.ENABLE.code">{{
-                    '仅显示' + $enums.AVAILABLE.ENABLE.desc
+                  <a-select-option :value="AVAILABLE.ENABLE.code">{{
+                    '仅显示' + AVAILABLE.ENABLE.desc
                   }}</a-select-option>
                 </a-select>
               </j-form-item>
@@ -144,6 +144,11 @@
     union,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import { MENU_DISPLAY } from '@/enums/biz/menuDisplay';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import MenuDisplayTag from '@/components/Tag/MenuDisplayTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'Menu',
@@ -152,6 +157,9 @@
       Modify,
       Detail,
       DownOutlined,
+      AvailableTag,
+      MenuDisplayTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -160,8 +168,9 @@
         SearchOutlined,
         PlusOutlined,
         h,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        MENU_DISPLAY,
+        AVAILABLE,
       };
     },
     data() {

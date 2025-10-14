@@ -27,7 +27,7 @@
       <a-form-item label="状态" name="available">
         <a-select v-model:value="formData.available" allow-clear>
           <a-select-option
-            v-for="item in $enums.AVAILABLE.getValues()"
+            v-for="item in AVAILABLE.getValues()"
             :key="item.code"
             :value="item.code"
             >{{ item.desc }}</a-select-option
@@ -53,7 +53,7 @@
     <data-permission
       ref="dataPermissionDialog"
       :biz-id="id"
-      :biz-type="$enums.SYS_DATA_PERMISSION_DATA_BIZ_TYPE.DEPT.code"
+      :biz-type="SYS_DATA_PERMISSION_DATA_BIZ_TYPE.DEPT.code"
     />
   </div>
 </template>
@@ -63,10 +63,20 @@
   import DataPermission from '@/components/DataPermission/index.vue';
   import * as api from '@/api/system/dept';
   import { createSuccess } from '@/hooks/web/msg';
+  import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import { SYS_DATA_PERMISSION_DATA_BIZ_TYPE } from '@/enums/biz/sysDataPermissionDataBizType';
 
   export default defineComponent({
     components: {
       DataPermission,
+      SysDeptSelector,
+    },
+    setup() {
+      return {
+        AVAILABLE,
+        SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
+      };
     },
     props: {
       id: {

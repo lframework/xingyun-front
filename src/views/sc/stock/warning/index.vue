@@ -46,7 +46,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.AVAILABLE.values()"
+                      v-for="item in AVAILABLE.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -142,17 +142,26 @@
     CloudUploadOutlined,
     DeleteOutlined,
   } from '@ant-design/icons-vue';
-  import StoreCenterSelector from '@/components/Selector/src/StoreCenterSelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import ProductSelector from '@/components/Selector/ProductSelector.vue';
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import StockWarningImporter from '@/components/Importor/StockWarningImporter.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'SysGenerateCode',
     components: {
       StoreCenterSelector,
+      ProductSelector,
       Add,
       Modify,
       Notify,
+      StockWarningImporter,
+      AvailableTag,
+      BatchHandler,
     },
     setup() {
       return {
@@ -162,8 +171,8 @@
         SettingOutlined,
         CloudUploadOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        AVAILABLE,
       };
     },
     data() {
@@ -177,7 +186,7 @@
           productId: '',
           updateTimeStart: '',
           updateTimeEnd: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {

@@ -27,10 +27,10 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="盘点类别">
-            {{ $enums.TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
+            {{ TAKE_STOCK_PLAN_TYPE.getDesc(formData.takeType) }}
           </j-form-item>
           <j-form-item label="盘点状态">
-            {{ $enums.TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
+            {{ TAKE_STOCK_PLAN_STATUS.getDesc(formData.takeStatus) }}
           </j-form-item>
           <j-form-item label="分类/品牌">
             {{ formData.bizName }}
@@ -129,11 +129,17 @@
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { isEmpty, isFloat, isFloatGeZero, isNumberPrecision, uuid } from '@/utils/utils';
   import { createSuccess, createConfirm, createError } from '@/hooks/web/msg';
+  import PreTakeStockSheetSelector from '@/components/Selector/PreTakeStockSheetSelector.vue';
+  import TakeStockPlanSelector from '@/components/Selector/TakeStockPlanSelector.vue';
+  import { TAKE_STOCK_PLAN_TYPE } from '@/enums/biz/takeStockPlanType';
+  import { TAKE_STOCK_PLAN_STATUS } from '@/enums/biz/takeStockPlanStatus';
 
   export default defineComponent({
     name: 'AddStockTakeSheet',
     components: {
       BatchAddProduct,
+      PreTakeStockSheetSelector,
+      TakeStockPlanSelector,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -141,8 +147,9 @@
         h,
         PlusOutlined,
         DeleteOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
       };
     },
     data() {

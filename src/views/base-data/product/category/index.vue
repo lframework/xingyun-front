@@ -41,8 +41,8 @@
               </j-form-item>
               <j-form-item label="状态">
                 <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option :value="$enums.AVAILABLE.ENABLE.code">{{
-                    '仅显示' + $enums.AVAILABLE.ENABLE.desc
+                  <a-select-option :value="AVAILABLE.ENABLE.code">{{
+                    '仅显示' + AVAILABLE.ENABLE.desc
                   }}</a-select-option>
                 </a-select>
               </j-form-item>
@@ -143,6 +143,11 @@
     union,
   } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
+  import ProductCategoryImporter from '@/components/Importor/ProductCategoryImporter.vue';
+  import BatchHandler from '@/components/BatchHandler';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import MenuDisplayTag from '@/components/Tag/MenuDisplayTag.vue';
 
   export default defineComponent({
     name: 'ProductCategory',
@@ -151,6 +156,10 @@
       Modify,
       AddChildren,
       DownOutlined,
+      ProductCategoryImporter,
+      BatchHandler,
+      AvailableTag,
+      MenuDisplayTag,
     },
     setup() {
       return {
@@ -160,6 +169,7 @@
         PlusOutlined,
         SearchOutlined,
         StopOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -169,7 +179,7 @@
         searchFormData: {
           code: '',
           name: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         originData: [],
         tableProxy: {

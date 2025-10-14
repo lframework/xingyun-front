@@ -30,7 +30,7 @@
               <j-form-item label="日志类型">
                 <a-select v-model:value="searchFormData.logType" placeholder="全部" allow-clear>
                   <a-select-option
-                    v-for="item in $enums.OP_LOG_TYPE.values()"
+                    v-for="item in OP_LOG_TYPE.values()"
                     :key="item.code"
                     :value="item.code"
                     >{{ item.desc }}</a-select-option
@@ -79,22 +79,26 @@
   import Moment from 'moment';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/op-log';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
   import {
     formatDateTime,
     getDateTimeWithMinTime,
     getDateTimeWithMaxTime,
     getCurrentDate,
   } from '@/utils/utils';
+  import { OP_LOG_TYPE } from '@/enums/biz/opLogType';
 
   export default defineComponent({
     name: 'Oplog',
     components: {
       Detail,
+      UserSelector,
     },
     setup() {
       return {
         h,
         SearchOutlined,
+        OP_LOG_TYPE,
       };
     },
     data() {
@@ -119,7 +123,7 @@
             title: '日志类型',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.OP_LOG_TYPE.getDesc(cellValue);
+              return OP_LOG_TYPE.getDesc(cellValue);
             },
           },
           { field: 'createBy', title: '创建人', width: 100 },

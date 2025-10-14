@@ -82,16 +82,24 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/sale/order';
   import Moment from 'moment';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import {
     isEmpty,
     formatDateTime,
     getDateTimeWithMinTime,
     getDateTimeWithMaxTime,
   } from '@/utils/utils';
+  import CustomerSelector from '@/components/Selector/CustomerSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
 
   export default defineComponent({
     name: 'SaleOrderSelectorWithOut',
-    components: { SearchOutlined },
+    components: {
+      SearchOutlined,
+      CustomerSelector,
+      StoreCenterSelector,
+      UserSelector,
+    },
     props: {
       requestParams: {
         type: Object,
@@ -104,7 +112,6 @@
       const moment = Moment;
       return {
         moment,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
       };
     },

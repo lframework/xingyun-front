@@ -41,9 +41,12 @@
   import * as api from '@/api/bpm/flow/definition';
   import { validCode } from '@/utils/validate';
   import { createSuccess } from '@/hooks/web/msg';
+  import FlowCategorySelector from '@/components/Selector/FlowCategorySelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      FlowCategorySelector,
+    },
     props: {
       id: {
         type: String,

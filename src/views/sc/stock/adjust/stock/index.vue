@@ -31,7 +31,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.status" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.STOCK_ADJUST_SHEET_STATUS.values()"
+                      v-for="item in STOCK_ADJUST_SHEET_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -177,6 +177,7 @@
   import Detail from './detail.vue';
   import ApproveRefuse from '@/components/ApproveRefuse';
   import moment from 'moment';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import {
     SearchOutlined,
     PlusOutlined,
@@ -195,12 +196,19 @@
     buildSortPageVo,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { STOCK_ADJUST_SHEET_STATUS } from '@/enums/biz/stockAdjustSheetStatus';
+  import { STOCK_ADJUST_SHEET_BIZ_TYPE } from '@/enums/biz/stockAdjustSheetBizType';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'StockAdjustSheet',
     components: {
       Detail,
       ApproveRefuse,
+      StoreCenterSelector,
+      UserSelector,
+      BatchHandler,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -212,6 +220,7 @@
         CloseOutlined,
         DeleteOutlined,
         DownloadOutlined,
+        STOCK_ADJUST_SHEET_STATUS,
       };
     },
     data() {
@@ -249,7 +258,7 @@
             title: '业务类型',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.STOCK_ADJUST_SHEET_BIZ_TYPE.getDesc(cellValue);
+              return STOCK_ADJUST_SHEET_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'reasonName', title: '调整原因', width: 120 },
@@ -260,7 +269,7 @@
             title: '状态',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.STOCK_ADJUST_SHEET_STATUS.getDesc(cellValue);
+              return STOCK_ADJUST_SHEET_STATUS.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170, sortable: true },
@@ -332,7 +341,7 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个库存调整单已审核通过，不允许继续执行审核！');
             return;
           }
@@ -351,12 +360,12 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个库存调整单已审核通过，不允许继续执行审核！');
             return;
           }
 
-          if (this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
+          if (STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个库存调整单已审核拒绝，不允许继续执行审核！');
             return;
           }
@@ -388,7 +397,7 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个库存调整单已审核通过，不允许执行删除操作！');
             return;
           }
@@ -423,8 +432,8 @@
             label: '审核',
             ifShow: () => {
               return (
-                this.$enums.STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {
@@ -436,8 +445,8 @@
             label: '修改',
             ifShow: () => {
               return (
-                this.$enums.STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {
@@ -450,8 +459,8 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(row.status) ||
+                STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {

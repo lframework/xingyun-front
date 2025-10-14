@@ -49,7 +49,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.available" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.AVAILABLE.values()"
+                      v-for="item in AVAILABLE.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -112,7 +112,6 @@
   import {
     CheckOutlined,
     CloudUploadOutlined,
-    DownOutlined,
     PlusOutlined,
     SearchOutlined,
     SettingOutlined,
@@ -121,6 +120,10 @@
   } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/shop';
   import { buildSortPageVo } from '@/utils/utils';
+  import ShopImporter from '@/components/Importor/ShopImporter.vue';
+  import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
+  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'Shop',
@@ -128,7 +131,9 @@
       Add,
       Modify,
       Detail,
-      DownOutlined,
+      ShopImporter,
+      SysDeptSelector,
+      AvailableTag,
     },
     setup() {
       return {
@@ -140,6 +145,7 @@
         CheckOutlined,
         StopOutlined,
         CloudUploadOutlined,
+        AVAILABLE,
       };
     },
     data() {
@@ -154,7 +160,7 @@
           deptId: '',
           createTimeStart: '',
           createTimeEnd: '',
-          available: this.$enums.AVAILABLE.ENABLE.code,
+          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {

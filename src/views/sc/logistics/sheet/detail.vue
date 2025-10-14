@@ -15,12 +15,12 @@
           </j-form-item>
           <j-form-item label="状态" :span="16">
             <span
-              v-if="$enums.LOGISTICS_SHEET_STATUS.DELIVERY.equalsCode(formData.status)"
+              v-if="LOGISTICS_SHEET_STATUS.DELIVERY.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.LOGISTICS_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ LOGISTICS_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.LOGISTICS_SHEET_STATUS.getDesc(formData.status)
+              LOGISTICS_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="操作人">
@@ -30,13 +30,13 @@
             <span>{{ formData.createTime }}</span>
           </j-form-item>
           <j-form-item
-            v-if="$enums.LOGISTICS_SHEET_STATUS.DELIVERY.equalsCode(formData.status)"
+            v-if="LOGISTICS_SHEET_STATUS.DELIVERY.equalsCode(formData.status)"
             label="发货人"
           >
             <span>{{ formData.deliveryBy }}</span>
           </j-form-item>
           <j-form-item
-            v-if="$enums.LOGISTICS_SHEET_STATUS.DELIVERY.equalsCode(formData.status)"
+            v-if="LOGISTICS_SHEET_STATUS.DELIVERY.equalsCode(formData.status)"
             label="发货时间"
             :span="16"
           >
@@ -60,9 +60,7 @@
         >
           <!-- 业务单据号 列自定义内容 -->
           <template #bizCode_default="{ row }">
-            <div
-              v-if="$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.SALE_OUT_SHEET.equalsCode(row.bizType)"
-            >
+            <div v-if="LOGISTICS_SHEET_DETAIL_BIZ_TYPE.SALE_OUT_SHEET.equalsCode(row.bizType)">
               <a
                 v-permission="['sale:out:query']"
                 @click="
@@ -76,9 +74,7 @@
               <span v-no-permission="['sale:out:query']">{{ row.bizCode }}</span>
             </div>
             <div
-              v-else-if="
-                $enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.RETAIL_OUT_SHEET.equalsCode(row.bizType)
-              "
+              v-else-if="LOGISTICS_SHEET_DETAIL_BIZ_TYPE.RETAIL_OUT_SHEET.equalsCode(row.bizType)"
             >
               <a
                 v-permission="['retail:out:query']"
@@ -160,11 +156,21 @@
   import DetailRetailOutSheet from '@/views/sc/retail/out/detail.vue';
   import * as api from '@/api/sc/logistics/sheet';
   import { uuid } from '@/utils/utils';
+  import LogisticsCompanySelector from '@/components/Selector/LogisticsCompanySelector.vue';
+  import { LOGISTICS_SHEET_STATUS } from '@/enums/biz/logisticsSheetStatus';
+  import { LOGISTICS_SHEET_DETAIL_BIZ_TYPE } from '@/enums/biz/logisticsSheetDetailBizType';
 
   export default defineComponent({
     components: {
       DetailSaleOutSheet,
       DetailRetailOutSheet,
+      LogisticsCompanySelector,
+    },
+    setup() {
+      return {
+        LOGISTICS_SHEET_STATUS,
+        LOGISTICS_SHEET_DETAIL_BIZ_TYPE,
+      };
     },
     props: {
       id: {
@@ -203,7 +209,7 @@
             title: '业务类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.getDesc(cellValue);
+              return LOGISTICS_SHEET_DETAIL_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'scName', title: '仓库名称', width: 100 },

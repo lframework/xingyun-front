@@ -72,6 +72,10 @@
   import * as api from '@/api/system/data-permission-model-detail';
   import { uuid, isEmpty } from '@/utils/utils';
   import { createError, createConfirm } from '@/hooks/web/msg';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE } from '@/enums/biz/sysDataPermissionModelDetailNodeType';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE } from '@/enums/biz/sysDataPermissionModelDetailCalcType';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE } from '@/enums/biz/sysDataPermissionModelDetailConditionType';
+  import { SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE } from '@/enums/biz/sysDataPermissionModelDetailInputType';
 
   export default defineComponent({
     name: 'DataPermissionDragger',
@@ -92,15 +96,15 @@
         calcTypes: [
           {
             id: -1,
-            nodeType: this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.code,
-            name: this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.AND.desc,
-            calcType: this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.AND.code,
+            nodeType: SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.code,
+            name: SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.AND.desc,
+            calcType: SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.AND.code,
           },
           {
             id: -2,
-            nodeType: this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.code,
-            name: this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.OR.desc,
-            calcType: this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.OR.code,
+            nodeType: SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.code,
+            name: SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.OR.desc,
+            calcType: SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE.OR.code,
           },
         ],
         conditions: [],
@@ -155,11 +159,11 @@
         api.getByModelId(this.modelId).then((res) => {
           this.conditions = res.map((item) => {
             const condition = Object.assign({}, item, {
-              nodeType: this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CONDITION.code,
+              nodeType: SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CONDITION.code,
               value: undefined,
               values: [],
               conditionTypes: item.conditionTypes.map((t) =>
-                this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.getByCode(t),
+                SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.getByCode(t),
               ),
             });
 
@@ -186,9 +190,7 @@
           let flag = true;
           for (let i = 0; i < this.nodes.length; i++) {
             const node = this.nodes[i];
-            if (
-              !this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(node.nodeType)
-            ) {
+            if (!SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(node.nodeType)) {
               createError('最外层必须是运算节点');
               flag = false;
               break;
@@ -219,9 +221,7 @@
         let flag = true;
         for (let i = 0; i < children.length; i++) {
           const child = children[i];
-          if (
-            this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(child.nodeType)
-          ) {
+          if (SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE.CALC.equalsCode(child.nodeType)) {
             if (isEmpty(child.children)) {
               createError('运算节点必须包含子节点');
               flag = false;
@@ -233,18 +233,10 @@
             }
           } else {
             if (
-              this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.IN.equalsCode(
-                child.conditionType,
-              ) ||
-              this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.NOT_IN.equalsCode(
-                child.conditionType,
-              )
+              SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.IN.equalsCode(child.conditionType) ||
+              SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE.NOT_IN.equalsCode(child.conditionType)
             ) {
-              if (
-                !this.$enums.SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.SQL.equalsCode(
-                  child.inputType,
-                )
-              ) {
+              if (!SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE.SQL.equalsCode(child.inputType)) {
                 if (isEmpty(child.values)) {
                   createError('节点：【' + child.name + '】请输入值');
                   flag = false;

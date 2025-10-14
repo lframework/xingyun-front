@@ -27,7 +27,7 @@
         <a-form-item label="状态" name="available">
           <a-select v-model:value="formData.available" allow-clear>
             <a-select-option
-              v-for="item in $enums.AVAILABLE.values()"
+              v-for="item in AVAILABLE.values()"
               :key="item.code"
               :value="item.code"
               >{{ item.desc }}</a-select-option
@@ -54,10 +54,19 @@
   import * as api from '@/api/system/user-group';
   import { validCode } from '@/utils/validate';
   import { createSuccess } from '@/hooks/web/msg';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
+  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: {
+      UserSelector,
+    },
+    setup() {
+      return {
+        AVAILABLE,
+      };
+    },
     props: {
       id: {
         type: String,

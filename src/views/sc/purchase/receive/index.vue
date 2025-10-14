@@ -77,7 +77,7 @@
                 <j-form-item label="状态">
                   <a-select v-model:value="searchFormData.status" placeholder="全部" allow-clear>
                     <a-select-option
-                      v-for="item in $enums.RECEIVE_SHEET_STATUS.values()"
+                      v-for="item in RECEIVE_SHEET_STATUS.values()"
                       :key="item.code"
                       :value="item.code"
                       >{{ item.desc }}</a-select-option
@@ -101,7 +101,7 @@
                       allow-clear
                     >
                       <a-select-option
-                        v-for="item in $enums.SETTLE_STATUS.values()"
+                        v-for="item in SETTLE_STATUS.values()"
                         :key="item.code"
                         :value="item.code"
                         >{{ item.desc }}</a-select-option
@@ -248,6 +248,9 @@
   import ApproveRefuse from '@/components/ApproveRefuse';
   import PurchaseOrderDetail from '@/views/sc/purchase/order/detail.vue';
   import moment from 'moment';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
+  import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
   import {
     CheckOutlined,
     CloseOutlined,
@@ -268,6 +271,12 @@
     buildSortPageVo,
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm } from '@/hooks/web/msg';
+  import ReceiveSheetImporter from '@/components/Importor/ReceiveSheetImporter.vue';
+  import ReceiveSheetPayTypeImporter from '@/components/Importor/ReceiveSheetPayTypeImporter.vue';
+  import { RECEIVE_SHEET_STATUS } from '@/enums/biz/receiveSheetStatus';
+  import { SETTLE_STATUS } from '@/enums/biz/settleStatus';
+  import { PURCHASE_ORDER_STATUS } from '@/enums/biz/purchaseOrderStatus';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     name: 'ReceiveSheet',
@@ -275,6 +284,12 @@
       Detail,
       ApproveRefuse,
       PurchaseOrderDetail,
+      ReceiveSheetImporter,
+      ReceiveSheetPayTypeImporter,
+      StoreCenterSelector,
+      SupplierSelector,
+      UserSelector,
+      BatchHandler,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -287,8 +302,9 @@
         CloseOutlined,
         DeleteOutlined,
         DownloadOutlined,
-        // 工具函数 - 仅返回模板中需要使用的
         isEmpty,
+        RECEIVE_SHEET_STATUS,
+        SETTLE_STATUS,
       };
     },
     data() {
@@ -340,7 +356,7 @@
             title: '状态',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.RECEIVE_SHEET_STATUS.getDesc(cellValue);
+              return RECEIVE_SHEET_STATUS.getDesc(cellValue);
             },
           },
           { field: 'approveTime', title: '审核时间', width: 170, sortable: true },
@@ -350,7 +366,7 @@
             title: '结算状态',
             width: 100,
             formatter: ({ cellValue }) => {
-              return this.$enums.SETTLE_STATUS.getDesc(cellValue);
+              return SETTLE_STATUS.getDesc(cellValue);
             },
           },
           { field: 'description', title: '备注', width: 200 },
@@ -449,7 +465,7 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个采购收货单已审核通过，不允许执行删除操作！');
             return;
           }
@@ -473,7 +489,7 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个采购单已审核通过，不允许继续执行审核！');
             return;
           }
@@ -492,12 +508,12 @@
         }
 
         for (let i = 0; i < records.length; i++) {
-          if (this.$enums.PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
+          if (PURCHASE_ORDER_STATUS.APPROVE_PASS.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个采购收货单已审核通过，不允许继续执行审核！');
             return;
           }
 
-          if (this.$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
+          if (PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(records[i].status)) {
             createError('第' + (i + 1) + '个采购收货单已审核拒绝，不允许继续执行审核！');
             return;
           }
@@ -547,8 +563,8 @@
             label: '审核',
             ifShow: () => {
               return (
-                this.$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) ||
+                PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {
@@ -560,8 +576,8 @@
             label: '修改',
             ifShow: () => {
               return (
-                this.$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) ||
+                PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {
@@ -574,8 +590,8 @@
             danger: true,
             ifShow: () => {
               return (
-                this.$enums.PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) ||
-                this.$enums.PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)
+                PURCHASE_ORDER_STATUS.CREATED.equalsCode(row.status) ||
+                PURCHASE_ORDER_STATUS.APPROVE_REFUSE.equalsCode(row.status)
               );
             },
             onClick: () => {

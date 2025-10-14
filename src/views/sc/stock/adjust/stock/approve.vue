@@ -7,7 +7,7 @@
             {{ formData.scName }}
           </j-form-item>
           <j-form-item label="业务类型" required>
-            {{ $enums.STOCK_ADJUST_SHEET_BIZ_TYPE.getDesc(formData.bizType) }}
+            {{ STOCK_ADJUST_SHEET_BIZ_TYPE.getDesc(formData.bizType) }}
           </j-form-item>
           <j-form-item label="调整原因" required>
             {{ formData.reasonName }}
@@ -18,24 +18,22 @@
           </j-form-item>
           <j-form-item label="状态">
             <span
-              v-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
+              v-if="STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status)"
               style="color: #52c41a"
-              >{{ $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span
-              v-else-if="
-                $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
-              "
+              v-else-if="STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               style="color: #f5222d"
-              >{{ $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span
+              >{{ STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status) }}</span
             >
             <span v-else style="color: #303133">{{
-              $enums.STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status)
+              STOCK_ADJUST_SHEET_STATUS.getDesc(formData.status)
             }}</span>
           </j-form-item>
           <j-form-item label="拒绝理由" :span="16" :content-nest="false">
             <a-input
-              v-if="$enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
+              v-if="STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)"
               v-model:value="formData.refuseReason"
               readonly
             />
@@ -48,8 +46,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核人"
           >
@@ -57,8 +55,8 @@
           </j-form-item>
           <j-form-item
             v-if="
-              $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
-              $enums.STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
+              STOCK_ADJUST_SHEET_STATUS.APPROVE_PASS.equalsCode(formData.status) ||
+              STOCK_ADJUST_SHEET_STATUS.APPROVE_REFUSE.equalsCode(formData.status)
             "
             label="审核时间"
             :span="16"
@@ -104,7 +102,7 @@
             >审核通过</a-button
           >
           <a-button
-            v-if="$enums.STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(formData.status)"
+            v-if="STOCK_ADJUST_SHEET_STATUS.CREATED.equalsCode(formData.status)"
             v-permission="['stock:adjust:approve']"
             danger
             :loading="loading"
@@ -126,13 +124,23 @@
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import { isEmpty, isFloatGeZero, add } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { STOCK_ADJUST_SHEET_BIZ_TYPE } from '@/enums/biz/stockAdjustSheetBizType';
+  import { STOCK_ADJUST_SHEET_STATUS } from '@/enums/biz/stockAdjustSheetStatus';
+  import OrderTimeLine from '@/components/OrderTimeLine';
 
   export default defineComponent({
     name: 'ApproveStockAdjustSheet',
     components: {
       ApproveRefuse,
+      OrderTimeLine,
     },
     mixins: [multiplePageMix],
+    setup() {
+      return {
+        STOCK_ADJUST_SHEET_BIZ_TYPE,
+        STOCK_ADJUST_SHEET_STATUS,
+      };
+    },
     data() {
       return {
         id: this.$route.params.id,

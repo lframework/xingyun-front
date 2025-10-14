@@ -74,15 +74,17 @@
   import moment from 'moment/moment';
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/logistics/sheet';
+  import UserSelector from '@/components/Selector/UserSelector.vue';
   import {
     isEmpty,
     formatDateTime,
     getDateTimeWithMinTime,
     getDateTimeWithMaxTime,
   } from '@/utils/utils';
+  import { LOGISTICS_SHEET_DETAIL_BIZ_TYPE } from '@/enums/biz/logisticsSheetDetailBizType';
 
   export default defineComponent({
-    components: {},
+    components: { UserSelector },
     setup() {
       return {
         h,
@@ -109,7 +111,7 @@
             title: '业务类型',
             width: 120,
             formatter: ({ cellValue }) => {
-              return this.$enums.LOGISTICS_SHEET_DETAIL_BIZ_TYPE.getDesc(cellValue);
+              return LOGISTICS_SHEET_DETAIL_BIZ_TYPE.getDesc(cellValue);
             },
           },
           { field: 'scName', title: '仓库名称', width: 100 },

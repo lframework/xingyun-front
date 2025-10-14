@@ -44,9 +44,14 @@
   import * as api from '@/api/sc/stock/warning';
   import { isEmpty, isFloat, isFloatGtZero, isNumberPrecision } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import ProductSelector from '@/components/Selector/ProductSelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      ProductSelector,
+      StoreCenterSelector,
+    },
     data() {
       return {
         // 是否可见

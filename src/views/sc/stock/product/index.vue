@@ -66,10 +66,17 @@
   import * as api from '@/api/sc/stock/product-stock';
   import { buildSortPageVo } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
+  import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
+  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
+  import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
 
   export default defineComponent({
     name: 'ProductStock',
-    components: {},
+    components: {
+      ProductBrandSelector,
+      ProductCategorySelector,
+      StoreCenterSelector,
+    },
     setup() {
       return {
         h,

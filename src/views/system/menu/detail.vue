@@ -16,8 +16,8 @@
         </a-descriptions-item>
         <a-descriptions-item
           v-if="
-            $enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display) ||
-            $enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
+            MENU_DISPLAY.FUNCTION.equalsCode(formData.display) ||
+            MENU_DISPLAY.PERMISSION.equalsCode(formData.display)
           "
           label="权限"
           :span="4"
@@ -28,35 +28,35 @@
           {{ formData.description }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
+          v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
           label="路由名称"
           :span="4"
         >
           {{ formData.name }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
+          v-if="MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
           label="组件"
           :span="4"
         >
           {{ formData.component }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
+          v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
           label="路由路径"
           :span="4"
         >
           {{ formData.path }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="$enums.MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
+          v-if="MENU_DISPLAY.FUNCTION.equalsCode(formData.display)"
           label="是否不缓存"
           :span="4"
         >
           {{ formData.noCache ? '不缓存' : '缓存' }}
         </a-descriptions-item>
         <a-descriptions-item
-          v-if="!$enums.MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
+          v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)"
           label="是否隐藏"
           :span="4"
         >
@@ -69,9 +69,18 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/menu';
+  import { MENU_DISPLAY } from '@/enums/biz/menuDisplay';
+  import MenuDisplayTag from '@/components/Tag/MenuDisplayTag.vue';
 
   export default defineComponent({
-    components: {},
+    components: {
+      MenuDisplayTag,
+    },
+    setup() {
+      return {
+        MENU_DISPLAY,
+      };
+    },
     props: {
       id: {
         type: String,

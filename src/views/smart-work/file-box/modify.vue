@@ -19,7 +19,7 @@
           <a-input
             v-model:value.trim="formData.name"
             allow-clear
-            :disabled="$enums.FILE_BOX_FILE_TYPE.DIR.equalsCode(formData.fileType)"
+            :disabled="FILE_BOX_FILE_TYPE.DIR.equalsCode(formData.fileType)"
           />
         </a-form-item>
         <a-form-item label="备注" name="description">
@@ -41,11 +41,16 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/smart-work/file-box';
   import { createSuccess } from '@/hooks/web/msg';
+  import { FILE_BOX_FILE_TYPE } from '@/enums/biz/fileBoxFileType';
 
   export default defineComponent({
     // 使用组件
     components: {},
-
+    setup() {
+      return {
+        FILE_BOX_FILE_TYPE,
+      };
+    },
     props: {
       id: {
         type: String,
