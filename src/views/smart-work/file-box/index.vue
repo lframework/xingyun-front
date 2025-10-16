@@ -118,7 +118,7 @@
   import Modify from './modify.vue';
   import Detail from './detail.vue';
   import * as api from '@/api/smart-work/file-box';
-  import Icon from '@/components/Icon/Icon.vue';
+  import { Icon } from '@/components/Icon';
   import { isEmpty } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
   import { FILE_BOX_FILE_TYPE } from '@/enums/biz/fileBoxFileType';

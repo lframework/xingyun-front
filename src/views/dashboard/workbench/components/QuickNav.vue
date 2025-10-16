@@ -17,7 +17,7 @@
   </a-card>
 </template>
 <script>
-  import Icon from '@/components/Icon/Icon.vue';
+  import { Icon } from '@/components/Icon';
   import { defineComponent } from 'vue';
   import { getCollectMenu } from '@/api/sys/menu';
   import { isEmpty } from '@/utils/utils';

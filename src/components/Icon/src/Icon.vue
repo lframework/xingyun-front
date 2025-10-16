@@ -25,10 +25,10 @@
     computed,
     CSSProperties,
   } from 'vue';
-  import SvgIcon from './src/SvgIcon.vue';
+  import SvgIcon from './SvgIcon.vue';
   import Iconify from '@purge-icons/generated';
-  import { isString } from '/@/utils/is';
-  import { propTypes } from '/@/utils/propTypes';
+  import { isString } from '/src/utils/is';
+  import { propTypes } from '/src/utils/propTypes';
 
   const SVG_END_WITH_FLAG = '|svg';
   export default defineComponent({

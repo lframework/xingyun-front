@@ -75,7 +75,7 @@
 <script>
   import { defineComponent, h } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-  import Icon from '@/components/Icon/Icon.vue';
+  import { Icon } from '@/components/Icon';
   import Modify from './modify.vue';
   import Detail from './detail.vue';
   import * as api from '@/api/smart-work/file-box';

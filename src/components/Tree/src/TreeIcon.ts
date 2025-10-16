@@ -1,7 +1,7 @@
 import type { VNode } from 'vue';
 import { h } from 'vue';
 import { isString } from 'lodash-es';
-import Icon from '@/components/Icon/Icon.vue';
+import { Icon } from '@/components/Icon';
 
 export const TreeIcon = ({ icon }: { icon: VNode | string }) => {
   if (!icon) return null;

@@ -38,7 +38,7 @@
 <script lang="ts">
   import { defineComponent, ref, watch, unref, computed } from 'vue';
   import { Recordable } from '@vben/types';
-  import Icon from '@/components/Icon/Icon.vue';
+  import { Icon } from '@/components/Icon';
   import { Tooltip, Space } from 'ant-design-vue';
   import { useModal } from '/@/components/Modal';
   import { uploadContainerProps } from './props';
