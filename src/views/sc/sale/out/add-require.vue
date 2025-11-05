@@ -1,6 +1,11 @@
 <template>
   <div class="app-card-container">
     <div v-permission="['sale:out:add']" v-loading="loading">
+      <a-alert
+        description="提示：使用回车键可以快速添加商品；使用Tab键可以快速跳转至下一个输入框。"
+        type="info"
+        show-icon
+      />
       <j-border>
         <j-form bordered>
           <j-form-item label="仓库" required>
@@ -68,14 +73,37 @@
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
             v-if="!row.isFixed && isEmpty(row.productId)"
+            :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
-            style="width: 100%"
-            placeholder=""
-            value-key="productName"
+            placeholder="请输入商品编号/名称/SKU编号/简码"
             :options="row.productOptions"
+            :dropdown-match-select-width="false"
+            :dropdown-style="{ width: '890px' }"
             @search="(e) => queryProduct(e, row)"
-            @select="(e) => handleSelectProduct(rowIndex, e, row)"
-          />
+          >
+            <!-- 自定义下拉框内容 -->
+            <template #dropdownRender>
+              <div v-if="!isEmpty(row.products)">
+                <vxe-table
+                  :data="row.products"
+                  max-height="500"
+                  class="cursor-pointer"
+                  highlight-hover-row
+                  show-overflow
+                  :row-config="{ isHover: true }"
+                  @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
+                >
+                  <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="skuCode" title="商品SKU编号" width="120" />
+                  <vxe-column field="spec" title="规格" width="80" />
+                  <vxe-column field="unit" title="单位" width="80" />
+                  <vxe-column field="salePrice" title="参考销售价（元）" width="140" align="right" />
+                  <vxe-column field="stockNum" title="库存数量" width="140" align="right" />
+                </vxe-table>
+              </div>
+            </template>
+          </a-auto-complete>
           <span v-else>{{ row.productName }}</span>
         </template>
 
@@ -255,12 +283,12 @@
           },
           { field: 'skuCode', title: '商品SKU编号', width: 120 },
           { field: 'externalCode', title: '商品简码', width: 120 },
-          { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
+          { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           { field: 'mainProductName', title: '所属组合商品', width: 120 },
-          { field: 'salePrice', title: '参考销售价（元）', align: 'right', width: 150 },
+          { field: 'salePrice', title: '参考销售价（元）', align: 'right', width: 140 },
           {
             field: 'isGift',
             title: '是否赠品',
@@ -273,16 +301,16 @@
             field: 'stockNum',
             title: '库存数量',
             align: 'right',
-            width: 100,
+            width: 140,
             slots: { default: 'stockNum_default' },
           },
-          { field: 'discountRate', title: '折扣（%）', align: 'right', width: 120 },
-          { field: 'taxPrice', title: '价格（元）', align: 'right', width: 120 },
+          { field: 'discountRate', title: '折扣（%）', align: 'right', width: 140 },
+          { field: 'taxPrice', title: '价格（元）', align: 'right', width: 140 },
           {
             field: 'orderNum',
             title: '销售数量',
             align: 'right',
-            width: 100,
+            width: 140,
             formatter: ({ cellValue }) => {
               return isEmpty(cellValue) ? '-' : cellValue;
             },
@@ -291,21 +319,21 @@
             field: 'remainNum',
             title: '剩余出库数量',
             align: 'right',
-            width: 120,
+            width: 140,
             slots: { default: 'remainNum_default' },
           },
           {
             field: 'outNum',
             title: '出库数量',
             align: 'right',
-            width: 100,
+            width: 140,
             slots: { default: 'outNum_default' },
           },
           {
             field: 'taxAmount',
             title: '含税金额',
             align: 'right',
-            width: 120,
+            width: 140,
             slots: { default: 'taxAmount_default' },
           },
           { field: 'taxRate', title: '税率（%）', align: 'right', width: 100 },
@@ -323,7 +351,22 @@
     created() {
       this.openDialog();
     },
+    mounted() {
+      // 监听键盘事件，按下回车键时调用addProduct方法
+      document.addEventListener('keydown', this.handleKeyDown);
+    },
+    beforeUnmount() {
+      // 移除键盘事件监听
+      document.removeEventListener('keydown', this.handleKeyDown);
+    },
     methods: {
+      // 处理键盘事件
+      handleKeyDown(event) {
+        // 按下回车键时调用addProduct方法
+        if (event.key === 'Enter' || event.keyCode === 13) {
+          this.addProduct();
+        }
+      },
       // 打开对话框 由父页面触发
       openDialog() {
         // 初始化表单数据
@@ -376,6 +419,7 @@
           description: '',
           isFixed: false,
           products: [],
+          productOptions: [],
         };
       },
       // 新增商品
@@ -385,6 +429,12 @@
           return;
         }
         this.tableData.push(this.emptyProduct());
+        this.$nextTick(() => {
+          const productInputRef = this.$refs['productInputRef' + (this.tableData.length - 1)];
+          if (productInputRef) {
+            productInputRef.focus();
+          }
+        });
       },
       // 搜索商品
       queryProduct(queryString, row) {
@@ -404,10 +454,10 @@
           });
         });
       },
-      // 选择商品
-      handleSelectProduct(index, value, row) {
-        value = row ? row.products.filter((item) => item.productId === value)[0] : value;
-        this.tableData[index] = Object.assign(this.tableData[index], value, {
+      // 选择商品（从表格中点击）
+      handleSelectProduct(index, product) {
+        // 将选中的商品数据赋值给当前行
+        this.tableData[index] = Object.assign(this.tableData[index], product, {
           isGift: true,
           taxPrice: 0,
         });
