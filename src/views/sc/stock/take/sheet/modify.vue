@@ -292,64 +292,93 @@
 
         this.tableData = [];
       },
-      // 提交表单事件
-      submit() {
+      validParams(validNum) {
         if (isEmpty(this.tableData)) {
           createError('请录入商品！');
-          return;
+          return false;
         }
 
         for (let i = 0; i < this.tableData.length; i++) {
           const column = this.tableData[i];
           if (isEmpty(column.productId)) {
             createError('第' + (i + 1) + '行商品不允许为空！');
-            return;
-          }
-          if (isEmpty(column.takeNum)) {
-            createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
-            return;
+            return false;
           }
 
-          if (!isFloat(column.takeNum)) {
-            createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
-            return;
+          if (validNum) {
+            if (isEmpty(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
+              return false;
+            }
           }
 
-          if (!isFloatGeZero(column.takeNum)) {
-            createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
-            return;
-          }
+          if (!isEmpty(column.takeNum)) {
+            if (!isFloat(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
+              return false;
+            }
 
-          if (!isNumberPrecision(column.takeNum, 8)) {
-            createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
-            return;
+            if (!isFloatGeZero(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
+              return false;
+            }
+
+            if (!isNumberPrecision(column.takeNum, 8)) {
+              createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
+              return false;
+            }
           }
         }
 
-        const params = {
-          id: this.id,
-          description: this.formData.description,
-          products: this.tableData.map((item) => {
-            return {
-              productId: item.productId,
-              takeNum: item.takeNum,
-              description: item.description,
-            };
-          }),
-        };
+        return true;
+      },
+      // 提交表单事件
+      submit() {
+        if (!this.validParams()) {
+          return;
+        }
 
-        this.loading = true;
-        api
-          .update(params)
-          .then(() => {
-            createSuccess('保存成功！');
-            this.$emit('confirm');
+        const reqApiFn = () => {
+          const params = {
+            id: this.id,
+            description: this.formData.description,
+            products: this.tableData.map((item) => {
+              return {
+                productId: item.productId,
+                takeNum: item.takeNum,
+                description: item.description,
+              };
+            }),
+          };
 
-            this.closeDialog();
-          })
-          .finally(() => {
-            this.loading = false;
+          this.loading = true;
+          api
+            .update(params)
+            .then(() => {
+              createSuccess('保存成功！');
+              this.$emit('confirm');
+
+              this.closeDialog();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        }
+
+        if (this.tableData.some((item) => isEmpty(item.takeNum))) {
+          createConfirm('存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(() => {
+            this.tableData.forEach((item) => {
+              if (isEmpty(item.takeNum)) {
+                item.takeNum = 0;
+              }
+            });
+            if (this.validParams(true)) {
+              reqApiFn();
+            }
           });
+        } else {
+          reqApiFn();
+        }
       },
       // 页面显示时触发
       open() {

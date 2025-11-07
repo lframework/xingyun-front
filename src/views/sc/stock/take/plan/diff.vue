@@ -91,17 +91,17 @@
   export default defineComponent({
     // 使用组件
     components: {},
-    setup() {
-      return {
-        TAKE_STOCK_PLAN_TYPE,
-        TAKE_STOCK_PLAN_STATUS,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
+      };
     },
     data() {
       return {
@@ -233,30 +233,30 @@
       submit() {
         const unTakeRecords = this.oriTableData.filter((item) => isEmpty(item.oriTakeNum));
         if (!isEmpty(unTakeRecords)) {
-          createConfirm('盘点任务中存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(
-            () => {
-              this.doSubmit();
-            },
-          );
+          createConfirm(
+            '盘点任务中存在盘点数量为空的商品，差异生成时会将此部分商品的盘点数量置为0，确认对此盘点任务进行差异生成？',
+          ).then(() => {
+            this.doSubmit();
+          });
         } else {
-          this.doSubmit();
+          createConfirm('确认对此盘点任务进行差异生成？').then(() => {
+            this.doSubmit();
+          });
         }
       },
       doSubmit() {
-        createConfirm('确认对此盘点任务进行差异生成？').then(() => {
-          this.loading = true;
-          api
-            .createDiff(this.id)
-            .then(() => {
-              createSuccess('盘点任务完成差异生成！');
-              this.$emit('confirm');
+        this.loading = true;
+        api
+          .createDiff(this.id)
+          .then(() => {
+            createSuccess('盘点任务完成差异生成！');
+            this.$emit('confirm');
 
-              this.closeDialog();
-            })
-            .finally(() => {
-              this.loading = false;
-            });
-        });
+            this.closeDialog();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       },
     },
   });

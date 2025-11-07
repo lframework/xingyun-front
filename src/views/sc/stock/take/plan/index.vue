@@ -258,7 +258,9 @@
         createConfirm('对选中的盘点任务执行作废操作？').then(() => {
           this.loading = true;
           api
-            .cancel(row.id)
+            .cancel({
+              id: row.id,
+            })
             .then((res) => {
               createSuccess('作废成功！');
               this.search();
@@ -270,7 +272,7 @@
       },
       deleteRow(row) {
         createConfirm(
-          '对选中的预先盘点单执行删除操作？注：关联此盘点任务的库存盘点单均会删除。',
+          '对选中的盘点任务执行删除操作？注：关联此盘点任务的库存盘点单均会删除。',
         ).then(() => {
           this.loading = true;
           api
@@ -342,7 +344,7 @@
           },
           {
             permission: ['stock:take:plan:delete'],
-            label: '作废',
+            label: '删除',
             danger: true,
             ifShow: () => {
               return TAKE_STOCK_PLAN_STATUS.CANCELED.equalsCode(row.takeStatus);

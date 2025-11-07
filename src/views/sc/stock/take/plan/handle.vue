@@ -315,16 +315,7 @@
         });
       },
       submit() {
-        const unTakeRecords = this.oriTableData.filter((item) => isEmpty(item.oriTakeNum));
-        if (!isEmpty(unTakeRecords)) {
-          createConfirm('盘点任务中存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(
-            () => {
-              this.doSubmit();
-            },
-          );
-        } else {
-          this.doSubmit();
-        }
+        this.doSubmit();
       },
       doSubmit() {
         for (let i = 0; i < this.oriTableData.length; i++) {

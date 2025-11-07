@@ -236,7 +236,7 @@
 
         this.tableData = [];
       },
-      validParams() {
+      validParams(validNum) {
         if (isEmpty(this.formData.takeStockPlanId)) {
           createError('请选择关联盘点任务！');
           return false;
@@ -252,24 +252,29 @@
             createError('第' + (i + 1) + '行商品不允许为空！');
             return false;
           }
-          if (isEmpty(column.takeNum)) {
-            createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
-            return false;
+
+          if (validNum) {
+            if (isEmpty(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量不允许为空！');
+              return false;
+            }
           }
 
-          if (!isFloat(column.takeNum)) {
-            createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
-            return false;
-          }
+          if (!isEmpty(column.takeNum)) {
+            if (!isFloat(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量必须是数字！');
+              return false;
+            }
 
-          if (!isFloatGeZero(column.takeNum)) {
-            createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
-            return false;
-          }
+            if (!isFloatGeZero(column.takeNum)) {
+              createError('第' + (i + 1) + '行商品的盘点数量不允许小于0！');
+              return false;
+            }
 
-          if (!isNumberPrecision(column.takeNum, 8)) {
-            createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
-            return false;
+            if (!isNumberPrecision(column.takeNum, 8)) {
+              createError('第' + (i + 1) + '行商品的盘点数量最多允许8位小数！');
+              return false;
+            }
           }
         }
 
@@ -294,40 +299,74 @@
         if (!this.validParams()) {
           return;
         }
-        const params = this.buildParams();
+        const reqApiFn = () => {
+          const params = this.buildParams();
 
-        this.loading = true;
-        api
-          .create(params)
-          .then(() => {
-            createSuccess('保存成功！');
-            this.$emit('confirm');
+          this.loading = true;
+          api
+            .create(params)
+            .then(() => {
+              createSuccess('保存成功！');
+              this.$emit('confirm');
 
-            this.closeDialog();
-          })
-          .finally(() => {
-            this.loading = false;
+              this.closeDialog();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        };
+        if (this.tableData.some((item) => isEmpty(item.takeNum))) {
+          createConfirm('存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(() => {
+            this.tableData.forEach((item) => {
+              if (isEmpty(item.takeNum)) {
+                item.takeNum = 0;
+              }
+            });
+            if (this.validParams(true)) {
+              reqApiFn();
+            }
           });
+        } else {
+          reqApiFn();
+        }
       },
       // 直接审核通过
       directApprovePass() {
         if (!this.validParams()) {
           return;
         }
-        const params = this.buildParams();
 
-        this.loading = true;
-        api
-          .directApprovePass(params)
-          .then(() => {
-            createSuccess('审核通过！');
-            this.$emit('confirm');
+        const reqApiFn = () => {
+          const params = this.buildParams();
 
-            this.closeDialog();
-          })
-          .finally(() => {
-            this.loading = false;
+          this.loading = true;
+          api
+            .directApprovePass(params)
+            .then(() => {
+              createSuccess('审核通过！');
+              this.$emit('confirm');
+
+              this.closeDialog();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        };
+
+        if (this.tableData.some((item) => isEmpty(item.takeNum))) {
+          createConfirm('存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(() => {
+            this.tableData.forEach((item) => {
+              if (isEmpty(item.takeNum)) {
+                item.takeNum = 0;
+              }
+            });
+            if (this.validParams(true)) {
+              reqApiFn();
+            }
           });
+        } else {
+          reqApiFn();
+        }
       },
       // 页面显示时触发
       open() {

@@ -18,14 +18,20 @@
         <div
           class="j-form-item-content-wrapper"
           :style="{ width: _contentNest ? contentWidth : '100%' }"
-          ><slot></slot
-        ></div>
+        >
+          <a-tooltip v-if="showTextTooltip" :title="textContent" class="j-form-item-text-tooltip">
+            <span class="j-form-item-text-ellipsis">{{ textContent }}</span>
+          </a-tooltip>
+          <template v-else>
+            <slot></slot>
+          </template>
+        </div>
       </div>
     </div>
   </transition>
 </template>
 <script>
-  import { defineComponent, ref, toValue } from 'vue';
+  import { Comment, Fragment, Text, computed, defineComponent, ref, toValue, useSlots } from 'vue';
 
   export default defineComponent({
     name: 'JFormItem',
@@ -108,9 +114,73 @@
     },
     setup() {
       const visible = ref(true);
+      const slots = useSlots();
+
+      const textSlotInfo = computed(() => {
+        const slot = slots.default;
+
+        if (!slot) {
+          return {
+            isText: false,
+            text: '',
+          };
+        }
+
+        const nodes = slot();
+
+        if (!nodes || nodes.length === 0) {
+          return {
+            isText: false,
+            text: '',
+          };
+        }
+
+        let isTextOnly = true;
+        const textSegments = [];
+
+        const extractText = (vnodes) => {
+          vnodes.forEach((node) => {
+            if (!node) {
+              return;
+            }
+
+            const { type, children } = node;
+
+            if (type === Text) {
+              textSegments.push(typeof children === 'string' ? children : '');
+              return;
+            }
+
+            if (type === Comment) {
+              return;
+            }
+
+            if (type === Fragment && Array.isArray(children)) {
+              extractText(children);
+              return;
+            }
+
+            isTextOnly = false;
+          });
+        };
+
+        extractText(nodes);
+
+        const textValue = textSegments.join('').trim();
+
+        return {
+          isText: isTextOnly && textValue.length > 0,
+          text: textValue,
+        };
+      });
+
+      const showTextTooltip = computed(() => textSlotInfo.value.isText);
+      const textContent = computed(() => textSlotInfo.value.text);
 
       return {
         visible,
+        showTextTooltip,
+        textContent,
       };
     },
     computed: {
