@@ -403,9 +403,7 @@
             { validator: validCode, message: '编号必须由字母、数字、“-_.”组成，长度不能超过20位' },
           ],
           name: [{ required: true, message: '请输入名称' }],
-          skuCode: [{ required: true, message: '请输入SKU编号' }],
           categoryId: [{ required: true, message: '请选择分类' }],
-          brandId: [{ required: true, message: '请选择品牌' }],
           weight: [
             {
               validator: (rule, value) => {
@@ -445,7 +443,6 @@
             },
           ],
           taxRate: [
-            { required: true, message: '请输入进项税率（%）' },
             {
               validator: (rule, value) => {
                 if (!isEmpty(value)) {
@@ -465,7 +462,6 @@
             },
           ],
           saleTaxRate: [
-            { required: true, message: '请输入销项税率（%）' },
             {
               validator: (rule, value) => {
                 if (!isEmpty(value)) {
