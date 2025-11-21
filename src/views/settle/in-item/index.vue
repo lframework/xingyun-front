@@ -57,14 +57,14 @@
               @click="exportList"
               >导出</a-button
             >
-            <a-dropdown v-permission="['settle:in-item:modify']">
+            <a-dropdown>
               <template #overlay>
                 <a-menu @click="handleCommand">
                   <a-menu-item key="batchEnable" :icon="h(CheckOutlined)"> 批量启用 </a-menu-item>
                   <a-menu-item key="batchUnable" :icon="h(StopOutlined)"> 批量停用 </a-menu-item>
                 </a-menu>
               </template>
-              <a-button>更多<DownOutlined /></a-button>
+              <a-button v-permission="['settle:in-item:modify']">更多<DownOutlined /></a-button>
             </a-dropdown>
           </a-space>
         </template>

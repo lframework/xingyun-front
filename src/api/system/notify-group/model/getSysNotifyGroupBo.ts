@@ -28,9 +28,4 @@ export interface GetSysNotifyGroupBo {
    * 备注
    */
   description: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

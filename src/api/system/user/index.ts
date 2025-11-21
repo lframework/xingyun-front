@@ -109,10 +109,10 @@ export function update(data: UpdateSysUserVo): Promise<void> {
  * 停用
  * @param id
  */
-export function unable(id: string): Promise<void> {
-  return defHttp.patch<void>(
+export function deleteById(id: string): Promise<void> {
+  return defHttp.delete<void>(
     {
-      url: baseUrl + '/unable',
+      url: baseUrl,
       data: {
         id,
       },

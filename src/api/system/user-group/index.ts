@@ -106,3 +106,23 @@ export function update(data: UpdateSysUserGroupVo): Promise<void> {
     },
   );
 }
+
+/**
+ * 根据ID删除
+ * @param id
+ */
+export function deleteById(id: string): Promise<void> {
+  return defHttp.delete<void>(
+    {
+      url: baseUrl,
+      data: {
+        id,
+      },
+    },
+    {
+      errorMessageMode: 'none',
+      contentType: ContentTypeEnum.FORM_URLENCODED,
+      region,
+    },
+  );
+}

@@ -33,9 +33,4 @@ export interface QuerySysNotifyGroupBo {
    * 创建时间
    */
   createTime: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

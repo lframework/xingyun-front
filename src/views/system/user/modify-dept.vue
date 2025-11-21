@@ -3,32 +3,31 @@
     v-model:open="visible"
     :mask-closable="false"
     width="40%"
-    title="修改"
+    title="修改部门"
     :style="{ top: '20px' }"
     :footer="null"
   >
-    <div v-if="visible" v-permission="['system:role:modify']" v-loading="loading">
+    <div v-if="visible" v-permission="['system:user:modify']" v-loading="loading">
       <a-form
         ref="form"
+        v-loading="loading"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 16 }"
         :model="formData"
-        :rules="rules"
       >
-        <a-form-item label="编号" name="code">
-          <a-input v-model:value.trim="formData.code" allow-clear />
+        <a-form-item label="部门" name="deptIds">
+          <sys-dept-selector
+            v-model:value="formData.deptIds"
+            :only-final="false"
+            :multiple="true"
+          />
         </a-form-item>
-        <a-form-item label="名称" name="name">
-          <a-input v-model:value.trim="formData.name" allow-clear />
-        </a-form-item>
-        <a-form-item label="分类" name="categoryId">
-          <sys-role-category-selector v-model:value="formData.categoryId" />
-        </a-form-item>
-        <a-form-item label="权限" name="permission">
-          <a-input v-model:value.trim="formData.permission" allow-clear />
-        </a-form-item>
-        <a-form-item label="备注" name="description">
-          <a-textarea v-model:value.trim="formData.description" />
+        <a-form-item label="操作类型" name="handleType">
+          <a-radio-group v-model:value="formData.handleType" name="handleTypeGroup">
+            <a-radio value="1">新增</a-radio>
+            <a-radio value="2">替换</a-radio>
+            <a-radio value="3">删除</a-radio>
+          </a-radio-group>
         </a-form-item>
         <div class="form-modal-footer">
           <a-space>
@@ -44,20 +43,19 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
-  import { validCode } from '@/utils/validate';
-  import * as api from '@/api/system/role';
-  import { createSuccess } from '@/hooks/web/msg';
-  import SysRoleCategorySelector from '@/components/Selector/SysRoleCategorySelector.vue';
+  import * as api from '@/api/system/user-dept';
+  import { createError, createSuccess } from '@/hooks/web/msg';
+  import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
+  import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
-    // 使用组件
     components: {
-      SysRoleCategorySelector,
+      SysDeptSelector,
     },
     props: {
-      id: {
-        type: String,
-        required: true,
+      ids: {
+        type: Array,
+        default: () => [],
       },
     },
     setup() {
@@ -71,15 +69,11 @@
         loading: false,
         // 表单数据
         formData: {},
-        // 表单校验规则
-        rules: {
-          code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
-          name: [{ required: true, message: '请输入名称' }],
-          categoryId: [{ required: true, message: '请选择分类' }],
-        },
       };
     },
+    computed: {},
     created() {
+      // 初始化表单数据
       this.initFormData();
     },
     methods: {
@@ -97,23 +91,33 @@
       // 初始化表单数据
       initFormData() {
         this.formData = {
-          id: '',
-          code: '',
-          name: '',
-          permission: '',
-          description: '',
-          categoryId: '',
+          deptIds: [],
+          handleType: '1',
         };
       },
       // 提交表单事件
       submit() {
+        if (this.formData.handleType === '1' || this.formData.handleType === '3') {
+          // 新增
+          if (isEmpty(this.formData.deptIds)) {
+            createError('请选择部门！');
+            return;
+          }
+        }
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             this.loading = true;
+            const params = {
+              deptIds: this.formData.deptIds,
+              userIds: this.ids,
+              handleType: this.formData.handleType,
+            };
             api
-              .update(this.formData)
+              .setting(params)
               .then(() => {
                 createSuccess('修改成功！');
+                // 初始化表单数据
+                this.initFormData();
                 this.$emit('confirm');
                 this.visible = false;
               })
@@ -125,23 +129,8 @@
       },
       // 页面显示时触发
       open() {
-        // 初始化数据
+        // 初始化表单数据
         this.initFormData();
-
-        // 查询数据
-        this.loadFormData();
-      },
-      // 查询数据
-      loadFormData() {
-        this.loading = true;
-        api
-          .get(this.id)
-          .then((data) => {
-            this.formData = data;
-          })
-          .finally(() => {
-            this.loading = false;
-          });
       },
     },
   });

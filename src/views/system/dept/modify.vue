@@ -17,22 +17,7 @@
         <a-input v-model:value.trim="formData.shortName" allow-clear />
       </a-form-item>
       <a-form-item label="上级部门" name="parentId">
-        <sys-dept-selector
-          v-if="inited"
-          v-model:value="formData.parentId"
-          :request-params="{ available: formData.available ? true : undefined }"
-          :only-final="false"
-        />
-      </a-form-item>
-      <a-form-item label="状态" name="available">
-        <a-select v-model:value="formData.available" allow-clear>
-          <a-select-option
-            v-for="item in AVAILABLE.getValues()"
-            :key="item.code"
-            :value="item.code"
-            >{{ item.desc }}</a-select-option
-          >
-        </a-select>
+        <sys-dept-selector v-if="inited" v-model:value="formData.parentId" :only-final="false" />
       </a-form-item>
       <a-form-item label="备注" name="description">
         <a-textarea v-model:value.trim="formData.description" />
@@ -64,7 +49,6 @@
   import * as api from '@/api/system/dept';
   import { createSuccess } from '@/hooks/web/msg';
   import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
-  import { AVAILABLE } from '@/enums/biz/available';
   import { SYS_DATA_PERMISSION_DATA_BIZ_TYPE } from '@/enums/biz/sysDataPermissionDataBizType';
 
   export default defineComponent({
@@ -72,17 +56,16 @@
       DataPermission,
       SysDeptSelector,
     },
-    setup() {
-      return {
-        AVAILABLE,
-        SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
+      };
     },
     data() {
       return {
@@ -96,7 +79,6 @@
           code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入名称' }],
           shortName: [{ required: true, message: '请输入简称' }],
-          available: [{ required: true, message: '请选择状态' }],
         },
       };
     },
@@ -116,7 +98,6 @@
           description: '',
           name: '',
           shortName: '',
-          available: '',
         };
       },
       // 提交表单事件

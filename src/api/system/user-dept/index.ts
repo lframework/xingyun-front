@@ -1,15 +1,15 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ContentTypeEnum } from '@/enums/httpEnum';
-import { SysUserRoleSettingVo } from '@/api/system/user-role/model/sysUserRoleSettingVo';
+import { SysUserDeptSettingVo } from '@/api/system/user-dept/model/sysUserDeptSettingVo';
 
-const baseUrl = '/system/user/role';
+const baseUrl = '/system/user/dept';
 const region = 'cloud-api';
 
 /**
- * 设置角色
+ * 设置部门
  * @param data
  */
-export function setting(data: SysUserRoleSettingVo): Promise<void> {
+export function setting(data: SysUserDeptSettingVo): Promise<void> {
   return defHttp.post<void>(
     {
       url: baseUrl + '/setting',

@@ -33,10 +33,7 @@
         <a-descriptions-item label="联系电话" :span="2">
           {{ formData.telephone }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="2">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
-        <a-descriptions-item label="是否锁定" :span="2">
+        <a-descriptions-item label="是否锁定" :span="4">
           {{ formData.lockStatus ? '是' : '否' }}
         </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">

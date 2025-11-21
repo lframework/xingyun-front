@@ -22,6 +22,19 @@ export function selector(params: void): Promise<SysDeptSelectorBo[]> {
   );
 }
 
+export function loadDept(ids: string[]): Promise<SysDeptSelectorBo[]> {
+  return defHttp.post<SysDeptSelectorBo[]>(
+    {
+      url: selectorBaseUrl + '/dept/load',
+      data: ids,
+    },
+    {
+      region,
+      contentType: ContentTypeEnum.JSON,
+    },
+  );
+}
+
 /**
  * 部门树形菜单数据
  */
@@ -55,33 +68,13 @@ export function get(id: string): Promise<GetSysDeptBo> {
 }
 
 /**
- * 停用部门
+ * 删除部门
  * @param id
  */
-export function unable(id: string): Promise<void> {
-  return defHttp.patch<void>(
+export function deleteById(id: string): Promise<void> {
+  return defHttp.delete<void>(
     {
-      url: baseUrl + '/unable',
-      data: {
-        id,
-      },
-    },
-    {
-      errorMessageMode: 'none',
-      contentType: ContentTypeEnum.FORM_URLENCODED,
-      region,
-    },
-  );
-}
-
-/**
- * 启用部门
- * @param id
- */
-export function enable(id: string): Promise<void> {
-  return defHttp.patch<void>(
-    {
-      url: baseUrl + '/enable',
+      url: baseUrl,
       data: {
         id,
       },

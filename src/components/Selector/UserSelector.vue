@@ -7,12 +7,6 @@
       :table-column="[
         { field: 'code', title: '编号', width: 120 },
         { field: 'name', title: '姓名', minWidth: 160 },
-        {
-          field: 'available',
-          title: '状态',
-          width: 80,
-          slots: { default: 'available_default' },
-        },
       ]"
       :request-params="_requestParams"
       v-bind="$attrs"
@@ -26,16 +20,6 @@
             </j-form-item>
             <j-form-item v-if="isEmpty(requestParams.name)" label="姓名">
               <a-input v-model:value="searchParams.name" />
-            </j-form-item>
-            <j-form-item v-if="isEmpty(requestParams.available)" label="状态">
-              <a-select v-model:value="searchParams.available" placeholder="全部" allow-clear>
-                <a-select-option
-                  v-for="item in AVAILABLE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
             </j-form-item>
           </j-form>
         </j-border>
@@ -60,7 +44,6 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/user';
   import { isEmpty } from '@/utils/utils';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     name: 'UserSelector',
@@ -68,7 +51,6 @@
     setup() {
       return {
         isEmpty,
-        AVAILABLE,
       };
     },
     props: {
@@ -84,13 +66,12 @@
         searchParams: {
           code: '',
           name: '',
-          available: AVAILABLE.ENABLE.code,
         },
       };
     },
     computed: {
       _requestParams() {
-        return { available: true, ...this.searchParams, ...this.requestParams };
+        return { ...this.searchParams, ...this.requestParams };
       },
     },
     methods: {

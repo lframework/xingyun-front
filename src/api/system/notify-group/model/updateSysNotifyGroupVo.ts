@@ -5,9 +5,4 @@ export interface UpdateSysNotifyGroupVo extends CreateSysNotifyGroupVo {
    * ID
    */
   id: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

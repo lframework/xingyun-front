@@ -4,15 +4,7 @@
       ref="selector"
       :request="getList"
       :load="getLoad"
-      :table-column="[
-        { field: 'name', title: '名称', minWidth: 160 },
-        {
-          field: 'available',
-          title: '状态',
-          width: 80,
-          slots: { default: 'available_default' },
-        },
-      ]"
+      :table-column="[{ field: 'name', title: '名称', minWidth: 160 }]"
       :request-params="_requestParams"
       v-bind="$attrs"
     >
@@ -22,16 +14,6 @@
           <j-form bordered>
             <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
               <a-input v-model:value="searchParams.name" />
-            </j-form-item>
-            <j-form-item v-if="isEmpty(requestParams.available)" label="状态">
-              <a-select v-model:value="searchParams.available" placeholder="全部" allow-clear>
-                <a-select-option
-                  v-for="item in AVAILABLE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
             </j-form-item>
           </j-form>
         </j-border>
@@ -56,17 +38,10 @@
   import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/notify-group';
   import { isEmpty } from '@/utils/utils';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     name: 'SysNotifyGroupSelector',
     components: { SearchOutlined },
-    setup() {
-      return {
-        isEmpty,
-        AVAILABLE,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
@@ -75,24 +50,27 @@
         },
       },
     },
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     data() {
       return {
         searchParams: {
           name: '',
-          available: AVAILABLE.ENABLE.code,
         },
       };
     },
     computed: {
       _requestParams() {
-        return { available: true, ...this.searchParams, ...this.requestParams };
+        return { ...this.searchParams, ...this.requestParams };
       },
     },
     methods: {
       getList(params) {
         return api.selector({
           ...params,
-          available: true,
           ...this.searchParams,
           ...this.requestParams,
         });

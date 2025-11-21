@@ -72,33 +72,13 @@ export function get(id: string): Promise<GetSysRoleBo> {
 }
 
 /**
- * 停用
+ * 根据ID删除
  * @param id
  */
-export function unable(id: string): Promise<void> {
-  return defHttp.patch<void>(
+export function deleteById(id: string): Promise<void> {
+  return defHttp.delete<void>(
     {
-      url: baseUrl + '/unable',
-      data: {
-        id,
-      },
-    },
-    {
-      errorMessageMode: 'none',
-      contentType: ContentTypeEnum.FORM_URLENCODED,
-      region,
-    },
-  );
-}
-
-/**
- * 启用
- * @param id
- */
-export function enable(id: string): Promise<void> {
-  return defHttp.patch<void>(
-    {
-      url: baseUrl + '/enable',
+      url: baseUrl,
       data: {
         id,
       },

@@ -1,3 +1,5 @@
+import { PageVo } from '@/api/model/pageVo';
+
 export interface SysRoleSelectorVo extends PageVo {
   /**
    * 编号
@@ -8,9 +10,4 @@ export interface SysRoleSelectorVo extends PageVo {
    * 名称
    */
   name: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

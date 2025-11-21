@@ -8,9 +8,4 @@ export interface SysNotifyGroupSelectorBo {
    * 名称
    */
   name: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

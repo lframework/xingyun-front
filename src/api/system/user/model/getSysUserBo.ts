@@ -55,11 +55,6 @@ export interface GetSysUserBo {
   roleName: string;
 
   /**
-   * 状态
-   */
-  available: boolean;
-
-  /**
    * 是否锁定
    */
   lockStatus: boolean;

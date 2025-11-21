@@ -1,4 +1,4 @@
-export interface SysUserRoleSettingVo {
+export interface SysUserDeptSettingVo {
   /**
    * 用户ID
    */
@@ -7,7 +7,7 @@ export interface SysUserRoleSettingVo {
   /**
    * 角色ID
    */
-  roleIds: string[];
+  deptIds: string[];
 
   /**
    * 操作类型

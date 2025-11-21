@@ -43,16 +43,6 @@
                     />
                   </div>
                 </j-form-item>
-                <j-form-item label="状态">
-                  <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                    <a-select-option
-                      v-for="item in AVAILABLE.values()"
-                      :key="item.code"
-                      :value="item.code"
-                      >{{ item.desc }}</a-select-option
-                    >
-                  </a-select>
-                </j-form-item>
               </j-form>
             </j-border>
           </template>
@@ -60,15 +50,24 @@
           <template #toolbar_buttons>
             <a-space>
               <a-button type="primary" :icon="h(SearchOutlined)" @click="search">查询</a-button>
-              <a-button type="primary" :icon="h(PlusOutlined)" @click="$refs.addDialog.openDialog()"
+              <a-button
+                type="primary"
+                v-permission="['system:user-group:add']"
+                :icon="h(PlusOutlined)"
+                @click="$refs.addDialog.openDialog()"
                 >新增</a-button
               >
+              <a-dropdown>
+                <template #overlay>
+                  <a-menu @click="handleCommand">
+                    <a-menu-item key="batchDelete" :icon="h(DeleteOutlined)">批量删除 </a-menu-item>
+                  </a-menu>
+                </template>
+                <a-button v-permission="['system:user-group:delete']"
+                  >更多<DownOutlined
+                /></a-button>
+              </a-dropdown>
             </a-space>
-          </template>
-
-          <!-- 状态 列自定义内容 -->
-          <template #available_default="{ row }">
-            <available-tag :available="row.available" />
           </template>
 
           <!-- 操作 列自定义内容 -->
@@ -83,6 +82,19 @@
 
     <!-- 修改窗口 -->
     <modify :id="id" ref="updateDialog" @confirm="search" />
+
+    <!-- 批量操作 -->
+    <batch-handler
+      ref="batchDeleteHandlerDialog"
+      :table-column="[
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'name', title: '名称', minWidth: 140 },
+      ]"
+      title="批量删除"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchDelete"
+      @confirm="search"
+    />
   </div>
 </template>
 
@@ -91,24 +103,30 @@
   import Add from './add.vue';
   import Modify from './modify.vue';
   import * as api from '@/api/system/user-group';
-  import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
-  import { buildSortPageVo } from '@/utils/utils';
-  import { AVAILABLE } from '@/enums/biz/available';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import {
+    SearchOutlined,
+    PlusOutlined,
+    DownOutlined,
+    DeleteOutlined,
+  } from '@ant-design/icons-vue';
+  import { buildSortPageVo, isEmpty } from '@/utils/utils';
+  import BatchHandler from '@/components/BatchHandler';
+  import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
     name: 'UserGroup',
     components: {
+      BatchHandler,
+      DownOutlined,
       Add,
       Modify,
-      AvailableTag,
     },
     setup() {
       return {
         h,
         SearchOutlined,
         PlusOutlined,
-        AVAILABLE,
+        DeleteOutlined,
       };
     },
     data() {
@@ -121,7 +139,6 @@
           name: '',
           createTimeStart: '',
           createTimeEnd: '',
-          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -132,13 +149,12 @@
         },
         // 列表数据配置
         tableColumn: [
-          { type: 'seq', width: 50 },
+          { type: 'checkbox', width: 45 },
           { field: 'code', title: '编号', width: 120, sortable: true },
           { field: 'name', title: '名称', minWidth: 140, sortable: true },
           { field: 'description', title: '备注', minWidth: 200 },
           { field: 'createTime', title: '创建时间', width: 170, sortable: true },
           { field: 'createBy', title: '创建人', width: 100 },
-          { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
           { title: '操作', width: 60, fixed: 'right', slots: { default: 'action_default' } },
         ],
         // 请求接口配置
@@ -156,6 +172,7 @@
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     created() {},
@@ -187,6 +204,27 @@
             },
           },
         ];
+      },
+      handleCommand({ key }) {
+        if (key === 'batchDelete') {
+          this.batchDelete();
+        }
+      },
+      doBatchDelete(row) {
+        return api.deleteById(row.id);
+      },
+      // 批量停用
+      batchDelete() {
+        const records = this.$refs.grid.getCheckboxRecords();
+
+        if (isEmpty(records)) {
+          createError('请选择要删除的用户分组！');
+          return;
+        }
+
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
     },
   });
