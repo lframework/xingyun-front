@@ -112,17 +112,17 @@
     components: {
       OrderTimeLine,
     },
-    setup() {
-      return {
-        STOCK_ADJUST_SHEET_BIZ_TYPE,
-        STOCK_ADJUST_SHEET_STATUS,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        STOCK_ADJUST_SHEET_BIZ_TYPE,
+        STOCK_ADJUST_SHEET_STATUS,
+      };
     },
     data() {
       return {

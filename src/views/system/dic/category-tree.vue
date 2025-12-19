@@ -41,8 +41,13 @@
         </a-dropdown>
       </template>
     </a-tree>
-    <add-category ref="addCategoryDialog" @confirm="doSearch" />
-    <modify-category :id="id" ref="updateCategoryDialog" @confirm="doSearch" />
+    <add-category :tenant-id="tenantId" ref="addCategoryDialog" @confirm="doSearch" />
+    <modify-category
+      :tenant-id="tenantId"
+      :id="id"
+      ref="updateCategoryDialog"
+      @confirm="doSearch"
+    />
   </a-card>
 </template>
 <script>
@@ -62,6 +67,10 @@
       height: {
         type: Number,
         default: 100,
+      },
+      tenantId: {
+        type: Number,
+        required: true,
       },
     },
     setup() {
@@ -95,7 +104,7 @@
           this.$refs.updateCategoryDialog.openDialog();
         } else if (menuKey === '3') {
           createConfirm('是否确认删除此分类？').then(() => {
-            api.deleteById(treeKey).then(() => {
+            api.deleteById(treeKey, this.tenantId).then(() => {
               createSuccess('删除成功！');
               this.doSearch();
             });
@@ -103,7 +112,7 @@
         }
       },
       doSearch() {
-        api.query().then((res) => {
+        api.query({ tenantId: this.tenantId }).then((res) => {
           this.treeData[0].children = [...res.map((item) => Object.assign({ parentId: 0 }, item))];
         });
       },

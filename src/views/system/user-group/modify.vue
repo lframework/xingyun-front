@@ -51,15 +51,14 @@
     components: {
       UserSelector,
     },
-    setup() {
-      return {
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {};
     },
     data() {
       return {

@@ -58,10 +58,10 @@
       </page-wrapper>
 
       <!-- 新增窗口 -->
-      <add ref="addDialog" :dic-id="dicId" @confirm="search" />
+      <add ref="addDialog" :tenant-id="tenantId" :dic-id="dicId" @confirm="search" />
 
       <!-- 修改窗口 -->
-      <modify ref="updateDialog" :item-id="id" @confirm="search" />
+      <modify ref="updateDialog" :tenant-id="tenantId" :item-id="id" @confirm="search" />
     </div>
   </a-modal>
 </template>
@@ -82,6 +82,10 @@
     props: {
       dicId: {
         type: String,
+        required: true,
+      },
+      tenantId: {
+        type: Number,
         required: true,
       },
     },
@@ -163,7 +167,7 @@
       },
       // 查询前构建具体的查询参数
       buildSearchFormData() {
-        return Object.assign({ dicId: this.dicId }, this.searchFormData);
+        return Object.assign({ dicId: this.dicId, tenantId: this.tenantId }, this.searchFormData);
       },
       createActions(row) {
         return [
@@ -189,7 +193,7 @@
       open() {},
       deleteRow(row) {
         createConfirm('是否确认删除此数据字典值？').then(() => {
-          api.deleteById(row.id).then(() => {
+          api.deleteById(row.id, this.tenantId).then(() => {
             createSuccess('删除成功！');
             this.search();
           });

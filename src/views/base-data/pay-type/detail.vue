@@ -18,9 +18,6 @@
         <a-descriptions-item label="是否记录内容" :span="2">
           {{ formData.recText ? '是' : '否' }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="2">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
         </a-descriptions-item>
@@ -31,13 +28,10 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/pay-type';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {
-      AvailableTag,
-    },
+    components: {},
 
     props: {
       id: {
@@ -79,7 +73,6 @@
           shortName: '',
           logo: '',
           introduction: '',
-          available: '',
           description: '',
         };
       },

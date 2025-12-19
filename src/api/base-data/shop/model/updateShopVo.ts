@@ -30,11 +30,6 @@ export interface UpdateShopVo {
   lat: number;
 
   /**
-   * 状态
-   */
-  available: boolean;
-
-  /**
    * 备注
    */
   description: string;

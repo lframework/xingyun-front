@@ -43,17 +43,14 @@
             <a-form-item label="商品分类" name="categoryId">
               <product-category-selector
                 v-model:value="formData.categoryId"
-                :only-final="false"
+                :only-final="true"
                 @update:value="selectCategory"
               />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="商品品牌" name="brandId">
-              <product-brand-selector
-                v-model:value="formData.brandId"
-                :request-params="{ available: true }"
-              />
+              <product-brand-selector v-model:value="formData.brandId" />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -99,18 +96,6 @@
           <a-col :md="8" :sm="24">
             <a-form-item label="零售价（元）" name="retailPrice">
               <a-input v-model:value="formData.retailPrice" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="状态" name="available">
-              <a-select v-model:value="formData.available" allow-clear>
-                <a-select-option
-                  v-for="item in AVAILABLE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
             </a-form-item>
           </a-col>
         </a-row>
@@ -355,7 +340,6 @@
   import { PRODUCT_TYPE } from '@/enums/biz/productType';
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
   import { COLUMN_DATA_TYPE } from '@/enums/biz/columnDataType';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     name: 'ModifyProduct',
@@ -375,7 +359,6 @@
         PRODUCT_TYPE,
         COLUMN_TYPE,
         COLUMN_DATA_TYPE,
-        AVAILABLE,
       };
     },
     data() {
@@ -532,7 +515,6 @@
               },
             },
           ],
-          available: [{ required: true, message: '请选择状态' }],
         },
       };
     },

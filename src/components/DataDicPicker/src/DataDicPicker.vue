@@ -24,11 +24,6 @@
 
   export default defineComponent({
     name: 'DataDicPicker',
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       code: {
         type: String,
@@ -46,6 +41,11 @@
         type: Boolean,
         default: false,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

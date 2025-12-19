@@ -108,12 +108,6 @@
       StoreCenterSelector,
       SupplierSelector,
     },
-    setup() {
-      return {
-        isEmpty,
-        PURCHASE_ORDER_STATUS,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
@@ -121,6 +115,12 @@
           return {};
         },
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+        PURCHASE_ORDER_STATUS,
+      };
     },
     data() {
       return {

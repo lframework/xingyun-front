@@ -77,16 +77,6 @@
             :disabled="columnTypeDisabled"
           />
         </a-form-item>
-        <a-form-item label="状态" name="available">
-          <a-select v-model:value="formData.available" allow-clear>
-            <a-select-option
-              v-for="item in AVAILABLE.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-select-option
-            >
-          </a-select>
-        </a-form-item>
         <a-form-item label="备注" name="description">
           <a-textarea v-model:value.trim="formData.description" />
         </a-form-item>
@@ -112,26 +102,24 @@
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
   import { COLUMN_DATA_TYPE } from '@/enums/biz/columnDataType';
   import { PROPERTY_TYPE } from '@/enums/biz/propertyType';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
     components: {
       ProductCategorySelector,
     },
-    setup() {
-      return {
-        COLUMN_TYPE,
-        COLUMN_DATA_TYPE,
-        PROPERTY_TYPE,
-        AVAILABLE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        COLUMN_TYPE,
+        COLUMN_DATA_TYPE,
+        PROPERTY_TYPE,
+      };
     },
     data() {
       return {
@@ -151,7 +139,6 @@
           columnType: [{ required: true, message: '请选择字段类型' }],
           columnDataType: [{ required: true, message: '请选择数据类型' }],
           propertyType: [{ required: true, message: '请选择类别' }],
-          available: [{ required: true, message: '请选择状态' }],
         },
       };
     },
@@ -180,7 +167,6 @@
           columnType: '',
           columnDataType: '',
           propertyType: '',
-          available: '',
           description: '',
           categories: [],
         };
@@ -204,7 +190,6 @@
               columnType: this.formData.columnType,
               columnDataType: this.formData.columnDataType,
               propertyType: this.formData.propertyType,
-              available: this.formData.available,
               description: this.formData.description,
             };
             if (!isEmpty(this.formData.categories)) {

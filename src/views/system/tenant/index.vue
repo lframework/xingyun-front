@@ -133,6 +133,14 @@
           { field: 'name', title: '名称', minWidth: 180, sortable: true },
           { field: 'serverName', title: '绑定域名', with: 150 },
           { field: 'jdbcUrl', title: 'JDBC Url', minWidth: 260 },
+          {
+            field: 'isPlatform',
+            title: '是否平台管理租户',
+            width: 120,
+            formatter: ({ cellValue }) => {
+              return cellValue ? '是' : '否';
+            },
+          },
           { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
           { title: '操作', width: 160, fixed: 'right', slots: { default: 'action_default' } },
         ],

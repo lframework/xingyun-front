@@ -60,17 +60,17 @@
       UpOutlined,
       DownOutlined,
     },
-    setup() {
-      return {
-        isEmpty,
-        ORDER_TIME_LINE_BIZ_TYPE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+        ORDER_TIME_LINE_BIZ_TYPE,
+      };
     },
     data() {
       return {

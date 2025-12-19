@@ -32,7 +32,7 @@
           <icon-picker v-model:value="formData.icon" />
         </a-form-item>
         <a-form-item label="父级菜单" name="parentId">
-          <sys-menu-selector v-model:value="formData.parentId" :only-final="false" />
+          <sys-menu-selector v-model:value="formData.parentId" :tenant-id="tenantId" :only-final="false" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -107,29 +107,6 @@
               allow-clear
             />
           </a-form-item>
-          <a-form-item
-            v-if="
-              MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
-              MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(formData.componentType)
-            "
-            label="自定义列表"
-            name="customListId"
-          >
-            <gen-custom-list-selector
-              v-model:value="formData.customListId"
-              :request-params="{ available: true }"
-            />
-          </a-form-item>
-          <a-form-item
-            v-if="
-              MENU_DISPLAY.FUNCTION.equalsCode(formData.display) &&
-              MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(formData.componentType)
-            "
-            label="自定义页面"
-            name="customPageId"
-          >
-            <gen-custom-page-selector v-model:value="formData.customPageId" />
-          </a-form-item>
           <a-form-item v-if="!MENU_DISPLAY.PERMISSION.equalsCode(formData.display)" name="path">
             <template #label>
               <a-space>
@@ -188,8 +165,6 @@
   import * as api from '@/api/system/menu';
   import { isEmpty } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
-  import GenCustomListSelector from '@/components/Selector/GenCustomListSelector.vue';
-  import GenCustomPageSelector from '@/components/Selector/GenCustomPageSelector.vue';
   import SysMenuSelector from '@/components/Selector/SysMenuSelector.vue';
   import { MENU_DISPLAY } from '@/enums/biz/menuDisplay';
   import { MENU_COMPONENT_TYPE } from '@/enums/biz/menuComponentType';
@@ -200,9 +175,17 @@
       IconPicker,
       JsonEditor,
       QuestionCircleOutlined,
-      GenCustomListSelector,
-      GenCustomPageSelector,
       SysMenuSelector,
+    },
+    props: {
+      id: {
+        type: String,
+        required: true,
+      },
+      tenantId: {
+        type: Number,
+        required: true,
+      },
     },
     setup() {
       return {
@@ -211,12 +194,6 @@
         MENU_COMPONENT_TYPE,
         AVAILABLE,
       };
-    },
-    props: {
-      id: {
-        type: String,
-        required: true,
-      },
     },
     data() {
       return {
@@ -302,12 +279,7 @@
       },
       doSubmit() {
         this.loading = true;
-        const params = Object.assign({}, this.formData);
-        if (MENU_COMPONENT_TYPE.CUSTOM_LIST.equalsCode(this.formData.componentType)) {
-          params.component = params.customListId;
-        } else if (MENU_COMPONENT_TYPE.CUSTOM_PAGE.equalsCode(this.formData.componentType)) {
-          params.component = params.customPageId;
-        }
+        const params = Object.assign({}, this.formData, {tenantId: this.tenantId});
         api
           .update(params)
           .then(() => {
@@ -331,7 +303,7 @@
       loadData() {
         this.loading = true;
         api
-          .get(this.id)
+          .get(this.id, this.tenantId)
           .then((data) => {
             this.formData = data;
           })

@@ -18,7 +18,7 @@ export function queryExporting(): Promise<ExportingExportTaskBo[]> {
       url: baseUrl + '/exporting',
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: true,
       region,
     },
   );

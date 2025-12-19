@@ -47,6 +47,12 @@
     components: {
       SysDataDicCategorySelector,
     },
+    props: {
+      tenantId: {
+        type: String,
+        required: true,
+      },
+    },
     data() {
       return {
         // 是否可见
@@ -96,6 +102,7 @@
               code: this.formData.code,
               name: this.formData.name,
               categoryId: this.formData.categoryId || '',
+              tenantId: this.tenantId,
             };
             api
               .create(params)

@@ -44,16 +44,16 @@
       OrderTimeLine,
     },
     mixins: [printMix],
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

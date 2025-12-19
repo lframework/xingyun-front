@@ -94,7 +94,12 @@
                   <vxe-column field="skuCode" title="商品SKU编号" width="120" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
-                  <vxe-column field="retailPrice" title="参考零售价（元）" width="140" align="right" />
+                  <vxe-column
+                    field="retailPrice"
+                    title="参考零售价（元）"
+                    width="140"
+                    align="right"
+                  />
                   <vxe-column field="stockNum" title="库存数量" width="140" align="right" />
                 </vxe-table>
               </div>

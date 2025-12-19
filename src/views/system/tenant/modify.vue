@@ -51,6 +51,13 @@
           </a-space>
           <a-input v-else v-model:value="formData.jdbcPassword" allow-clear />
         </a-form-item>
+        <a-form-item label="是否平台管理租户" name="isPlatform">
+          <a-switch
+            v-model:checked="formData.isPlatform"
+            checked-children="是"
+            un-checked-children="否"
+          />
+        </a-form-item>
         <a-form-item label="状态" name="available">
           <a-select v-model:value="formData.available" allow-clear>
             <a-select-option
@@ -83,16 +90,16 @@
   export default defineComponent({
     // 使用组件
     components: { QuestionCircleOutlined },
-    setup() {
-      return {
-        AVAILABLE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        AVAILABLE,
+      };
     },
     data() {
       return {

@@ -144,6 +144,12 @@
       OrderTimeLine,
     },
     mixins: [printMix],
+    props: {
+      id: {
+        type: String,
+        required: true,
+      },
+    },
     setup() {
       return {
         isEmpty,
@@ -152,12 +158,6 @@
         mul,
         RETAIL_OUT_SHEET_STATUS,
       };
-    },
-    props: {
-      id: {
-        type: String,
-        required: true,
-      },
     },
     data() {
       return {

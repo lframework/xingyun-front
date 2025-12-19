@@ -363,7 +363,7 @@
             .finally(() => {
               this.loading = false;
             });
-        }
+        };
 
         if (this.tableData.some((item) => isEmpty(item.takeNum))) {
           createConfirm('存在盘点数量为空的商品，是否将此部分商品的盘点数量置为0？').then(() => {

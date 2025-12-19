@@ -76,12 +76,6 @@
   export default defineComponent({
     // 使用组件
     components: {},
-    setup() {
-      return {
-        isEmpty,
-        QRTZ_JOB_TYPE,
-      };
-    },
     props: {
       name: {
         type: String,
@@ -91,6 +85,12 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+        QRTZ_JOB_TYPE,
+      };
     },
     data() {
       return {

@@ -166,17 +166,17 @@
       DetailRetailOutSheet,
       LogisticsCompanySelector,
     },
-    setup() {
-      return {
-        LOGISTICS_SHEET_STATUS,
-        LOGISTICS_SHEET_DETAIL_BIZ_TYPE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        LOGISTICS_SHEET_STATUS,
+        LOGISTICS_SHEET_DETAIL_BIZ_TYPE,
+      };
     },
     data() {
       return {

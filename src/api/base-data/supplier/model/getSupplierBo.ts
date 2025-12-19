@@ -100,11 +100,6 @@ export interface GetSupplierBo {
   accountNo: string;
 
   /**
-   * 状态
-   */
-  available: boolean;
-
-  /**
    * 备注
    */
   description: string;

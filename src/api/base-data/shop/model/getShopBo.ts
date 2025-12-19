@@ -35,11 +35,6 @@ export interface GetShopBo {
   lat: number;
 
   /**
-   * 状态
-   */
-  available: boolean;
-
-  /**
    * 备注
    */
   description: string;

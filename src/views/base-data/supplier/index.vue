@@ -27,16 +27,6 @@
               <j-form-item label="名称">
                 <a-input v-model:value="searchFormData.name" allow-clear />
               </j-form-item>
-              <j-form-item label="状态">
-                <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option
-                    v-for="item in AVAILABLE.values()"
-                    :key="item.code"
-                    :value="item.code"
-                    >{{ item.desc }}</a-select-option
-                  >
-                </a-select>
-              </j-form-item>
             </j-form>
           </j-border>
         </template>
@@ -60,18 +50,12 @@
             <a-dropdown>
               <template #overlay>
                 <a-menu @click="handleCommand">
-                  <a-menu-item key="batchEnable" :icon="h(CheckOutlined)"> 批量启用 </a-menu-item>
-                  <a-menu-item key="batchUnable" :icon="h(StopOutlined)"> 批量停用 </a-menu-item>
+                  <a-menu-item key="batchDelete" :icon="h(DeleteOutlined)"> 批量删除 </a-menu-item>
                 </a-menu>
               </template>
-              <a-button v-permission="['base-data:supplier:modify']">更多<DownOutlined /></a-button>
+              <a-button v-permission="['base-data:supplier:delete']">更多<DownOutlined /></a-button>
             </a-dropdown>
           </a-space>
-        </template>
-
-        <!-- 状态 列自定义内容 -->
-        <template #available_default="{ row }">
-          <available-tag :available="row.available" />
         </template>
 
         <!-- 操作 列自定义内容 -->
@@ -94,25 +78,14 @@
 
     <!-- 批量操作 -->
     <batch-handler
-      ref="batchUnableHandlerDialog"
+      ref="batchDeleteHandlerDialog"
       :table-column="[
         { field: 'code', title: '编号', width: 100 },
         { field: 'name', title: '名称', minWidth: 180 },
       ]"
-      title="批量停用"
+      title="批量删除"
       :tableData="batchHandleDatas"
-      :handle-fn="doBatchUnable"
-      @confirm="search"
-    />
-    <batch-handler
-      ref="batchEnableHandlerDialog"
-      :table-column="[
-        { field: 'code', title: '编号', width: 100 },
-        { field: 'name', title: '名称', minWidth: 180 },
-      ]"
-      title="批量启用"
-      :tableData="batchHandleDatas"
-      :handle-fn="doBatchEnable"
+      :handle-fn="doBatchDelete"
       @confirm="search"
     />
   </div>
@@ -131,15 +104,13 @@
     PlusOutlined,
     SearchOutlined,
     SettingOutlined,
-    StopOutlined,
+    DeleteOutlined,
     ThunderboltOutlined,
   } from '@ant-design/icons-vue';
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
   import SupplierImporter from '@/components/Importor/SupplierImporter.vue';
   import BatchHandler from '@/components/BatchHandler';
-  import { AVAILABLE } from '@/enums/biz/available';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     name: 'Supplier',
@@ -150,7 +121,6 @@
       DownOutlined,
       SupplierImporter,
       BatchHandler,
-      AvailableTag,
     },
     setup() {
       return {
@@ -160,9 +130,8 @@
         ThunderboltOutlined,
         SettingOutlined,
         CheckOutlined,
-        StopOutlined,
+        DeleteOutlined,
         CloudUploadOutlined,
-        AVAILABLE,
       };
     },
     data() {
@@ -172,9 +141,7 @@
         id: '',
         ids: [],
         // 查询列表的查询条件
-        searchFormData: {
-          available: AVAILABLE.ENABLE.code,
-        },
+        searchFormData: {},
         // 工具栏配置
         toolbarConfig: {
           // 自定义左侧工具栏
@@ -188,7 +155,6 @@
           { field: 'code', title: '编号', width: 100, sortable: true },
           { field: 'name', title: '名称', minWidth: 180, sortable: true },
           { field: 'description', title: '备注', minWidth: 200 },
-          { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
           { field: 'createBy', title: '创建人', width: 100 },
           { field: 'createTime', title: '创建时间', width: 170, sortable: true },
           { field: 'updateBy', title: '修改人', width: 100 },
@@ -233,43 +199,25 @@
         };
       },
       handleCommand({ key }) {
-        if (key === 'batchEnable') {
-          this.batchEnable();
-        } else if (key === 'batchUnable') {
-          this.batchUnable();
+        if (key === 'batchDelete') {
+          this.batchDelete();
         }
       },
-      doBatchUnable(row) {
-        return api.unable(row.id);
+      doBatchDelete(row) {
+        return api.deleteById(row.id);
       },
-      // 批量停用
-      batchUnable() {
+      // 批量删除
+      batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (isEmpty(records)) {
-          createError('请选择要停用的供应商！');
+          createError('请选择要删除的供应商！');
           return;
         }
 
         this.batchHandleDatas = records;
 
-        this.$refs.batchUnableHandlerDialog.openDialog();
-      },
-      doBatchEnable(row) {
-        return api.enable(row.id);
-      },
-      // 批量启用
-      batchEnable() {
-        const records = this.$refs.grid.getCheckboxRecords();
-
-        if (isEmpty(records)) {
-          createError('请选择要启用的供应商！');
-          return;
-        }
-
-        this.batchHandleDatas = records;
-
-        this.$refs.batchEnableHandlerDialog.openDialog();
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
       createActions(row) {
         return [

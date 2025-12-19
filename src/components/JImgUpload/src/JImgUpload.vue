@@ -38,11 +38,6 @@
       LoadingOutlined,
       PictureOutlined,
     },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       value: {
         type: String,
@@ -72,6 +67,11 @@
         type: Boolean,
         default: false,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

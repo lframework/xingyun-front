@@ -24,16 +24,6 @@
         <a-form-item label="上级分类">
           <a-input v-model:value="formData.parentName" disabled />
         </a-form-item>
-        <a-form-item label="状态" name="available">
-          <a-select v-model:value.trim="formData.available" allow-clear>
-            <a-select-option
-              v-for="item in AVAILABLE.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-select-option
-            >
-          </a-select>
-        </a-form-item>
         <a-form-item label="备注" name="description">
           <a-textarea v-model:value="formData.description" />
         </a-form-item>
@@ -54,21 +44,18 @@
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/category';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
     components: {},
-    setup() {
-      return {
-        AVAILABLE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {};
     },
     data() {
       return {
@@ -82,9 +69,7 @@
         rules: {
           code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入名称' }],
-          available: [{ required: true, message: '请选择状态' }],
         },
-        oriAvailable: '',
       };
     },
     created() {
@@ -109,39 +94,14 @@
           code: '',
           name: '',
           parentName: '',
-          available: '',
           description: '',
         };
-
-        this.oriAvailable = '';
       },
       // 提交表单事件
       submit() {
         this.$refs.form.validate().then((valid) => {
           if (valid) {
-            if (
-              AVAILABLE.UNABLE.equalsCode(this.formData.available) &&
-              AVAILABLE.ENABLE.equalsCode(this.oriAvailable)
-            ) {
-              // 如果是停用，子节点全部停用
-              createConfirm(
-                '是否确认修改分类信息，以及停用当前分类以及该分类的所有子级分类？',
-              ).then(() => {
-                this.doSubmit();
-              });
-            } else if (
-              AVAILABLE.ENABLE.equalsCode(this.formData.available) &&
-              AVAILABLE.UNABLE.equalsCode(this.oriAvailable)
-            ) {
-              // 如果是启用，父节点全部启用
-              createConfirm(
-                '是否确认修改分类信息，以及启用当前分类以及该分类的所有父级分类？',
-              ).then(() => {
-                this.doSubmit();
-              });
-            } else {
-              this.doSubmit();
-            }
+            this.doSubmit();
           }
         });
       },
@@ -160,7 +120,6 @@
           .get(this.id)
           .then((data) => {
             this.formData = data;
-            this.oriAvailable = data.available;
           })
           .finally(() => {
             this.loading = false;

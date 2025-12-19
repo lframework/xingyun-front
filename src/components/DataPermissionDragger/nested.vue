@@ -179,15 +179,6 @@
     components: {
       Draggable,
     },
-    setup() {
-      return {
-        getEnum,
-        SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE,
-        SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE,
-        SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE,
-        SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE,
-      };
-    },
     props: {
       list: {
         required: true,
@@ -197,6 +188,15 @@
         type: Boolean,
         default: true,
       },
+    },
+    setup() {
+      return {
+        getEnum,
+        SYS_DATA_PERMISSION_MODEL_DETAIL_NODE_TYPE,
+        SYS_DATA_PERMISSION_MODEL_DETAIL_CALC_TYPE,
+        SYS_DATA_PERMISSION_MODEL_DETAIL_INPUT_TYPE,
+        SYS_DATA_PERMISSION_MODEL_DETAIL_CONDITION_TYPE,
+      };
     },
     computed: {
       empty() {

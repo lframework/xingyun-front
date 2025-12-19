@@ -112,18 +112,18 @@
       StoreCenterSelector,
       SupplierSelector,
     },
+    props: {
+      id: {
+        type: String,
+        required: true,
+      },
+    },
     setup() {
       return {
         isEmpty,
         ADDRESS_ENTITY_TYPE,
         ADDRESS_TYPE,
       };
-    },
-    props: {
-      id: {
-        type: String,
-        required: true,
-      },
     },
     data() {
       return {

@@ -44,11 +44,6 @@
   export default defineComponent({
     name: 'UserGroupSelector',
     components: { SearchOutlined },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
@@ -56,6 +51,11 @@
           return {};
         },
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

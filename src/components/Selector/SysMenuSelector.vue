@@ -53,6 +53,10 @@
         type: String,
         default: '',
       },
+      tenantId: {
+        type: Number,
+        required: true,
+      },
     },
     data() {
       return {
@@ -75,7 +79,10 @@
     },
     methods: {
       getList(params) {
-        return api.selector(params);
+        return api.selector({
+          ...params,
+          tenantId: this.tenantId,
+        });
       },
       loadOptions() {
         this.getList(this._requestParams).then((data) => {

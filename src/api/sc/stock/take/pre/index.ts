@@ -166,7 +166,7 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function batchDelete(id: string): Promise<void> {
+export function batchDelete(id: string, showError: boolean = false): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
@@ -175,7 +175,7 @@ export function batchDelete(id: string): Promise<void> {
       },
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       region,
       contentType: ContentTypeEnum.FORM_URLENCODED,
     },

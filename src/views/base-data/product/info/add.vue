@@ -64,17 +64,14 @@
             <a-form-item label="商品分类" name="categoryId">
               <product-category-selector
                 v-model:value="formData.categoryId"
-                :only-final="false"
+                :only-final="true"
                 @update:value="selectCategory"
               />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="商品品牌" name="brandId">
-              <product-brand-selector
-                v-model:value="formData.brandId"
-                :request-params="{ available: true }"
-              />
+              <product-brand-selector v-model:value="formData.brandId" />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">

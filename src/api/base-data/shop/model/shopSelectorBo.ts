@@ -13,9 +13,4 @@ export interface ShopSelectorBo {
    * 名称
    */
   name: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

@@ -25,9 +25,4 @@ export interface QueryShopVo extends SortPageVo {
    * 创建时间 截止时间
    */
   createTimeEnd: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

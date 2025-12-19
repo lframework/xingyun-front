@@ -46,16 +46,16 @@
   export default defineComponent({
     // 使用组件
     components: {},
-    setup() {
-      return {
-        FILE_BOX_FILE_TYPE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        FILE_BOX_FILE_TYPE,
+      };
     },
     data() {
       return {

@@ -97,16 +97,16 @@
       UserGroupSelector,
       UserSelector,
     },
-    setup() {
-      return {
-        SYS_NOTIFY_GROUP_RECEIVER_TYPE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        SYS_NOTIFY_GROUP_RECEIVER_TYPE,
+      };
     },
     data() {
       return {

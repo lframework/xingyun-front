@@ -18,9 +18,6 @@
         <a-descriptions-item label="简称" :span="2">
           {{ formData.shortName }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="2">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
         <a-descriptions-item label="Logo" :span="4">
           <img v-if="!isEmpty(formData.logo)" :src="formData.logo" class="img-uploader-container" />
         </a-descriptions-item>
@@ -38,23 +35,20 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/product/brand';
   import { isEmpty } from '@/utils/utils';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {
-      AvailableTag,
-    },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
+    components: {},
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {
@@ -90,7 +84,6 @@
           shortName: '',
           logo: '',
           introduction: '',
-          available: '',
           description: '',
         };
       },

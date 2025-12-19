@@ -20,11 +20,6 @@ export interface QueryShopBo {
   deptName: string;
 
   /**
-   * 状态
-   */
-  available: boolean;
-
-  /**
    * 备注
    */
   description: string;

@@ -1,124 +1,140 @@
 <template>
   <div>
     <div v-show="visible" v-permission="['base-data:product:info:query']">
-      <page-wrapper content-full-height fixed-height>
-        <!-- 数据列表 -->
-        <vxe-grid
-          id="ProductInfo"
-          ref="grid"
-          resizable
-          show-overflow
-          highlight-hover-row
-          keep-source
-          row-id="id"
-          :proxy-config="proxyConfig"
-          :columns="tableColumn"
-          :toolbar-config="toolbarConfig"
-          :custom-config="{}"
-          :pager-config="{}"
-          :loading="loading"
-          height="auto"
-        >
-          <template #form>
-            <j-border>
-              <j-form bordered @collapse="$refs.grid.refreshColumn()">
-                <j-form-item label="编号">
-                  <a-input v-model:value="searchFormData.code" allow-clear />
-                </j-form-item>
-                <j-form-item label="名称">
-                  <a-input v-model:value="searchFormData.name" allow-clear />
-                </j-form-item>
-                <j-form-item label="简称">
-                  <a-input v-model:value="searchFormData.shortName" allow-clear />
-                </j-form-item>
-                <j-form-item label="SKU编号">
-                  <a-input v-model:value="searchFormData.skuCode" allow-clear />
-                </j-form-item>
-                <j-form-item label="分类">
-                  <product-category-selector v-model:value="searchFormData.categoryId" />
-                </j-form-item>
-                <j-form-item label="品牌">
-                  <product-brand-selector v-model:value="searchFormData.brandId" />
-                </j-form-item>
-                <j-form-item label="商品类型">
-                  <a-select
-                    v-model:value="searchFormData.productType"
-                    placeholder="全部"
-                    allow-clear
+      <a-row>
+        <a-col :span="4">
+          <page-wrapper content-full-height fixed-height content-class="!mr-0">
+            <category-tree style="height: 100%" @change="(e) => doSearch(e)" />
+          </page-wrapper>
+        </a-col>
+        <a-col :span="20">
+          <page-wrapper content-full-height fixed-height>
+            <!-- 数据列表 -->
+            <vxe-grid
+              id="ProductInfo"
+              ref="grid"
+              resizable
+              show-overflow
+              highlight-hover-row
+              keep-source
+              row-id="id"
+              :proxy-config="proxyConfig"
+              :columns="tableColumn"
+              :toolbar-config="toolbarConfig"
+              :custom-config="{}"
+              :pager-config="{}"
+              :loading="loading"
+              height="auto"
+            >
+              <template #form>
+                <j-border>
+                  <j-form bordered @collapse="$refs.grid.refreshColumn()">
+                    <j-form-item label="编号">
+                      <a-input v-model:value="searchFormData.code" allow-clear />
+                    </j-form-item>
+                    <j-form-item label="名称">
+                      <a-input v-model:value="searchFormData.name" allow-clear />
+                    </j-form-item>
+                    <j-form-item label="简称">
+                      <a-input v-model:value="searchFormData.shortName" allow-clear />
+                    </j-form-item>
+                    <j-form-item label="SKU编号">
+                      <a-input v-model:value="searchFormData.skuCode" allow-clear />
+                    </j-form-item>
+                    <j-form-item label="品牌">
+                      <product-brand-selector v-model:value="searchFormData.brandId" />
+                    </j-form-item>
+                    <j-form-item label="商品类型">
+                      <a-select
+                        v-model:value="searchFormData.productType"
+                        placeholder="全部"
+                        allow-clear
+                      >
+                        <a-select-option
+                          v-for="item in PRODUCT_TYPE.values()"
+                          :key="item.code"
+                          :value="item.code"
+                          >{{ item.desc }}</a-select-option
+                        >
+                      </a-select>
+                    </j-form-item>
+                    <j-form-item label="创建日期" :content-nest="false">
+                      <div class="date-range-container">
+                        <a-date-picker
+                          v-model:value="searchFormData.startTime"
+                          placeholder=""
+                          value-format="YYYY-MM-DD 00:00:00"
+                        />
+                        <span class="date-split">至</span>
+                        <a-date-picker
+                          v-model:value="searchFormData.endTime"
+                          placeholder=""
+                          value-format="YYYY-MM-DD 23:59:59"
+                        />
+                      </div>
+                    </j-form-item>
+                  </j-form>
+                </j-border>
+              </template>
+              <!-- 工具栏 -->
+              <template #toolbar_buttons>
+                <a-space>
+                  <a-button type="primary" :icon="h(SearchOutlined)" @click="search">查询</a-button>
+                  <a-button
+                    v-permission="['base-data:product:info:add']"
+                    type="primary"
+                    :icon="h(PlusOutlined)"
+                    @click="openChildPage('/product/info/add')"
+                    >新增</a-button
                   >
-                    <a-select-option
-                      v-for="item in PRODUCT_TYPE.values()"
-                      :key="item.code"
-                      :value="item.code"
-                      >{{ item.desc }}</a-select-option
-                    >
-                  </a-select>
-                </j-form-item>
-                <j-form-item label="创建日期" :content-nest="false">
-                  <div class="date-range-container">
-                    <a-date-picker
-                      v-model:value="searchFormData.startTime"
-                      placeholder=""
-                      value-format="YYYY-MM-DD 00:00:00"
-                    />
-                    <span class="date-split">至</span>
-                    <a-date-picker
-                      v-model:value="searchFormData.endTime"
-                      placeholder=""
-                      value-format="YYYY-MM-DD 23:59:59"
-                    />
-                  </div>
-                </j-form-item>
-                <j-form-item label="状态">
-                  <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                    <a-select-option
-                      v-for="item in AVAILABLE.values()"
-                      :key="item.code"
-                      :value="item.code"
-                      >{{ item.desc }}</a-select-option
-                    >
-                  </a-select>
-                </j-form-item>
-              </j-form>
-            </j-border>
-          </template>
-          <!-- 工具栏 -->
-          <template #toolbar_buttons>
-            <a-space>
-              <a-button type="primary" :icon="h(SearchOutlined)" @click="search">查询</a-button>
-              <a-button
-                v-permission="['base-data:product:info:add']"
-                type="primary"
-                :icon="h(PlusOutlined)"
-                @click="openChildPage('/product/info/add')"
-                >新增</a-button
-              >
-              <a-button
-                v-permission="['base-data:product:info:import']"
-                :icon="h(CloudUploadOutlined)"
-                @click="$refs.importer.openDialog()"
-                >导入Excel</a-button
-              >
-            </a-space>
-          </template>
+                  <a-button
+                    v-permission="['base-data:product:info:import']"
+                    :icon="h(CloudUploadOutlined)"
+                    @click="$refs.importer.openDialog()"
+                    >导入Excel</a-button
+                  >
+                  <a-dropdown>
+                    <template #overlay>
+                      <a-menu @click="handleCommand">
+                        <a-menu-item key="batchDelete" :icon="h(DeleteOutlined)">
+                          批量删除
+                        </a-menu-item>
+                      </a-menu>
+                    </template>
+                    <a-button v-permission="['base-data:product:info:delete']"
+                      >更多<DownOutlined
+                    /></a-button>
+                  </a-dropdown>
+                </a-space>
+              </template>
 
-          <!-- 状态 列自定义内容 -->
-          <template #available_default="{ row }">
-            <available-tag :available="row.available" />
-          </template>
-
-          <!-- 操作 列自定义内容 -->
-          <template #action_default="{ row }">
-            <table-action outside :actions="createActions(row)" />
-          </template>
-        </vxe-grid>
-      </page-wrapper>
+              <!-- 操作 列自定义内容 -->
+              <template #action_default="{ row }">
+                <table-action outside :actions="createActions(row)" />
+              </template>
+            </vxe-grid>
+          </page-wrapper>
+        </a-col>
+      </a-row>
 
       <!-- 查看窗口 -->
       <detail :id="id" ref="viewDialog" />
     </div>
 
     <product-importer ref="importer" @confirm="search" />
+
+    <!-- 批量操作 -->
+    <batch-handler
+      ref="batchDeleteHandlerDialog"
+      :table-column="[
+        { field: 'code', title: '编号', width: 120 },
+        { field: 'name', title: '名称', minWidth: 160 },
+      ]"
+      title="批量删除"
+      :tableData="batchHandleDatas"
+      :handle-fn="doBatchDelete"
+      @confirm="search"
+    />
   </div>
 </template>
 
@@ -126,24 +142,33 @@
   import { h, defineComponent } from 'vue';
   import Detail from './detail.vue';
   import * as api from '@/api/base-data/product/info';
-  import { CloudUploadOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons-vue';
+  import {
+    CloudUploadOutlined,
+    DownOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    DeleteOutlined,
+  } from '@ant-design/icons-vue';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
-  import { buildSortPageVo } from '@/utils/utils';
+  import { buildSortPageVo, isEmpty, isEqualWithStr } from '@/utils/utils';
   import ProductImporter from '@/components/Importor/ProductImporter.vue';
   import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
   import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
   import { PRODUCT_TYPE } from '@/enums/biz/productType';
-  import { AVAILABLE } from '@/enums/biz/available';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import BatchHandler from '@/components/BatchHandler';
+  import { createError } from '@/hooks/web/msg';
+  import CategoryTree from './category-tree.vue';
 
   export default defineComponent({
     name: 'ProductInfo',
     components: {
+      CategoryTree,
+      BatchHandler,
+      DownOutlined,
       Detail,
       ProductImporter,
       ProductBrandSelector,
       ProductCategorySelector,
-      AvailableTag,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -153,7 +178,7 @@
         PlusOutlined,
         SearchOutlined,
         PRODUCT_TYPE,
-        AVAILABLE,
+        DeleteOutlined,
       };
     },
     data() {
@@ -172,7 +197,6 @@
           brandId: '',
           startTime: '',
           endTime: '',
-          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -198,7 +222,6 @@
               return PRODUCT_TYPE.getDesc(cellValue);
             },
           },
-          { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
           { field: 'createTime', title: '创建时间', width: 170, sortable: true },
           { field: 'updateTime', title: '修改时间', width: 170, sortable: true },
           { title: '操作', width: 120, fixed: 'right', slots: { default: 'action_default' } },
@@ -218,6 +241,7 @@
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     created() {},
@@ -239,6 +263,27 @@
           ...this.searchFormData,
         };
       },
+      handleCommand({ key }) {
+        if (key === 'batchDelete') {
+          this.batchDelete();
+        }
+      },
+      doBatchDelete(row) {
+        return api.deleteById(row.id);
+      },
+      // 批量删除
+      batchDelete() {
+        const records = this.$refs.grid.getCheckboxRecords();
+
+        if (isEmpty(records)) {
+          createError('请选择要删除的商品！');
+          return;
+        }
+
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
+      },
       createActions(row) {
         return [
           {
@@ -256,6 +301,19 @@
             },
           },
         ];
+      },
+      doSearch(categoryId) {
+        if (!isEmpty(categoryId)) {
+          if (isEqualWithStr(0, categoryId)) {
+            this.searchFormData.categoryId = '';
+          } else {
+            this.searchFormData.categoryId = categoryId;
+          }
+        } else {
+          this.searchFormData.categoryId = '';
+        }
+
+        this.search();
       },
       onRefreshPage() {
         this.search();

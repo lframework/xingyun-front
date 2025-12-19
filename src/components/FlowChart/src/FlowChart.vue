@@ -30,12 +30,6 @@
   export default defineComponent({
     name: 'FlowChart',
     components: {},
-    setup() {
-      return {
-        isEmpty,
-        uuid,
-      };
-    },
     props: {
       instanceId: {
         type: String,
@@ -49,6 +43,12 @@
         type: String,
         default: '',
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+        uuid,
+      };
     },
     data() {
       return {};

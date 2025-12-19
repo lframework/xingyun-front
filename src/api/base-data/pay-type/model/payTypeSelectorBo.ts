@@ -18,9 +18,4 @@ export interface PayTypeSelectorBo {
    * 是否记录内容
    */
   recText: boolean;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

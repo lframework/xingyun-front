@@ -111,7 +111,7 @@ export function update(data: UpdateSysUserGroupVo): Promise<void> {
  * 根据ID删除
  * @param id
  */
-export function deleteById(id: string): Promise<void> {
+export function deleteById(id: string, showError: boolean = false): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
@@ -120,7 +120,7 @@ export function deleteById(id: string): Promise<void> {
       },
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },

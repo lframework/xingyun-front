@@ -1,5 +1,10 @@
 export interface UpdateSysDataDicVo {
   /**
+   * 租户ID
+   */
+  tenantId: number;
+
+  /**
    * ID
    */
   id: string;

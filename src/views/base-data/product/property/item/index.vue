@@ -31,16 +31,6 @@
               <j-form-item label="名称">
                 <a-input v-model:value="searchFormData.name" allow-clear />
               </j-form-item>
-              <j-form-item label="状态">
-                <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option
-                    v-for="item in AVAILABLE.values()"
-                    :key="item.code"
-                    :value="item.code"
-                    >{{ item.desc }}</a-select-option
-                  >
-                </a-select>
-              </j-form-item>
             </j-form>
           </j-border>
         </template>
@@ -55,12 +45,17 @@
               @click="$refs.addDialog.openDialog()"
               >新增</a-button
             >
+            <a-dropdown>
+              <template #overlay>
+                <a-menu @click="handleCommand">
+                  <a-menu-item key="batchDelete" :icon="h(DeleteOutlined)"> 批量删除 </a-menu-item>
+                </a-menu>
+              </template>
+              <a-button v-permission="['base-data:product:property-item:delete']"
+                >更多<DownOutlined
+              /></a-button>
+            </a-dropdown>
           </a-space>
-        </template>
-
-        <!-- 状态 列自定义内容 -->
-        <template #available_default="{ row }">
-          <available-tag :available="row.available" />
         </template>
 
         <!-- 操作 列自定义内容 -->
@@ -74,6 +69,19 @@
 
       <!-- 修改窗口 -->
       <modify ref="updateDialog" :group-id="propertyId" :item-id="id" @confirm="search" />
+
+      <!-- 批量操作 -->
+      <batch-handler
+        ref="batchDeleteHandlerDialog"
+        :table-column="[
+          { field: 'code', title: '编号', width: 120 },
+          { field: 'name', title: '名称', minWidth: 160 },
+        ]"
+        title="批量删除"
+        :tableData="batchHandleDatas"
+        :handle-fn="doBatchDelete"
+        @confirm="search"
+      />
     </div>
   </a-modal>
 </template>
@@ -82,15 +90,22 @@
   import Add from './add.vue';
   import Modify from './modify.vue';
   import * as api from '@/api/base-data/product/property-item';
-  import { PlusOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { AVAILABLE } from '@/enums/biz/available';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import {
+    DownOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    DeleteOutlined,
+  } from '@ant-design/icons-vue';
+  import { isEmpty } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
     components: {
+      BatchHandler,
+      DownOutlined,
       Modify,
       Add,
-      AvailableTag,
     },
     props: {
       propertyId: {
@@ -103,7 +118,7 @@
         h,
         PlusOutlined,
         SearchOutlined,
-        AVAILABLE,
+        DeleteOutlined,
       };
     },
     data() {
@@ -117,7 +132,6 @@
         searchFormData: {
           code: '',
           name: '',
-          available: AVAILABLE.ENABLE.code,
         },
         // 工具栏配置
         toolbarConfig: {
@@ -131,7 +145,6 @@
           { type: 'checkbox', width: 45 },
           { field: 'code', title: '编号', width: 120 },
           { field: 'name', title: '名称', minWidth: 160 },
-          { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
           { field: 'description', title: '备注', minWidth: 160 },
           { title: '操作', width: 70, fixed: 'right', slots: { default: 'action_default' } },
         ],
@@ -150,6 +163,7 @@
             },
           },
         },
+        batchHandleDatas: [],
       };
     },
     computed: {},
@@ -184,6 +198,27 @@
       },
       // 页面显示时触发
       open() {},
+      handleCommand({ key }) {
+        if (key === 'batchDelete') {
+          this.batchDelete();
+        }
+      },
+      doBatchDelete(row) {
+        return api.deleteById(row.id);
+      },
+      // 批量删除
+      batchDelete() {
+        const records = this.$refs.grid.getCheckboxRecords();
+
+        if (isEmpty(records)) {
+          createError('请选择要删除的属性值！');
+          return;
+        }
+
+        this.batchHandleDatas = records;
+
+        this.$refs.batchDeleteHandlerDialog.openDialog();
+      },
       createActions(row) {
         return [
           {

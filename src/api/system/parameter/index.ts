@@ -29,12 +29,13 @@ export function query(params: QuerySysParameterVo): Promise<PageResult<QuerySysP
  * 根据ID查询
  * @param id
  */
-export function get(id: string): Promise<GetSysParameterBo> {
+export function get(id: string, tenantId: number): Promise<GetSysParameterBo> {
   return defHttp.get<GetSysParameterBo>(
     {
       url: baseUrl,
       params: {
         id: id,
+        tenantId: tenantId,
       },
     },
     {
@@ -81,12 +82,13 @@ export function update(data: UpdateSysParameterVo): Promise<void> {
  * 根据ID删除
  * @param id
  */
-export function deleteById(id: string): Promise<void> {
+export function deleteById(id: string, tenantId: number): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
       data: {
         id,
+        tenantId,
       },
     },
     {

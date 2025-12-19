@@ -60,12 +60,6 @@
   export default defineComponent({
     name: 'SysTenantSelector',
     components: { SearchOutlined },
-    setup() {
-      return {
-        isEmpty,
-        AVAILABLE,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
@@ -73,6 +67,12 @@
           return {};
         },
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+        AVAILABLE,
+      };
     },
     data() {
       return {

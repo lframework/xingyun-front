@@ -57,9 +57,6 @@
         <a-descriptions-item label="银行账号" :span="2">
           {{ formData.accountNo }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="4">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
         </a-descriptions-item>
@@ -71,23 +68,20 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/customer';
   import { SETTLE_TYPE } from '@/enums/biz/settleType';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {
-      AvailableTag,
-    },
-    setup() {
-      return {
-        SETTLE_TYPE,
-      };
-    },
+    components: {},
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        SETTLE_TYPE,
+      };
     },
     data() {
       return {
@@ -139,7 +133,6 @@
           accountName: '',
           accountNo: '',
           description: '',
-          available: '',
         };
       },
       // 页面显示时触发

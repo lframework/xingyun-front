@@ -125,13 +125,6 @@
       SearchOutlined,
       StoreCenterSelector,
     },
-    setup() {
-      return {
-        isEmpty,
-        TAKE_STOCK_PLAN_TYPE,
-        TAKE_STOCK_PLAN_STATUS,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
@@ -139,6 +132,13 @@
           return {};
         },
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
+      };
     },
     data() {
       return {

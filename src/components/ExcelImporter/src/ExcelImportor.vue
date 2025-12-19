@@ -74,11 +74,6 @@
     components: {
       InboxOutlined,
     },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       // 下载模板url，传入request
       downloadTemplateUrl: {
@@ -105,6 +100,11 @@
         type: Boolean,
         default: false,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

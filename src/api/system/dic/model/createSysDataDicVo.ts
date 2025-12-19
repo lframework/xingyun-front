@@ -1,5 +1,10 @@
 export interface CreateSysDataDicVo {
   /**
+   * 租户ID
+   */
+  tenantId: number;
+
+  /**
    * 编号
    */
   code: string;

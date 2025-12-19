@@ -50,6 +50,10 @@
         type: String,
         required: true,
       },
+      tenantId: {
+        type: Number,
+        required: true,
+      },
     },
     data() {
       return {
@@ -94,8 +98,12 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             this.loading = true;
+            const params = {
+              ...this.formData,
+              tenantId: this.tenantId,
+            };
             api
-              .update(this.formData)
+              .update(params)
               .then(() => {
                 createSuccess('修改成功！');
                 this.$emit('confirm');
@@ -119,7 +127,7 @@
       async loadFormData() {
         this.loading = true;
         api
-          .get(this.id)
+          .get(this.id, this.tenantId)
           .then((data) => {
             this.formData = data;
           })

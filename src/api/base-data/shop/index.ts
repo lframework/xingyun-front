@@ -1,7 +1,7 @@
 import { defHttp } from '/@/utils/http/axios';
 import { PageResult } from '@/api/model/pageResult';
 import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
-import { QueryShopSelectorVo } from '@/api/base-data/shop/model/queryShopSelectorVo';
+import { ShopSelectorVo } from '@/api/base-data/shop/model/shopSelectorVo';
 import { ShopSelectorBo } from '@/api/base-data/shop/model/shopSelectorBo';
 import { UpdateShopVo } from '@/api/base-data/shop/model/updateShopVo';
 import { CreateShopVo } from '@/api/base-data/shop/model/createShopVo';
@@ -13,7 +13,7 @@ const baseUrl = '/basedata/shop';
 const selectorBaseUrl = '/selector';
 const region = 'cloud-api';
 
-export function selector(params: QueryShopSelectorVo): Promise<PageResult<ShopSelectorBo>> {
+export function selector(params: ShopSelectorVo): Promise<PageResult<ShopSelectorBo>> {
   return defHttp.get<PageResult<ShopSelectorBo>>(
     {
       url: selectorBaseUrl + '/shop',
@@ -131,6 +131,26 @@ export function importExcel(data: { id: string; file: Blob }): Promise<void> {
     },
     {
       contentType: ContentTypeEnum.BLOB,
+      region,
+    },
+  );
+}
+
+/**
+ * 根据ID删除
+ * @param id
+ */
+export function deleteById(id: string, showError: boolean = false): Promise<void> {
+  return defHttp.delete<void>(
+    {
+      url: baseUrl,
+      data: {
+        id,
+      },
+    },
+    {
+      hiddenError: !showError,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
   );

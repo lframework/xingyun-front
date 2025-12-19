@@ -40,18 +40,18 @@
     // 使用组件
     components: {},
 
-    setup() {
-      return {
-        isEmpty,
-        OP_LOG_TYPE,
-      };
-    },
-
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+
+    setup() {
+      return {
+        isEmpty,
+        OP_LOG_TYPE,
+      };
     },
     data() {
       return {

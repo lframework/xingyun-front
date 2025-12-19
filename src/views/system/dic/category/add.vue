@@ -41,6 +41,12 @@
 
   export default defineComponent({
     components: {},
+    props: {
+      tenantId: {
+        type: Number,
+        required: true,
+      },
+    },
     data() {
       return {
         // 是否可见
@@ -85,8 +91,12 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             this.loading = true;
+            const params = {
+              ...this.formData,
+              tenantId: this.tenantId,
+            };
             api
-              .create(this.formData)
+              .create(params)
               .then(() => {
                 createSuccess('新增成功！');
                 this.$emit('confirm');

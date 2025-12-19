@@ -48,11 +48,6 @@
   export default defineComponent({
     name: 'SysRoleCategorySelector',
     components: { SearchOutlined },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
@@ -60,6 +55,11 @@
           return {};
         },
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

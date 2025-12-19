@@ -141,6 +141,12 @@
       OrderTimeLine,
     },
     mixins: [printMix],
+    props: {
+      id: {
+        type: String,
+        required: true,
+      },
+    },
     setup() {
       return {
         isFloatGeZero,
@@ -148,12 +154,6 @@
         mul,
         SALE_ORDER_STATUS,
       };
-    },
-    props: {
-      id: {
-        type: String,
-        required: true,
-      },
     },
     data() {
       return {

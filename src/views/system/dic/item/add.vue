@@ -50,6 +50,10 @@
         type: String,
         required: true,
       },
+      tenantId: {
+        type: Number,
+        required: true,
+      },
     },
     data() {
       return {
@@ -102,7 +106,7 @@
             }
             this.loading = true;
             api
-              .create({ dicId: this.dicId, ...this.formData })
+              .create({ dicId: this.dicId, ...this.formData, tenantId: this.tenantId })
               .then(() => {
                 createSuccess('新增成功！');
                 // 初始化表单数据

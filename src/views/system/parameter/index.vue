@@ -1,7 +1,8 @@
 <template>
   <div>
     <div v-permission="['system:parameter:query']">
-      <page-wrapper content-full-height fixed-height>
+      <TenantList v-if="activeKey === 0" @select="onSelectTenant" />
+      <page-wrapper v-else content-full-height fixed-height>
         <!-- 数据列表 -->
         <vxe-grid
           id="SysParameter"
@@ -65,13 +66,13 @@
       </page-wrapper>
     </div>
     <!-- 新增窗口 -->
-    <add ref="addDialog" @confirm="search" />
+    <add ref="addDialog" :tenant-id="tenantId" @confirm="search" />
 
     <!-- 修改窗口 -->
-    <modify :id="id" ref="updateDialog" @confirm="search" />
+    <modify :id="id" ref="updateDialog" :tenant-id="tenantId" @confirm="search" />
 
     <!-- 查看窗口 -->
-    <detail :id="id" ref="viewDialog" />
+    <detail :id="id" ref="viewDialog" :tenant-id="tenantId" />
   </div>
 </template>
 
@@ -84,10 +85,12 @@
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { buildSortPageVo } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import TenantList from "@/components/TenantList";
 
   export default defineComponent({
     name: 'SysParameter',
     components: {
+      TenantList,
       Add,
       Modify,
       Detail,
@@ -102,6 +105,8 @@
     data() {
       return {
         loading: false,
+        activeKey: 0,
+        tenantId: '',
         // 当前行数据
         id: '',
         // 查询列表的查询条件
@@ -156,7 +161,7 @@
         ).then(() => {
           this.loading = true;
           api
-            .deleteById(id)
+            .deleteById(id, this.tenantId)
             .then(() => {
               createSuccess('删除成功！');
               this.search();
@@ -177,6 +182,7 @@
       buildSearchFormData() {
         return {
           ...this.searchFormData,
+          tenantId: this.tenantId,
         };
       },
       createActions(row) {
@@ -205,6 +211,10 @@
             },
           },
         ];
+      },
+      onSelectTenant(tenantId) {
+        this.tenantId = tenantId;
+        this.activeKey = 1;
       },
     },
   });

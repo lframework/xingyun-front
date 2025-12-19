@@ -77,17 +77,17 @@
   export default defineComponent({
     // 使用组件
     components: {},
-    setup() {
-      return {
-        TAKE_STOCK_PLAN_TYPE,
-        TAKE_STOCK_PLAN_STATUS,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
+      };
     },
     data() {
       return {

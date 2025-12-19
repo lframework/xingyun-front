@@ -150,11 +150,6 @@
       CronPicker,
       SysTenantSelector,
     },
-    setup() {
-      return {
-        QRTZ_JOB_TYPE,
-      };
-    },
     props: {
       oriName: {
         type: String,
@@ -164,6 +159,11 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        QRTZ_JOB_TYPE,
+      };
     },
     data() {
       return {

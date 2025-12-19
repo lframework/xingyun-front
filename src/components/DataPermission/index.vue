@@ -51,12 +51,6 @@
     components: {
       DataPermissionDragger,
     },
-    setup() {
-      return {
-        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE,
-        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME,
-      };
-    },
     props: {
       bizId: {
         type: String,
@@ -66,6 +60,12 @@
         type: Number,
         required: true,
       },
+    },
+    setup() {
+      return {
+        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE,
+        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME,
+      };
     },
     data() {
       return {

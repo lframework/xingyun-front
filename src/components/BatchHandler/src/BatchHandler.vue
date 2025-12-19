@@ -71,11 +71,6 @@
       CloseCircleFilled,
       ClockCircleOutlined,
     },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       title: {
         type: String,
@@ -107,6 +102,11 @@
         type: String,
         default: '',
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {
@@ -190,6 +190,7 @@
                   item.__status = 2;
                 })
                 .catch((e) => {
+                  console.log(e);
                   item.__errorMsg = e?.msg || '网络请求错误，请稍后重试！';
                   item.__status = 3;
                 })

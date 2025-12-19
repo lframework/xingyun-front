@@ -48,24 +48,22 @@
   import * as api from '@/api/system/user';
   import { getEnumDesc } from '@/utils/enumUtil';
   import { GENDER } from '@/enums/biz/gender';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
     components: {
-      AvailableTag,
-    },
-    setup() {
-      return {
-        getEnumDesc,
-        GENDER,
-      };
     },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        getEnumDesc,
+        GENDER,
+      };
     },
     data() {
       return {
@@ -99,7 +97,6 @@
           code: '',
           name: '',
           permission: '',
-          available: '',
           lockStatus: '',
           description: '',
         };

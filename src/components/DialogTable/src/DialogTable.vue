@@ -53,8 +53,7 @@
             :data="selectRow"
             :columns="_sumTableColumn"
             :pager-config="undefined"
-          >
-          </vxe-grid>
+          />
         </div>
 
         <template #footer>

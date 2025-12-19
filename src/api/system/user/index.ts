@@ -109,7 +109,7 @@ export function update(data: UpdateSysUserVo): Promise<void> {
  * 停用
  * @param id
  */
-export function deleteById(id: string): Promise<void> {
+export function deleteById(id: string, showError: boolean = false): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
@@ -118,27 +118,7 @@ export function deleteById(id: string): Promise<void> {
       },
     },
     {
-      errorMessageMode: 'none',
-      contentType: ContentTypeEnum.FORM_URLENCODED,
-      region,
-    },
-  );
-}
-
-/**
- * 启用
- * @param id
- */
-export function enable(id: string): Promise<void> {
-  return defHttp.patch<void>(
-    {
-      url: baseUrl + '/enable',
-      data: {
-        id,
-      },
-    },
-    {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },

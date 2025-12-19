@@ -15,9 +15,6 @@
         <a-descriptions-item label="名称" :span="2">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="4">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
         </a-descriptions-item>
@@ -28,13 +25,10 @@
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/sc/stock/adjust/reason';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {
-      AvailableTag,
-    },
+    components: {},
 
     props: {
       id: {
@@ -73,7 +67,6 @@
           id: '',
           code: '',
           name: '',
-          available: '',
           description: '',
         };
       },

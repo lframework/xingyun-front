@@ -55,11 +55,6 @@
       SearchOutlined,
       SysDataDicCategorySelector,
     },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
@@ -67,6 +62,11 @@
           return {};
         },
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {

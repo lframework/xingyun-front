@@ -35,6 +35,10 @@
         type: String,
         required: true,
       },
+      tenantId: {
+        type: Number,
+        required: true,
+      },
     },
     data() {
       return {
@@ -82,7 +86,7 @@
       loadFormData() {
         this.loading = true;
         api
-          .get(this.id)
+          .get(this.id, this.tenantId)
           .then((data) => {
             this.formData = data;
           })

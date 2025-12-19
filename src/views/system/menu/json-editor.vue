@@ -36,11 +36,6 @@
 
   export default defineComponent({
     components: {},
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       value: {
         type: String,
@@ -54,6 +49,11 @@
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {
