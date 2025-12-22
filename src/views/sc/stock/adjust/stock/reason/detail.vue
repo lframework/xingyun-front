@@ -15,9 +15,6 @@
         <a-descriptions-item label="名称" :span="2">
           {{ formData.name }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="4">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
         </a-descriptions-item>
@@ -73,7 +70,6 @@
           id: '',
           code: '',
           name: '',
-          available: '',
           description: '',
         };
       },

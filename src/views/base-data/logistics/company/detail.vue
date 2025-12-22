@@ -27,9 +27,6 @@
         <a-descriptions-item label="地址" :span="2">
           {{ formData.address }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="4">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
         </a-descriptions-item>

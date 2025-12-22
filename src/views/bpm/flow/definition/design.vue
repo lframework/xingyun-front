@@ -37,17 +37,17 @@
   export default defineComponent({
     // 使用组件
     components: {},
-    setup() {
-      return {
-        uuid,
-        FLOW_DEFINITION_IS_PUBLISH,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        uuid,
+        FLOW_DEFINITION_IS_PUBLISH,
+      };
     },
     data() {
       return {

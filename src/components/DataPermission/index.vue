@@ -67,6 +67,12 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE,
+        SYS_DATA_PERMISSION_DATA_PERMISSION_TYPE_NAME,
+      };
+    },
     data() {
       return {
         visible: false,

@@ -13,9 +13,4 @@ export interface SysDeptTreeBo {
    * 父级ID
    */
   parentId: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

@@ -13,9 +13,4 @@ export interface SysUserSelectorBo {
    * 姓名
    */
   name: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

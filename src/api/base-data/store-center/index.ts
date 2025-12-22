@@ -74,46 +74,6 @@ export function get(id: string): Promise<GetStoreCenterBo> {
 }
 
 /**
- * 停用
- * @param id
- */
-export function unable(id: string): Promise<void> {
-  return defHttp.patch<void>(
-    {
-      url: baseUrl + '/unable',
-      data: {
-        id,
-      },
-    },
-    {
-      errorMessageMode: 'none',
-      contentType: ContentTypeEnum.FORM_URLENCODED,
-      region,
-    },
-  );
-}
-
-/**
- * 启用
- * @param id
- */
-export function enable(id: string): Promise<void> {
-  return defHttp.patch<void>(
-    {
-      url: baseUrl + '/enable',
-      data: {
-        id,
-      },
-    },
-    {
-      errorMessageMode: 'none',
-      contentType: ContentTypeEnum.FORM_URLENCODED,
-      region,
-    },
-  );
-}
-
-/**
  * 新增
  * @param data
  */
@@ -173,6 +133,26 @@ export function importExcel(data: { id: string; file: Blob }): Promise<void> {
     },
     {
       contentType: ContentTypeEnum.BLOB,
+      region,
+    },
+  );
+}
+
+/**
+ * 根据ID删除
+ * @param id
+ */
+export function deleteById(id: string, showError: boolean = false): Promise<void> {
+  return defHttp.delete<void>(
+    {
+      url: baseUrl,
+      data: {
+        id,
+      },
+    },
+    {
+      hiddenError: !showError,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
   );

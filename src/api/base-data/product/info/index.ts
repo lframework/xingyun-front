@@ -106,6 +106,26 @@ export function update(data: UpdateProductVo): Promise<void> {
 }
 
 /**
+ * 根据ID删除
+ * @param id
+ */
+export function deleteById(id: string, showError: boolean = false): Promise<void> {
+  return defHttp.delete<void>(
+    {
+      url: baseUrl,
+      data: {
+        id,
+      },
+    },
+    {
+      hiddenError: !showError,
+      contentType: ContentTypeEnum.FORM_URLENCODED,
+      region,
+    },
+  );
+}
+
+/**
  * 下载导入模板
  */
 export function downloadImportTemplate(): Promise<void> {

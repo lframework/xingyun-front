@@ -2,56 +2,64 @@
   <a-modal
     v-model:open="visible"
     :mask-closable="false"
-    width="60%"
-    title="授权"
+    width="40%"
+    title="批量授权"
     :style="{ top: '20px' }"
+    :footer="null"
   >
     <div v-if="visible" v-permission="['system:user:permission']" v-loading="loading">
-      <vxe-grid
-        ref="grid"
-        resizable
-        show-overflow
-        highlight-hover-row
-        keep-source
-        row-id="id"
-        :tree-config="{}"
-        :export-config="{}"
-        :data="tableData"
-        :checkbox-config="{ checkField: 'selected' }"
-        :columns="tableColumn"
-        :max-height="300"
-      />
+      <a-form
+        ref="form"
+        v-loading="loading"
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 16 }"
+        :model="formData"
+      >
+        <a-form-item label="角色" name="roleIds">
+          <sys-role-selector
+            v-model:value="formData.roleIds"
+            :only-final="false"
+            :multiple="true"
+          />
+        </a-form-item>
+        <a-form-item label="操作类型" name="handleType">
+          <a-radio-group v-model:value="formData.handleType" name="handleTypeGroup">
+            <a-radio value="1">新增</a-radio>
+            <a-radio value="2">替换</a-radio>
+            <a-radio value="3">删除</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        <div class="form-modal-footer">
+          <a-space>
+            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+              >保存</a-button
+            >
+            <a-button :loading="loading" @click="closeDialog">取消</a-button>
+          </a-space>
+        </div>
+      </a-form>
     </div>
-
-    <template #footer>
-      <div class="form-modal-footer">
-        <a-space>
-          <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
-          <a-button :loading="loading" @click="closeDialog">取消</a-button>
-        </a-space>
-      </div>
-    </template>
   </a-modal>
 </template>
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/user-role';
+  import { createError, createSuccess } from '@/hooks/web/msg';
+  import SysRoleSelector from '@/components/Selector/SysRoleSelector.vue';
   import { isEmpty } from '@/utils/utils';
-  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
-    // 使用组件
-    components: {},
-    setup() {
-      return {
-        isEmpty,
-      };
+    components: {
+      SysRoleSelector,
     },
     props: {
       ids: {
         type: Array,
-        required: true,
+        default: () => [],
       },
+    },
+    setup() {
+      return {};
     },
     data() {
       return {
@@ -59,18 +67,15 @@
         visible: false,
         // 是否显示加载框
         loading: false,
-        // 表格数据
-        tableData: [],
-        // 表格列配置
-        tableColumn: [
-          { type: 'checkbox', width: 45 },
-          { field: 'code', title: '编号', width: 100 },
-          { field: 'name', title: '名称', minWidth: 160 },
-          { field: 'permission', title: '权限', width: 220 },
-        ],
+        // 表单数据
+        formData: {},
       };
     },
-    created() {},
+    computed: {},
+    created() {
+      // 初始化表单数据
+      this.initFormData();
+    },
     methods: {
       // 打开对话框 由父页面触发
       openDialog() {
@@ -83,45 +88,49 @@
         this.visible = false;
         this.$emit('close');
       },
+      // 初始化表单数据
+      initFormData() {
+        this.formData = {
+          roleIds: [],
+          handleType: '1',
+        };
+      },
+      // 提交表单事件
+      submit() {
+        if (this.formData.handleType === '1' || this.formData.handleType === '3') {
+          // 新增
+          if (isEmpty(this.formData.roleIds)) {
+            createError('请选择角色！');
+            return;
+          }
+        }
+        this.$refs.form.validate().then((valid) => {
+          if (valid) {
+            this.loading = true;
+            const params = {
+              roleIds: this.formData.roleIds,
+              userIds: this.ids,
+              handleType: this.formData.handleType,
+            };
+            api
+              .setting(params)
+              .then(() => {
+                createSuccess('修改成功！');
+                // 初始化表单数据
+                this.initFormData();
+                this.$emit('confirm');
+                this.visible = false;
+              })
+              .finally(() => {
+                this.loading = false;
+              });
+          }
+        });
+      },
       // 页面显示时触发
       open() {
-        // 查询数据
-        this.query();
-      },
-      // 列表查询数据
-      query() {
-        this.loading = true;
-        const params = {};
-        if (!isEmpty(this.ids) && this.ids.length === 1) {
-          params.userId = this.ids[0];
-        }
-        api
-          .roles(params)
-          .then((res) => {
-            this.tableData = res;
-          })
-          .finally(() => {
-            this.loading = false;
-          });
-      },
-      // 提交数据
-      submit() {
-        this.loading = true;
-        const records = this.$refs.grid.getCheckboxRecords();
-        const roleIds = isEmpty(records) ? [] : records.map((item) => item.id);
-        api
-          .setting({
-            userIds: this.ids,
-            roleIds: roleIds,
-          })
-          .then(() => {
-            createSuccess('授权成功！');
-            this.$emit('confirm');
-            this.visible = false;
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+        // 初始化表单数据
+        this.initFormData();
       },
     },
   });

@@ -171,6 +171,15 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        PURCHASE_RETURN_STATUS,
+      };
+    },
     data() {
       return {
         // 是否可见

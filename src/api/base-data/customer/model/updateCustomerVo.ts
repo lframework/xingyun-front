@@ -80,11 +80,6 @@ export interface UpdateCustomerVo {
   accountNo: string;
 
   /**
-   * 状态
-   */
-  available: boolean;
-
-  /**
    * 备注
    */
   description: string;

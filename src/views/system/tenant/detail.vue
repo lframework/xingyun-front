@@ -27,6 +27,9 @@
         <a-descriptions-item label="Jdbc密码" :span="2">
           {{ formData.jdbcPassword }}
         </a-descriptions-item>
+        <a-descriptions-item label="是否平台管理租户" :span="4">
+          {{ formData.isPlatform ? '是' : '否' }}
+        </a-descriptions-item>
         <a-descriptions-item label="状态" :span="4">
           <available-tag :available="formData.available" />
         </a-descriptions-item>

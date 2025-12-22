@@ -1,5 +1,10 @@
 export interface UpdateSysParameterVo {
   /**
+   * 租户ID
+   */
+  tenantId: number;
+
+  /**
    * ID
    */
   id: number;

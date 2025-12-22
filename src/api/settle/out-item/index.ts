@@ -74,19 +74,19 @@ export function get(id: string): Promise<GetSettleOutItemBo> {
 }
 
 /**
- * 停用
+ * 根据ID删除
  * @param id
  */
-export function unable(id: string): Promise<void> {
-  return defHttp.patch<void>(
+export function deleteById(id: string, showError: boolean = false): Promise<void> {
+  return defHttp.delete<void>(
     {
-      url: baseUrl + '/unable',
+      url: baseUrl,
       data: {
         id,
       },
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
@@ -97,7 +97,7 @@ export function unable(id: string): Promise<void> {
  * 启用
  * @param id
  */
-export function enable(id: string): Promise<void> {
+export function enable(id: string, showError: boolean = false): Promise<void> {
   return defHttp.patch<void>(
     {
       url: baseUrl + '/enable',
@@ -106,7 +106,7 @@ export function enable(id: string): Promise<void> {
       },
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },

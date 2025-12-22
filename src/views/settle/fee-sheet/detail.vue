@@ -111,16 +111,16 @@
     components: {
       OrderTimeLine,
     },
-    setup() {
-      return {
-        SETTLE_FEE_SHEET_STATUS,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        SETTLE_FEE_SHEET_STATUS,
+      };
     },
     data() {
       return {

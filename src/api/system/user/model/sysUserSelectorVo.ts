@@ -15,9 +15,4 @@ export interface SysUserSelectorVo extends PageVo {
    * 用户名
    */
   username: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

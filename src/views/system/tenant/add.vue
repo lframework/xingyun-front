@@ -39,6 +39,13 @@
         <a-form-item label="Jdbc密码" name="jdbcPassword">
           <a-input v-model:value="formData.jdbcPassword" allow-clear />
         </a-form-item>
+        <a-form-item label="是否平台管理租户" name="isPlatform">
+          <a-switch
+            v-model:checked="formData.isPlatform"
+            checked-children="是"
+            un-checked-children="否"
+          />
+        </a-form-item>
         <div class="form-modal-footer">
           <a-space>
             <a-button type="primary" :loading="loading" html-type="submit" @click="submit"

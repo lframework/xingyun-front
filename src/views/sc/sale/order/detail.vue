@@ -155,6 +155,14 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        isFloatGeZero,
+        getNumber,
+        mul,
+        SALE_ORDER_STATUS,
+      };
+    },
     data() {
       return {
         // 是否可见

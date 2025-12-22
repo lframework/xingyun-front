@@ -53,6 +53,13 @@
         required: true,
       },
     },
+
+    setup() {
+      return {
+        isEmpty,
+        OP_LOG_TYPE,
+      };
+    },
     data() {
       return {
         // 是否可见

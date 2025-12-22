@@ -46,9 +46,6 @@
         <a-descriptions-item label="商品类型" :span="4">{{
           PRODUCT_TYPE.getDesc(formData.productType)
         }}</a-descriptions-item>
-        <a-descriptions-item label="状态" :span="4"
-          ><available-tag :available="formData.available"
-        /></a-descriptions-item>
         <a-descriptions-item
           v-for="item in formData.properties"
           :key="item.id"
@@ -65,23 +62,20 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/product/info';
   import { PRODUCT_TYPE } from '@/enums/biz/productType';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {
-      AvailableTag,
-    },
-    setup() {
-      return {
-        PRODUCT_TYPE,
-      };
-    },
+    components: {},
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        PRODUCT_TYPE,
+      };
     },
     data() {
       return {
@@ -123,7 +117,6 @@
           purchasePrice: '',
           salePrice: '',
           retailPrice: '',
-          available: '',
           properties: [],
         };
       },

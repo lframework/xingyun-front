@@ -223,17 +223,17 @@
       SettlePreSheetDetail,
       OrderTimeLine,
     },
-    setup() {
-      return {
-        SETTLE_CHECK_SHEET_STATUS,
-        SETTLE_CHECK_SHEET_BIZ_TYPE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        SETTLE_CHECK_SHEET_STATUS,
+        SETTLE_CHECK_SHEET_BIZ_TYPE,
+      };
     },
     data() {
       return {

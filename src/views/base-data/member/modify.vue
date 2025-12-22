@@ -87,20 +87,6 @@
         </a-row>
         <a-row :gutter="16">
           <a-col :span="24">
-            <a-form-item label="状态" name="available">
-              <a-select v-model:value="formData.available" allow-clear>
-                <a-select-option
-                  v-for="item in AVAILABLE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="24">
             <a-form-item label="备注" name="description">
               <a-textarea v-model:value.trim="formData.description" />
             </a-form-item>
@@ -128,7 +114,6 @@
   import ShopSelector from '@/components/Selector/ShopSelector.vue';
   import UserSelector from '@/components/Selector/UserSelector.vue';
   import { GENDER } from '@/enums/biz/gender';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
@@ -136,17 +121,16 @@
       ShopSelector,
       UserSelector,
     },
-    setup() {
-      return {
-        GENDER,
-        AVAILABLE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        GENDER,
+      };
     },
     data() {
       return {
@@ -173,7 +157,6 @@
             },
           ],
           joinDay: [{ required: true, message: '请选择入会日期' }],
-          available: [{ required: true, message: '请选择状态' }],
         },
       };
     },
@@ -210,7 +193,6 @@
           guiderId: '',
           birthday: '',
           joinDay: '',
-          available: '',
           description: '',
         };
       },

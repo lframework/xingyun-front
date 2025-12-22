@@ -200,14 +200,17 @@ export function approvePass(data: ApprovePassSaleOutSheetVo): Promise<void> {
 /**
  * 批量审核通过
  */
-export function batchApprovePass(data: ApprovePassSaleOutSheetVo): Promise<void> {
+export function batchApprovePass(
+  data: ApprovePassSaleOutSheetVo,
+  showError: boolean = false,
+): Promise<void> {
   return defHttp.patch<void>(
     {
       url: baseUrl + '/approve/pass',
       data,
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -249,14 +252,17 @@ export function approveRefuse(data: ApproveRefuseSaleOutSheetVo): Promise<void> 
 /**
  * 批量审核拒绝
  */
-export function batchApproveRefuse(data: ApproveRefuseSaleOutSheetVo): Promise<void> {
+export function batchApproveRefuse(
+  data: ApproveRefuseSaleOutSheetVo,
+  showError: boolean = false,
+): Promise<void> {
   return defHttp.patch<void>(
     {
       url: baseUrl + '/approve/refuse',
       data,
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       region,
       contentType: ContentTypeEnum.JSON,
     },
@@ -284,7 +290,7 @@ export function deleteById(id: string): Promise<void> {
 /**
  * 批量删除
  */
-export function batchDelete(id: string): Promise<void> {
+export function batchDelete(id: string, showError: boolean = false): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
@@ -293,7 +299,7 @@ export function batchDelete(id: string): Promise<void> {
       },
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       region,
       contentType: ContentTypeEnum.FORM_URLENCODED,
     },

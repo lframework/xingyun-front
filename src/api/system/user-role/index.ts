@@ -6,24 +6,7 @@ const baseUrl = '/system/user/role';
 const region = 'cloud-api';
 
 /**
- * 查询角色列表
- */
-export function roles({ userId }: { userId: string }): Promise<void> {
-  return defHttp.get<void>(
-    {
-      url: baseUrl + '/roles',
-      params: {
-        userId,
-      },
-    },
-    {
-      region,
-    },
-  );
-}
-
-/**
- * 根据ID查询
+ * 设置角色
  * @param data
  */
 export function setting(data: SysUserRoleSettingVo): Promise<void> {

@@ -79,6 +79,11 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        AVAILABLE,
+      };
+    },
     data() {
       return {
         // 是否可见

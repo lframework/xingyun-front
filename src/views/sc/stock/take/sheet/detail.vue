@@ -134,6 +134,12 @@
       PreTakeStockSheetDetail,
       OrderTimeLine,
     },
+    props: {
+      id: {
+        type: String,
+        required: true,
+      },
+    },
     setup() {
       return {
         isEmpty,
@@ -141,12 +147,6 @@
         TAKE_STOCK_PLAN_STATUS,
         TAKE_STOCK_SHEET_STATUS,
       };
-    },
-    props: {
-      id: {
-        type: String,
-        required: true,
-      },
     },
     data() {
       return {

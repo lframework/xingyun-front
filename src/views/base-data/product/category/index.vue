@@ -15,15 +15,12 @@
         :toolbar-config="toolBarConfig"
         :custom-config="{}"
         :tree-config="{ expandAll: true }"
+        :checkbox-config="{ checkStrictly: true }"
         :loading="loading"
         height="auto"
       >
         <template #menuDisplay_default="{ row }">
           <menu-display-tag :menu-display="row.display" />
-        </template>
-
-        <template #available_default="{ row }">
-          <available-tag :available="row.available" />
         </template>
 
         <template #action_default="{ row }">
@@ -38,13 +35,6 @@
               </j-form-item>
               <j-form-item label="名称">
                 <a-input v-model:value="searchFormData.name" allow-clear />
-              </j-form-item>
-              <j-form-item label="状态">
-                <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option :value="AVAILABLE.ENABLE.code">{{
-                    '仅显示' + AVAILABLE.ENABLE.desc
-                  }}</a-select-option>
-                </a-select>
               </j-form-item>
             </j-form>
           </j-border>
@@ -66,14 +56,15 @@
               @click="$refs.importer.openDialog()"
               >导入Excel</a-button
             >
-            <a-dropdown v-permission="['base-data:product:category:modify']">
+            <a-dropdown>
               <template #overlay>
                 <a-menu @click="handleCommand">
-                  <a-menu-item key="batchEnable" :icon="h(CheckOutlined)"> 批量启用 </a-menu-item>
-                  <a-menu-item key="batchUnable" :icon="h(StopOutlined)"> 批量停用 </a-menu-item>
+                  <a-menu-item key="batchDelete" :icon="h(DeleteOutlined)"> 批量删除 </a-menu-item>
                 </a-menu>
               </template>
-              <a-button>更多<DownOutlined /></a-button>
+              <a-button v-permission="['base-data:product:category:delete']"
+                >更多<DownOutlined
+              /></a-button>
             </a-dropdown>
           </a-space>
         </template>
@@ -93,27 +84,15 @@
 
     <!-- 批量操作 -->
     <batch-handler
-      ref="batchUnableHandlerDialog"
+      ref="batchDeleteHandlerDialog"
       :table-column="[
         { field: 'code', title: '编号', width: 120 },
         { field: 'name', title: '名称', minWidth: 160 },
       ]"
-      title="批量停用"
-      tip="停用商品分类时，会将该分类及其子分类同时停用。"
+      title="批量删除"
+      tip="删除商品分类时，会将该分类及其子分类同时删除。"
       :tableData="batchHandleDatas"
-      :handle-fn="doBatchUnable"
-      @confirm="search"
-    />
-    <batch-handler
-      ref="batchEnableHandlerDialog"
-      :table-column="[
-        { field: 'code', title: '编号', width: 120 },
-        { field: 'name', title: '名称', minWidth: 160 },
-      ]"
-      title="批量启用"
-      tip="启用商品分类时，会将该分类及其父级分类同时启用。"
-      :tableData="batchHandleDatas"
-      :handle-fn="doBatchEnable"
+      :handle-fn="doBatchDelete"
       @confirm="search"
     />
   </div>
@@ -129,24 +108,14 @@
     CloudUploadOutlined,
     PlusOutlined,
     SearchOutlined,
-    StopOutlined,
+    DeleteOutlined,
     DownOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/base-data/product/category';
-  import {
-    toArrayTree,
-    toString,
-    isEmpty,
-    searchTree,
-    isEqualWithStr,
-    toTreeArray,
-    union,
-  } from '@/utils/utils';
+  import { toArrayTree, toString, isEmpty, searchTree, isEqualWithStr } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
   import ProductCategoryImporter from '@/components/Importor/ProductCategoryImporter.vue';
   import BatchHandler from '@/components/BatchHandler';
-  import { AVAILABLE } from '@/enums/biz/available';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
   import MenuDisplayTag from '@/components/Tag/MenuDisplayTag.vue';
 
   export default defineComponent({
@@ -158,7 +127,6 @@
       DownOutlined,
       ProductCategoryImporter,
       BatchHandler,
-      AvailableTag,
       MenuDisplayTag,
     },
     setup() {
@@ -168,8 +136,7 @@
         CloudUploadOutlined,
         PlusOutlined,
         SearchOutlined,
-        StopOutlined,
-        AVAILABLE,
+        DeleteOutlined,
       };
     },
     data() {
@@ -179,7 +146,6 @@
         searchFormData: {
           code: '',
           name: '',
-          available: AVAILABLE.ENABLE.code,
         },
         originData: [],
         tableProxy: {
@@ -209,7 +175,6 @@
           { type: 'checkbox', width: 45 },
           { field: 'code', title: '编号', width: 120 },
           { field: 'name', title: '名称', minWidth: 160, treeNode: true },
-          { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
           { field: 'description', title: '备注', minWidth: 160 },
           {
             field: 'action',
@@ -227,11 +192,9 @@
       handleSearch() {
         const filterCode = toString(this.searchFormData.code).trim();
         const filterName = toString(this.searchFormData.name).trim();
-        const filterAvailable = this.searchFormData.available;
         const isFilterCode = !isEmpty(filterCode);
         const isFilterName = !isEmpty(filterName);
-        const isFilterAvailable = !isEmpty(filterAvailable);
-        if (isFilterName || isFilterAvailable || isFilterCode) {
+        if (isFilterName || isFilterCode) {
           const options = { key: 'id', parentKey: 'parentId', children: 'children', strict: true };
           let tableData = searchTree(
             this.originData,
@@ -250,14 +213,6 @@
             options,
           );
 
-          if (isFilterAvailable) {
-            tableData = toTreeArray(tableData, options);
-            tableData = tableData.filter((item) =>
-              isEqualWithStr(item['available'], filterAvailable),
-            );
-            tableData = toArrayTree(tableData, options);
-          }
-
           // 搜索之后默认展开所有子节点
           this.$nextTick(() => {
             this.$refs.grid.setAllTreeExpand(true);
@@ -271,44 +226,24 @@
         this.$refs.grid.commitProxy('reload');
       },
       handleCommand({ key }) {
-        if (key === 'batchEnable') {
-          this.batchEnable();
-        } else if (key === 'batchUnable') {
-          this.batchUnable();
+        if (key === 'batchDelete') {
+          this.batchDelete();
         }
       },
-      doBatchUnable(row) {
-        return api.unable(row.id);
+      doBatchDelete(row) {
+        return api.deleteById(row.id);
       },
-      batchUnable() {
+      batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (isEmpty(records)) {
-          createError('请选择要停用的分类！');
+          createError('请选择要删除的分类！');
           return;
         }
 
         this.batchHandleDatas = records;
 
-        this.$refs.batchUnableHandlerDialog.openDialog();
-      },
-      doBatchEnable(row) {
-        return api.enable(row.id);
-      },
-      batchEnable() {
-        const records = union(
-          this.$refs.grid.getCheckboxRecords(),
-          this.$refs.grid.getCheckboxIndeterminateRecords(true),
-        );
-
-        if (isEmpty(records)) {
-          createError('请选择要启用的分类！');
-          return;
-        }
-
-        this.batchHandleDatas = records;
-
-        this.$refs.batchEnableHandlerDialog.openDialog();
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
       createActions(row) {
         return [

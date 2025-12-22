@@ -259,13 +259,13 @@
       SettlePreSheetDetail,
       OrderTimeLine,
     },
+    mixins: [multiplePageMix],
     setup() {
       return {
         SETTLE_CHECK_SHEET_STATUS,
         SETTLE_CHECK_SHEET_BIZ_TYPE,
       };
     },
-    mixins: [multiplePageMix],
     data() {
       return {
         id: this.$route.params.id,

@@ -7,6 +7,7 @@ import { QuerySysDataDicCategoryBo } from '@/api/system/dic-category/model/query
 import { GetSysDataDicCategoryBo } from '@/api/system/dic-category/model/getSysDataDicCategoryBo';
 import { CreateSysDataDicCategoryVo } from '@/api/system/dic-category/model/createSysDataDicCategoryVo';
 import { UpdateSysDataDicCategoryVo } from '@/api/system/dic-category/model/updateSysDataDicCategoryVo';
+import { QuerySysDataDicCategoryVo } from '@/api/system/dic-category/model/querySysDataDicCategoryVo';
 
 const baseUrl = '/system/dic/category';
 const selectorBaseUrl = '/selector';
@@ -42,10 +43,11 @@ export function loadDataDicCategory(ids: string[]): Promise<SysDataDicCategorySe
 /**
  * 查询列表
  */
-export function query(): Promise<QuerySysDataDicCategoryBo[]> {
+export function query(params: QuerySysDataDicCategoryVo): Promise<QuerySysDataDicCategoryBo[]> {
   return defHttp.get<QuerySysDataDicCategoryBo[]>(
     {
       url: baseUrl + '/query',
+      params,
     },
     {
       region,
@@ -57,12 +59,13 @@ export function query(): Promise<QuerySysDataDicCategoryBo[]> {
  * 根据ID查询
  * @param id
  */
-export function get(id: string): Promise<GetSysDataDicCategoryBo> {
+export function get(id: string, tenantId: number): Promise<GetSysDataDicCategoryBo> {
   return defHttp.get<GetSysDataDicCategoryBo>(
     {
       url: baseUrl,
       params: {
         id: id,
+        tenantId,
       },
     },
     {
@@ -109,12 +112,13 @@ export function update(data: UpdateSysDataDicCategoryVo): Promise<void> {
  * 根据ID删除
  * @param data
  */
-export function deleteById(id: string): Promise<void> {
+export function deleteById(id: string, tenantId: number): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
       data: {
         id,
+        tenantId,
       },
     },
     {

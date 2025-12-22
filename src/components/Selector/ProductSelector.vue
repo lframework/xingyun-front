@@ -35,7 +35,10 @@
               <a-input v-model:value="searchParams.skuCode" />
             </j-form-item>
             <j-form-item v-if="isEmpty(requestParams.categoryId)" label="分类">
-              <product-category-selector v-model:value="searchParams.categoryId" />
+              <product-category-selector
+                v-model:value="searchParams.categoryId"
+                :only-final="true"
+              />
             </j-form-item>
             <j-form-item v-if="isEmpty(requestParams.brandId)" label="品牌">
               <product-brand-selector v-model:value="searchParams.brandId" />

@@ -109,16 +109,16 @@
     components: {
       OrderTimeLine,
     },
-    setup() {
-      return {
-        CUSTOMER_SETTLE_PRE_SHEET_STATUS,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        CUSTOMER_SETTLE_PRE_SHEET_STATUS,
+      };
     },
     data() {
       return {

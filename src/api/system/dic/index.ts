@@ -57,12 +57,13 @@ export function query(params: QuerySysDataDicVo): Promise<PageResult<QuerySysDat
  * 根据ID查询
  * @param id
  */
-export function get(id: string): Promise<GetSysDataDicBo> {
+export function get(id: string, tenantId: number): Promise<GetSysDataDicBo> {
   return defHttp.get<GetSysDataDicBo>(
     {
       url: baseUrl,
       params: {
         id: id,
+        tenantId,
       },
     },
     {
@@ -109,12 +110,13 @@ export function update(data: UpdateSysDataDicVo): Promise<void> {
  * 根据ID删除
  * @param data
  */
-export function deleteById(id: string): Promise<void> {
+export function deleteById(id: string, tenantId: number): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
       data: {
         id,
+        tenantId,
       },
     },
     {

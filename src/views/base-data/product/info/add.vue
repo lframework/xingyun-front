@@ -64,17 +64,14 @@
             <a-form-item label="商品分类" name="categoryId">
               <product-category-selector
                 v-model:value="formData.categoryId"
-                :only-final="false"
+                :only-final="true"
                 @update:value="selectCategory"
               />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="商品品牌" name="brandId">
-              <product-brand-selector
-                v-model:value="formData.brandId"
-                :request-params="{ available: true }"
-              />
+              <product-brand-selector v-model:value="formData.brandId" />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -403,9 +400,7 @@
             { validator: validCode, message: '编号必须由字母、数字、“-_.”组成，长度不能超过20位' },
           ],
           name: [{ required: true, message: '请输入名称' }],
-          skuCode: [{ required: true, message: '请输入SKU编号' }],
           categoryId: [{ required: true, message: '请选择分类' }],
-          brandId: [{ required: true, message: '请选择品牌' }],
           weight: [
             {
               validator: (rule, value) => {
@@ -445,7 +440,6 @@
             },
           ],
           taxRate: [
-            { required: true, message: '请输入进项税率（%）' },
             {
               validator: (rule, value) => {
                 if (!isEmpty(value)) {
@@ -465,7 +459,6 @@
             },
           ],
           saleTaxRate: [
-            { required: true, message: '请输入销项税率（%）' },
             {
               validator: (rule, value) => {
                 if (!isEmpty(value)) {

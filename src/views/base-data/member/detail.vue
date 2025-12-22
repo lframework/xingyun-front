@@ -36,9 +36,6 @@
         <a-descriptions-item label="入会日期" :span="2">
           {{ formData.joinDay }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="2">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
         </a-descriptions-item>
@@ -50,23 +47,20 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/member';
   import { GENDER } from '@/enums/biz/gender';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {
-      AvailableTag,
-    },
-    setup() {
-      return {
-        GENDER,
-      };
-    },
+    components: {},
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        GENDER,
+      };
     },
     data() {
       return {
@@ -106,7 +100,6 @@
           shopName: '',
           guiderName: '',
           joinDay: '',
-          available: '',
           description: '',
         };
       },

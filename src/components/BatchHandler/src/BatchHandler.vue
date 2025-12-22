@@ -108,6 +108,11 @@
         default: '',
       },
     },
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     data() {
       return {
         loading: false,
@@ -190,6 +195,7 @@
                   item.__status = 2;
                 })
                 .catch((e) => {
+                  console.log(e);
                   item.__errorMsg = e?.msg || '网络请求错误，请稍后重试！';
                   item.__status = 3;
                 })

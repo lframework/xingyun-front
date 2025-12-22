@@ -6,6 +6,7 @@ import { GetSysMenuBo } from '@/api/system/menu/model/getSysMenuBo';
 import { UpdateSysMenuVo } from '@/api/system/menu/model/updateSysMeneVo';
 import { SysMenuSelectorBo } from '@/api/system/menu/model/sysMenuSelectorBo';
 import { SysMenuSelectorVo } from '@/api/system/menu/model/sysMenuSelectorVo';
+import { QuerySysMenuVo } from '@/api/system/menu/model/querySysMenuVo';
 
 const baseUrl = '/system/menu';
 const selectorBaseUrl = '/selector';
@@ -26,10 +27,11 @@ export function selector(params: SysMenuSelectorVo): Promise<SysMenuSelectorBo[]
 /**
  * 查询列表
  */
-export function query(): Promise<QuerySysMenuBo[]> {
+export function query(params: QuerySysMenuVo): Promise<QuerySysMenuBo[]> {
   return defHttp.get<QuerySysMenuBo[]>(
     {
       url: baseUrl + '/query',
+      params,
     },
     {
       region,
@@ -58,12 +60,13 @@ export function create(vo: CreateSysMenuVo): Promise<void> {
  * 根据ID查询
  * @param id
  */
-export function get(id: string): Promise<GetSysMenuBo> {
+export function get(id: string, tenantId: number): Promise<GetSysMenuBo> {
   return defHttp.get<GetSysMenuBo>(
     {
       url: baseUrl,
       params: {
         id,
+        tenantId,
       },
     },
     {
@@ -93,12 +96,13 @@ export function update(vo: UpdateSysMenuVo): Promise<void> {
  * 根据ID删除
  * @param id
  */
-export function deleteById(id: string): Promise<void> {
+export function deleteById(id: string, tenantId: number): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
       data: {
-        id: id,
+        id,
+        tenantId,
       },
     },
     {
@@ -112,16 +116,17 @@ export function deleteById(id: string): Promise<void> {
  * 启用
  * @param id
  */
-export function enable(id: string): Promise<void> {
+export function enable(id: string, tenantId: number, showError: boolean = false): Promise<void> {
   return defHttp.patch<void>(
     {
       url: baseUrl + '/enable',
       data: {
         id,
+        tenantId,
       },
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },
@@ -132,16 +137,17 @@ export function enable(id: string): Promise<void> {
  * 停用
  * @param id
  */
-export function unable(id: string): Promise<void> {
+export function unable(id: string, tenantId: number, showError: boolean = false): Promise<void> {
   return defHttp.patch<void>(
     {
       url: baseUrl + '/unable',
       data: {
         id,
+        tenantId,
       },
     },
     {
-      errorMessageMode: 'none',
+      hiddenError: !showError,
       contentType: ContentTypeEnum.FORM_URLENCODED,
       region,
     },

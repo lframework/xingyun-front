@@ -17,16 +17,6 @@
             <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
-            <j-form-item v-if="isEmpty(requestParams.available)" label="状态">
-              <a-select v-model:value="searchParams.available" placeholder="全部" allow-clear>
-                <a-select-option
-                  v-for="item in AVAILABLE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
-            </j-form-item>
           </j-form>
         </j-border>
       </template>
@@ -48,9 +38,12 @@
 <script>
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
+<<<<<<<< HEAD:src/components/Selector/GenCustomListCategorySelector.vue
+  import * as api from '@/api/development/custom/list-category';
+========
   import * as api from '@/api/base-data/logistics/company';
+>>>>>>>> develop:src/components/Selector/LogisticsCompanySelector.vue
   import { isEmpty } from '@/utils/utils';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     name: 'LogisticsCompanySelector',
@@ -58,7 +51,6 @@
     setup() {
       return {
         isEmpty,
-        AVAILABLE,
       };
     },
     props: {
@@ -69,25 +61,28 @@
         },
       },
     },
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     data() {
       return {
         searchParams: {
           code: '',
           name: '',
-          available: AVAILABLE.ENABLE.code,
         },
       };
     },
     computed: {
       _requestParams() {
-        return { available: true, ...this.searchParams, ...this.requestParams };
+        return { ...this.searchParams, ...this.requestParams };
       },
     },
     methods: {
       getList(params) {
         return api.selector({
           ...params,
-          available: true,
           ...this.searchParams,
           ...this.requestParams,
         });

@@ -8,9 +8,4 @@ export interface SysUserGroupSelectorBo {
    * 名称
    */
   name: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

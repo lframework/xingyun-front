@@ -64,16 +64,16 @@
       ProductSelector,
       StoreCenterSelector,
     },
-    setup() {
-      return {
-        AVAILABLE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        AVAILABLE,
+      };
     },
     data() {
       return {

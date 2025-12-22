@@ -76,16 +76,20 @@
     components: {
       MenuDisplayTag,
     },
-    setup() {
-      return {
-        MENU_DISPLAY,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+      tenantId: {
+        type: Number,
+        required: true,
+      },
+    },
+    setup() {
+      return {
+        MENU_DISPLAY,
+      };
     },
     data() {
       return {
@@ -127,7 +131,7 @@
       loadData() {
         this.loading = true;
         api
-          .get(this.id)
+          .get(this.id, this.tenantId)
           .then((data) => {
             this.formData = data;
           })

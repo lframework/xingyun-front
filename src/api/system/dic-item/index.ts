@@ -30,12 +30,13 @@ export function query(params: QuerySysDataDicItemVo): Promise<PageResult<QuerySy
  * 根据ID查询
  * @param id
  */
-export function get(id: string): Promise<GetSysDataDicItemBo> {
+export function get(id: string, tenantId: number): Promise<GetSysDataDicItemBo> {
   return defHttp.get<GetSysDataDicItemBo>(
     {
       url: baseUrl,
       params: {
         id: id,
+        tenantId,
       },
     },
     {
@@ -100,12 +101,13 @@ export function update(data: UpdateSysDataDicItemVo): Promise<void> {
  * 根据ID删除
  * @param data
  */
-export function deleteById(id: string): Promise<void> {
+export function deleteById(id: string, tenantId: number): Promise<void> {
   return defHttp.delete<void>(
     {
       url: baseUrl,
       data: {
         id,
+        tenantId,
       },
     },
     {

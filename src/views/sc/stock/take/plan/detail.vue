@@ -89,6 +89,12 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        TAKE_STOCK_PLAN_TYPE,
+        TAKE_STOCK_PLAN_STATUS,
+      };
+    },
     data() {
       return {
         // 是否可见

@@ -65,6 +65,10 @@
         type: String,
         required: true,
       },
+      tenantId: {
+        type: String,
+        required: true,
+      },
     },
     data() {
       return {
@@ -118,7 +122,7 @@
         this.$refs.form.validate().then((valid) => {
           if (valid) {
             this.loading = true;
-            const params = Object.assign({}, this.formData);
+            const params = Object.assign({}, this.formData, { tenantId: this.tenantId });
 
             api
               .update(params)
@@ -145,7 +149,7 @@
       loadFormData() {
         this.loading = true;
         api
-          .get(this.id)
+          .get(this.id, this.tenantId)
           .then((data) => {
             this.formData = Object.assign({}, this.formData, data);
             this.formData.categoryId = data.categoryId;

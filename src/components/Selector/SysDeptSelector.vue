@@ -1,113 +1,121 @@
 <template>
   <div>
-    <a-tree-select
-      v-model:value="model"
-      :show-search="true"
-      :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-      :field-names="{ label: 'name', key: 'id', value: 'id', children: 'children' }"
-      :tree-data="options"
-      :placeholder="placeholder"
-      allow-clear
-      :filter-tree-node="filter"
-      :disabled="disabled"
-      :multiple="multiple"
-      style="width: 100%"
-      @change="onChange"
-    />
+    <dialog-tree
+      ref="selector"
+      :request="getList"
+      :load="getLoad"
+      :handle-search="handleSearch"
+      :check-strictly="checkStrictly"
+      :request-params="_requestParams"
+      v-bind="$attrs"
+    >
+      <template #form>
+        <!-- 查询条件 -->
+        <j-border>
+          <j-form bordered>
+            <j-form-item v-if="isEmpty(requestParams.code)" label="编号">
+              <a-input v-model:value="searchParams.code" />
+            </j-form-item>
+            <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
+              <a-input v-model:value="searchParams.name" />
+            </j-form-item>
+          </j-form>
+        </j-border>
+      </template>
+      <!-- 工具栏 -->
+      <template #toolbar_buttons>
+        <a-space class="operator">
+          <a-button type="primary" @click="$refs.selector.search()">
+            <template #icon>
+              <SearchOutlined />
+            </template>
+            查询</a-button
+          >
+        </a-space>
+      </template>
+    </dialog-tree>
   </div>
 </template>
 
 <script>
   import { defineComponent } from 'vue';
+  import { SearchOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/system/dept';
-  import { toArrayTree, eachTree, isEmpty } from '@/utils/utils';
+  import { isEmpty, toString, searchTree } from '@/utils/utils';
 
   export default defineComponent({
     name: 'SysDeptSelector',
-    components: {},
+    components: { SearchOutlined },
     props: {
-      value: { type: [Object, String, Array], required: true },
       requestParams: {
         type: Object,
-        default: (e) => {
+        default: () => {
           return {};
         },
       },
-      onlyFinal: {
+      checkStrictly: {
         type: Boolean,
         default: true,
       },
-      disabled: {
-        type: Boolean,
-        default: false,
-      },
-      beforeOpen: {
-        type: Function,
-        default: (e) => {
-          return () => {
-            return true;
-          };
-        },
-      },
-      placeholder: {
-        type: String,
-        default: '',
-      },
-      multiple: {
-        type: Boolean,
-        default: false,
-      },
+    },
+    setup() {
+      return {
+        isEmpty,
+      };
     },
     data() {
       return {
-        options: [],
+        searchParams: {
+          code: '',
+          name: '',
+        },
       };
     },
     computed: {
-      model: {
-        get() {
-          return this.value;
-        },
-        set() {},
-      },
       _requestParams() {
-        return Object.assign({ available: true }, this.requestParams);
+        return { ...this.searchParams, ...this.requestParams };
       },
-    },
-    created() {
-      this.loadOptions();
     },
     methods: {
       getList(params) {
-        console.log(params);
-        return api.selector(params);
-      },
-      loadOptions() {
-        this.getList(this._requestParams).then((data) => {
-          const options = toArrayTree(data, {
-            strict: true,
-          });
-          if (this.onlyFinal) {
-            eachTree(options, (item) => {
-              if (!isEmpty(item.children)) {
-                item.disabled = true;
-              }
-            });
-          }
-
-          this.options = options;
+        return api.selector({
+          ...params,
+          ...this.searchParams,
+          ...this.requestParams,
         });
       },
-      onChange(e) {
-        if (isEmpty(e)) {
-          this.$emit('update:value', e);
-          this.$emit('clear', e);
-        } else {
-          this.$emit('update:value', e);
-        }
+      getLoad(ids) {
+        return api.loadDept(ids);
       },
-      filter(inputValue, node) {
-        return node.name.indexOf(inputValue) > -1;
+      handleSearch(datas) {
+        const filterCode = toString(this.searchParams.code).trim();
+        const filterName = toString(this.searchParams.name).trim();
+        const isFilterCode = !isEmpty(filterCode);
+        const isFilterName = !isEmpty(filterName);
+        if (isFilterName || isFilterCode) {
+          const options = { key: 'id', parentKey: 'parentId', children: 'children', strict: true };
+          let tableData = searchTree(
+            datas,
+            (item) => {
+              let filterResult = true;
+
+              if (isFilterName) {
+                filterResult &= toString(item['name']).indexOf(filterName) > -1;
+              }
+
+              if (isFilterCode) {
+                filterResult &= toString(item['code']).indexOf(filterCode) > -1;
+              }
+
+              return filterResult;
+            },
+            options,
+          );
+
+          return tableData;
+        } else {
+          return datas;
+        }
       },
     },
   });

@@ -27,16 +27,6 @@
         <a-form-item label="位置" name="location">
           <location-map ref="map" v-model:value="location" allow-clear />
         </a-form-item>
-        <a-form-item label="状态" name="available">
-          <a-select v-model:value="formData.available" allow-clear>
-            <a-select-option
-              v-for="item in AVAILABLE.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-select-option
-            >
-          </a-select>
-        </a-form-item>
         <a-form-item label="备注" name="description">
           <a-textarea v-model:value="formData.description" allow-clear />
         </a-form-item>
@@ -59,7 +49,6 @@
   import * as api from '@/api/base-data/shop';
   import { createSuccess } from '@/hooks/web/msg';
   import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
@@ -74,9 +63,7 @@
       },
     },
     setup() {
-      return {
-        AVAILABLE,
-      };
+      return {};
     },
     data() {
       return {
@@ -92,7 +79,6 @@
         rules: {
           code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入名称' }],
-          available: [{ required: true, message: '请选择状态' }],
         },
       };
     },
@@ -120,7 +106,6 @@
           deptId: '',
           lng: '',
           lat: '',
-          available: '',
           description: '',
         };
         this.location = {};

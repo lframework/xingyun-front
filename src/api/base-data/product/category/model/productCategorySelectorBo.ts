@@ -18,9 +18,4 @@ export interface ProductCategorySelectorBo {
    * 父级ID
    */
   parentId: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

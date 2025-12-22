@@ -225,17 +225,17 @@
       SettlePreSheetDetail,
       OrderTimeLine,
     },
-    setup() {
-      return {
-        CUSTOMER_SETTLE_CHECK_SHEET_STATUS,
-        CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        CUSTOMER_SETTLE_CHECK_SHEET_STATUS,
+        CUSTOMER_SETTLE_CHECK_SHEET_BIZ_TYPE,
+      };
     },
     data() {
       return {

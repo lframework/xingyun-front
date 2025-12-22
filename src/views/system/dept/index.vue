@@ -42,25 +42,16 @@
                 <a-button>操作 <DownOutlined /></a-button>
               </a-dropdown>
 
-              <a-dropdown v-permission="['system:dept:modify']">
+              <a-dropdown>
                 <template #overlay>
                   <a-menu @click="handleCommand">
-                    <a-menu-item key="batchEnable">
-                      <template #icon><CheckOutlined /></template>批量启用
-                    </a-menu-item>
-                    <a-menu-item key="batchUnable">
-                      <template #icon><StopOutlined /></template>批量停用
+                    <a-menu-item key="batchDelete">
+                      <template #icon><DeleteOutlined /></template>批量删除
                     </a-menu-item>
                   </a-menu>
                 </template>
-                <a-button>更多 <DownOutlined /></a-button>
+                <a-button v-permission="['system:dept:delete']">更多 <DownOutlined /></a-button>
               </a-dropdown>
-              <a-switch
-                v-model:checked="showAllDepts"
-                checked-children="显示全部部门"
-                un-checked-children="只显示启用部门"
-                @change="showChange"
-              />
             </a-space>
             <a-divider />
             <div v-loading="loading" class="tree-container">
@@ -84,12 +75,7 @@
                 @select="currentChange"
               >
                 <template #title="treeNode">
-                  <span v-if="treeNode.available">
-                    {{ treeNode.name }}
-                  </span>
-                  <span v-else class="unable-tree-node">
-                    {{ treeNode.name }}
-                  </span>
+                  {{ treeNode.name }}
                 </template>
               </a-tree>
             </div>
@@ -123,21 +109,12 @@
 
       <!-- 批量操作 -->
       <batch-handler
-        ref="batchUnableHandlerDialog"
+        ref="batchDeleteHandlerDialog"
         :table-column="[{ field: 'name', title: '部门', minWidth: 160 }]"
-        title="批量停用"
-        tip="停用部门时，会将该部门及其子部门同时停用。"
+        title="批量删除"
+        tip="删除部门时，会将该部门及其子部门同时删除。"
         :tableData="batchHandleDatas"
-        :handle-fn="doBatchUnable"
-        @confirm="getDeptTrees"
-      />
-      <batch-handler
-        ref="batchEnableHandlerDialog"
-        :table-column="[{ field: 'name', title: '部门', minWidth: 160 }]"
-        title="批量启用"
-        tip="启用部门时，会将该部门及其父级部门同时启用。"
-        :tableData="batchHandleDatas"
-        :handle-fn="doBatchEnable"
+        :handle-fn="doBatchDelete"
         @confirm="getDeptTrees"
       />
     </div>
@@ -157,6 +134,7 @@
     DownOutlined,
     CheckOutlined,
     StopOutlined,
+    DeleteOutlined,
     ExpandAltOutlined,
     ShrinkOutlined,
     RestOutlined,
@@ -175,6 +153,7 @@
       DownOutlined,
       CheckOutlined,
       StopOutlined,
+      DeleteOutlined,
       ExpandAltOutlined,
       ShrinkOutlined,
       RestOutlined,
@@ -197,8 +176,6 @@
         treeData: [],
         // 部门数据
         depts: [],
-        // 是否显示停用的部门
-        showAllDepts: false,
         id: '',
         expandedKeys: [],
         checkedKeys: {
@@ -247,9 +224,6 @@
 
               treeData = res;
               this.depts = res;
-              if (!this.showAllDepts) {
-                treeData = treeData.filter((item) => item.available);
-              }
 
               this.treeData = toArrayTree(treeData, {
                 key: 'id',
@@ -271,10 +245,8 @@
           });
       },
       handleCommand({ key }) {
-        if (key === 'batchEnable') {
-          this.batchEnable();
-        } else if (key === 'batchUnable') {
-          this.batchUnable();
+        if (key === 'batchDelete') {
+          this.batchDelete();
         } else if (key === 'allOpen') {
           this.expandedKeys = this.depts.map((item) => item.id);
         } else if (key === 'allFold') {
@@ -315,14 +287,14 @@
           };
         }
       },
-      doBatchUnable(row) {
-        return api.unable(row.id);
+      doBatchDelete(row) {
+        return api.deleteById(row.id);
       },
-      batchUnable() {
+      batchDelete() {
         const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked];
 
         if (isEmpty(records)) {
-          createError('请选择要停用的部门！');
+          createError('请选择要删除的部门！');
           return;
         }
 
@@ -336,42 +308,7 @@
         treeData = treeData.filter((item) => records.includes(item.id));
         this.batchHandleDatas = treeData;
 
-        this.$refs.batchUnableHandlerDialog.openDialog();
-      },
-      doBatchEnable(row) {
-        return api.enable(row.id);
-      },
-      batchEnable() {
-        const records = [...this.checkedKeys.checked, ...this.checkedKeys.halfChecked];
-        if (isEmpty(records)) {
-          createError('请选择要启用的部门！');
-          return;
-        }
-
-        let treeData = toTreeArray(this.treeData, {
-          key: 'id',
-          parentKey: 'parentId',
-          children: 'children',
-          strict: true,
-        });
-
-        treeData = treeData.filter((item) => records.includes(item.id));
-        this.batchHandleDatas = treeData;
-
-        this.$refs.batchEnableHandlerDialog.openDialog();
-      },
-      showChange(val) {
-        let treeData = this.depts;
-        if (!val) {
-          treeData = treeData.filter((item) => item.available);
-
-          const currentIds = treeData.map((item) => item.id);
-          this.checkedKeys = {
-            checked: this.checkedKeys.checked.filter((item) => currentIds.includes(item)),
-            halfChecked: this.checkedKeys.halfChecked.filter((item) => currentIds.includes(item)),
-          };
-        }
-        this.treeData = toArrayTree(treeData);
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
       // 选中的部门发生改变
       currentChange(data) {

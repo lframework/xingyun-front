@@ -20,6 +20,7 @@ export interface RequestOptions {
   // 请求拼接路径
   urlPrefix?: string;
   // Error message prompt type
+  hiddenError?: boolean;
   errorMessageMode?: ErrorMessageMode;
   // Success message prompt type
   successMessageMode?: SuccessMessageMode;

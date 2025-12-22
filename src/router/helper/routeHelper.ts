@@ -8,15 +8,11 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 export type LayoutMapKey = 'LAYOUT';
 const IFRAME = () => import('/@/views/sys/iframe/FrameBlank.vue');
-const CUSTOMLIST = () => import('/@/components/CustomList');
-const CUSTOMPAGE = () => import('/@/components/CustomPage');
 
 const LayoutMap = new Map<string, () => Promise<typeof import('*.vue')>>();
 
 LayoutMap.set('LAYOUT', LAYOUT);
 LayoutMap.set('IFRAME', IFRAME);
-LayoutMap.set('CUSTOMLIST', CUSTOMLIST);
-LayoutMap.set('CUSTOMPAGE', CUSTOMPAGE);
 
 let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
 
@@ -34,15 +30,6 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
       const layoutFound = LayoutMap.get(component.toUpperCase());
       if (layoutFound) {
         item.component = layoutFound;
-        if (component.toUpperCase() === 'CUSTOMLIST') {
-          item.props = {
-            customListId: meta.customListId,
-          };
-        } else if (component.toUpperCase() === 'CUSTOMPAGE') {
-          item.props = {
-            pageId: meta.customPageId,
-          };
-        }
       } else {
         item.component = dynamicImport(dynamicViewsModules, component as string);
       }

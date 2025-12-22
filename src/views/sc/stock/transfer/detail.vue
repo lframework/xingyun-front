@@ -128,17 +128,17 @@
       DetailReceive,
       OrderTimeLine,
     },
-    setup() {
-      return {
-        gt,
-        SC_TRANSFER_ORDER_STATUS,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        gt,
+        SC_TRANSFER_ORDER_STATUS,
+      };
     },
     data() {
       return {

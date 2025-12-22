@@ -45,11 +45,6 @@ export interface GetStoreCenterBo {
   peopleNum: number;
 
   /**
-   * 状态
-   */
-  available: boolean;
-
-  /**
    * 备注
    */
   description: string;

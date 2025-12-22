@@ -22,11 +22,6 @@ export interface QuerySysUserVo extends PageVo {
   deptId: string;
 
   /**
-   * 状态
-   */
-  available: boolean;
-
-  /**
    * 是否锁定
    */
   lockStatus: boolean;

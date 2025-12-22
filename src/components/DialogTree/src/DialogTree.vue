@@ -175,16 +175,14 @@
           return [
             { field: 'code', title: '编号', width: 120 },
             { field: 'name', title: '名称', minWidth: 160, treeNode: true },
-            {
-              field: 'available',
-              title: '状态',
-              width: 80,
-              slots: { default: 'available_default' },
-            },
           ];
         },
       },
       onlyFinal: {
+        type: Boolean,
+        default: false,
+      },
+      checkStrictly: {
         type: Boolean,
         default: false,
       },
@@ -296,6 +294,8 @@
         if (this.multiple) {
           config = Object.assign({ trigger: 'row', highlight: true }, config);
         }
+
+        config = Object.assign({}, { checkStrictly: this.checkStrictly }, config);
 
         return config;
       },

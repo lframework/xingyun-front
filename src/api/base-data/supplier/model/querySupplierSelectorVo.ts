@@ -15,9 +15,4 @@ export interface QuerySupplierSelectorVo extends PageVo {
    * 经营方式
    */
   manageType: number;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

@@ -114,20 +114,6 @@
         </a-row>
         <a-row :gutter="16">
           <a-col :span="24">
-            <a-form-item label="状态" name="available">
-              <a-select v-model:value="formData.available" allow-clear>
-                <a-select-option
-                  v-for="item in AVAILABLE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="24">
             <a-form-item label="备注" name="description">
               <a-textarea v-model:value.trim="formData.description" />
             </a-form-item>
@@ -153,24 +139,22 @@
   import { createSuccess } from '@/hooks/web/msg';
   import CitySelector from '@/components/Selector/CitySelector.vue';
   import { SETTLE_TYPE } from '@/enums/biz/settleType';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
     components: {
       CitySelector,
     },
-    setup() {
-      return {
-        SETTLE_TYPE,
-        AVAILABLE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        SETTLE_TYPE,
+      };
     },
     data() {
       return {
@@ -197,7 +181,6 @@
             },
           ],
           settleType: [{ required: true, message: '请选择结算方式' }],
-          available: [{ required: true, message: '请选择状态' }],
         },
       };
     },
@@ -239,7 +222,6 @@
           bankName: '',
           accountName: '',
           accountNo: '',
-          available: '',
           description: '',
         };
       },

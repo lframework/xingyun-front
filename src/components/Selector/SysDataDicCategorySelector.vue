@@ -61,6 +61,11 @@
         },
       },
     },
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     data() {
       return {
         searchParams: {

@@ -30,15 +30,11 @@
               <j-form-item label="姓名">
                 <a-input v-model:value="searchFormData.name" allow-clear />
               </j-form-item>
-              <j-form-item label="状态">
-                <a-select v-model:value="searchFormData.available" placeholder="全部" allow-clear>
-                  <a-select-option
-                    v-for="item in AVAILABLE.values()"
-                    :key="item.code"
-                    :value="item.code"
-                    >{{ item.desc }}</a-select-option
-                  >
-                </a-select>
+              <j-form-item label="部门">
+                <sys-dept-selector v-model:value="searchFormData.deptId" :only-final="false" />
+              </j-form-item>
+              <j-form-item label="角色">
+                <sys-role-selector v-model:value="searchFormData.roleId" />
               </j-form-item>
               <j-form-item label="是否锁定">
                 <a-select v-model:value="searchFormData.lockStatus" placeholder="全部" allow-clear>
@@ -67,26 +63,26 @@
               >批量授权</a-button
             >
             <a-button
+              v-permission="['system:user:modify']"
+              :icon="h(EditOutlined)"
+              @click="batchModifyDept"
+              >修改部门</a-button
+            >
+            <a-button
               v-permission="['system:user:permission']"
               :icon="h(SettingOutlined)"
-              @click="batchDataPermmission"
+              @click="batchDataPermission"
               >批量数据权限</a-button
             >
-            <a-dropdown v-permission="['system:user:modify']">
+            <a-dropdown>
               <template #overlay>
                 <a-menu @click="handleCommand">
-                  <a-menu-item key="batchEnable" :icon="h(CheckOutlined)">批量启用 </a-menu-item>
-                  <a-menu-item key="batchUnable" :icon="h(StopOutlined)">批量停用 </a-menu-item>
+                  <a-menu-item key="batchDelete" :icon="h(DeleteOutlined)">批量删除 </a-menu-item>
                 </a-menu>
               </template>
-              <a-button>更多<DownOutlined /></a-button>
+              <a-button v-permission="['system:user:delete']">更多<DownOutlined /></a-button>
             </a-dropdown>
           </a-space>
-        </template>
-
-        <!-- 状态 列自定义内容 -->
-        <template #available_default="{ row }">
-          <available-tag :available="row.available" />
         </template>
 
         <!-- 操作 列自定义内容 -->
@@ -122,27 +118,18 @@
 
     <!-- 批量操作 -->
     <batch-handler
-      ref="batchUnableHandlerDialog"
+      ref="batchDeleteHandlerDialog"
       :table-column="[
         { field: 'code', title: '编号', width: 100 },
         { field: 'username', title: '用户名', minWidth: 120 },
       ]"
-      title="批量停用"
+      title="批量删除"
       :tableData="batchHandleDatas"
-      :handle-fn="doBatchUnable"
+      :handle-fn="doBatchDelete"
       @confirm="search"
     />
-    <batch-handler
-      ref="batchEnableHandlerDialog"
-      :table-column="[
-        { field: 'code', title: '编号', width: 100 },
-        { field: 'username', title: '用户名', minWidth: 120 },
-      ]"
-      title="批量启用"
-      :tableData="batchHandleDatas"
-      :handle-fn="doBatchEnable"
-      @confirm="search"
-    />
+
+    <modify-dept :ids="ids" ref="modifyDeptDialog" @confirm="search" />
   </div>
 </template>
 
@@ -163,18 +150,22 @@
     SettingOutlined,
     DownOutlined,
     CheckOutlined,
-    StopOutlined,
+    DeleteOutlined,
+    EditOutlined,
   } from '@ant-design/icons-vue';
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
-  import { AVAILABLE } from '@/enums/biz/available';
   import { SYS_DATA_PERMISSION_DATA_BIZ_TYPE } from '@/enums/biz/sysDataPermissionDataBizType';
   import { GENDER } from '@/enums/biz/gender';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
   import BatchHandler from '@/components/BatchHandler';
+  import SysDeptSelector from '@/components/Selector/SysDeptSelector.vue';
+  import SysRoleSelector from '@/components/Selector/SysRoleSelector.vue';
+  import ModifyDept from '@/views/system/user/modify-dept.vue';
 
   export default defineComponent({
     name: 'User',
     components: {
+      SysDeptSelector,
+      SysRoleSelector,
       Add,
       Modify,
       Detail,
@@ -182,8 +173,8 @@
       DataPermission,
       BatchDataPermission,
       DownOutlined,
-      AvailableTag,
       BatchHandler,
+      ModifyDept,
     },
     setup() {
       return {
@@ -193,9 +184,9 @@
         ThunderboltOutlined,
         SettingOutlined,
         CheckOutlined,
-        StopOutlined,
+        DeleteOutlined,
+        EditOutlined,
         isEmpty,
-        AVAILABLE,
         SYS_DATA_PERMISSION_DATA_BIZ_TYPE,
       };
     },
@@ -206,9 +197,7 @@
         id: '',
         ids: [],
         // 查询列表的查询条件
-        searchFormData: {
-          available: true,
-        },
+        searchFormData: {},
         // 工具栏配置
         toolbarConfig: {
           // 自定义左侧工具栏
@@ -235,7 +224,6 @@
             },
           },
           { field: 'description', title: '备注', minWidth: 200 },
-          { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
           {
             field: 'lockStatus',
             title: '是否锁定',
@@ -248,7 +236,7 @@
           { field: 'createTime', title: '创建时间', width: 170, sortable: true },
           { field: 'updateBy', title: '修改人', width: 100 },
           { field: 'updateTime', title: '修改时间', width: 170, sortable: true },
-          { title: '操作', width: 290, fixed: 'right', slots: { default: 'action_default' } },
+          { title: '操作', width: 220, fixed: 'right', slots: { default: 'action_default' } },
         ],
         // 请求接口配置
         proxyConfig: {
@@ -288,10 +276,8 @@
         };
       },
       handleCommand({ key }) {
-        if (key === 'batchEnable') {
-          this.batchEnable();
-        } else if (key === 'batchUnable') {
-          this.batchUnable();
+        if (key === 'batchDelete') {
+          this.batchDelete();
         }
       },
       createActions(row) {
@@ -321,13 +307,6 @@
           },
           {
             permission: ['system:user:permission'],
-            label: '授权',
-            onClick: () => {
-              this.setting(row);
-            },
-          },
-          {
-            permission: ['system:user:permission'],
             label: '数据权限',
             onClick: () => {
               this.id = row.id;
@@ -336,42 +315,33 @@
           },
         ];
       },
-      doBatchUnable(row) {
-        return api.unable(row.id);
+      doBatchDelete(row) {
+        return api.deleteById(row.id);
       },
       // 批量停用
-      batchUnable() {
+      batchDelete() {
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (isEmpty(records)) {
-          createError('请选择要停用的用户！');
+          createError('请选择要删除的用户！');
           return;
         }
 
         this.batchHandleDatas = records;
 
-        this.$refs.batchUnableHandlerDialog.openDialog();
+        this.$refs.batchDeleteHandlerDialog.openDialog();
       },
-      doBatchEnable(row) {
-        return api.enable(row.id);
-      },
-      // 批量启用
-      batchEnable() {
+      batchModifyDept() {
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (isEmpty(records)) {
-          createError('请选择要启用的用户！');
+          createError('请选择要修改部门的用户！');
           return;
         }
 
-        this.batchHandleDatas = records;
+        this.ids = records.map((item) => item.id);
 
-        this.$refs.batchEnableHandlerDialog.openDialog();
-      },
-      // 授权
-      setting(row) {
-        this.ids = [row.id];
-        this.$refs.permissionDialog.openDialog();
+        this.$refs.modifyDeptDialog.openDialog();
       },
       // 批量授权
       batchSetting() {
@@ -399,7 +369,7 @@
             });
         });
       },
-      batchDataPermmission() {
+      batchDataPermission() {
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (isEmpty(records)) {

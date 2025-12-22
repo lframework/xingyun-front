@@ -63,6 +63,10 @@
         type: String,
         required: true,
       },
+      tenantId: {
+        type: Number,
+        required: true,
+      },
     },
     data() {
       return {
@@ -114,7 +118,7 @@
             }
             this.loading = true;
             api
-              .update({ ...this.formData })
+              .update({ ...this.formData, tenantId: this.tenantId })
               .then(() => {
                 createSuccess('修改成功！');
                 this.$emit('confirm');
@@ -138,7 +142,7 @@
       loadFormData() {
         this.loading = true;
         api
-          .get(this.itemId)
+          .get(this.itemId, this.tenantId)
           .then((data) => {
             this.formData = data;
           })

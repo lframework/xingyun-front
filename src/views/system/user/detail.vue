@@ -33,10 +33,7 @@
         <a-descriptions-item label="联系电话" :span="2">
           {{ formData.telephone }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="2">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
-        <a-descriptions-item label="是否锁定" :span="2">
+        <a-descriptions-item label="是否锁定" :span="4">
           {{ formData.lockStatus ? '是' : '否' }}
         </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
@@ -51,24 +48,22 @@
   import * as api from '@/api/system/user';
   import { getEnumDesc } from '@/utils/enumUtil';
   import { GENDER } from '@/enums/biz/gender';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
     // 使用组件
     components: {
-      AvailableTag,
-    },
-    setup() {
-      return {
-        getEnumDesc,
-        GENDER,
-      };
     },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        getEnumDesc,
+        GENDER,
+      };
     },
     data() {
       return {
@@ -102,7 +97,6 @@
           code: '',
           name: '',
           permission: '',
-          available: '',
           lockStatus: '',
           description: '',
         };

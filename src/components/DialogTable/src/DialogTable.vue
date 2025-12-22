@@ -53,12 +53,7 @@
             :data="selectRow"
             :columns="_sumTableColumn"
             :pager-config="undefined"
-          >
-            <!-- 状态 列自定义内容 -->
-            <template #available_default="{ row }">
-              <available-tag :available="row.available" />
-            </template>
-          </vxe-grid>
+          />
         </div>
 
         <template #footer>
@@ -109,11 +104,6 @@
 
             <template #toolbar_buttons>
               <slot name="toolbar_buttons"></slot>
-            </template>
-
-            <!-- 状态 列自定义内容 -->
-            <template #available_default="{ row }">
-              <available-tag :available="row.available" />
             </template>
           </vxe-grid>
         </div>
@@ -169,12 +159,6 @@
           return [
             { field: 'code', title: '编号', width: 120 },
             { field: 'name', title: '名称', minWidth: 160 },
-            {
-              field: 'available',
-              title: '状态',
-              width: 80,
-              slots: { default: 'available_default' },
-            },
           ];
         },
       },

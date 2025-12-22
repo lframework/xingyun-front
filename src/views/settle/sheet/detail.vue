@@ -151,16 +151,16 @@
       SettleCheckSheetDetail,
       OrderTimeLine,
     },
-    setup() {
-      return {
-        SETTLE_SHEET_STATUS,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        SETTLE_SHEET_STATUS,
+      };
     },
     data() {
       return {

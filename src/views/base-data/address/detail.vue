@@ -46,17 +46,17 @@
   export default defineComponent({
     // 使用组件
     components: {},
-    setup() {
-      return {
-        ADDRESS_ENTITY_TYPE,
-        ADDRESS_TYPE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {
+        ADDRESS_ENTITY_TYPE,
+        ADDRESS_TYPE,
+      };
     },
     data() {
       return {

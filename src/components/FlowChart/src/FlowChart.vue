@@ -50,6 +50,12 @@
         default: '',
       },
     },
+    setup() {
+      return {
+        isEmpty,
+        uuid,
+      };
+    },
     data() {
       return {};
     },

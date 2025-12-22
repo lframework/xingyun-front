@@ -24,9 +24,6 @@
         <a-descriptions-item label="纬度" :span="2">
           {{ formData.lat }}
         </a-descriptions-item>
-        <a-descriptions-item label="状态" :span="2">
-          <available-tag :available="formData.available" />
-        </a-descriptions-item>
         <a-descriptions-item label="备注" :span="2">
           {{ formData.description }}
         </a-descriptions-item>
@@ -84,7 +81,6 @@
           deptName: '',
           lng: '',
           lat: '',
-          available: '',
           description: '',
         };
       },

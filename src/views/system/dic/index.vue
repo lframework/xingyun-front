@@ -1,9 +1,11 @@
 <template>
   <div v-permission="['system:dic:query']">
-    <a-row>
+    <TenantList v-if="activeKey === 0" @select="onSelectTenant" />
+
+    <a-row v-else>
       <a-col :span="4">
         <page-wrapper content-full-height fixed-height content-class="!mr-0">
-          <category-tree style="height: 100%" @change="(e) => doSearch(e)" />
+          <category-tree :tenant-id="tenantId" style="height: 100%" @change="(e) => doSearch(e)" />
         </page-wrapper>
       </a-col>
       <a-col :span="20">
@@ -66,13 +68,13 @@
     </a-row>
 
     <!-- 新增窗口 -->
-    <add ref="addDialog" @confirm="search" />
+    <add ref="addDialog" :tenant-id="tenantId" @confirm="search" />
 
     <!-- 修改窗口 -->
-    <modify :id="id" ref="updateDialog" @confirm="search" />
+    <modify :id="id" :tenant-id="tenantId" ref="updateDialog" @confirm="search" />
 
     <!-- 规格值窗口 -->
-    <item ref="itemDialog" :dic-id="id" />
+    <item ref="itemDialog" :tenant-id="tenantId" :dic-id="id" />
   </div>
 </template>
 
@@ -88,10 +90,12 @@
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
   import AvailableTag from '@/components/Tag/AvailableTag.vue';
+  import TenantList from '@/components/TenantList';
 
   export default defineComponent({
     name: 'SysDataDic',
     components: {
+      TenantList,
       Add,
       Modify,
       Item,
@@ -108,6 +112,8 @@
     data() {
       return {
         loading: false,
+        activeKey: 0,
+        tenantId: '',
         // 当前行数据
         id: '',
         ids: [],
@@ -178,6 +184,7 @@
       buildSearchFormData() {
         return {
           ...this.searchFormData,
+          tenantId: this.tenantId,
         };
       },
       createActions(row) {
@@ -210,11 +217,15 @@
       },
       deleteRow(row) {
         createConfirm('是否确认删除此数据字典？').then(() => {
-          api.deleteById(row.id).then(() => {
+          api.deleteById(row.id, this.tenantId).then(() => {
             createSuccess('删除成功！');
             this.search();
           });
         });
+      },
+      onSelectTenant(tenantId) {
+        this.tenantId = tenantId;
+        this.activeKey = 1;
       },
     },
   });

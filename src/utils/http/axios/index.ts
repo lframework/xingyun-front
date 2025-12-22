@@ -19,6 +19,8 @@ import { createError, createErrorDialog } from '@/hooks/web/msg';
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
 
+const defaultErrorMessageMode = 'message';
+
 /**
  * @description: 数据处理，方便区分多种处理方式
  */
@@ -163,7 +165,10 @@ const transform: AxiosTransform = {
    */
   responseInterceptorsCatch: (axiosInstance: AxiosInstance, error: any) => {
     const { response, config } = error || {};
-    const errorMessageMode = config?.requestOptions?.errorMessageMode || 'none';
+    let errorMessageMode = config?.requestOptions?.errorMessageMode || defaultErrorMessageMode;
+    if (config?.requestOptions?.hiddenError) {
+      errorMessageMode = 'none';
+    }
     let errMessage = response?.data?.error?.message ?? '';
 
     if (axios.isCancel(error)) {
@@ -250,8 +255,9 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           joinParamsToUrl: false,
           // 格式化提交参数时间
           formatDate: true,
+          hiddenError: false,
           // 消息提示类型
-          errorMessageMode: 'message',
+          errorMessageMode: defaultErrorMessageMode,
           // 接口地址
           apiUrl: globSetting.apiUrl,
           // 接口拼接地址

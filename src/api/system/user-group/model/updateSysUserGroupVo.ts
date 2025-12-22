@@ -5,9 +5,4 @@ export interface UpdateSysUserGroupVo extends CreateSysUserGroupVo {
    * ID
    */
   id: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

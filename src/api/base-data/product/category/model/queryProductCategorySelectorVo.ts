@@ -1,6 +1,1 @@
-export interface QueryProductCategorySelectorVo {
-  /**
-   * 状态
-   */
-  available: boolean;
-}
+export interface QueryProductCategorySelectorVo {}

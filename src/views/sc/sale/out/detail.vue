@@ -167,6 +167,15 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        SALE_OUT_SHEET_STATUS,
+      };
+    },
     data() {
       return {
         // 是否可见

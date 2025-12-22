@@ -13,9 +13,4 @@ export interface StoreCenterSelectorBo {
    * 名称
    */
   name: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

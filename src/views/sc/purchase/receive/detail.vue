@@ -174,6 +174,15 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        RECEIVE_SHEET_STATUS,
+      };
+    },
     data() {
       return {
         // 是否可见

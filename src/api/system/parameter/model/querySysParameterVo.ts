@@ -2,6 +2,11 @@ import { SortPageVo } from '@/api/model/sortPageVo';
 
 export interface QuerySysParameterVo extends SortPageVo {
   /**
+   * 租户ID
+   */
+  tenantId: number;
+
+  /**
    * 键
    */
   pmKey: string;

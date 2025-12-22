@@ -47,6 +47,11 @@
         default: false,
       },
     },
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     data() {
       return {
         dicOptions: [],

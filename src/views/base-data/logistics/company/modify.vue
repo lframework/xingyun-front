@@ -44,20 +44,6 @@
           </a-col>
         </a-row>
         <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="状态" name="available">
-              <a-select v-model:value="formData.available" allow-clear>
-                <a-select-option
-                  v-for="item in AVAILABLE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
           <a-col :span="24">
             <a-form-item label="备注" name="description">
               <a-textarea v-model:value.trim="formData.description" />
@@ -83,23 +69,20 @@
   import { isEmpty } from '@/utils/utils';
   import { createSuccess } from '@/hooks/web/msg';
   import CitySelector from '@/components/Selector/CitySelector.vue';
-  import { AVAILABLE } from '@/enums/biz/available';
 
   export default defineComponent({
     // 使用组件
     components: {
       CitySelector,
     },
-    setup() {
-      return {
-        AVAILABLE,
-      };
-    },
     props: {
       id: {
         type: String,
         required: true,
       },
+    },
+    setup() {
+      return {};
     },
     data() {
       return {
@@ -113,7 +96,6 @@
         rules: {
           code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入名称' }],
-          available: [{ required: true, message: '请选择状态' }],
         },
       };
     },

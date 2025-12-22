@@ -159,6 +159,15 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        RETAIL_OUT_SHEET_STATUS,
+      };
+    },
     data() {
       return {
         // 是否可见

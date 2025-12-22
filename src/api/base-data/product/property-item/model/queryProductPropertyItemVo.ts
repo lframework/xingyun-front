@@ -15,9 +15,4 @@ export interface QueryProductPropertyItemVo extends PageVo {
    * 属性ID
    */
   propertyId: string;
-
-  /**
-   * 状态
-   */
-  available: boolean;
 }

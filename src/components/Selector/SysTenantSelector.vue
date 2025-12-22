@@ -74,6 +74,12 @@
         },
       },
     },
+    setup() {
+      return {
+        isEmpty,
+        AVAILABLE,
+      };
+    },
     data() {
       return {
         searchParams: {

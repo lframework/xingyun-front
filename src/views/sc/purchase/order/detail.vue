@@ -55,6 +55,11 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        isEmpty,
+      };
+    },
     data() {
       return {
         // 是否可见

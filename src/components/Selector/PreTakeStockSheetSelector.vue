@@ -102,12 +102,6 @@
       SearchOutlined,
       StoreCenterSelector,
     },
-    setup() {
-      return {
-        isEmpty,
-        PRE_TAKE_STOCK_SHEET_STATUS,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
@@ -115,6 +109,12 @@
           return {};
         },
       },
+    },
+    setup() {
+      return {
+        isEmpty,
+        PRE_TAKE_STOCK_SHEET_STATUS,
+      };
     },
     data() {
       return {

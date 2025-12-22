@@ -178,6 +178,15 @@
         required: true,
       },
     },
+    setup() {
+      return {
+        isEmpty,
+        isFloatGeZero,
+        getNumber,
+        mul,
+        RETAIL_RETURN_STATUS,
+      };
+    },
     data() {
       return {
         // 是否可见

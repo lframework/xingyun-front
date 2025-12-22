@@ -1,5 +1,10 @@
 export interface UpdateSysDataDicCategoryVo {
   /**
+   * 租户ID
+   */
+  tenantId: number;
+
+  /**
    * ID
    */
   id: string;
