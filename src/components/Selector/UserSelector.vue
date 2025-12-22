@@ -18,11 +18,7 @@
             <j-form-item v-if="isEmpty(requestParams.code)" label="编号">
               <a-input v-model:value="searchParams.code" />
             </j-form-item>
-<<<<<<<< HEAD:src/components/Selector/GenDataEntityCategorySelector.vue
-            <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
-========
             <j-form-item v-if="isEmpty(requestParams.name)" label="姓名">
->>>>>>>> develop:src/components/Selector/UserSelector.vue
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
           </j-form>
@@ -46,21 +42,12 @@
 <script>
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-<<<<<<<< HEAD:src/components/Selector/GenDataEntityCategorySelector.vue
-  import * as api from '@/api/development/data/entity-category';
-========
   import * as api from '@/api/system/user';
->>>>>>>> develop:src/components/Selector/UserSelector.vue
   import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'UserSelector',
     components: { SearchOutlined },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       requestParams: {
         type: Object,

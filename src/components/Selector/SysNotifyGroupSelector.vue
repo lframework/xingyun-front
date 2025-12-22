@@ -12,11 +12,7 @@
         <!-- 查询条件 -->
         <j-border>
           <j-form bordered>
-<<<<<<<< HEAD:src/components/Selector/SimpleDbTableSelector.vue
-            <j-form-item v-if="isEmpty(requestParams.name)" label="表名">
-========
             <j-form-item v-if="isEmpty(requestParams.name)" label="名称">
->>>>>>>> develop:src/components/Selector/SysNotifyGroupSelector.vue
               <a-input v-model:value="searchParams.name" />
             </j-form-item>
           </j-form>
@@ -40,21 +36,12 @@
 <script>
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-<<<<<<<< HEAD:src/components/Selector/SimpleDbTableSelector.vue
-  import * as api from '@/api/development/gen/simple-db';
-========
   import * as api from '@/api/system/notify-group';
->>>>>>>> develop:src/components/Selector/SysNotifyGroupSelector.vue
   import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'SysNotifyGroupSelector',
     components: { SearchOutlined },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       requestParams: {
         type: Object,

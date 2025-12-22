@@ -38,21 +38,12 @@
 <script>
   import { defineComponent } from 'vue';
   import { SearchOutlined } from '@ant-design/icons-vue';
-<<<<<<<< HEAD:src/components/Selector/GenCustomListCategorySelector.vue
-  import * as api from '@/api/development/custom/list-category';
-========
   import * as api from '@/api/base-data/logistics/company';
->>>>>>>> develop:src/components/Selector/LogisticsCompanySelector.vue
   import { isEmpty } from '@/utils/utils';
 
   export default defineComponent({
     name: 'LogisticsCompanySelector',
     components: { SearchOutlined },
-    setup() {
-      return {
-        isEmpty,
-      };
-    },
     props: {
       requestParams: {
         type: Object,
