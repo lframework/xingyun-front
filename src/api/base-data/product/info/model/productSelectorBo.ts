@@ -15,16 +15,6 @@ export interface ProductSelectorBo {
   name: string;
 
   /**
-   * SKU
-   */
-  skuCode: string;
-
-  /**
-   * 简码
-   */
-  externalCode: string;
-
-  /**
    * 分类ID
    */
   categoryId: string;

@@ -77,16 +77,6 @@ export interface SheetDetailBo {
   brandName: string;
 
   /**
-   * SKU
-   */
-  skuCode: string;
-
-  /**
-   * 简码
-   */
-  externalCode: string;
-
-  /**
    * 规格
    */
   spec: string;

@@ -63,14 +63,6 @@ export interface OrderDetailBo {
    */
   productName: string;
   /**
-   * SKU编号
-   */
-  skuCode: string;
-  /**
-   * 简码
-   */
-  externalCode: string;
-  /**
    * 采购数量
    */
   purchaseNum: number;

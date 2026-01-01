@@ -75,7 +75,7 @@
             v-if="!row.isFixed && isEmpty(row.productId)"
             :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
-            placeholder="请输入商品编号/名称/SKU编号/简码"
+            placeholder="请输入商品编号/名称"
             :options="row.productOptions"
             :dropdown-match-select-width="false"
             :dropdown-style="{ width: '890px' }"
@@ -95,7 +95,6 @@
                 >
                   <vxe-column field="productCode" title="商品编号" width="120" />
                   <vxe-column field="productName" title="商品名称" min-width="200" />
-                  <vxe-column field="skuCode" title="商品SKU编号" width="120" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
                   <vxe-column
@@ -286,8 +285,6 @@
             width: 260,
             slots: { default: 'productName_default' },
           },
-          { field: 'skuCode', title: '商品SKU编号', width: 120 },
-          { field: 'externalCode', title: '商品简码', width: 120 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -413,8 +410,6 @@
           productId: '',
           productCode: '',
           productName: '',
-          skuCode: '',
-          externalCode: '',
           unit: '',
           spec: '',
           categoryName: '',

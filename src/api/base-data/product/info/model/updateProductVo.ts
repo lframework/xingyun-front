@@ -23,16 +23,6 @@ export interface UpdateProductVo {
   shortName: string;
 
   /**
-   * 商品SKU编号
-   */
-  skuCode: string;
-
-  /**
-   * 简码
-   */
-  externalCode: string;
-
-  /**
    * 分类ID
    */
   categoryId: string;

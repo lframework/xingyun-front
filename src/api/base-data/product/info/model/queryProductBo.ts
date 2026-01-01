@@ -20,11 +20,6 @@ export interface QueryProductBo {
   shortName: string;
 
   /**
-   * SKU
-   */
-  skuCode: string;
-
-  /**
    * 分类名称
    */
   categoryName: string;

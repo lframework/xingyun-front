@@ -38,9 +38,6 @@
                     <j-form-item label="简称">
                       <a-input v-model:value="searchFormData.shortName" allow-clear />
                     </j-form-item>
-                    <j-form-item label="SKU编号">
-                      <a-input v-model:value="searchFormData.skuCode" allow-clear />
-                    </j-form-item>
                     <j-form-item label="品牌">
                       <product-brand-selector v-model:value="searchFormData.brandId" />
                     </j-form-item>
@@ -192,7 +189,6 @@
         searchFormData: {
           code: '',
           name: '',
-          skuCode: '',
           categoryId: '',
           brandId: '',
           startTime: '',
@@ -211,7 +207,6 @@
           { field: 'code', title: '编号', width: 120, sortable: true },
           { field: 'name', title: '名称', minWidth: 160, sortable: true },
           { field: 'shortName', title: '简称', width: 140 },
-          { field: 'skuCode', title: 'SKU编号', width: 120 },
           { field: 'categoryName', title: '分类', width: 120 },
           { field: 'brandName', title: '品牌', width: 120 },
           {

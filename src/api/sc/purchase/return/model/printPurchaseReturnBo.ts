@@ -75,14 +75,6 @@ export interface ReturnDetailBo {
    */
   productName: string;
   /**
-   * SKU编号
-   */
-  skuCode: string;
-  /**
-   * 简码
-   */
-  externalCode: string;
-  /**
    * 退货数量
    */
   returnNum: number;

@@ -12,11 +12,6 @@ export interface QueryProductVo extends SortPageVo {
   name: string;
 
   /**
-   * SKU
-   */
-  skuCode: string;
-
-  /**
    * 简称
    */
   shortName: string;

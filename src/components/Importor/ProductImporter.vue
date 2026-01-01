@@ -2,7 +2,7 @@
   <div>
     <excel-importer
       ref="importer"
-      :tip-msg="'导入只支持新增商品信息。\n注：只支持导入普通商品。'"
+      :tip-msg="'导入只支持新增商品信息。\n注：1、只支持导入普通商品。\n2、导入多个扩展编号，用英文逗号隔开。'"
       :download-template-url="downloadTemplate"
       :upload-url="upload"
       @confirm="(e) => $emit('confirm', e)"

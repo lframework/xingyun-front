@@ -1,3 +1,5 @@
+import { OrderPayTypeBo } from '@/api/sc/pay-type/model/orderPayTypeBo';
+
 export interface GetSaleReturnBo {
   /**
    * ID
@@ -140,16 +142,6 @@ export interface ReturnDetailBo {
    * 商品名称
    */
   productName: string;
-
-  /**
-   * SKU编号
-   */
-  skuCode: string;
-
-  /**
-   * 简码
-   */
-  externalCode: string;
 
   /**
    * 单位

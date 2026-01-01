@@ -29,15 +29,30 @@
           "
         >
           <a-col :md="8" :sm="24">
+            <a-form-item label="一品多码" name="multiCode">
+              <a-switch v-model:checked="formData.multiCode" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="8" :sm="24">
             <a-form-item label="编号" name="code">
-              <a-input-group compact>
+              <template v-if="!formData.multiCode">
+                <a-input-group compact>
+                  <a-input
+                    v-model:value.trim="formData.code"
+                    style="width: calc(100% - 75px)"
+                    allow-clear
+                  />
+                  <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
+                </a-input-group>
+              </template>
+              <template v-else>
                 <a-input
+                  class="cursor-pointer"
+                  readonly
                   v-model:value.trim="formData.code"
-                  style="width: calc(100% - 75px)"
-                  allow-clear
+                  @click="openMultiCodeDialog"
                 />
-                <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
-              </a-input-group>
+              </template>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -48,16 +63,6 @@
           <a-col :md="8" :sm="24">
             <a-form-item label="简称" name="shortName">
               <a-input v-model:value="formData.shortName" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="SKU编号" name="skuCode">
-              <a-input v-model:value="formData.skuCode" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="简码" name="externalCode">
-              <a-input v-model:value="formData.externalCode" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -331,6 +336,13 @@
         </a-space>
       </div>
     </div>
+
+    <multi-code
+      ref="multiCodeDialog"
+      :main-code="formData.code"
+      :multi-codes="formData.multiCodes"
+      @complete="onCompleteMultiCode"
+    />
   </div>
 </template>
 <script>
@@ -363,10 +375,12 @@
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
   import { COLUMN_DATA_TYPE } from '@/enums/biz/columnDataType';
   import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
+  import MultiCode from './multi-code.vue';
 
   export default defineComponent({
     name: 'AddProduct',
     components: {
+      MultiCode,
       ProductBrandSelector,
       ProductCategorySelector,
       ProductSelector,
@@ -552,11 +566,13 @@
       },
       // 初始化表单数据
       initFormData() {
-        this.formData = {};
+        this.formData = {
+          multiCode: false,
+          multiCodes: [],
+          code: '',
+        };
 
         this.modelorList = [];
-
-        this.onGenerateCode();
       },
       // 提交表单事件
       async submit() {
@@ -768,6 +784,13 @@
             return isEmpty(tmp);
           });
         });
+      },
+      openMultiCodeDialog() {
+        this.$refs.multiCodeDialog.openDialog();
+      },
+      onCompleteMultiCode({ mainCode, multiCodes }) {
+        this.formData.code = mainCode;
+        this.formData.multiCodes = multiCodes;
       },
       onGenerateCode() {
         generateCode(GENERATE_CODE_TYPE.PRODUCT.code).then((res) => {

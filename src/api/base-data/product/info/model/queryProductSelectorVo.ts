@@ -12,11 +12,6 @@ export interface QueryProductSelectorVo extends PageVo {
   name: string;
 
   /**
-   * SKU
-   */
-  skuCode: string;
-
-  /**
    * 简称
    */
   shortName: string;

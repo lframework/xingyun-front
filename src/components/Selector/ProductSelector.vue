@@ -7,8 +7,6 @@
       :table-column="[
         { field: 'code', title: '商品编号', width: 120 },
         { field: 'name', title: '商品名称', minWidth: 260 },
-        { field: 'skuCode', title: '商品SKU编号', width: 120 },
-        { field: 'externalCode', title: '商品简码', width: 120 },
         { field: 'unit', title: '单位', width: 80 },
         { field: 'spec', title: '规格', width: 80 },
         { field: 'categoryName', title: '商品分类', width: 120 },
@@ -30,9 +28,6 @@
             </j-form-item>
             <j-form-item v-if="isEmpty(requestParams.shortName)" label="简称">
               <a-input v-model:value="searchParams.shortName" />
-            </j-form-item>
-            <j-form-item v-if="isEmpty(requestParams.skuCode)" label="SKU编号">
-              <a-input v-model:value="searchParams.skuCode" />
             </j-form-item>
             <j-form-item v-if="isEmpty(requestParams.categoryId)" label="分类">
               <product-category-selector
