@@ -16,7 +16,7 @@
           {{ formData.name }}
         </a-descriptions-item>
         <a-descriptions-item label="权限" :span="2">
-          {{ formData.permission }}
+          {{ formData.permission }}  
         </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}

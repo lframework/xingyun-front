@@ -88,7 +88,7 @@ export function createActionColumn(handleRemove: Function): BasicColumn {
       const actions: ActionItem[] = [
         {
           label: t('component.upload.del'),
-          color: 'error',
+          danger: true,
           onClick: handleRemove.bind(null, record),
         },
       ];
@@ -138,7 +138,7 @@ export function createPreviewActionColumn({
       const actions: ActionItem[] = [
         {
           label: t('component.upload.del'),
-          color: 'error',
+          danger: true,
           onClick: handleRemove.bind(null, record),
         },
         {

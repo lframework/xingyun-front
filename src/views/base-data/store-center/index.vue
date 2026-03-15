@@ -47,6 +47,12 @@
               @click="$refs.importer.openDialog()"
               >导入Excel</a-button
             >
+            <a-button
+              v-permission="['base-data:stock-cell:import']"
+              :icon="h(CloudUploadOutlined)"
+              @click="$refs.stockCellImporter.openDialog()"
+              >导入仓位</a-button
+            >
             <a-dropdown>
               <template #overlay>
                 <a-menu @click="handleCommand">
@@ -76,7 +82,12 @@
     <!-- 查看窗口 -->
     <detail :id="id" ref="viewDialog" />
 
+    <!-- 仓位管理 -->
+    <stock-cell-manage :sc-id="id" ref="stockCellManageDialog" />
+
     <sc-importer ref="importer" @confirm="search" />
+
+    <stock-cell-importer ref="stockCellImporter" />
 
     <!-- 批量操作 -->
     <batch-handler
@@ -112,7 +123,9 @@
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
   import ScImporter from '@/components/Importor/ScImporter.vue';
+  import StockCellImporter from '@/components/Importor/StockCellImporter.vue';
   import BatchHandler from '@/components/BatchHandler';
+  import StockCellManage from '@/views/base-data/stock-cell/index.vue';
 
   export default defineComponent({
     name: 'StoreCenterInfo',
@@ -123,6 +136,8 @@
       DownOutlined,
       ScImporter,
       BatchHandler,
+      StockCellManage,
+      StockCellImporter,
     },
     setup() {
       return {
@@ -161,7 +176,7 @@
           { field: 'createTime', title: '创建时间', width: 170, sortable: true },
           { field: 'updateBy', title: '修改人', width: 100 },
           { field: 'updateTime', title: '修改时间', width: 170, sortable: true },
-          { title: '操作', width: 120, fixed: 'right', slots: { default: 'action_default' } },
+          { title: '操作', width: 170, fixed: 'right', slots: { default: 'action_default' } },
         ],
         // 请求接口配置
         proxyConfig: {
@@ -236,6 +251,14 @@
             onClick: () => {
               this.id = row.id;
               this.$nextTick(() => this.$refs.updateDialog.openDialog());
+            },
+          },
+          {
+            permission: ['base-data:stock-cell:query'],
+            label: '仓位管理',
+            onClick: () => {
+              this.id = row.id;
+              this.$nextTick(() => this.$refs.stockCellManageDialog.openDialog());
             },
           },
         ];

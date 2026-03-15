@@ -1,0 +1,26 @@
+export interface CreateStockCellVo {
+  /**
+   * 仓库ID
+   */
+  scId: string;
+
+  /**
+   * 编号
+   */
+  code: string;
+
+  /**
+   * 名称
+   */
+  name: string;
+
+  /**
+   * 仓位类别
+   */
+  cellType: number;
+
+  /**
+   * 备注
+   */
+  description: string;
+}

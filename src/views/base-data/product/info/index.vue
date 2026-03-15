@@ -150,7 +150,6 @@
   import { buildSortPageVo, isEmpty, isEqualWithStr } from '@/utils/utils';
   import ProductImporter from '@/components/Importor/ProductImporter.vue';
   import ProductBrandSelector from '@/components/Selector/ProductBrandSelector.vue';
-  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
   import { PRODUCT_TYPE } from '@/enums/biz/productType';
   import BatchHandler from '@/components/BatchHandler';
   import { createError } from '@/hooks/web/msg';
@@ -165,7 +164,6 @@
       Detail,
       ProductImporter,
       ProductBrandSelector,
-      ProductCategorySelector,
     },
     mixins: [multiplePageMix],
     setup() {

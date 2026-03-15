@@ -12,6 +12,7 @@ GENERATE_CODE_TYPE.set('SHOP', new BaseEnumItem<number, string>(8, '门店编号
 GENERATE_CODE_TYPE.set('BRAND', new BaseEnumItem<number, string>(9, '品牌编号'));
 GENERATE_CODE_TYPE.set('PRODUCT', new BaseEnumItem<number, string>(10, '商品编号'));
 GENERATE_CODE_TYPE.set('USER_GROUP', new BaseEnumItem<number, string>(11, '用户编号'));
+GENERATE_CODE_TYPE.set('STOCK_CELL', new BaseEnumItem<number, string>(12, '仓位编号'));
 GENERATE_CODE_TYPE.set('COMMON', new BaseEnumItem<number, string>(99, '通用编号'));
 GENERATE_CODE_TYPE.set('PURCHASE_ORDER', new BaseEnumItem<number, string>(200, '采购订单号'));
 GENERATE_CODE_TYPE.set('RECEIVE_SHEET', new BaseEnumItem<number, string>(201, '采购收货单号'));
