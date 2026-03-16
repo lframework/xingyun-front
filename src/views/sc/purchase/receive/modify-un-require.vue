@@ -115,6 +115,9 @@
               >批量调整采购价</a-button
             >
             <a-button :icon="h(AlertOutlined)" @click="setGift">设置赠品</a-button>
+            <a-button :icon="h(UploadOutlined)" @click="openExcelModifyPriceDialog"
+              >EXCEL修改采购价</a-button
+            >
           </a-space>
         </template>
 
@@ -222,6 +225,15 @@
         @confirm="batchAddProduct"
       />
 
+      <excel-parser
+        ref="excelModifyPriceDialog"
+        :columns="excelModifyPriceColumns"
+        template-filename="EXCEL修改采购价模板"
+        title="EXCEL修改采购价"
+        :close-after-finish="false"
+        @confirm="handleExcelModifyPrice"
+      />
+
       <div style="text-align: center; background-color: #ffffff; padding: 8px 0">
         <a-space>
           <a-button
@@ -240,6 +252,7 @@
 <script>
   import { h, defineComponent } from 'vue';
   import BatchAddProduct from '@/views/sc/purchase/batch-add-product.vue';
+  import ExcelParser from '@/components/ExcelParser';
   import Moment from 'moment';
   import {
     PlusOutlined,
@@ -247,12 +260,14 @@
     NumberOutlined,
     EditOutlined,
     AlertOutlined,
+    UploadOutlined,
   } from '@ant-design/icons-vue';
   import StoreCenterSelector from '@/components/Selector/StoreCenterSelector.vue';
   import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
   import UserSelector from '@/components/Selector/UserSelector.vue';
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
+  import * as productApi from '@/api/base-data/product/info';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
     isEmpty,
@@ -275,6 +290,7 @@
     name: 'ModifyPurchaseReceiveSheetUnRequire',
     components: {
       BatchAddProduct,
+      ExcelParser,
       StoreCenterSelector,
       SupplierSelector,
       UserSelector,
@@ -289,6 +305,7 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
+        UploadOutlined,
         isEmpty,
         isFloatGeZero,
         getNumber,
@@ -370,6 +387,11 @@
           },
         ],
         tableData: [],
+        // EXCEL修改价格列定义
+        excelModifyPriceColumns: [
+          { field: 'productCode', label: '商品编号', required: true },
+          { field: 'price', label: '采购价', required: false },
+        ],
       };
     },
     computed: {
@@ -665,6 +687,57 @@
           this.tableData.push(this.emptyProduct());
           this.handleSelectProduct(this.tableData.length - 1, item);
         });
+      },
+      // 打开EXCEL修改价格弹窗
+      openExcelModifyPriceDialog() {
+        if (isEmpty(this.tableData)) {
+          createError('请先录入商品！');
+          return;
+        }
+        this.$refs.excelModifyPriceDialog.openDialog();
+      },
+      // 处理EXCEL修改价格
+      async handleExcelModifyPrice({ data }) {
+        if (isEmpty(data)) {
+          createError('Excel中没有数据！');
+          return;
+        }
+
+        this.loading = true;
+        try {
+          let matchedCount = 0;
+
+          for (const row of data) {
+            const productCode = row.productCode;
+            if (isEmpty(productCode)) {
+              continue;
+            }
+
+            const price = isEmpty(row.price) ? 0 : row.price;
+
+            const productId = await productApi.getIdByCode(productCode);
+            if (isEmpty(productId)) {
+              continue;
+            }
+
+            this.tableData
+              .filter((item) => !item.isGift)
+              .forEach((item) => {
+                if (item.productId === productId) {
+                  item.purchasePrice = price;
+                  matchedCount++;
+                }
+              });
+          }
+
+          this.calcSum();
+          this.$refs.excelModifyPriceDialog.closeDialog();
+          createSuccess('成功修改' + matchedCount + '条商品的采购价！');
+        } catch (e) {
+          createError('修改价格失败：' + (e.message || e));
+        } finally {
+          this.loading = false;
+        }
       },
       // 校验数据
       validData() {

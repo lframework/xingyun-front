@@ -155,3 +155,20 @@ export function importExcel(data: { id: string; file: Blob }): Promise<void> {
     },
   );
 }
+
+/**
+ * 根据商品编号查询商品ID
+ */
+export function getIdByCode(code: string): Promise<string> {
+  return defHttp.get<string>(
+    {
+      url: baseUrl + '/id/code',
+      params: {
+        code,
+      },
+    },
+    {
+      region,
+    },
+  );
+}
