@@ -8,17 +8,11 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['system:notice:modify']" v-loading="loading">
-      <a-form
-        ref="form"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
-        :rules="rules"
-      >
-        <a-form-item label="标题" name="title">
+      <vxe-form border title-background title-width="80" ref="form" :data="formData" :rules="rules">
+        <vxe-form-item title="标题" field="title" span="12">
           <a-input v-model:value="formData.title" allow-clear />
-        </a-form-item>
-        <a-form-item label="状态" name="available">
+        </vxe-form-item>
+        <vxe-form-item title="状态" field="available" span="12">
           <a-select v-model:value="formData.available" allow-clear>
             <a-select-option
               v-for="item in AVAILABLE.values()"
@@ -27,32 +21,34 @@
               >{{ item.desc }}</a-select-option
             >
           </a-select>
-        </a-form-item>
-        <a-form-item name="content" :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }">
+        </vxe-form-item>
+        <vxe-form-item title="内容" field="content" span="24">
           <tinymce v-model:value="formData.content" class="mb-1" />
-        </a-form-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button
-              v-if="!formData.published || !formData.available"
-              type="primary"
-              :loading="loading"
-              html-type="submit"
-              @click="(e) => submit(false)"
-              >保存</a-button
-            >
-            <a-button
-              v-if="formData.available"
-              type="primary"
-              :loading="loading"
-              html-type="submit"
-              @click="(e) => submit(true)"
-              >保存并发布</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        </vxe-form-item>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button
+                v-if="!formData.published || !formData.available"
+                type="primary"
+                :loading="loading"
+                html-type="submit"
+                @click="(e) => submit(false)"
+                >保存</a-button
+              >
+              <a-button
+                v-if="formData.available"
+                type="primary"
+                :loading="loading"
+                html-type="submit"
+                @click="(e) => submit(true)"
+                >保存并发布</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -67,11 +63,6 @@
     // 使用组件
     components: {
       Tinymce,
-    },
-    setup() {
-      return {
-        AVAILABLE,
-      };
     },
     props: {
       id: {
@@ -127,8 +118,8 @@
       },
       // 提交表单事件
       submit(published) {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             if (this.formData.published && published) {
               createConfirm('重新发布后，会重置所有人的已读状态，是否确认继续执行？').then(() => {
                 this.onPublish(published);
@@ -148,7 +139,7 @@
       onPublish(published) {
         this.loading = true;
         api
-          .update(Object.assign(this.formData, { published: published }))
+          .update(Object.assign({}, this.formData, { published: published }))
           .then(() => {
             createSuccess(
               published ? '发布成功，发布状态更新稍有延迟，请耐心等待！' : '修改成功！',

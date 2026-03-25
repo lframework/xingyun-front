@@ -1,326 +1,312 @@
 <template>
   <div class="app-card-container">
     <div v-loading="loading" v-permission="['base-data:product:info:modify']">
-      <a-form
+      <vxe-form
+        border
+        title-background
+        title-width="120"
         ref="form"
-        :label-col="{ span: 6 }"
-        :wrapper-col="{ span: 14 }"
-        :model="formData"
+        :data="formData"
         :rules="rules"
       >
-        <a-row
-          v-if="
-            PRODUCT_TYPE.NORMAL.equalsCode(productType) ||
-            PRODUCT_TYPE.BUNDLE.equalsCode(productType)
-          "
-        >
-          <a-col :md="8" :sm="24">
-            <a-form-item label="一品多码" name="multiCode">
-              <a-switch v-model:checked="formData.multiCode" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="编号" name="code">
-              <template v-if="!formData.multiCode">
-                <a-input-group compact>
-                  <a-input
-                    v-model:value.trim="formData.code"
-                    style="width: calc(100% - 75px)"
-                    allow-clear
-                  />
-                  <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
-                </a-input-group>
-              </template>
-              <template v-else>
-                <a-input
-                  class="cursor-pointer"
-                  readonly
-                  v-model:value.trim="formData.code"
-                  @click="openMultiCodeDialog"
-                />
-              </template>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="名称" name="name">
-              <a-input v-model:value="formData.name" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="简称" name="shortName">
-              <a-input v-model:value="formData.shortName" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="商品分类" name="categoryId">
-              <product-category-selector
-                v-model:value="formData.categoryId"
-                :only-final="true"
-                @update:value="selectCategory"
+        <vxe-form-item :visible="showProductInfoItems" title="一品多码" field="multiCode" span="8">
+          <a-switch v-model:checked="formData.multiCode" />
+        </vxe-form-item>
+        <vxe-form-item :visible="showProductInfoItems" title="编号" field="code" span="8">
+          <template v-if="!formData.multiCode">
+            <a-input-group compact>
+              <a-input
+                v-model:value.trim="formData.code"
+                style="width: calc(100% - 75px)"
+                allow-clear
               />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="商品品牌" name="brandId">
-              <product-brand-selector v-model:value="formData.brandId" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="规格" name="spec">
-              <a-input v-model:value="formData.spec" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="单位" name="unit">
-              <a-input v-model:value="formData.unit" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
-            <a-form-item label="重量（kg）" name="weight">
-              <a-input v-model:value="formData.weight" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
-            <a-form-item label="体积（cm³）" name="volume">
-              <a-input v-model:value="formData.volume" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
-            <a-form-item label="进项税率（%）" name="taxRate">
-              <a-input v-model:value="formData.taxRate" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col v-if="PRODUCT_TYPE.NORMAL.equalsCode(productType)" :md="8" :sm="24">
-            <a-form-item label="销项税率（%）" name="saleTaxRate">
-              <a-input v-model:value="formData.saleTaxRate" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="采购价（元）" name="purchasePrice">
-              <a-input v-model:value="formData.purchasePrice" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="销售价（元）" name="salePrice">
-              <a-input v-model:value="formData.salePrice" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="零售价（元）" name="retailPrice">
-              <a-input v-model:value="formData.retailPrice" allow-clear />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row v-if="PRODUCT_TYPE.BUNDLE.equalsCode(productType)">
-          <a-col :span="24">
-            <vxe-grid
-              ref="grid"
-              resizable
-              show-overflow
-              highlight-hover-row
-              keep-source
-              row-id="id"
-              height="500"
-              :data="productBundles"
-              :columns="[
-                { type: 'checkbox', width: 45 },
-                {
-                  field: 'product',
-                  title: '单品',
-                  minWidth: 260,
-                  slots: { default: 'product_default' },
-                },
-                {
-                  field: 'bundle_num',
-                  title: '包含数量',
-                  width: 200,
-                  align: 'right',
-                  slots: { default: 'bundleNum_default', header: 'bundleNum_header' },
-                },
-                {
-                  field: 'purchasePrice',
-                  title: '采购价（元）',
-                  width: 200,
-                  align: 'right',
-                  slots: { default: 'purchasePrice_default', header: 'purchasePrice_header' },
-                },
-                {
-                  field: 'salePrice',
-                  title: '销售价（元）',
-                  width: 200,
-                  align: 'right',
-                  slots: { default: 'salePrice_default', header: 'salePrice_header' },
-                },
-                {
-                  field: 'retailPrice',
-                  title: '零售价（元）',
-                  width: 200,
-                  align: 'right',
-                  slots: { default: 'retailPrice_default', header: 'retailPrice_header' },
-                },
-              ]"
-              :toolbar-config="{
-                // 缩放
-                zoom: false,
-                // 自定义表头
-                custom: false,
-                // 右侧是否显示刷新按钮
-                refresh: false,
-                // 自定义左侧工具栏
-                slots: {
-                  buttons: 'toolbar_buttons',
-                },
-              }"
-            >
-              <!-- 工具栏 -->
-              <template #toolbar_buttons>
-                <a-space>
-                  <a-button type="primary" :icon="h(PlusOutlined)" @click="addRow">新增</a-button>
-                  <a-button danger :icon="h(DeleteOutlined)" @click="delRow">删除</a-button>
-                </a-space>
-              </template>
+              <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
+            </a-input-group>
+          </template>
+          <template v-else>
+            <a-input
+              class="cursor-pointer"
+              readonly
+              v-model:value.trim="formData.code"
+              @click="openMultiCodeDialog"
+            />
+          </template>
+        </vxe-form-item>
+        <vxe-form-item :visible="showProductInfoItems" title="名称" field="name" span="8">
+          <a-input v-model:value="formData.name" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item :visible="showProductInfoItems" title="简称" field="shortName" span="8">
+          <a-input v-model:value="formData.shortName" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item :visible="showProductInfoItems" title="商品分类" field="categoryId" span="8">
+          <product-category-selector
+            v-model:value="formData.categoryId"
+            :only-final="true"
+            @update:value="selectCategory"
+          />
+        </vxe-form-item>
+        <vxe-form-item :visible="showProductInfoItems" title="商品品牌" field="brandId" span="8">
+          <product-brand-selector v-model:value="formData.brandId" />
+        </vxe-form-item>
+        <vxe-form-item :visible="showProductInfoItems" title="规格" field="spec" span="8">
+          <a-input v-model:value="formData.spec" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item :visible="showProductInfoItems" title="单位" field="unit" span="8">
+          <a-input v-model:value="formData.unit" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="PRODUCT_TYPE.NORMAL.equalsCode(productType)"
+          title="重量（kg）"
+          field="weight"
+          span="8"
+        >
+          <a-input v-model:value="formData.weight" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="PRODUCT_TYPE.NORMAL.equalsCode(productType)"
+          title="体积（cm³）"
+          field="volume"
+          span="8"
+        >
+          <a-input v-model:value="formData.volume" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="PRODUCT_TYPE.NORMAL.equalsCode(productType)"
+          title="进项税率（%）"
+          field="taxRate"
+          span="8"
+        >
+          <a-input v-model:value="formData.taxRate" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="PRODUCT_TYPE.NORMAL.equalsCode(productType)"
+          title="销项税率（%）"
+          field="saleTaxRate"
+          span="8"
+        >
+          <a-input v-model:value="formData.saleTaxRate" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="showProductInfoItems"
+          title="采购价（元）"
+          field="purchasePrice"
+          span="8"
+        >
+          <a-input v-model:value="formData.purchasePrice" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="showProductInfoItems"
+          title="销售价（元）"
+          field="salePrice"
+          span="8"
+        >
+          <a-input v-model:value="formData.salePrice" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="showProductInfoItems"
+          title="零售价（元）"
+          field="retailPrice"
+          span="8"
+        >
+          <a-input v-model:value="formData.retailPrice" allow-clear />
+        </vxe-form-item>
+        <vxe-form-item :visible="PRODUCT_TYPE.BUNDLE.equalsCode(productType)" span="24">
+          <vxe-grid
+            ref="grid"
+            resizable
+            show-overflow
+            highlight-hover-row
+            keep-source
+            row-id="id"
+            height="500"
+            :data="productBundles"
+            :columns="[
+              { type: 'checkbox', width: 45 },
+              {
+                field: 'product',
+                title: '单品',
+                minWidth: 260,
+                slots: { default: 'product_default' },
+              },
+              {
+                field: 'bundle_num',
+                title: '包含数量',
+                width: 200,
+                align: 'right',
+                slots: { default: 'bundleNum_default', header: 'bundleNum_header' },
+              },
+              {
+                field: 'purchasePrice',
+                title: '采购价（元）',
+                width: 200,
+                align: 'right',
+                slots: { default: 'purchasePrice_default', header: 'purchasePrice_header' },
+              },
+              {
+                field: 'salePrice',
+                title: '销售价（元）',
+                width: 200,
+                align: 'right',
+                slots: { default: 'salePrice_default', header: 'salePrice_header' },
+              },
+              {
+                field: 'retailPrice',
+                title: '零售价（元）',
+                width: 200,
+                align: 'right',
+                slots: { default: 'retailPrice_default', header: 'retailPrice_header' },
+              },
+            ]"
+            :toolbar-config="{
+              zoom: false,
+              custom: false,
+              refresh: false,
+              slots: {
+                buttons: 'toolbar_buttons',
+              },
+            }"
+          >
+            <template #toolbar_buttons>
+              <a-space>
+                <a-button type="primary" :icon="h(PlusOutlined)" @click="addRow">新增</a-button>
+                <a-button danger :icon="h(DeleteOutlined)" @click="delRow">删除</a-button>
+              </a-space>
+            </template>
 
-              <!-- 商品 列自定义内容 -->
-              <template #product_default="{ row }">
-                <product-selector
-                  v-model:value="row.productId"
-                  :request-params="{ productType: PRODUCT_TYPE.NORMAL.code }"
-                />
-              </template>
+            <template #product_default="{ row }">
+              <product-selector
+                v-model:value="row.productId"
+                :request-params="{ productType: PRODUCT_TYPE.NORMAL.code }"
+              />
+            </template>
 
-              <!-- 包含数量 列自定义表头 -->
-              <template #bundleNum_header>
-                <a-space>
-                  <span>包含数量</span
-                  ><a-tooltip title="表示一个组合商品中包含的单品数量"
-                    ><a-icon type="question-circle"
-                  /></a-tooltip>
-                </a-space>
-              </template>
+            <template #bundleNum_header>
+              <a-space>
+                <span>包含数量</span
+                ><a-tooltip title="表示一个组合商品中包含的单品数量"
+                  ><a-icon type="question-circle"
+                /></a-tooltip>
+              </a-space>
+            </template>
 
-              <!-- 包含数量 列自定义内容 -->
-              <template #bundleNum_default="{ row }">
-                <a-input v-model:value="row.bundleNum" class="number-input" />
-              </template>
+            <template #bundleNum_default="{ row }">
+              <a-input v-model:value="row.bundleNum" class="number-input" />
+            </template>
 
-              <!-- 采购价 列自定义表头 -->
-              <template #purchasePrice_header>
-                <a-space>
-                  <span>采购价（元）</span
-                  ><a-tooltip
-                    title="表示一个组合商品采购后的单品的采购价，此处的计算公式：每行单品的【包含数量】乘以【采购价】的总和 等于【组合商品的采购价】"
-                    ><a-icon type="question-circle"
-                  /></a-tooltip>
-                </a-space>
-              </template>
+            <template #purchasePrice_header>
+              <a-space>
+                <span>采购价（元）</span
+                ><a-tooltip
+                  title="表示一个组合商品采购后的单品的采购价，此处的计算公式：每行单品的【包含数量】乘以【采购价】的总和 等于【组合商品的采购价】"
+                  ><a-icon type="question-circle"
+                /></a-tooltip>
+              </a-space>
+            </template>
 
-              <!-- 采购价 列自定义内容 -->
-              <template #purchasePrice_default="{ row }">
-                <a-input v-model:value="row.purchasePrice" class="number-input" />
-              </template>
+            <template #purchasePrice_default="{ row }">
+              <a-input v-model:value="row.purchasePrice" class="number-input" />
+            </template>
 
-              <!-- 销售价 列自定义表头 -->
-              <template #salePrice_header>
-                <a-space>
-                  <span>销售价（元）</span
-                  ><a-tooltip
-                    title="表示一个组合商品销售后的单品的销售价，此处的计算公式：每行单品的【包含数量】乘以【销售价】的总和 等于【组合商品的销售价】"
-                    ><a-icon type="question-circle"
-                  /></a-tooltip>
-                </a-space>
-              </template>
+            <template #salePrice_header>
+              <a-space>
+                <span>销售价（元）</span
+                ><a-tooltip
+                  title="表示一个组合商品销售后的单品的销售价，此处的计算公式：每行单品的【包含数量】乘以【销售价】的总和 等于【组合商品的销售价】"
+                  ><a-icon type="question-circle"
+                /></a-tooltip>
+              </a-space>
+            </template>
 
-              <!-- 销售价 列自定义内容 -->
-              <template #salePrice_default="{ row }">
-                <a-input v-model:value="row.salePrice" class="number-input" />
-              </template>
+            <template #salePrice_default="{ row }">
+              <a-input v-model:value="row.salePrice" class="number-input" />
+            </template>
 
-              <!-- 零售价 列自定义表头 -->
-              <template #retailPrice_header>
-                <a-space>
-                  <span>零售价（元）</span
-                  ><a-tooltip
-                    title="表示一个组合商品零售后的单品的零售价，此处的计算公式：每行单品的【包含数量】乘以【零售价】的总和 等于【组合商品的零售价】"
-                    ><a-icon type="question-circle"
-                  /></a-tooltip>
-                </a-space>
-              </template>
+            <template #retailPrice_header>
+              <a-space>
+                <span>零售价（元）</span
+                ><a-tooltip
+                  title="表示一个组合商品零售后的单品的零售价，此处的计算公式：每行单品的【包含数量】乘以【零售价】的总和 等于【组合商品的零售价】"
+                  ><a-icon type="question-circle"
+                /></a-tooltip>
+              </a-space>
+            </template>
 
-              <!-- 零售价 列自定义内容 -->
-              <template #retailPrice_default="{ row }">
-                <a-input v-model:value="row.retailPrice" class="number-input" />
-              </template>
-            </vxe-grid>
-          </a-col>
-        </a-row>
-        <a-row>
-          <a-col v-for="modelor in modelorList" :key="modelor.id" :md="8" :sm="24">
-            <a-form-item :label="modelor.name" :required="modelor.isRequired">
-              <a-select
-                v-if="COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)"
-                v-model:value="modelor.text"
-                mode="multiple"
-                placeholder="请选择"
-              >
-                <a-select-option v-for="item in modelor.items" :key="item.id" :value="item.id">{{
-                  item.name
-                }}</a-select-option>
-              </a-select>
-              <a-select
-                v-if="COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)"
-                v-model:value="modelor.text"
-                placeholder="请选择"
-              >
-                <a-select-option v-for="item in modelor.items" :key="item.id" :value="item.id">{{
-                  item.name
-                }}</a-select-option>
-              </a-select>
-              <div v-else-if="COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
-                <a-input-number
-                  v-if="COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)"
-                  v-model:value="modelor.text"
-                  class="number-input"
-                />
-                <a-input-number
-                  v-else-if="COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)"
-                  v-model:value="modelor.text"
-                  :precision="2"
-                  class="number-input"
-                />
-                <a-input
-                  v-else-if="COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)"
-                  v-model:value="modelor.text"
-                />
-                <a-date-picker
-                  v-else-if="COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)"
-                  v-model:value="modelor.text"
-                  placeholder=""
-                  value-format="YYYY-MM-DD"
-                />
-                <a-time-picker
-                  v-else-if="COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
-                  v-model:value="modelor.text"
-                  placeholder=""
-                  value-format="HH:mm:ss"
-                />
-                <a-date-picker
-                  v-else-if="COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)"
-                  v-model:value="modelor.text"
-                  placeholder=""
-                  show-time
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                />
-              </div>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form>
-      <div class="form-modal-footer">
-        <a-space>
-          <a-button type="primary" @click="submit">保存</a-button>
-          <a-button @click="closeDialog">关闭</a-button>
-        </a-space>
-      </div>
+            <template #retailPrice_default="{ row }">
+              <a-input v-model:value="row.retailPrice" class="number-input" />
+            </template>
+          </vxe-grid>
+        </vxe-form-item>
+        <vxe-form-item
+          v-for="modelor in modelorList"
+          :key="modelor.id"
+          :title="modelor.name"
+          span="8"
+        >
+          <a-select
+            v-if="COLUMN_TYPE.MULTIPLE.equalsCode(modelor.columnType)"
+            v-model:value="modelor.text"
+            mode="multiple"
+            placeholder="请选择"
+          >
+            <a-select-option v-for="item in modelor.items" :key="item.id" :value="item.id">{{
+              item.name
+            }}</a-select-option>
+          </a-select>
+          <a-select
+            v-else-if="COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)"
+            v-model:value="modelor.text"
+            placeholder="请选择"
+          >
+            <a-select-option v-for="item in modelor.items" :key="item.id" :value="item.id">{{
+              item.name
+            }}</a-select-option>
+          </a-select>
+          <div v-else-if="COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
+            <a-input-number
+              v-if="COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)"
+              v-model:value="modelor.text"
+              class="number-input"
+            />
+            <a-input-number
+              v-else-if="COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)"
+              v-model:value="modelor.text"
+              :precision="2"
+              class="number-input"
+            />
+            <a-input
+              v-else-if="COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)"
+              v-model:value="modelor.text"
+            />
+            <a-date-picker
+              v-else-if="COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)"
+              v-model:value="modelor.text"
+              placeholder=""
+              value-format="YYYY-MM-DD"
+            />
+            <a-time-picker
+              v-else-if="COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
+              v-model:value="modelor.text"
+              placeholder=""
+              value-format="HH:mm:ss"
+            />
+            <a-date-picker
+              v-else-if="COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)"
+              v-model:value="modelor.text"
+              placeholder=""
+              show-time
+              value-format="YYYY-MM-DD HH:mm:ss"
+            />
+          </div>
+        </vxe-form-item>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" html-type="submit" @click="submit">保存</a-button>
+              <a-button @click="closeDialog">关闭</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
 
     <multi-code
@@ -541,6 +527,14 @@
         },
       };
     },
+    computed: {
+      showProductInfoItems() {
+        return (
+          PRODUCT_TYPE.NORMAL.equalsCode(this.productType) ||
+          PRODUCT_TYPE.BUNDLE.equalsCode(this.productType)
+        );
+      },
+    },
     created() {
       // 初始化数据
       this.initFormData();
@@ -562,16 +556,12 @@
       },
       // 提交表单事件
       async submit() {
-        const that = this;
-        let valid = true;
-
-        await this.$refs.form.validate().then((res) => {
-          valid = res;
-        });
-
-        if (!valid) {
+        const errMaps = await this.$refs.form.validate();
+        if (errMaps) {
           return;
         }
+
+        let valid = true;
         if (PRODUCT_TYPE.BUNDLE.equalsCode(this.productType)) {
           // 如果是组合商品
           if (isEmpty(this.productBundles)) {

@@ -8,15 +8,15 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['system:user:add']" v-loading="loading">
-      <a-form
+      <vxe-form
+        border
+        title-background
+        title-width="120"
         ref="form"
-        v-loading="loading"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
+        :data="formData"
         :rules="rules"
       >
-        <a-form-item label="编号" name="code">
+        <vxe-form-item title="编号" field="code" span="12">
           <a-input-group compact>
             <a-input
               v-model:value.trim="formData.code"
@@ -25,47 +25,49 @@
             />
             <a-button type="primary" @click="onGenerateCode">点此生成</a-button>
           </a-input-group>
-        </a-form-item>
-        <a-form-item label="用户名" name="username">
+        </vxe-form-item>
+        <vxe-form-item title="用户名" field="username" span="12">
           <a-input v-model:value.trim="formData.username" allow-clear />
-        </a-form-item>
-        <a-form-item label="姓名" name="name">
+        </vxe-form-item>
+        <vxe-form-item title="姓名" field="name" span="12">
           <a-input v-model:value.trim="formData.name" allow-clear />
-        </a-form-item>
-        <a-form-item label="部门" name="dept">
+        </vxe-form-item>
+        <vxe-form-item title="部门" field="depts" span="24">
           <sys-dept-selector v-model:value="formData.depts" :only-final="false" :multiple="true" />
-        </a-form-item>
-        <a-form-item label="角色" name="role">
+        </vxe-form-item>
+        <vxe-form-item title="角色" field="roles" span="24">
           <sys-role-selector v-model:value="formData.roles" :multiple="true" />
-        </a-form-item>
-        <a-form-item label="密码" name="password">
+        </vxe-form-item>
+        <vxe-form-item title="密码" field="password" span="12">
           <a-input-password v-model:value="formData.password" allow-clear />
-        </a-form-item>
-        <a-form-item label="性别" name="gender">
+        </vxe-form-item>
+        <vxe-form-item title="性别" field="gender" span="12">
           <a-select v-model:value="formData.gender">
             <a-select-option v-for="item in GENDER.values()" :key="item.code" :value="item.code">{{
               item.desc
             }}</a-select-option>
           </a-select>
-        </a-form-item>
-        <a-form-item label="邮箱" name="email">
+        </vxe-form-item>
+        <vxe-form-item title="邮箱" field="email" span="12">
           <a-input v-model:value.trim="formData.email" allow-clear />
-        </a-form-item>
-        <a-form-item label="联系电话" name="telephone">
+        </vxe-form-item>
+        <vxe-form-item title="联系电话" field="telephone" span="12">
           <a-input v-model:value.trim="formData.telephone" allow-clear />
-        </a-form-item>
-        <a-form-item label="备注" name="description">
+        </vxe-form-item>
+        <vxe-form-item title="备注" field="description" span="24">
           <a-textarea v-model:value.trim="formData.description" />
-        </a-form-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        </vxe-form-item>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -148,8 +150,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             const params = Object.assign(
               {

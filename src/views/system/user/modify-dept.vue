@@ -8,36 +8,32 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['system:user:modify']" v-loading="loading">
-      <a-form
-        ref="form"
-        v-loading="loading"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
-      >
-        <a-form-item label="部门" name="deptIds">
+      <vxe-form border title-background title-width="120" ref="form" :data="formData">
+        <vxe-form-item title="部门" field="deptIds" span="24">
           <sys-dept-selector
             v-model:value="formData.deptIds"
             :only-final="false"
             :multiple="true"
           />
-        </a-form-item>
-        <a-form-item label="操作类型" name="handleType">
+        </vxe-form-item>
+        <vxe-form-item title="操作类型" field="handleType" span="24">
           <a-radio-group v-model:value="formData.handleType" name="handleTypeGroup">
             <a-radio value="1">新增</a-radio>
             <a-radio value="2">替换</a-radio>
             <a-radio value="3">删除</a-radio>
           </a-radio-group>
-        </a-form-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        </vxe-form-item>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -104,8 +100,8 @@
             return;
           }
         }
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             const params = {
               deptIds: this.formData.deptIds,

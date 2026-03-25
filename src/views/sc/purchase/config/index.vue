@@ -4,58 +4,71 @@
       <a-row>
         <a-col :md="16" :sm="24">
           <a-card v-loading="loading">
-            <a-form
+            <vxe-form
+              border
+              title-background
+              title-width="240"
               ref="form"
-              :label-col="{ span: 10 }"
-              :wrapper-col="{ span: 8 }"
-              :model="formData"
+              :data="formData"
               :rules="rules"
             >
-              <j-border class="m-2" title="采购订单设置">
-                <a-form-item label="采购订单是否开启审批流程" name="purchaseRequireBpm">
+              <vxe-form-group span="24" title="采购订单设置" title-bold vertical>
+                <vxe-form-item
+                  title="采购订单是否开启审批流程"
+                  field="purchaseRequireBpm"
+                  span="24"
+                >
                   <a-select v-model:value="formData.purchaseRequireBpm" placeholder="">
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>
                   </a-select>
-                </a-form-item>
-                <a-form-item
-                  v-if="formData.purchaseRequireBpm"
-                  label="审批流程"
-                  name="purchaseBpmProcessId"
+                </vxe-form-item>
+                <vxe-form-item
+                  :visible="formData.purchaseRequireBpm"
+                  title="审批流程"
+                  field="purchaseBpmProcessId"
+                  span="24"
                 >
                   <flow-definition-selector v-model:value="formData.purchaseBpmProcessId" />
-                </a-form-item>
-              </j-border>
-              <j-border class="m-2" title="采购收货设置">
-                <a-form-item label="采购收货单是否关联采购订单" name="receiveRequirePurchase">
+                </vxe-form-item>
+              </vxe-form-group>
+              <vxe-form-group span="24" title="采购收货设置" title-bold vertical>
+                <vxe-form-item
+                  title="采购收货单是否关联采购订单"
+                  field="receiveRequirePurchase"
+                  span="24"
+                >
                   <a-select v-model:value="formData.receiveRequirePurchase" placeholder="">
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>
                   </a-select>
-                </a-form-item>
-                <a-form-item
-                  label="采购收货单是否多次关联采购订单"
-                  name="receiveMultipleRelatePurchase"
+                </vxe-form-item>
+                <vxe-form-item
+                  title="采购收货单是否多次关联采购订单"
+                  field="receiveMultipleRelatePurchase"
+                  span="24"
                 >
                   <a-select v-model:value="formData.receiveMultipleRelatePurchase" placeholder="">
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>
                   </a-select>
-                </a-form-item>
-              </j-border>
-              <j-border class="m-2" title="采购退货设置">
-                <a-form-item
-                  label="采购退货单是否关联采购收货单"
-                  name="purchaseReturnRequireReceive"
+                </vxe-form-item>
+              </vxe-form-group>
+              <vxe-form-group span="24" title="采购退货设置" title-bold vertical>
+                <vxe-form-item
+                  title="采购退货单是否关联采购收货单"
+                  field="purchaseReturnRequireReceive"
+                  span="24"
                 >
                   <a-select v-model:value="formData.purchaseReturnRequireReceive" placeholder="">
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>
                   </a-select>
-                </a-form-item>
-                <a-form-item
-                  label="采购退货单是否多次关联采购收货单"
-                  name="purchaseReturnMultipleRelateReceive"
+                </vxe-form-item>
+                <vxe-form-item
+                  title="采购退货单是否多次关联采购收货单"
+                  field="purchaseReturnMultipleRelateReceive"
+                  span="24"
                 >
                   <a-select
                     v-model:value="formData.purchaseReturnMultipleRelateReceive"
@@ -64,15 +77,17 @@
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>
                   </a-select>
-                </a-form-item>
-              </j-border>
-            </a-form>
-            <div class="form-modal-footer">
-              <a-space>
-                <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
-                <a-button :loading="loading" @click="close">取消</a-button>
-              </a-space>
-            </div>
+                </vxe-form-item>
+              </vxe-form-group>
+              <vxe-form-item span="24">
+                <div class="form-modal-footer">
+                  <a-space>
+                    <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+                    <a-button :loading="loading" @click="close">取消</a-button>
+                  </a-space>
+                </div>
+              </vxe-form-item>
+            </vxe-form>
           </a-card>
         </a-col>
       </a-row>
@@ -113,7 +128,17 @@
             { required: true, message: '请选择采购退货单是否多次关联采购收货单' },
           ],
           purchaseRequireBpm: [{ required: true, message: '请选择采购订单是否开启审批流程' }],
-          purchaseBpmProcessId: [{ required: true, message: '请选择审批流程' }],
+          purchaseBpmProcessId: [
+            {
+              validator({ itemValue, data }) {
+                if (!data.purchaseRequireBpm || itemValue) {
+                  return;
+                }
+
+                return new Error('请选择审批流程');
+              },
+            },
+          ],
         },
       };
     },
@@ -127,6 +152,8 @@
       // 初始化表单数据
       initFormData() {
         this.formData = {
+          purchaseRequireBpm: '',
+          purchaseBpmProcessId: '',
           receiveRequirePurchase: '',
           receiveMultipleRelatePurchase: '',
           purchaseReturnRequireReceive: '',
@@ -147,8 +174,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             api
               .update(this.formData)

@@ -8,32 +8,27 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:store-center:query']" v-loading="loading">
-      <a-descriptions :column="4" bordered>
-        <a-descriptions-item label="编号" :span="2">
-          {{ formData.code }}
-        </a-descriptions-item>
-        <a-descriptions-item label="名称" :span="2">
-          {{ formData.name }}
-        </a-descriptions-item>
-        <a-descriptions-item label="联系人" :span="2">
-          {{ formData.contact }}
-        </a-descriptions-item>
-        <a-descriptions-item label="联系人手机号码" :span="2">
-          {{ formData.telephone }}
-        </a-descriptions-item>
-        <a-descriptions-item label="地区" :span="2">
-          {{ formData.cityName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="仓库地址" :span="2">
-          {{ formData.address }}
-        </a-descriptions-item>
-        <a-descriptions-item label="仓库人数" :span="2">
-          {{ formData.peopleNum }}
-        </a-descriptions-item>
-        <a-descriptions-item label="备注" :span="4">
-          {{ formData.description }}
-        </a-descriptions-item>
-      </a-descriptions>
+      <vxe-form
+        border
+        title-background
+        title-width="120"
+        ref="form"
+        :data="formData"
+        :rules="rules"
+      >
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12" />
+          <vxe-form-item title="名称" field="name" span="12" />
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="联系人" field="contact" span="8" />
+          <vxe-form-item title="联系人手机号码" field="telephone" span="8" />
+          <vxe-form-item title="地区" field="cityName" span="24" />
+          <vxe-form-item title="仓库地址" field="address" span="24" />
+          <vxe-form-item title="仓库人数" field="peopleNum" span="8" />
+          <vxe-form-item title="备注" field="description" span="24" />
+        </vxe-form-group>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -42,6 +37,7 @@
   import * as api from '@/api/base-data/store-center';
 
   export default defineComponent({
+    components: {},
     props: {
       id: {
         type: String,

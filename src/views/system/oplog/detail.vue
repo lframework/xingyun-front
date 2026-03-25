@@ -8,24 +8,23 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['system:oplog:query']" v-loading="loading">
-      <a-descriptions bordered :xs="4" :sm="2" :md="2">
-        <a-descriptions-item label="日志名称" :span="4">{{ formData.name }}</a-descriptions-item>
-        <a-descriptions-item label="日志类型" :span="2">{{
-          OP_LOG_TYPE.getDesc(formData.logType)
-        }}</a-descriptions-item>
-        <a-descriptions-item label="IP地址" :span="2">{{ formData.ip }}</a-descriptions-item>
-        <a-descriptions-item label="创建人" :span="2">{{ formData.createBy }}</a-descriptions-item>
-        <a-descriptions-item label="创建时间" :span="2">{{
-          formData.createTime
-        }}</a-descriptions-item>
-        <a-descriptions-item label="补充信息" :span="4"
-          ><a-textarea
+      <vxe-form border title-background title-width="80" :data="formData">
+        <vxe-form-item title="日志名称" field="name" span="24" />
+        <vxe-form-item title="日志类型" field="logType" span="12">
+          {{ OP_LOG_TYPE.getDesc(formData.logType) }}
+        </vxe-form-item>
+        <vxe-form-item title="IP地址" field="ip" span="12" />
+        <vxe-form-item title="创建人" field="createBy" span="12" />
+        <vxe-form-item title="创建时间" field="createTime" span="12" />
+        <vxe-form-item title="补充信息" field="extra" span="24">
+          <a-textarea
             v-if="!isEmpty(formData.extra)"
             v-model:value="formData.extra"
             readonly
             @click="handleClipboard(formData.extra, $event)"
-        /></a-descriptions-item>
-      </a-descriptions>
+          />
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -37,16 +36,7 @@
   import { OP_LOG_TYPE } from '@/enums/biz/opLogType';
 
   export default defineComponent({
-    // 使用组件
     components: {},
-
-    setup() {
-      return {
-        isEmpty,
-        OP_LOG_TYPE,
-      };
-    },
-
     props: {
       id: {
         type: String,

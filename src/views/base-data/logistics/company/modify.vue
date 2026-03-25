@@ -8,57 +8,50 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:logistics-company:modify']" v-loading="loading">
-      <a-form ref="form" layout="vertical" :model="formData" :rules="rules">
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="编号" name="code">
-              <a-input v-model:value.trim="formData.code" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="名称" name="name">
-              <a-input v-model:value.trim="formData.name" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="联系人" name="contact">
-              <a-input v-model:value.trim="formData.contact" allow-clear />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="联系电话" name="telephone">
-              <a-input v-model:value.trim="formData.telephone" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="地区" name="city">
-              <city-selector v-model:value="formData.city" :only-final="true" />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="地址" name="address">
-              <a-input v-model:value.trim="formData.address" allow-clear />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="24">
-            <a-form-item label="备注" name="description">
-              <a-textarea v-model:value.trim="formData.description" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+      <vxe-form
+        border
+        title-background
+        title-width="120"
+        ref="form"
+        :data="formData"
+        :rules="rules"
+      >
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12">
+            <a-input v-model:value.trim="formData.code" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="名称" field="name" span="12">
+            <a-input v-model:value.trim="formData.name" allow-clear />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="联系人" field="contact" span="8">
+            <a-input v-model:value.trim="formData.contact" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="联系电话" field="telephone" span="8">
+            <a-input v-model:value.trim="formData.telephone" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="地区" field="city" span="24">
+            <city-selector v-model:value="formData.city" :only-final="true" />
+          </vxe-form-item>
+          <vxe-form-item title="地址" field="address" span="24">
+            <a-input v-model:value.trim="formData.address" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="备注" field="description" span="24">
+            <a-textarea v-model:value.trim="formData.description" />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -129,8 +122,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
             params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];

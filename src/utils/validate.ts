@@ -61,19 +61,25 @@ export function isTelephone(str) {
   return reg.test(str);
 }
 
+const INVALID_CODE_MESSAGE = '编号必须由字母、数字、“-_.”组成，长度不能超过20位';
+
 /**
- * 判断编号
+ * �жϱ��
  * @param rule
  * @param value
  */
 export function validCode(rule, value) {
-  if (utils.isEmpty(value)) {
-    return Promise.resolve();
+  const isVxeForm =
+    arguments.length === 1 && rule && typeof rule === 'object' && 'itemValue' in rule;
+  const codeValue = isVxeForm ? rule.itemValue : value;
+
+  if (utils.isEmpty(codeValue)) {
+    return isVxeForm ? undefined : Promise.resolve();
   }
 
-  if (!utils.isCode(value)) {
-    return Promise.reject('编号必须由字母、数字、“-_.”组成，长度不能超过20位');
+  if (!utils.isCode(codeValue)) {
+    return isVxeForm ? new Error(INVALID_CODE_MESSAGE) : Promise.reject(INVALID_CODE_MESSAGE);
   }
 
-  return Promise.resolve();
+  return isVxeForm ? undefined : Promise.resolve();
 }

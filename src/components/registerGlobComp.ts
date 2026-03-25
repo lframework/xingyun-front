@@ -36,6 +36,7 @@ export async function registerGlobComp(app: App) {
     .use(bpmApproveInstall);
 
   VxeUI.use(VxeUIPluginRenderAntd);
+  VxeUI.setConfig(componentSetting.vxeUI);
   VXETable.setup(componentSetting.vxeTable);
   VXETable.renderer.add('NotData', {
     // 空内容模板

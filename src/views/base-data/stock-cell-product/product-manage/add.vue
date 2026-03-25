@@ -8,25 +8,28 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:stock-cell-product:add']" v-loading="loading">
-      <a-form
+      <vxe-form
+        border
+        title-background
+        title-width="120"
         ref="form"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
+        :data="formData"
         :rules="rules"
       >
-        <a-form-item label="商品" name="productIds">
+        <vxe-form-item title="商品" field="productIds" span="12">
           <product-selector v-model:value="formData.productIds" multiple />
-        </a-form-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        </vxe-form-item>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -34,7 +37,6 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/stock-cell-product';
   import { createSuccess } from '@/hooks/web/msg';
-  import { STOCK_CELL_TYPE } from '@/enums/biz/stockCellType';
   import ProductSelector from '@/components/Selector/ProductSelector.vue';
 
   export default defineComponent({
@@ -44,11 +46,6 @@
         type: String,
         required: true,
       },
-    },
-    setup() {
-      return {
-        STOCK_CELL_TYPE,
-      };
     },
     data() {
       return {
@@ -89,8 +86,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             const params = Object.assign({}, this.formData, { stockCellId: this.stockCellId });
             api

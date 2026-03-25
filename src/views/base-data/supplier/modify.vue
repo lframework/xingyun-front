@@ -8,143 +8,99 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:supplier:modify']" v-loading="loading">
-      <a-form ref="form" layout="vertical" :model="formData" :rules="rules">
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="编号" name="code">
-              <a-input v-model:value.trim="formData.code" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="名称" name="name">
-              <a-input
-                v-model:value.trim="formData.name"
-                allow-clear
-                @input="(e) => changeName(e.target.value)"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="简码" name="mnemonicCode">
-              <a-input v-model:value.trim="formData.mnemonicCode" allow-clear />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="联系人" name="contact">
-              <a-input v-model:value.trim="formData.contact" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="联系电话" name="telephone">
-              <a-input v-model:value.trim="formData.telephone" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="电子邮箱" name="email">
-              <a-input v-model:value.trim="formData.email" allow-clear />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="邮编" name="zipCode">
-              <a-input v-model:value.trim="formData.zipCode" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="传真" name="fax">
-              <a-input v-model:value.trim="formData.fax" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="地区" name="city">
-              <city-selector v-model:value="formData.city" :only-final="true" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="地址" name="address">
-              <a-input v-model:value.trim="formData.address" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="送货周期（天）" name="deliveryCycle">
-              <a-input v-model:value="formData.deliveryCycle" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="经营方式" name="manageType">
-              <a-select v-model:value="formData.manageType" allow-clear>
-                <a-select-option
-                  v-for="item in MANAGE_TYPE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="统一社会信用代码" name="creditCode">
-              <a-input v-model:value.trim="formData.creditCode" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="纳税人识别号" name="taxIdentifyNo">
-              <a-input v-model:value.trim="formData.taxIdentifyNo" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="开户银行" name="bankName">
-              <a-input v-model:value.trim="formData.bankName" allow-clear />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="户名" name="accountName">
-              <a-input v-model:value.trim="formData.accountName" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="银行账号" name="accountNo">
-              <a-input v-model:value.trim="formData.accountNo" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="结算方式" name="settleType">
-              <a-select v-model:value="formData.settleType" disabled>
-                <a-select-option
-                  v-for="item in SETTLE_TYPE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="24">
-            <a-form-item label="备注" name="description">
-              <a-textarea v-model:value.trim="formData.description" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+      <vxe-form
+        border
+        title-background
+        title-width="120"
+        ref="form"
+        :data="formData"
+        :rules="rules"
+      >
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12">
+            <a-input v-model:value.trim="formData.code" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="名称" field="name" span="12">
+            <a-input
+              v-model:value.trim="formData.name"
+              allow-clear
+              @input="(e) => changeName(e.target.value)"
+            />
+          </vxe-form-item>
+          <vxe-form-item title="简码" field="mnemonicCode" span="12">
+            <a-input v-model:value.trim="formData.mnemonicCode" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="经营方式" field="manageType" span="12">
+            <a-select v-model:value="formData.manageType" allow-clear>
+              <a-select-option
+                v-for="item in MANAGE_TYPE.values()"
+                :key="item.code"
+                :value="item.code"
+                >{{ item.desc }}</a-select-option
+              >
+            </a-select>
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-group span="24" title="结算信息" title-bold vertical>
+          <vxe-form-item title="结算方式" field="settleType" span="8">
+            {{ SETTLE_TYPE.getDesc(formData.settleType) }}
+          </vxe-form-item>
+          <vxe-form-item title="统一社会信用代码" field="creditCode" span="8">
+            <a-input v-model:value.trim="formData.creditCode" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="纳税人识别号" field="taxIdentifyNo" span="8">
+            <a-input v-model:value.trim="formData.taxIdentifyNo" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="开户银行" field="bankName" span="8">
+            <a-input v-model:value.trim="formData.bankName" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="户名" field="accountName" span="8">
+            <a-input v-model:value.trim="formData.accountName" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="银行账号" field="accountNo" span="8">
+            <a-input v-model:value.trim="formData.accountNo" allow-clear />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="联系人" field="contact" span="8">
+            <a-input v-model:value.trim="formData.contact" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="联系电话" field="telephone" span="8">
+            <a-input v-model:value.trim="formData.telephone" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="电子邮箱" field="email" span="8">
+            <a-input v-model:value.trim="formData.email" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="邮编" field="zipCode" span="8">
+            <a-input v-model:value.trim="formData.zipCode" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="传真" field="fax" span="8">
+            <a-input v-model:value.trim="formData.fax" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="送货周期（天）" field="deliveryCycle" span="8">
+            <a-input v-model:value="formData.deliveryCycle" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="地区" field="city" span="24">
+            <city-selector v-model:value="formData.city" :only-final="true" />
+          </vxe-form-item>
+          <vxe-form-item title="地址" field="address" span="24">
+            <a-input v-model:value.trim="formData.address" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="备注" field="description" span="24">
+            <a-textarea v-model:value.trim="formData.description" />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -190,33 +146,27 @@
           mnemonicCode: [{ required: true, message: '请输入简码' }],
           email: [
             {
-              validator: (rule, value) => {
-                if (isEmpty(value) || isEmail(value)) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject('邮箱地址格式不正确');
+              validator({ itemValue }) {
+                if (!isEmpty(itemValue) && !isEmail(itemValue)) {
+                  return new Error('邮箱地址格式不正确');
                 }
-
-                return Promise.resolve();
               },
             },
           ],
           deliveryCycle: [
             {
-              validator: (rule, value) => {
-                if (isEmpty(value)) {
-                  return Promise.resolve();
+              validator({ itemValue }) {
+                if (isEmpty(itemValue)) {
+                  return;
                 }
 
-                if (!isInteger(value)) {
-                  return Promise.reject('送货周期（天）必须为整数');
+                if (!isInteger(itemValue)) {
+                  return new Error('送货周期（天）必须为整数');
                 }
 
-                if (!isIntegerGtZero(value)) {
-                  return Promise.reject('送货周期（天）必须大于0');
+                if (!isIntegerGtZero(itemValue)) {
+                  return new Error('送货周期（天）必须大于0');
                 }
-
-                return Promise.resolve();
               },
             },
           ],
@@ -266,8 +216,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
             params.cityId = isEmpty(params.city) ? '' : params.city[params.city.length - 1];

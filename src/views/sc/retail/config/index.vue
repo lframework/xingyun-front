@@ -4,63 +4,79 @@
       <a-row>
         <a-col :md="16" :sm="24">
           <a-card v-loading="loading">
-            <a-form
+            <vxe-form
+              border
+              title-background
+              title-width="220"
               ref="form"
-              :label-col="{ span: 10 }"
-              :wrapper-col="{ span: 8 }"
-              :model="formData"
+              :data="formData"
               :rules="rules"
             >
-              <j-border title="零售出库单设置" class="m-2">
-                <a-form-item label="零售出库单上的会员是否必填" name="retailOutSheetRequireMember">
-                  <a-select v-model:value="formData.retailOutSheetRequireMember" placeholder="">
-                    <a-select-option :value="true">是</a-select-option>
-                    <a-select-option :value="false">否</a-select-option>
-                  </a-select>
-                </a-form-item>
-                <a-form-item label="零售出库单是否需要发货" name="retailOutSheetRequireLogistics">
-                  <a-select v-model:value="formData.retailOutSheetRequireLogistics" placeholder="">
-                    <a-select-option :value="true">是</a-select-option>
-                    <a-select-option :value="false">否</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </j-border>
-              <j-border title="零售出库单设置" class="m-2">
-                <a-form-item label="零售退货单上的会员是否必填" name="retailReturnRequireMember">
-                  <a-select v-model:value="formData.retailReturnRequireMember" placeholder="">
-                    <a-select-option :value="true">是</a-select-option>
-                    <a-select-option :value="false">否</a-select-option>
-                  </a-select>
-                </a-form-item>
-                <a-form-item
-                  label="零售退货单是否关联零售出库单"
-                  name="retailReturnRequireOutStock"
+              <vxe-form-group span="24" title="零售出库单设置" title-bold vertical>
+                <vxe-form-item
+                  title="零售出库单上的会员是否必填"
+                  field="retailOutSheetRequireMember"
+                  span="24"
                 >
-                  <a-select v-model:value="formData.retailReturnRequireOutStock" placeholder="">
+                  <a-select v-model:value="formData.retailOutSheetRequireMember" allow-clear>
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>
                   </a-select>
-                </a-form-item>
-                <a-form-item
-                  label="零售退货单是否多次关联零售出库单"
-                  name="retailReturnMultipleRelateOutStock"
+                </vxe-form-item>
+                <vxe-form-item
+                  title="零售出库单是否需要发货"
+                  field="retailOutSheetRequireLogistics"
+                  span="24"
                 >
-                  <a-select
-                    v-model:value="formData.retailReturnMultipleRelateOutStock"
-                    placeholder=""
-                  >
+                  <a-select v-model:value="formData.retailOutSheetRequireLogistics" allow-clear>
                     <a-select-option :value="true">是</a-select-option>
                     <a-select-option :value="false">否</a-select-option>
                   </a-select>
-                </a-form-item>
-              </j-border>
-            </a-form>
-            <div class="form-modal-footer">
-              <a-space>
-                <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
-                <a-button :loading="loading" @click="close">取消</a-button>
-              </a-space>
-            </div>
+                </vxe-form-item>
+              </vxe-form-group>
+              <vxe-form-group span="24" title="零售退货单设置" title-bold vertical>
+                <vxe-form-item
+                  title="零售退货单上的会员是否必填"
+                  field="retailReturnRequireMember"
+                  span="24"
+                >
+                  <a-select v-model:value="formData.retailReturnRequireMember" allow-clear>
+                    <a-select-option :value="true">是</a-select-option>
+                    <a-select-option :value="false">否</a-select-option>
+                  </a-select>
+                </vxe-form-item>
+                <vxe-form-item
+                  title="零售退货单是否关联零售出库单"
+                  field="retailReturnRequireOutStock"
+                  span="24"
+                >
+                  <a-select v-model:value="formData.retailReturnRequireOutStock" allow-clear>
+                    <a-select-option :value="true">是</a-select-option>
+                    <a-select-option :value="false">否</a-select-option>
+                  </a-select>
+                </vxe-form-item>
+                <vxe-form-item
+                  title="零售退货单是否多次关联零售出库单"
+                  field="retailReturnMultipleRelateOutStock"
+                  span="24"
+                >
+                  <a-select v-model:value="formData.retailReturnMultipleRelateOutStock" allow-clear>
+                    <a-select-option :value="true">是</a-select-option>
+                    <a-select-option :value="false">否</a-select-option>
+                  </a-select>
+                </vxe-form-item>
+              </vxe-form-group>
+              <vxe-form-item span="24">
+                <div class="form-modal-footer">
+                  <a-space>
+                    <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                      >保存</a-button
+                    >
+                    <a-button :loading="loading" @click="close">取消</a-button>
+                  </a-space>
+                </div>
+              </vxe-form-item>
+            </vxe-form>
           </a-card>
         </a-col>
       </a-row>
@@ -137,8 +153,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             api
               .update(this.formData)

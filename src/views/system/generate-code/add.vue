@@ -8,28 +8,24 @@
     :footer="null"
   >
     <div v-if="visible" v-loading="loading" v-permission="['system:generate-code:manage']">
-      <a-form
-        ref="form"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
-        :rules="rules"
-      >
-        <a-form-item label="规则ID" name="id">
+      <vxe-form border title-background ref="form" title-width="80" :data="formData" :rules="rules">
+        <vxe-form-item title="规则ID" field="id" span="24">
           <a-input v-model:value="formData.id" allow-clear />
-        </a-form-item>
-        <a-form-item label="名称" name="name">
+        </vxe-form-item>
+        <vxe-form-item title="名称" field="name" span="24">
           <a-input v-model:value="formData.name" allow-clear />
-        </a-form-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        </vxe-form-item>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -54,14 +50,10 @@
           id: [
             { required: true, message: '请输入规则ID' },
             {
-              validator: (rule, value) => {
-                if (!isEmpty(value)) {
-                  if (!isIntegerGtZero(value)) {
-                    return Promise.reject('规则ID必须为整数');
-                  }
+              validator({ itemValue }) {
+                if (!isEmpty(itemValue) && !isIntegerGtZero(itemValue)) {
+                  return new Error('规则ID必须为整数');
                 }
-
-                return Promise.resolve();
               },
             },
           ],
@@ -95,8 +87,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             api
               .create(this.formData)

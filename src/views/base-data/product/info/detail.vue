@@ -8,49 +8,41 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:product:info:query']" v-loading="loading">
-      <a-descriptions :column="4" bordered>
-        <a-descriptions-item label="编号" :span="2">{{ formData.code }}</a-descriptions-item>
-        <a-descriptions-item label="名称" :span="2">{{ formData.name }}</a-descriptions-item>
-        <a-descriptions-item label="简称" :span="2">{{ formData.shortName }}</a-descriptions-item>
-        <a-descriptions-item label="分类" :span="2">{{
-          formData.categoryName
-        }}</a-descriptions-item>
-        <a-descriptions-item label="品牌" :span="2">{{ formData.brandName }}</a-descriptions-item>
-        <a-descriptions-item label="规格" :span="2">{{ formData.spec }}</a-descriptions-item>
-        <a-descriptions-item label="单位" :span="2">{{ formData.unit }}</a-descriptions-item>
-        <a-descriptions-item label="重量（kg）" :span="2">{{
-          PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.weight : '-'
-        }}</a-descriptions-item>
-        <a-descriptions-item label="体积（cm³）" :span="2">{{
-          PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.volume : '-'
-        }}</a-descriptions-item>
-        <a-descriptions-item label="进项税率（%）" :span="2">{{
-          PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.taxRate : '-'
-        }}</a-descriptions-item>
-        <a-descriptions-item label="销项税率（%）" :span="2">{{
-          PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.saleTaxRate : '-'
-        }}</a-descriptions-item>
-        <a-descriptions-item label="采购价（元）" :span="2">{{
-          formData.purchasePrice
-        }}</a-descriptions-item>
-        <a-descriptions-item label="销售价（元）" :span="2">{{
-          formData.salePrice
-        }}</a-descriptions-item>
-        <a-descriptions-item label="零售价（元）" :span="2">{{
-          formData.retailPrice
-        }}</a-descriptions-item>
-        <a-descriptions-item label="商品类型" :span="4">{{
-          PRODUCT_TYPE.getDesc(formData.productType)
-        }}</a-descriptions-item>
-        <a-descriptions-item
+      <vxe-form border title-background title-width="120" ref="form" :data="formData">
+        <vxe-form-item title="编号" field="code" span="12" />
+        <vxe-form-item title="名称" field="name" span="12" />
+        <vxe-form-item title="简称" field="shortName" span="12" />
+        <vxe-form-item title="分类" field="categoryName" span="12" />
+        <vxe-form-item title="品牌" field="brandName" span="12" />
+        <vxe-form-item title="规格" field="spec" span="12" />
+        <vxe-form-item title="单位" field="unit" span="12" />
+        <vxe-form-item title="重量（kg）" span="12">
+          {{ PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.weight : '-' }}
+        </vxe-form-item>
+        <vxe-form-item title="体积（cm³）" span="12">
+          {{ PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.volume : '-' }}
+        </vxe-form-item>
+        <vxe-form-item title="进项税率（%）" span="12">
+          {{ PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.taxRate : '-' }}
+        </vxe-form-item>
+        <vxe-form-item title="销项税率（%）" span="12">
+          {{ PRODUCT_TYPE.NORMAL.equalsCode(formData.productType) ? formData.saleTaxRate : '-' }}
+        </vxe-form-item>
+        <vxe-form-item title="采购价（元）" field="purchasePrice" span="12" />
+        <vxe-form-item title="销售价（元）" field="salePrice" span="12" />
+        <vxe-form-item title="零售价（元）" field="retailPrice" span="12" />
+        <vxe-form-item title="商品类型" span="24">
+          {{ PRODUCT_TYPE.getDesc(formData.productType) }}
+        </vxe-form-item>
+        <vxe-form-item
           v-for="item in formData.properties"
           :key="item.id"
-          :label="item.name"
-          :span="4"
+          :title="item.name"
+          span="24"
         >
           {{ item.textStr }}
-        </a-descriptions-item>
-      </a-descriptions>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>

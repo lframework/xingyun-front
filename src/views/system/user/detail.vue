@@ -8,38 +8,22 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['system:user:query']" v-loading="loading">
-      <a-descriptions bordered :xs="4" :sm="2" :md="2">
-        <a-descriptions-item label="编号" :span="2">
-          {{ formData.code }}
-        </a-descriptions-item>
-        <a-descriptions-item label="用户名" :span="2">
-          {{ formData.username }}
-        </a-descriptions-item>
-        <a-descriptions-item label="姓名" :span="2">
-          {{ formData.name }}
-        </a-descriptions-item>
-        <a-descriptions-item label="性别" :span="2">
+      <vxe-form border title-background title-width="120" :data="formData">
+        <vxe-form-item title="编号" field="code" span="12" />
+        <vxe-form-item title="用户名" field="username" span="12" />
+        <vxe-form-item title="姓名" field="name" span="12" />
+        <vxe-form-item title="性别" field="gender" span="12">
           {{ getEnumDesc('GENDER', formData.gender) }}
-        </a-descriptions-item>
-        <a-descriptions-item label="部门" :span="4">
-          {{ formData.deptName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="角色" :span="4">
-          {{ formData.roleName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="邮箱" :span="2">
-          {{ formData.email }}
-        </a-descriptions-item>
-        <a-descriptions-item label="联系电话" :span="2">
-          {{ formData.telephone }}
-        </a-descriptions-item>
-        <a-descriptions-item label="是否锁定" :span="4">
+        </vxe-form-item>
+        <vxe-form-item title="部门" field="deptName" span="24" />
+        <vxe-form-item title="角色" field="roleName" span="24" />
+        <vxe-form-item title="邮箱" field="email" span="12" />
+        <vxe-form-item title="联系电话" field="telephone" span="12" />
+        <vxe-form-item title="是否锁定" field="lockStatus" span="24">
           {{ formData.lockStatus ? '是' : '否' }}
-        </a-descriptions-item>
-        <a-descriptions-item label="备注" :span="4">
-          {{ formData.description }}
-        </a-descriptions-item>
-      </a-descriptions>
+        </vxe-form-item>
+        <vxe-form-item title="备注" field="description" span="24" />
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -50,9 +34,6 @@
   import { GENDER } from '@/enums/biz/gender';
 
   export default defineComponent({
-    // 使用组件
-    components: {
-    },
     props: {
       id: {
         type: String,
@@ -95,9 +76,14 @@
         this.formData = {
           id: '',
           code: '',
+          username: '',
           name: '',
-          permission: '',
-          lockStatus: '',
+          gender: '',
+          deptName: '',
+          roleName: '',
+          email: '',
+          telephone: '',
+          lockStatus: false,
           description: '',
         };
       },

@@ -170,11 +170,11 @@
             },
           },
           { field: 'description', title: '备注', minWidth: 160 },
-          { title: '操作', width: 150, fixed: 'right', slots: { default: 'action_default' } },
+          { title: '操作', field: 'action', width: 150, fixed: 'right', slots: { default: 'action_default' } },
         ],
         // 请求接口配置
         proxyConfig: {
-          props: {
+          response: {
             // 响应结果列表字段
             result: 'datas',
             // 响应结果总条数字段

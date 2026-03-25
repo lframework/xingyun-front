@@ -8,34 +8,22 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['system:role:query']" v-loading="loading">
-      <a-descriptions bordered :xs="4" :sm="2" :md="2">
-        <a-descriptions-item label="编号" :span="2">
-          {{ formData.code }}
-        </a-descriptions-item>
-        <a-descriptions-item label="名称" :span="2">
-          {{ formData.name }}
-        </a-descriptions-item>
-        <a-descriptions-item label="权限" :span="2">
-          {{ formData.permission }}  
-        </a-descriptions-item>
-        <a-descriptions-item label="备注" :span="4">
-          {{ formData.description }}
-        </a-descriptions-item>
-      </a-descriptions>
+      <vxe-form border title-background title-width="120" :data="formData">
+        <vxe-form-item title="编号" field="code" span="12" />
+        <vxe-form-item title="名称" field="name" span="12" />
+        <vxe-form-item title="分类" field="categoryName" span="12" />
+        <vxe-form-item title="权限" field="permission" span="12" />
+        <vxe-form-item title="备注" field="description" span="24" />
+      </vxe-form>
     </div>
   </a-modal>
 </template>
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/system/role';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
-    // 使用组件
-    components: {
-      AvailableTag,
-    },
-
+    components: {},
     props: {
       id: {
         type: String,
@@ -74,7 +62,6 @@
           code: '',
           name: '',
           permission: '',
-          available: '',
           description: '',
         };
       },

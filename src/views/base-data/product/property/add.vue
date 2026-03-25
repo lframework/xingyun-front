@@ -8,82 +8,91 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:product:property:add']" v-loading="loading">
-      <a-form
+      <vxe-form
+        border
+        title-background
+        title-width="120"
         ref="form"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
+        :data="formData"
         :rules="rules"
       >
-        <a-form-item label="编号" name="code">
-          <a-input v-model:value.trim="formData.code" allow-clear />
-        </a-form-item>
-        <a-form-item label="名称" name="name">
-          <a-input v-model:value.trim="formData.name" allow-clear />
-        </a-form-item>
-        <a-form-item label="是否必填" name="isRequired">
-          <a-select v-model:value="formData.isRequired" allow-clear>
-            <a-select-option :value="true">是</a-select-option>
-            <a-select-option :value="false">否</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="字段类型" name="columnType">
-          <a-select v-model:value="formData.columnType" allow-clear>
-            <a-select-option
-              v-for="item in COLUMN_TYPE.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-select-option
-            >
-          </a-select>
-        </a-form-item>
-        <a-form-item
-          v-if="COLUMN_TYPE.CUSTOM.equalsCode(formData.columnType)"
-          label="数据类型"
-          name="columnDataType"
-        >
-          <a-select v-model:value="formData.columnDataType" allow-clear>
-            <a-select-option
-              v-for="item in COLUMN_DATA_TYPE.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-select-option
-            >
-          </a-select>
-        </a-form-item>
-        <a-form-item label="类别" name="propertyType">
-          <a-select v-model:value="formData.propertyType" allow-clear>
-            <a-select-option
-              v-for="item in PROPERTY_TYPE.values()"
-              :key="item.code"
-              :value="item.code"
-              >{{ item.desc }}</a-select-option
-            >
-          </a-select>
-        </a-form-item>
-        <a-form-item
-          v-if="PROPERTY_TYPE.APPOINT.equalsCode(formData.propertyType)"
-          label="商品分类"
-          :required="true"
-        >
-          <product-category-selector
-            v-model:value="formData.categories"
-            :multiple="true"
-            :only-final="false"
-          />
-        </a-form-item>
-        <a-form-item label="备注" name="description">
-          <a-textarea v-model:value.trim="formData.description" />
-        </a-form-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12">
+            <a-input v-model:value.trim="formData.code" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="名称" field="name" span="12">
+            <a-input v-model:value.trim="formData.name" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="是否必填" field="isRequired" span="12">
+            <a-select v-model:value="formData.isRequired" allow-clear>
+              <a-select-option :value="true">是</a-select-option>
+              <a-select-option :value="false">否</a-select-option>
+            </a-select>
+          </vxe-form-item>
+          <vxe-form-item title="字段类型" field="columnType" span="12">
+            <a-select v-model:value="formData.columnType" allow-clear>
+              <a-select-option
+                v-for="item in COLUMN_TYPE.values()"
+                :key="item.code"
+                :value="item.code"
+                >{{ item.desc }}</a-select-option
+              >
+            </a-select>
+          </vxe-form-item>
+          <vxe-form-item
+            :visible="COLUMN_TYPE.CUSTOM.equalsCode(formData.columnType)"
+            title="数据类型"
+            field="columnDataType"
+            span="12"
+          >
+            <a-select v-model:value="formData.columnDataType" allow-clear>
+              <a-select-option
+                v-for="item in COLUMN_DATA_TYPE.values()"
+                :key="item.code"
+                :value="item.code"
+                >{{ item.desc }}</a-select-option
+              >
+            </a-select>
+          </vxe-form-item>
+          <vxe-form-item title="类别" field="propertyType" span="12">
+            <a-select v-model:value="formData.propertyType" allow-clear>
+              <a-select-option
+                v-for="item in PROPERTY_TYPE.values()"
+                :key="item.code"
+                :value="item.code"
+                >{{ item.desc }}</a-select-option
+              >
+            </a-select>
+          </vxe-form-item>
+          <vxe-form-item
+            :visible="PROPERTY_TYPE.APPOINT.equalsCode(formData.propertyType)"
+            title="商品分类"
+            span="12"
+          >
+            <product-category-selector
+              v-model:value="formData.categories"
+              :multiple="true"
+              :only-final="false"
+              :disabled="columnTypeDisabled"
+            />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="备注" field="description" span="24">
+            <a-textarea v-model:value.trim="formData.description" />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -166,8 +175,8 @@
             return;
           }
         }
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             const params = {
               code: this.formData.code,

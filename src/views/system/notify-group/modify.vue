@@ -8,17 +8,18 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['system:notify-group:modify']" v-loading="loading">
-      <a-form
+      <vxe-form
+        border
+        title-background
+        title-width="100"
         ref="form"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
+        :data="formData"
         :rules="rules"
       >
-        <a-form-item label="名称" name="name">
+        <vxe-form-item title="名称" field="name" span="12">
           <a-input v-model:value="formData.name" allow-clear />
-        </a-form-item>
-        <a-form-item label="接收者类型" name="receiverType">
+        </vxe-form-item>
+        <vxe-form-item title="接收者类型" field="receiverType" span="12">
           <a-select v-model:value="formData.receiverType" allow-clear>
             <a-select-option
               v-for="item in SYS_NOTIFY_GROUP_RECEIVER_TYPE.values()"
@@ -27,54 +28,60 @@
               >{{ item.desc }}</a-select-option
             >
           </a-select>
-        </a-form-item>
-        <a-form-item
-          v-if="SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(formData.receiverType)"
-          label="部门"
-          name="deptIds"
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="SYS_NOTIFY_GROUP_RECEIVER_TYPE.DEPT.equalsCode(formData.receiverType)"
+          title="部门"
+          field="deptIds"
+          span="24"
         >
           <sys-dept-selector
             v-model:value="formData.deptIds"
             :multiple="true"
             :only-final="false"
           />
-        </a-form-item>
-        <a-form-item
-          v-if="SYS_NOTIFY_GROUP_RECEIVER_TYPE.ROLE.equalsCode(formData.receiverType)"
-          label="角色"
-          name="roleIds"
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="SYS_NOTIFY_GROUP_RECEIVER_TYPE.ROLE.equalsCode(formData.receiverType)"
+          title="角色"
+          field="roleIds"
+          span="24"
         >
           <sys-role-selector v-model:value="formData.roleIds" :multiple="true" />
-        </a-form-item>
-        <a-form-item
-          v-if="SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER.equalsCode(formData.receiverType)"
-          label="用户"
-          name="userIds"
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER.equalsCode(formData.receiverType)"
+          title="用户"
+          field="userIds"
+          span="24"
         >
           <user-selector v-model:value="formData.userIds" :multiple="true" />
-        </a-form-item>
-        <a-form-item
-          v-if="SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(formData.receiverType)"
-          label="用户组"
-          name="userGroupIds"
+        </vxe-form-item>
+        <vxe-form-item
+          :visible="SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER_GROUP.equalsCode(formData.receiverType)"
+          title="用户组"
+          field="userGroupIds"
+          span="24"
         >
           <user-group-selector v-model:value="formData.userGroupIds" :multiple="true" />
-        </a-form-item>
-        <a-form-item label="消息类型" name="messageType">
+        </vxe-form-item>
+        <vxe-form-item title="消息类型" field="messageType" span="24">
           <a-checkbox-group v-model:value="formData.messageType" :options="messageTypeOptions" />
-        </a-form-item>
-        <a-form-item label="备注" name="description">
+        </vxe-form-item>
+        <vxe-form-item title="备注" field="description" span="24">
           <a-textarea v-model:value.trim="formData.description" />
-        </a-form-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        </vxe-form-item>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -169,10 +176,10 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
-            const params = this.formData;
+            const params = Object.assign({}, this.formData);
 
             if (SYS_NOTIFY_GROUP_RECEIVER_TYPE.USER.equalsCode(this.formData.receiverType)) {
               params.receiverIds = this.formData.userIds;

@@ -8,59 +8,40 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:customer:query']" v-loading="loading">
-      <a-descriptions :column="4" bordered>
-        <a-descriptions-item label="编号" :span="2">
-          {{ formData.code }}
-        </a-descriptions-item>
-        <a-descriptions-item label="名称" :span="2">
-          {{ formData.name }}
-        </a-descriptions-item>
-        <a-descriptions-item label="简码" :span="2">
-          {{ formData.mnemonicCode }}
-        </a-descriptions-item>
-        <a-descriptions-item label="联系人" :span="2">
-          {{ formData.contact }}
-        </a-descriptions-item>
-        <a-descriptions-item label="联系电话" :span="2">
-          {{ formData.telephone }}
-        </a-descriptions-item>
-        <a-descriptions-item label="电子邮箱" :span="2">
-          {{ formData.email }}
-        </a-descriptions-item>
-        <a-descriptions-item label="邮编" :span="2">
-          {{ formData.zipCode }}
-        </a-descriptions-item>
-        <a-descriptions-item label="传真" :span="2">
-          {{ formData.fax }}
-        </a-descriptions-item>
-        <a-descriptions-item label="地区" :span="2">
-          {{ formData.cityName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="地址" :span="2">
-          {{ formData.address }}
-        </a-descriptions-item>
-        <a-descriptions-item label="结算方式" :span="2">
-          {{ SETTLE_TYPE.getDesc(formData.settleType) }}
-        </a-descriptions-item>
-        <a-descriptions-item label="统一社会信用代码" :span="2">
-          {{ formData.creditCode }}
-        </a-descriptions-item>
-        <a-descriptions-item label="纳税人识别号" :span="2">
-          {{ formData.taxIdentifyNo }}
-        </a-descriptions-item>
-        <a-descriptions-item label="开户银行" :span="2">
-          {{ formData.bankName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="户名" :span="2">
-          {{ formData.accountName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="银行账号" :span="2">
-          {{ formData.accountNo }}
-        </a-descriptions-item>
-        <a-descriptions-item label="备注" :span="4">
-          {{ formData.description }}
-        </a-descriptions-item>
-      </a-descriptions>
+      <vxe-form
+        border
+        title-background
+        title-width="120"
+        ref="form"
+        :data="formData"
+        :rules="rules"
+      >
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12" />
+          <vxe-form-item title="名称" field="name" span="12" />
+          <vxe-form-item title="简码" field="mnemonicCode" span="12" />
+        </vxe-form-group>
+        <vxe-form-group span="24" title="结算信息" title-bold vertical>
+          <vxe-form-item title="结算方式" field="settleType" span="8">
+            {{ SETTLE_TYPE.getDesc(formData.settleType) }}
+          </vxe-form-item>
+          <vxe-form-item title="统一社会信用代码" field="creditCode" span="8" />
+          <vxe-form-item title="纳税人识别号" field="taxIdentifyNo" span="8" />
+          <vxe-form-item title="开户银行" field="bankName" span="8" />
+          <vxe-form-item title="户名" field="accountName" span="8" />
+          <vxe-form-item title="银行账号" field="accountNo" span="8" />
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="联系人" field="contact" span="8" />
+          <vxe-form-item title="联系电话" field="telephone" span="8" />
+          <vxe-form-item title="电子邮箱" field="email" span="8" />
+          <vxe-form-item title="邮编" field="zipCode" span="8" />
+          <vxe-form-item title="传真" field="fax" span="8" />
+          <vxe-form-item title="地区" field="cityName" span="24" />
+          <vxe-form-item title="地址" field="address" span="24" />
+          <vxe-form-item title="备注" field="description" span="24" />
+        </vxe-form-group>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -68,10 +49,11 @@
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/customer';
   import { SETTLE_TYPE } from '@/enums/biz/settleType';
+  import CitySelector from '@/components/Selector/CitySelector.vue';
 
   export default defineComponent({
     // 使用组件
-    components: {},
+    components: { CitySelector },
     props: {
       id: {
         type: String,

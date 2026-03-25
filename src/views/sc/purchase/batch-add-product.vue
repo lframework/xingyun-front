@@ -146,7 +146,7 @@
         ],
         // 请求接口配置
         proxyConfig: {
-          props: {
+          response: {
             // 响应结果列表字段
             result: 'datas',
             // 响应结果总条数字段

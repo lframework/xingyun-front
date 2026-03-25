@@ -8,39 +8,27 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:shop:query']" v-loading="loading">
-      <a-descriptions :column="4" bordered>
-        <a-descriptions-item label="编号" :span="2">
-          {{ formData.code }}
-        </a-descriptions-item>
-        <a-descriptions-item label="名称" :span="2">
-          {{ formData.name }}
-        </a-descriptions-item>
-        <a-descriptions-item label="所属部门" :span="2">
-          {{ formData.deptName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="经度" :span="2">
-          {{ formData.lng }}
-        </a-descriptions-item>
-        <a-descriptions-item label="纬度" :span="2">
-          {{ formData.lat }}
-        </a-descriptions-item>
-        <a-descriptions-item label="备注" :span="2">
-          {{ formData.description }}
-        </a-descriptions-item>
-      </a-descriptions>
+      <vxe-form border title-background title-width="120" :data="formData">
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12" />
+          <vxe-form-item title="名称" field="name" span="12" />
+          <vxe-form-item title="所属部门" field="deptName" span="24" />
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="经度" field="lng" span="12" />
+          <vxe-form-item title="纬度" field="lat" span="12" />
+          <vxe-form-item title="备注" field="description" span="24" />
+        </vxe-form-group>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
 <script>
   import { defineComponent } from 'vue';
   import * as api from '@/api/base-data/shop';
-  import AvailableTag from '@/components/Tag/AvailableTag.vue';
 
   export default defineComponent({
-    // 使用组件
-    components: {
-      AvailableTag,
-    },
+    components: {},
     props: {
       id: {
         type: String,

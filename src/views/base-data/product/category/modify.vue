@@ -8,34 +8,36 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:product:category:modify']" v-loading="loading">
-      <a-form
+      <vxe-form
+        border
+        title-background
+        title-width="120"
         ref="form"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
+        :data="formData"
         :rules="rules"
       >
-        <a-form-item label="编号" name="code">
-          <a-input v-model:value.trim="formData.code" allow-clear />
-        </a-form-item>
-        <a-form-item label="名称" name="name">
-          <a-input v-model:value.trim="formData.name" allow-clear />
-        </a-form-item>
-        <a-form-item label="上级分类">
-          <a-input v-model:value="formData.parentName" disabled />
-        </a-form-item>
-        <a-form-item label="备注" name="description">
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12">
+            <a-input v-model:value.trim="formData.code" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="名称" field="name" span="12">
+            <a-input v-model:value.trim="formData.name" allow-clear />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-item title="备注" field="description" span="24">
           <a-textarea v-model:value="formData.description" />
-        </a-form-item>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        </vxe-form-item>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                >保存</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -43,7 +45,7 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/category';
-  import { createSuccess, createConfirm } from '@/hooks/web/msg';
+  import { createSuccess } from '@/hooks/web/msg';
 
   export default defineComponent({
     // 使用组件
@@ -99,8 +101,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.doSubmit();
           }
         });

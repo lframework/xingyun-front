@@ -80,7 +80,7 @@ export default {
       },
       proxyConfig: {
         sort: true,
-        props: {
+        response: {
           // 响应结果列表字段
           result: 'datas',
           // 响应结果总条数字段
@@ -88,6 +88,24 @@ export default {
         },
       },
       zoomConfig: {},
+    },
+  },
+  vxeUI: {
+    form: {
+      // preventSubmit: false,
+      // size: null,
+      // colon: false,
+      validConfig: {
+        showMessage: true,
+        autoPos: true,
+        theme: 'normal',
+      },
+      tooltipConfig: {
+        enterable: true,
+      },
+      titleAsterisk: true,
+      titleOverflow: false,
+      padding: true,
     },
   },
   // scrollbar setting

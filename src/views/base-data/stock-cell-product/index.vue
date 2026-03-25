@@ -73,27 +73,6 @@
 
       <!-- 商品管理窗口 -->
       <product-manage :stock-cell-id="id" ref="productManageDialog" />
-
-      <!-- 批量操作 -->
-      <batch-handler
-        ref="batchDeleteHandlerDialog"
-        :table-column="[
-          { field: 'code', title: '编号', width: 100, sortable: true },
-          { field: 'name', title: '名称', minWidth: 180, sortable: true },
-          {
-            field: 'cellType',
-            title: '仓位类别',
-            minWidth: 100,
-            formatter: ({ cellValue }) => {
-              return STOCK_CELL_TYPE.getDesc(cellValue);
-            },
-          },
-        ]"
-        title="批量删除"
-        :tableData="batchHandleDatas"
-        :handle-fn="doBatchDelete"
-        @confirm="search"
-      />
     </div>
   </div>
 </template>
@@ -108,12 +87,9 @@
     ThunderboltOutlined,
     SettingOutlined,
     CheckOutlined,
-    DownOutlined,
     DeleteOutlined,
     CloudUploadOutlined,
   } from '@ant-design/icons-vue';
-  import Add from './add.vue';
-  import Modify from './modify.vue';
   import BatchHandler from '@/components/BatchHandler';
   import ProductManage from './product-manage/index.vue';
   import AllProduct from './product-manage/all.vue'
@@ -121,9 +97,6 @@
   export default defineComponent({
     components: {
       BatchHandler,
-      DownOutlined,
-      Add,
-      Modify,
       ProductManage,
       AllProduct,
     },
@@ -177,7 +150,7 @@
         ],
         // 请求接口配置
         proxyConfig: {
-          props: {
+          response: {
             // 响应结果列表字段
             result: 'datas',
             // 响应结果总条数字段

@@ -8,26 +8,24 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:product:brand:query']" v-loading="loading">
-      <a-descriptions :column="4" bordered>
-        <a-descriptions-item label="编号" :span="2">
-          {{ formData.code }}
-        </a-descriptions-item>
-        <a-descriptions-item label="名称" :span="2">
-          {{ formData.name }}
-        </a-descriptions-item>
-        <a-descriptions-item label="简称" :span="2">
-          {{ formData.shortName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="Logo" :span="4">
-          <img v-if="!isEmpty(formData.logo)" :src="formData.logo" class="img-uploader-container" />
-        </a-descriptions-item>
-        <a-descriptions-item label="简介" :span="4">
-          {{ formData.introduction }}
-        </a-descriptions-item>
-        <a-descriptions-item label="备注" :span="4">
-          {{ formData.description }}
-        </a-descriptions-item>
-      </a-descriptions>
+      <vxe-form border title-background title-width="120" ref="form" :data="formData">
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12" />
+          <vxe-form-item title="名称" field="name" span="12" />
+          <vxe-form-item title="简称" field="shortName" span="12" />
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="Logo" field="logo" span="24">
+            <img
+              v-if="!isEmpty(formData.logo)"
+              :src="formData.logo"
+              class="img-uploader-container"
+            />
+          </vxe-form-item>
+          <vxe-form-item title="简介" field="introduction" span="24" />
+          <vxe-form-item title="备注" field="description" span="24" />
+        </vxe-form-group>
+      </vxe-form>
     </div>
   </a-modal>
 </template>

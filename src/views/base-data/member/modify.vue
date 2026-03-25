@@ -8,99 +8,75 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:member:modify']" v-loading="loading">
-      <a-form ref="form" layout="vertical" :model="formData" :rules="rules">
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="编号" name="code">
-              <a-input v-model:value.trim="formData.code" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="名称" name="name">
-              <a-input v-model:value.trim="formData.name" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="性别" name="gender">
-              <a-select v-model:value="formData.gender" allow-clear>
-                <a-select-option
-                  v-for="item in GENDER.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="会员手机号" name="telephone">
-              <a-input v-model:value.trim="formData.telephone" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="电子邮箱" name="email">
-              <a-input v-model:value.trim="formData.email" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="出生日期" name="birthday">
-              <a-date-picker
-                v-model:value="formData.birthday"
-                placeholder=""
-                value-format="YYYY-MM-DD"
-                :disabled-date="
-                  (current) => {
-                    return current && current > moment().endOf('day');
-                  }
-                "
-              />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="8">
-            <a-form-item label="注册门店" name="shopId">
-              <shop-selector v-model:value="formData.shopId" />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="所属导购" name="guiderId">
-              <user-selector v-model:value="formData.guiderId" />
-            </a-form-item>
-          </a-col>
-          <a-col :span="8">
-            <a-form-item label="入会日期" name="joinDay">
-              <a-date-picker
-                v-model:value="formData.joinDay"
-                placeholder=""
-                value-format="YYYY-MM-DD"
-                :disabled-date="
-                  (current) => {
-                    return current && current > moment().endOf('day');
-                  }
-                "
-              />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row :gutter="16">
-          <a-col :span="24">
-            <a-form-item label="备注" name="description">
-              <a-textarea v-model:value.trim="formData.description" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-              >保存</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+      <vxe-form border title-background title-width="120" ref="form" :data="formData" :rules="rules">
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="编号" field="code" span="12">
+            <a-input v-model:value.trim="formData.code" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="名称" field="name" span="12">
+            <a-input v-model:value.trim="formData.name" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="性别" field="gender" span="12">
+            <a-select v-model:value="formData.gender" allow-clear>
+              <a-select-option
+                v-for="item in GENDER.values()"
+                :key="item.code"
+                :value="item.code"
+              >{{ item.desc }}</a-select-option
+              >
+            </a-select>
+          </vxe-form-item>
+          <vxe-form-item title="入会日期" field="joinDay" span="12">
+            <a-date-picker
+              v-model:value="formData.joinDay"
+              placeholder=""
+              value-format="YYYY-MM-DD"
+              :disabled-date="
+                (current) => {
+                  return current && current > moment().endOf('day');
+                }
+              "
+            />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="会员手机号" field="telephone" span="8">
+            <a-input v-model:value.trim="formData.telephone" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="电子邮箱" field="email" span="8">
+            <a-input v-model:value.trim="formData.email" allow-clear />
+          </vxe-form-item>
+          <vxe-form-item title="出生日期" field="birthday" span="8">
+            <a-date-picker
+              v-model:value="formData.birthday"
+              placeholder=""
+              value-format="YYYY-MM-DD"
+              :disabled-date="
+                (current) => {
+                  return current && current > moment().endOf('day');
+                }
+              "
+            />
+          </vxe-form-item>
+          <vxe-form-item title="注册门店" field="shopId" span="8">
+            <shop-selector v-model:value="formData.shopId" />
+          </vxe-form-item>
+          <vxe-form-item title="所属导购" field="guiderId" span="8">
+            <user-selector v-model:value="formData.guiderId" />
+          </vxe-form-item>
+          <vxe-form-item title="备注" field="description" span="24">
+            <a-textarea v-model:value.trim="formData.description" />
+          </vxe-form-item>
+        </vxe-form-group>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -147,11 +123,9 @@
           gender: [{ required: true, message: '请选择性别' }],
           email: [
             {
-              validator: (rule, value, callback) => {
-                if (isEmpty(value) || isEmail(value)) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject('邮箱地址格式不正确');
+              validator({ itemValue }) {
+                if (!isEmpty(itemValue) && !isEmail(itemValue)) {
+                  return new Error('邮箱地址格式不正确');
                 }
               },
             },
@@ -198,8 +172,8 @@
       },
       // 提交表单事件
       submit() {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             const params = Object.assign({}, this.formData);
 

@@ -1,61 +1,77 @@
 <template>
-  <div>
+  <div class="app-card-container">
     <div v-permission="['stock:take:config:modify']">
       <a-row>
         <a-col :md="16" :sm="24">
           <a-card v-loading="loading">
-            <a-form
+            <vxe-form
+              border
+              title-background
+              title-width="260"
               ref="form"
-              :label-col="{ span: 14 }"
-              :wrapper-col="{ span: 4 }"
-              :model="formData"
+              :data="formData"
               :rules="rules"
             >
-              <a-form-item
-                label="库存盘点单关联盘点任务后，是否显示盘点任务中的商品数据"
-                name="showProduct"
-              >
-                <a-select v-model:value="formData.showProduct" allow-clear>
-                  <a-select-option :value="true">显示</a-select-option>
-                  <a-select-option :value="false">不显示</a-select-option>
-                </a-select>
-              </a-form-item>
-              <a-form-item
-                label="库存盘点单是否显示盘点任务创建时商品的系统库存数量"
-                name="showStock"
-              >
-                <a-select v-model:value="formData.showStock" allow-clear>
-                  <a-select-option :value="true">显示</a-select-option>
-                  <a-select-option :value="false">不显示</a-select-option>
-                </a-select>
-              </a-form-item>
-              <a-form-item
-                label="盘点差异生成时是否自动调整盘点任务中商品的系统库存数量"
-                name="autoChangeStock"
-              >
-                <a-select v-model:value="formData.autoChangeStock" allow-clear>
-                  <a-select-option :value="true">调整</a-select-option>
-                  <a-select-option :value="false">不调整</a-select-option>
-                </a-select>
-              </a-form-item>
-              <a-form-item label="盘点差异单中的盘点数量是否允许手动修改" name="allowChangeNum">
-                <a-select v-model:value="formData.allowChangeNum" allow-clear>
-                  <a-select-option :value="true">允许</a-select-option>
-                  <a-select-option :value="false">不允许</a-select-option>
-                </a-select>
-              </a-form-item>
-              <a-form-item label="盘点任务自动作废时间" name="cancelHours">
-                <a-input v-model:value="formData.cancelHours" allow-clear>
-                  <template #suffix>小时</template>
-                </a-input>
-              </a-form-item>
-            </a-form>
-            <div class="form-modal-footer">
-              <a-space>
-                <a-button type="primary" :loading="loading" @click="submit">保存</a-button>
-                <a-button :loading="loading" @click="closeDialog">取消</a-button>
-              </a-space>
-            </div>
+              <vxe-form-group span="24" title="盘点任务设置" title-bold vertical>
+                <vxe-form-item
+                  title="库存盘点单关联盘点任务后，是否显示盘点任务中的商品数据"
+                  field="showProduct"
+                  span="24"
+                >
+                  <a-select v-model:value="formData.showProduct" allow-clear>
+                    <a-select-option :value="true">显示</a-select-option>
+                    <a-select-option :value="false">不显示</a-select-option>
+                  </a-select>
+                </vxe-form-item>
+                <vxe-form-item
+                  title="库存盘点单是否显示盘点任务创建时商品的系统库存数量"
+                  field="showStock"
+                  span="24"
+                >
+                  <a-select v-model:value="formData.showStock" allow-clear>
+                    <a-select-option :value="true">显示</a-select-option>
+                    <a-select-option :value="false">不显示</a-select-option>
+                  </a-select>
+                </vxe-form-item>
+                <vxe-form-item title="盘点任务自动作废时间" field="cancelHours" span="24">
+                  <a-input v-model:value="formData.cancelHours" allow-clear>
+                    <template #suffix>小时</template>
+                  </a-input>
+                </vxe-form-item>
+              </vxe-form-group>
+              <vxe-form-group span="24" title="盘点差异设置" title-bold vertical>
+                <vxe-form-item
+                  title="盘点差异生成时是否自动调整盘点任务中商品的系统库存数量"
+                  field="autoChangeStock"
+                  span="24"
+                >
+                  <a-select v-model:value="formData.autoChangeStock" allow-clear>
+                    <a-select-option :value="true">调整</a-select-option>
+                    <a-select-option :value="false">不调整</a-select-option>
+                  </a-select>
+                </vxe-form-item>
+                <vxe-form-item
+                  title="盘点差异单中的盘点数量是否允许手动修改"
+                  field="allowChangeNum"
+                  span="24"
+                >
+                  <a-select v-model:value="formData.allowChangeNum" allow-clear>
+                    <a-select-option :value="true">允许</a-select-option>
+                    <a-select-option :value="false">不允许</a-select-option>
+                  </a-select>
+                </vxe-form-item>
+              </vxe-form-group>
+              <vxe-form-item span="24">
+                <div class="form-modal-footer">
+                  <a-space>
+                    <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
+                      >保存</a-button
+                    >
+                    <a-button :loading="loading" @click="closeDialog">取消</a-button>
+                  </a-space>
+                </div>
+              </vxe-form-item>
+            </vxe-form>
           </a-card>
         </a-col>
       </a-row>
@@ -142,15 +158,13 @@
             return;
           }
         }
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             this.loading = true;
             api
               .update(this.formData)
               .then(() => {
-                createSuccess('保存成功！');
-                this.$emit('confirm');
-                this.visible = false;
+                createSuccess('修改成功！');
               })
               .finally(() => {
                 this.loading = false;

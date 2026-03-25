@@ -8,32 +8,26 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:address:query']" v-loading="loading">
-      <a-descriptions :column="4" bordered>
-        <a-descriptions-item label="实体类型" :span="2">
-          {{ ADDRESS_ENTITY_TYPE.getDesc(formData.entityType) }}
-        </a-descriptions-item>
-        <a-descriptions-item label="实体" :span="2">
-          {{ formData.entityName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="地址类型" :span="2">
-          {{ ADDRESS_TYPE.getDesc(formData.addressType) }}
-        </a-descriptions-item>
-        <a-descriptions-item label="姓名" :span="2">
-          {{ formData.name }}
-        </a-descriptions-item>
-        <a-descriptions-item label="手机号" :span="2">
-          {{ formData.telephone }}
-        </a-descriptions-item>
-        <a-descriptions-item label="地区" :span="2">
-          {{ formData.areaName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="详细地址" :span="4">
-          {{ formData.address }}
-        </a-descriptions-item>
-        <a-descriptions-item label="默认地址" :span="4">
-          {{ formData.isDefault ? '是' : '否' }}
-        </a-descriptions-item>
-      </a-descriptions>
+      <vxe-form border title-background title-width="80" ref="form" :data="formData">
+        <vxe-form-group span="24" title="基础信息" title-bold vertical>
+          <vxe-form-item title="实体类型" field="entityType" span="24">
+            {{ ADDRESS_ENTITY_TYPE.getDesc(formData.entityType) }}
+          </vxe-form-item>
+          <vxe-form-item title="实体" field="entityName" span="24" />
+          <vxe-form-item title="地址类型" field="addressType" span="24">
+            {{ ADDRESS_TYPE.getDesc(formData.addressType) }}
+          </vxe-form-item>
+          <vxe-form-item title="姓名" field="name" span="12" />
+          <vxe-form-item title="手机号" field="telephone" span="12" />
+        </vxe-form-group>
+        <vxe-form-group span="24" title="扩展信息" title-bold vertical>
+          <vxe-form-item title="地区" field="areaName" span="24" />
+          <vxe-form-item title="详细地址" field="address" span="24" />
+          <vxe-form-item title="默认地址" field="isDefault" span="24">
+            {{ formData.isDefault ? '是' : '否' }}
+          </vxe-form-item>
+        </vxe-form-group>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -44,7 +38,6 @@
   import { ADDRESS_TYPE } from '@/enums/biz/addressType';
 
   export default defineComponent({
-    // 使用组件
     components: {},
     props: {
       id: {
@@ -86,7 +79,14 @@
       // 初始化表单数据
       initFormData() {
         this.formData = {
+          entityType: '',
+          entityName: '',
+          addressType: '',
+          name: '',
+          telephone: '',
           areaName: '',
+          address: '',
+          isDefault: false,
         };
       },
       // 页面显示时触发

@@ -115,8 +115,8 @@
     "vue-router": "4.0.14",
     "vue-types": "^5.1.0",
     "vuedraggable": "^4.1.0",
-    "vxe-pc-ui": "^4.0.1",
-    "vxe-table": "^4.7.30",
+    "vxe-pc-ui": "^4.3.0",
+    "vxe-table": "^4.18.0",
     "vxe-table-plugin-export-xlsx": "^4.0.1",
     "xe-utils": "^3.5.11",
     "xlsx": "^0.18.5"
@@ -151,11 +151,11 @@
     "prettier-plugin-packagejson": "^2.4.4",
     "rimraf": "^5.0.1",
     "turbo": "^1.10.7",
-    "typescript": "^5.1.6",
+    "typescript": "5.4.5",
     "unbuild": "^1.2.1",
     "vite": "^4.4.0",
     "vite-plugin-mock": "^2.9.6",
-    "vue-tsc": "^1.8.4"
+    "vue-tsc": "1.8.27"
   },
   "packageManager": "pnpm@8.1.0",
   "engines": {

@@ -8,41 +8,37 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['system:notice:add']" v-loading="loading">
-      <a-form
-        ref="form"
-        :label-col="{ span: 4 }"
-        :wrapper-col="{ span: 16 }"
-        :model="formData"
-        :rules="rules"
-      >
-        <a-form-item label="标题" name="title">
+      <vxe-form border title-background title-width="80" ref="form" :data="formData" :rules="rules">
+        <vxe-form-item title="标题" field="title" span="24">
           <a-input v-model:value="formData.title" allow-clear />
-        </a-form-item>
+        </vxe-form-item>
 
-        <a-form-item name="content" :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }">
+        <vxe-form-item title="内容" field="content" span="24">
           <tinymce v-model:value="formData.content" class="mb-1" />
-        </a-form-item>
+        </vxe-form-item>
 
-        <div class="form-modal-footer">
-          <a-space>
-            <a-button
-              type="primary"
-              :loading="loading"
-              html-type="submit"
-              @click="(e) => submit(false)"
-              >保存</a-button
-            >
-            <a-button
-              type="primary"
-              :loading="loading"
-              html-type="submit"
-              @click="(e) => submit(true)"
-              >保存并发布</a-button
-            >
-            <a-button :loading="loading" @click="closeDialog">取消</a-button>
-          </a-space>
-        </div>
-      </a-form>
+        <vxe-form-item span="24">
+          <div class="form-modal-footer">
+            <a-space>
+              <a-button
+                type="primary"
+                :loading="loading"
+                html-type="submit"
+                @click="(e) => submit(false)"
+                >保存</a-button
+              >
+              <a-button
+                type="primary"
+                :loading="loading"
+                html-type="submit"
+                @click="(e) => submit(true)"
+                >保存并发布</a-button
+              >
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
+            </a-space>
+          </div>
+        </vxe-form-item>
+      </vxe-form>
     </div>
   </a-modal>
 </template>
@@ -97,8 +93,8 @@
       },
       // 提交表单事件
       submit(published) {
-        this.$refs.form.validate().then((valid) => {
-          if (valid) {
+        this.$refs.form.validate().then((errMaps) => {
+          if (!errMaps) {
             if (published) {
               createConfirm('是否确认执行发布操作？').then(() => {
                 this.onPublish(published);
