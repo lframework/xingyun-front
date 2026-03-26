@@ -31,8 +31,9 @@ export function buildRefreshUrl(locationLike: LocationLike, now: number): string
 
   const search = searchParams.toString();
   const hash = locationLike.hash ?? '';
+  const pathname = locationLike.pathname === '/' ? '/index.html' : locationLike.pathname;
 
-  return `${locationLike.origin}${locationLike.pathname}${search ? `?${search}` : ''}${hash}`;
+  return `${locationLike.origin}${pathname}${search ? `?${search}` : ''}${hash}`;
 }
 
 export function isVersionChanged(localBuildId: string, remoteBuildId?: string): boolean {

@@ -72,8 +72,8 @@ function defineApplicationConfig(defineOptions: DefineOptions = {}) {
         cssTarget: 'chrome80',
         rollupOptions: {
           output: {
-            // 入口文件名
-            entryFileNames: 'assets/[name].js',
+            // 入口文件使用 hash，避免新部署后主入口脚本命中旧缓存。
+            entryFileNames: 'assets/[name]-[hash].js',
             manualChunks: {
               vue: ['vue', 'pinia', 'vue-router'],
               antd: ['ant-design-vue', '@ant-design/icons-vue'],

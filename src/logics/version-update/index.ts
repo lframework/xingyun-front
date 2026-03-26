@@ -1,6 +1,5 @@
 import { createConfirm } from '@/hooks/web/msg';
 import {
-  buildRefreshUrl,
   buildVersionRequestUrl,
   isVersionAssetError,
   isVersionChanged,
@@ -10,7 +9,9 @@ const VERSION_FILE_PATH = '/version.json';
 const POLL_INTERVAL = 60 * 1000;
 
 let hasInitialized = false;
+// 仅用于防止重复弹框，不影响后台继续轮询 version.json。
 let isPromptVisible = false;
+// 用户点击“不再提醒”后，仅在当前页面生命周期内停止提示与轮询。
 let ignoreForCurrentPage = false;
 let pollingTimer: number | null = null;
 
@@ -62,7 +63,7 @@ function showUpdateConfirm() {
     cancelText: '不再提醒',
   })
     .then(() => {
-      window.location.replace(buildRefreshUrl(window.location, Date.now()));
+      window.location.reload();
     })
     .catch(() => {
       ignoreForCurrentPage = true;
@@ -71,7 +72,9 @@ function showUpdateConfirm() {
 }
 
 async function checkForVersionUpdate() {
-  if (ignoreForCurrentPage || isPromptVisible) {
+  // “不再提醒”会让当前页面后续不再提示，也不再继续轮询。
+  // 弹框处于显示中时，只需要阻止重复弹框，不能阻止下一次轮询请求。
+  if (ignoreForCurrentPage) {
     return;
   }
 
@@ -89,6 +92,26 @@ function handleVisibilityChange() {
   if (document.visibilityState === 'visible') {
     void checkForVersionUpdate();
   }
+}
+
+function isReloadNavigation(): boolean {
+  if (typeof performance === 'undefined' || !performance.getEntriesByType) {
+    return false;
+  }
+
+  const [navigationEntry] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+  return navigationEntry?.type === 'reload';
+}
+
+function handlePageShow(event: PageTransitionEvent) {
+  if (!event.persisted && !isReloadNavigation()) {
+    return;
+  }
+
+  // 浏览器恢复页面或刷新后，应重新启用当前页的版本检测能力。
+  ignoreForCurrentPage = false;
+  isPromptVisible = false;
+  void checkForVersionUpdate();
 }
 
 function handleWindowError(event: Event) {
@@ -117,6 +140,7 @@ export function setupAppVersionUpdate() {
   }, POLL_INTERVAL);
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
+  window.addEventListener('pageshow', handlePageShow);
   window.addEventListener('error', handleWindowError, true);
   window.addEventListener('unhandledrejection', handleUnhandledRejection);
 

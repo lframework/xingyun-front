@@ -1,7 +1,18 @@
+import dayjs from 'dayjs';
 import { defineApplicationConfig } from '@vben/vite-config';
+import {
+  createIndexBuildIdPlugin,
+  createVersionManifestPlugin,
+} from './src/logics/version-update/buildPlugin';
+
+const buildId = dayjs().format('YYYYMMDDHHmmss');
 
 export default defineApplicationConfig({
   overrides: {
+    define: {
+      __APP_BUILD_ID__: JSON.stringify(buildId),
+    },
+    plugins: [createVersionManifestPlugin(buildId), createIndexBuildIdPlugin(buildId)],
     optimizeDeps: {
       include: [
         'echarts/core',
