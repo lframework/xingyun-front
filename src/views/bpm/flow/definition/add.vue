@@ -3,7 +3,7 @@
     v-model:open="visible"
     :mask-closable="false"
     width="40%"
-    title="鏂板"
+    title="新增"
     :style="{ top: '20px' }"
     :footer="null"
   >
@@ -16,22 +16,22 @@
         :data="formData"
         :rules="rules"
       >
-        <vxe-form-item title="娴佺▼缂栧彿" field="code" span="12">
+        <vxe-form-item title="流程编号" field="code" span="12">
           <a-input v-model:value.trim="formData.code" allow-clear />
         </vxe-form-item>
-        <vxe-form-item title="娴佺▼鍚嶇О" field="name" span="12">
+        <vxe-form-item title="流程名称" field="name" span="12">
           <a-input v-model:value.trim="formData.name" allow-clear />
         </vxe-form-item>
-        <vxe-form-item title="娴佺▼鍒嗙被" field="categoryId" span="24">
+        <vxe-form-item title="流程分类" field="categoryId" span="24">
           <flow-category-selector v-model:value="formData.categoryId" only-final />
         </vxe-form-item>
         <vxe-form-item span="24">
           <div class="form-modal-footer">
             <a-space>
               <a-button type="primary" :loading="loading" html-type="submit" @click="submit"
-                >淇濆瓨</a-button
+                >保存</a-button
               >
-              <a-button :loading="loading" @click="closeDialog">鍙栨秷</a-button>
+              <a-button :loading="loading" @click="closeDialog">取消</a-button>
             </a-space>
           </div>
         </vxe-form-item>
@@ -52,13 +52,13 @@
     },
     data() {
       return {
-        // 鏄惁鍙
+        // 是否可见
         visible: false,
-        // 鏄惁鏄剧ず鍔犺浇妗?
+        // 是否显示加载框
         loading: false,
-        // 琛ㄥ崟鏁版嵁
+        // 表单数据
         formData: {},
-        // 琛ㄥ崟鏍￠獙瑙勫垯
+        // 表单校验规则
         rules: {
           code: [{ required: true, message: '请输入流程编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入流程名称' }],
@@ -68,22 +68,22 @@
     },
     computed: {},
     created() {
-      // 鍒濆鍖栬〃鍗曟暟鎹?
+      // 初始化表单数据
       this.initFormData();
     },
     methods: {
-      // 鎵撳紑瀵硅瘽妗嗭紝鐢辩埗椤甸潰瑙﹀彂
+      // 打开对话框 由父页面触发
       openDialog() {
         this.visible = true;
 
         this.$nextTick(() => this.open());
       },
-      // 鍏抽棴瀵硅瘽妗?
+      // 关闭对话框
       closeDialog() {
         this.visible = false;
         this.$emit('close');
       },
-      // 鍒濆鍖栬〃鍗曟暟鎹?
+      // 初始化表单数据
       initFormData() {
         this.formData = {
           code: '',
@@ -91,9 +91,9 @@
           categoryId: '',
         };
       },
-      // 椤甸潰鏄剧ず鏃剁敱鐖堕〉闈㈣Е鍙?
+      // 页面显示时由父页面触发
       open() {
-        // 鍒濆鍖栬〃鍗曟暟鎹?
+        // 初始化表单数据
         this.initFormData();
       },
       submit() {
