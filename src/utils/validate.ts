@@ -64,7 +64,7 @@ export function isTelephone(str) {
 const INVALID_CODE_MESSAGE = '编号必须由字母、数字、“-_.”组成，长度不能超过20位';
 
 /**
- * �жϱ��
+ * 判断编号
  * @param rule
  * @param value
  */
