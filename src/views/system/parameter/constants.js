@@ -1,7 +1,13 @@
 import * as utils from '@/utils/utils';
 
-export function validKey({ itemValue }) {
-  if (!utils.isEmpty(itemValue) && !/^[A-Za-z0-9\.\-_]+$/.test(itemValue)) {
-    return new Error('键只能由大写字母、小写字母、数字或._-组成');
+export function validKey(rule, value) {
+  if (utils.isEmpty(value)) {
+    return Promise.resolve();
   }
+
+  if (!/^[A-Za-z0-9\.\-_]+$/.test(value)) {
+    return Promise.reject('键只能由大写字母、小写字母、数字或._-组成');
+  }
+
+  return Promise.resolve();
 }
