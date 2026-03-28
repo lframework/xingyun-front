@@ -101,7 +101,12 @@
   import { useGo } from '/@/hooks/web/usePage';
   import { SIDE_BAR_MINI_WIDTH, SIDE_BAR_SHOW_TIT_MINI_WIDTH } from '/@/enums/appEnum';
   import clickOutside from '/@/directives/clickOutside';
-  import { getChildrenMenus, getCurrentParentPath, getShallowMenus } from '/@/router/menus';
+  import {
+    getChildrenMenus,
+    getCurrentParentPath,
+    getFirstChildMenuPath,
+    getShallowMenus,
+  } from '/@/router/menus';
   import { listenerRouteChange } from '/@/logics/mitt/routeChange';
   import LayoutTrigger from '../trigger/index.vue';
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
@@ -260,6 +265,13 @@
           return;
         }
         childrenMenus.value = children;
+
+        if (!hover) {
+          const targetPath = await getFirstChildMenuPath(path);
+          if (targetPath) {
+            go(targetPath);
+          }
+        }
       }
 
       // Set the currently active menu and submenu
@@ -302,7 +314,16 @@
             onMouseenter: () => handleModuleClick(item.path, true),
             onClick: async () => {
               const children = await getChildrenMenus(item.path);
-              if (item.path && (!children || children.length === 0)) go(item.path);
+              if (!item.path) {
+                return;
+              }
+              const targetPath =
+                !children || children.length === 0
+                  ? item.path
+                  : await getFirstChildMenuPath(item.path);
+              if (targetPath) {
+                go(targetPath);
+              }
             },
           };
         }

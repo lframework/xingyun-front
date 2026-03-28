@@ -11,6 +11,23 @@ export function getAllParentPath<T = Recordable>(treeData: T[], path: string) {
   return (menuList || []).map((item) => item.path);
 }
 
+export function getFirstLeafMenuPath(menus: Menu[]) {
+  const [firstMenu] = menus || [];
+
+  if (!firstMenu) {
+    return '';
+  }
+
+  const hasChildren =
+    !firstMenu.meta?.hideChildrenInMenu && !!firstMenu.children && firstMenu.children.length > 0;
+
+  if (!hasChildren) {
+    return firstMenu.path;
+  }
+
+  return getFirstLeafMenuPath(firstMenu.children || []) || firstMenu.path;
+}
+
 // 路径处理
 function joinParentPath(menus: Menu[], parentPath = '') {
   for (let index = 0; index < menus.length; index++) {

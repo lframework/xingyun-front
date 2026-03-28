@@ -3,7 +3,11 @@ import type { RouteRecordNormalized } from 'vue-router';
 
 import { useAppStoreWithOut } from '/@/store/modules/app';
 import { usePermissionStore } from '/@/store/modules/permission';
-import { transformMenuModule, getAllParentPath } from '/@/router/helper/menuHelper';
+import {
+  transformMenuModule,
+  getAllParentPath,
+  getFirstLeafMenuPath,
+} from '/@/router/helper/menuHelper';
 import { filter } from '/@/utils/helper/treeHelper';
 import { isUrl } from '/@/utils/is';
 import { router } from '/@/router';
@@ -85,6 +89,11 @@ export async function getCurrentParentPath(currentPath: string) {
   const menus = await getAsyncMenus();
   const allParentPath = await getAllParentPath(menus, currentPath);
   return allParentPath?.[0];
+}
+
+export async function getFirstChildMenuPath(parentPath: string) {
+  const children = await getChildrenMenus(parentPath);
+  return getFirstLeafMenuPath(children) || parentPath;
 }
 
 // Get the level 1 menu, delete children
