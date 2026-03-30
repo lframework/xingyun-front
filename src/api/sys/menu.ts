@@ -1,9 +1,11 @@
 import { defHttp } from '/@/utils/http/axios';
 import { getMenuListResultModel } from './model/menuModel';
+import { SaveUserMenuSortVo } from './model/saveUserMenuSortVo';
 import { ContentTypeEnum } from '@/enums/httpEnum';
 
 enum Api {
   GetMenuList = '/auth/menus',
+  SaveUserMenuSort = '/auth/menus/sort',
   CollectMenu = '/menu/collect',
   CancelCollectMenu = '/menu/collect/cancel',
   GetCollectMenu = '/menu/collect',
@@ -17,6 +19,13 @@ const region = 'cloud-api';
 
 export const getMenuList = (): Promise<getMenuListResultModel> => {
   return defHttp.get<getMenuListResultModel>({ url: Api.GetMenuList }, { region });
+};
+
+export const saveUserMenuSort = (data: SaveUserMenuSortVo): Promise<void> => {
+  return defHttp.post<void>(
+    { url: Api.SaveUserMenuSort, data },
+    { contentType: ContentTypeEnum.JSON, region },
+  );
 };
 
 /**
