@@ -114,6 +114,7 @@
             v-if="!row.isFixed && isEmpty(row.productId)"
             :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
+            style="width: 100%"
             placeholder="请输入商品编号/名称"
             :options="row.productOptions"
             :dropdown-match-select-width="false"
