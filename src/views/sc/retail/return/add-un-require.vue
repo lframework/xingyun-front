@@ -62,6 +62,7 @@
             <a-button :icon="h(NumberOutlined)" @click="batchInputReturnNum">批量录入数量</a-button>
             <a-button :icon="h(EditOutlined)" @click="batchInputTaxPrice">批量调整价格</a-button>
             <a-button :icon="h(AlertOutlined)" @click="setGift">设置赠品</a-button>
+            <a-button :icon="h(ScanOutlined)" @click="openScanDialog">扫码录入</a-button>
           </a-space>
         </template>
 
@@ -189,6 +190,57 @@
         :is-return="true"
         @confirm="batchAddProduct"
       />
+      <a-modal
+        v-model:open="scanDialogVisible"
+        title="扫码录入"
+        :confirm-loading="scanLoading"
+        :footer="null"
+        width="900px"
+        @cancel="closeScanDialog"
+      >
+        <a-space direction="vertical" style="width: 100%">
+          <a-alert
+            message="连续扫码录入"
+            description="请先选择仓库后再扫码。扫描成功后会保留弹窗，可直接继续扫描下一件商品。"
+            type="info"
+            show-icon
+          />
+          <a-input
+            ref="scanInputRef"
+            v-model:value.trim="scanCode"
+            allow-clear
+            placeholder="请扫描商品条码/商品编号，回车确认"
+            :disabled="loading"
+            @focus="handleScanInputFocus"
+            @blur="handleScanInputBlur"
+            @keydown.enter.stop
+            @press-enter="submitScanCode"
+          />
+          <a-alert
+            v-if="!isEmpty(scanMessage)"
+            :message="scanMessage"
+            :type="scanMessageType"
+            show-icon
+          />
+          <vxe-table
+            v-if="!isEmpty(scanCandidates)"
+            :data="scanCandidates"
+            max-height="500"
+            class="cursor-pointer"
+            highlight-hover-row
+            show-overflow
+            :row-config="{ isHover: true }"
+            @cell-click="({ row }) => selectScanCandidate(row)"
+          >
+            <vxe-column field="productCode" title="商品编号" width="120" />
+            <vxe-column field="productName" title="商品名称" min-width="200" />
+            <vxe-column field="spec" title="规格" width="80" />
+            <vxe-column field="unit" title="单位" width="80" />
+            <vxe-column field="retailPrice" title="参考零售价（元）" width="140" align="right" />
+            <vxe-column field="stockNum" title="库存数量" width="140" align="right" />
+          </vxe-table>
+        </a-space>
+      </a-modal>
       <div style="text-align: center; background-color: #ffffff; padding: 8px 0">
         <a-space>
           <a-button
@@ -225,12 +277,24 @@
     NumberOutlined,
     EditOutlined,
     AlertOutlined,
+    ScanOutlined,
   } from '@ant-design/icons-vue';
   import * as payTypeApi from '@/api/base-data/pay-type';
   import * as configApi from '@/api/sc/retail/config';
   import * as outApi from '@/api/sc/retail/out';
   import * as api from '@/api/sc/retail/return';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
+  import {
+    applyScannedProductResult,
+    beginNextScanConsumeState,
+    openScanDialogState,
+    closeScanDialogState,
+    enqueueScanCodeState,
+    finishScanConsumeState,
+    pauseScanQueueState,
+    resumeScanQueueState,
+    shouldIgnoreGlobalEnter,
+  } from '../../common/scanProductHelper.mjs';
   import {
     isEmpty,
     isFloatGeZero,
@@ -270,6 +334,7 @@
         NumberOutlined,
         EditOutlined,
         AlertOutlined,
+        ScanOutlined,
         moment,
         isEmpty,
         isFloatGeZero,
@@ -349,6 +414,16 @@
           },
         ],
         tableData: [],
+        scanCode: '',
+        scanLoading: false,
+        scanMessage: '',
+        scanMessageType: 'info',
+        scanDialogVisible: false,
+        scanCandidates: [],
+        scanQueue: [],
+        scanPendingCode: '',
+        scanQueuePaused: false,
+        isScanInputFocused: false,
         retailConfig: {},
       };
     },
@@ -367,9 +442,30 @@
       // 处理键盘事件
       handleKeyDown(event) {
         // 按下回车键时调用addProduct方法
+        if (shouldIgnoreGlobalEnter(this.$data)) {
+          return;
+        }
         if (event.key === 'Enter' || event.keyCode === 13) {
           this.addProduct();
         }
+      },
+      handleScanInputFocus() {
+        this.isScanInputFocused = true;
+      },
+      handleScanInputBlur() {
+        this.isScanInputFocused = false;
+      },
+      focusScanInput() {
+        this.$nextTick(() => {
+          const scanInputRef = this.$refs.scanInputRef;
+          if (scanInputRef && scanInputRef.focus) {
+            scanInputRef.focus();
+          }
+        });
+      },
+      setScanMessage(message, type = 'info') {
+        this.scanMessage = message;
+        this.scanMessageType = type;
       },
       // 打开对话框 由父页面触发
       openDialog() {
@@ -397,6 +493,16 @@
         };
 
         this.tableData = [];
+        this.scanCode = '';
+        this.scanLoading = false;
+        this.scanMessage = '';
+        this.scanMessageType = 'info';
+        this.scanDialogVisible = false;
+        this.scanCandidates = [];
+        this.scanQueue = [];
+        this.scanPendingCode = '';
+        this.scanQueuePaused = false;
+        this.isScanInputFocused = false;
         configApi.get().then((data) => {
           this.retailConfig = data;
         });
@@ -430,9 +536,9 @@
           createError('请先选择仓库！');
           return;
         }
-        this.tableData.push(this.emptyProduct());
+        this.tableData.unshift(this.emptyProduct());
         this.$nextTick(() => {
-          const productInputRef = this.$refs['productInputRef' + (this.tableData.length - 1)];
+          const productInputRef = this.$refs.productInputRef0;
           if (productInputRef) {
             productInputRef.focus();
           }
@@ -492,14 +598,138 @@
         }
         this.$refs.batchAddProductDialog.openDialog();
       },
-      changeDiscountRate(row, value) {
+      openScanDialog() {
+        if (isEmpty(this.formData.scId)) {
+          createError('请先选择仓库！');
+          return;
+        }
+        Object.assign(this.$data, openScanDialogState(this.$data));
+        this.focusScanInput();
+      },
+      createScannedRow(product, returnNum = 1) {
+        return Object.assign(this.emptyProduct(), product, {
+          isGift: false,
+          taxPrice: product.retailPrice,
+          returnNum,
+        });
+      },
+      applyScannedProduct(product) {
+        const result = applyScannedProductResult(this.tableData, product, {
+          quantityField: 'returnNum',
+          createRow: (item, quantity) => this.createScannedRow(item, quantity),
+        });
+
+        this.tableData = result.tableData;
+        this.calcSum();
+
+        if (result.type === 'merged') {
+          this.setScanMessage(
+            '商品【' +
+              product.productCode +
+              ' ' +
+              product.productName +
+              '】退货数量已 +1，可继续扫码',
+            'success',
+          );
+        } else {
+          this.setScanMessage(
+            '已新增商品【' +
+              product.productCode +
+              ' ' +
+              product.productName +
+              '】，可继续扫码下一件',
+            'success',
+          );
+        }
+
+        this.scanCode = '';
+        this.scanCandidates = [];
+        this.focusScanInput();
+      },
+      async submitScanCode() {
+        if (isEmpty(this.formData.scId)) {
+          createError('请先选择仓库！');
+          this.setScanMessage('请先选择仓库后再扫码！', 'warning');
+          this.focusScanInput();
+          return;
+        }
+
+        if (isEmpty(this.scanCode)) {
+          this.setScanMessage('请先扫描商品条码或商品编号！', 'warning');
+          this.focusScanInput();
+          return;
+        }
+
+        const code = this.scanCode;
+        const shouldShowQueuedMessage =
+          !this.scanQueuePaused && (this.scanLoading || !isEmpty(this.scanQueue));
+        Object.assign(this.$data, enqueueScanCodeState(this.$data, code));
+        if (shouldShowQueuedMessage) {
+          this.setScanMessage(
+            '条码/编号【' + code + '】已加入扫码队列，等待前序扫码处理完成！',
+            'info',
+          );
+        }
+        this.focusScanInput();
+        this.consumeScanQueue();
+      },
+      async consumeScanQueue() {
+        const { state, code } = beginNextScanConsumeState(this.$data);
+        if (isEmpty(code)) {
+          return;
+        }
+
+        Object.assign(this.$data, state);
+        try {
+          const products = await outApi.searchRetailProducts(this.formData.scId, code, true);
+          if (isEmpty(products)) {
+            this.setScanMessage('条码/编号【' + code + '】未匹配到商品！', 'error');
+            Object.assign(this.$data, finishScanConsumeState(this.$data));
+            return;
+          }
+
+          if (products.length > 1) {
+            Object.assign(this.$data, pauseScanQueueState(this.$data, products));
+            this.setScanMessage('条码/编号【' + code + '】匹配到多条商品，请选择！', 'warning');
+            return;
+          }
+
+          this.applyScannedProduct(products[0]);
+          Object.assign(this.$data, finishScanConsumeState(this.$data));
+        } catch (e) {
+          createError('扫码查询失败：' + (e.message || e));
+          this.setScanMessage('扫码查询失败，请重试！', 'error');
+          Object.assign(this.$data, finishScanConsumeState(this.$data));
+        } finally {
+          this.scanLoading = false;
+          if (this.scanDialogVisible) {
+            this.focusScanInput();
+          }
+          if (this.scanDialogVisible && !this.scanQueuePaused) {
+            this.consumeScanQueue();
+          }
+        }
+      },
+      selectScanCandidate(product) {
+        this.applyScannedProduct(product);
+        Object.assign(this.$data, resumeScanQueueState(this.$data));
+        if (this.scanDialogVisible) {
+          this.focusScanInput();
+          this.consumeScanQueue();
+        }
+      },
+      closeScanDialog() {
+        Object.assign(this.$data, closeScanDialogState(this.$data));
+        this.isScanInputFocused = false;
+      },
+      changeDiscountRate(row, _value) {
         if (isFloatGeZero(row.discountRate) && isFloatGtZero(row.retailPrice)) {
           row.taxPrice = getNumber(div(mul(row.retailPrice, row.discountRate), 100), 6);
         }
 
         this.calcSum();
       },
-      taxPriceInput(row, value) {
+      taxPriceInput(row, _value) {
         if (row.retailPrice !== 0) {
           if (isFloatGeZero(row.taxPrice)) {
             row.discountRate = getNumber(mul(div(row.taxPrice, row.retailPrice), 100), 2);
@@ -507,7 +737,7 @@
         }
         this.calcSum();
       },
-      returnNumInput(value) {
+      returnNumInput(_value) {
         this.calcSum();
       },
       // 计算汇总数据
@@ -601,10 +831,13 @@
       },
       // 批量新增商品
       batchAddProduct(productList) {
-        productList.forEach((item) => {
-          this.tableData.push(this.emptyProduct());
-          this.handleSelectProduct(this.tableData.length - 1, item);
-        });
+        productList
+          .slice()
+          .reverse()
+          .forEach((item) => {
+            this.tableData.unshift(this.emptyProduct());
+            this.handleSelectProduct(0, item);
+          });
       },
       // 校验数据
       validData() {
@@ -741,7 +974,7 @@
         this.loading = true;
         api
           .create(params)
-          .then((res) => {
+          .then(() => {
             createSuccess('保存成功！');
 
             this.$emit('confirm');
@@ -763,7 +996,7 @@
           this.loading = true;
           api
             .directApprovePass(params)
-            .then((res) => {
+            .then(() => {
               createSuccess('审核通过！');
 
               this.$emit('confirm');

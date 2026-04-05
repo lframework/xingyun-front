@@ -713,7 +713,11 @@
               continue;
             }
 
-            const price = isEmpty(row.price) ? 0 : row.price;
+            if (isEmpty(row.price)) {
+              continue;
+            }
+
+            const price = row.price;
 
             const productId = await productApi.getIdByCode(productCode);
             if (isEmpty(productId)) {

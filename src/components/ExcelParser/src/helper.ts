@@ -1,16 +1,24 @@
 import * as XLSX from 'xlsx';
 import { aoaToSheetXlsx } from './Export2Excel';
+import { buildTemplateBody, buildTemplateHeader } from './templateDataHelper.mjs';
 import type { ExcelParserColumn } from './typing';
 
 /**
  * 生成并下载 Excel 模板文件
  * @param columns 模板列定义
  * @param filename 文件名（不含后缀）
+ * @param templateData 模板数据行
  */
-export function generateTemplate(columns: ExcelParserColumn[], filename = '导入模板') {
-  const header = columns.map((col) => (col.required ? `*${col.label}` : col.label));
+export function generateTemplate(
+  columns: ExcelParserColumn[],
+  filename = '导入模板',
+  templateData: Record<string, any>[] = [],
+) {
+  const header = buildTemplateHeader(columns);
+  const data = buildTemplateBody(columns, templateData);
+
   aoaToSheetXlsx({
-    data: [],
+    data,
     header,
     filename: `${filename}.xlsx`,
   });

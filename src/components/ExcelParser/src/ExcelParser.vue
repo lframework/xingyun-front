@@ -70,6 +70,7 @@
   interface Props {
     columns: ExcelParserColumn[];
     templateFilename?: string;
+    templateData?: Record<string, any>[];
     title?: string;
     tipMsg?: string;
     closeAfterFinish?: boolean;
@@ -78,6 +79,7 @@
   const props = withDefaults(defineProps<Props>(), {
     title: '导入',
     templateFilename: '导入模板',
+    templateData: () => [],
     tipMsg: '',
     closeAfterFinish: false,
   });
@@ -112,7 +114,7 @@
   }
 
   function handleDownloadTemplate() {
-    generateTemplate(props.columns, props.templateFilename);
+    generateTemplate(props.columns, props.templateFilename, props.templateData);
   }
 
   async function handleUpload({ file }: { file: File }) {

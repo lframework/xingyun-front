@@ -217,6 +217,7 @@
       <excel-parser
         ref="excelModifyPriceDialog"
         :columns="excelModifyPriceColumns"
+        :template-data="excelModifyPriceTemplateData"
         template-filename="EXCEL修改采购价模板"
         title="EXCEL修改采购价"
         :close-after-finish="false"
@@ -273,6 +274,7 @@
   } from '@/utils/utils';
   import { createSuccess, createError, createConfirm, createPrompt } from '@/hooks/web/msg';
   import { PURCHASE_ORDER_STATUS } from '@/enums/biz/purchaseOrderStatus';
+  import { buildExcelModifyPriceTemplateData } from './excelModifyPriceTemplateHelper.mjs';
 
   export default defineComponent({
     name: 'ModifyPurchaseOrder',
@@ -383,7 +385,11 @@
         ],
       };
     },
-    computed: {},
+    computed: {
+      excelModifyPriceTemplateData() {
+        return buildExcelModifyPriceTemplateData(this.tableData);
+      },
+    },
     created() {
       this.openDialog();
     },
@@ -555,10 +561,10 @@
         }
         this.$refs.batchAddProductDialog.openDialog();
       },
-      purchasePriceInput(row, value) {
+      purchasePriceInput(_row, _value) {
         this.calcSum();
       },
-      purchaseNumInput(value) {
+      purchaseNumInput(_value) {
         this.calcSum();
       },
       // 计算汇总数据
@@ -685,7 +691,11 @@
               continue;
             }
 
-            const price = isEmpty(row.price) ? 0 : row.price;
+            if (isEmpty(row.price)) {
+              continue;
+            }
+
+            const price = row.price;
 
             const productId = await productApi.getIdByCode(productCode);
             if (isEmpty(productId)) {
@@ -836,7 +846,7 @@
         this.loading = true;
         api
           .update(params)
-          .then((res) => {
+          .then((_res) => {
             createSuccess('保存成功！');
 
             this.$emit('confirm');
