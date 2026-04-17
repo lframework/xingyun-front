@@ -253,7 +253,7 @@ importers:
         specifier: ^1.10.7
         version: 1.13.4
       typescript:
-        specifier: ^5.4.5
+        specifier: 5.4.5
         version: 5.4.5
       unbuild:
         specifier: ^1.2.1
@@ -265,7 +265,7 @@ importers:
         specifier: ^2.9.6
         version: 2.9.8(mockjs@1.1.0)(vite@4.5.3(@types/node@20.5.1)(less@4.2.0)(sass@1.77.8)(terser@5.31.6))
       vue-tsc:
-        specifier: ^1.8.27
+        specifier: 1.8.27
         version: 1.8.27(typescript@5.4.5)
 
   internal/eslint-config:

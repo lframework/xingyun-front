@@ -1,105 +1,99 @@
 <template>
   <div class="analysis">
     <a-row style="margin-top: 0" :gutter="[24, 24]">
-      <a-col
-        :sm="24"
-        :md="12"
-        :xl="6"
-        @click="handleSetLineChartData('今日订单', 'today', formData.today.order.charts)"
-      >
+      <a-col :sm="24" :md="12" :xl="6">
         <chart-card
+          class="analysis-panel-card"
+          :active="activeMetricKey === 'today-order'"
           :loading="loading"
           title="今日订单"
-          :total="formData.today.order.totalAmount"
-          style="cursor: pointer"
+          :total="Number(formData.today.order.totalAmount || 0)"
+          @click="emitMetricChange('today-order', formData.today.order)"
         >
           <template #action>
-            <a-tooltip title="今日销售订单、零售出库单、采购订单数据">
+            <a-tooltip :title="metricDescriptorMap['today-order'].description">
               <InfoCircleOutlined />
             </a-tooltip>
           </template>
-          <div>
-            <a-space>
-              <span>数量</span
-              ><span><count-to :startVal="0" :endVal="formData.today.order.totalNum" /></span>
+          <div class="analysis-panel-card__meta">
+            <a-space class="analysis-panel-card__stat">
+              <span>{{ countLabel }}</span>
+              <span><count-to :startVal="0" :endVal="Number(formData.today.order.totalNum || 0)" /></span>
             </a-space>
+            <p>{{ metricDescriptorMap['today-order'].description }}</p>
           </div>
         </chart-card>
       </a-col>
-      <a-col
-        :sm="24"
-        :md="12"
-        :xl="6"
-        @click="handleSetLineChartData('今日退单', 'today', formData.today.returned.charts)"
-      >
+      <a-col :sm="24" :md="12" :xl="6">
         <chart-card
+          class="analysis-panel-card"
+          :active="activeMetricKey === 'today-returned'"
           :loading="loading"
           title="今日退单"
-          :total="formData.today.returned.totalAmount"
-          style="cursor: pointer"
+          :total="Number(formData.today.returned.totalAmount || 0)"
+          @click="emitMetricChange('today-returned', formData.today.returned)"
         >
           <template #action>
-            <a-tooltip title="今日销售退单、零售退单、采购退单数据">
+            <a-tooltip :title="metricDescriptorMap['today-returned'].description">
               <InfoCircleOutlined />
             </a-tooltip>
           </template>
-          <div>
-            <a-space>
-              <span>数量</span
-              ><span><count-to :startVal="0" :endVal="formData.today.returned.totalNum" /></span>
-            </a-space>
-          </div>
-        </chart-card>
-      </a-col>
-      <a-col
-        :sm="24"
-        :md="12"
-        :xl="6"
-        @click="handleSetLineChartData('本月订单', 'sameMonth', formData.sameMonth.order.charts)"
-      >
-        <chart-card
-          :loading="loading"
-          title="本月订单"
-          :total="formData.sameMonth.order.totalAmount"
-          style="cursor: pointer"
-        >
-          <template #action>
-            <a-tooltip title="本月销售订单、零售出库单、采购订单数据">
-              <InfoCircleOutlined />
-            </a-tooltip>
-          </template>
-          <div>
-            <a-space>
-              <span>数量</span
-              ><span><count-to :startVal="0" :endVal="formData.sameMonth.order.totalNum" /></span>
-            </a-space>
-          </div>
-        </chart-card>
-      </a-col>
-      <a-col
-        :sm="24"
-        :md="12"
-        :xl="6"
-        @click="handleSetLineChartData('本月退单', 'sameMonth', formData.sameMonth.returned.charts)"
-      >
-        <chart-card
-          :loading="loading"
-          title="本月退单"
-          :total="formData.sameMonth.returned.totalAmount"
-          style="cursor: pointer"
-        >
-          <template #action>
-            <a-tooltip title="本月销售退单、零售退单、采购退单数据">
-              <InfoCircleOutlined />
-            </a-tooltip>
-          </template>
-          <div>
-            <a-space>
-              <span>数量</span
-              ><span
-                ><count-to :startVal="0" :endVal="formData.sameMonth.returned.totalNum"
+          <div class="analysis-panel-card__meta">
+            <a-space class="analysis-panel-card__stat">
+              <span>{{ countLabel }}</span>
+              <span
+                ><count-to :startVal="0" :endVal="Number(formData.today.returned.totalNum || 0)"
               /></span>
             </a-space>
+            <p>{{ metricDescriptorMap['today-returned'].description }}</p>
+          </div>
+        </chart-card>
+      </a-col>
+      <a-col :sm="24" :md="12" :xl="6">
+        <chart-card
+          class="analysis-panel-card"
+          :active="activeMetricKey === 'month-order'"
+          :loading="loading"
+          title="本月订单"
+          :total="Number(formData.sameMonth.order.totalAmount || 0)"
+          @click="emitMetricChange('month-order', formData.sameMonth.order)"
+        >
+          <template #action>
+            <a-tooltip :title="metricDescriptorMap['month-order'].description">
+              <InfoCircleOutlined />
+            </a-tooltip>
+          </template>
+          <div class="analysis-panel-card__meta">
+            <a-space class="analysis-panel-card__stat">
+              <span>{{ countLabel }}</span>
+              <span><count-to :startVal="0" :endVal="Number(formData.sameMonth.order.totalNum || 0)" /></span>
+            </a-space>
+            <p>{{ metricDescriptorMap['month-order'].description }}</p>
+          </div>
+        </chart-card>
+      </a-col>
+      <a-col :sm="24" :md="12" :xl="6">
+        <chart-card
+          class="analysis-panel-card"
+          :active="activeMetricKey === 'month-returned'"
+          :loading="loading"
+          title="本月退单"
+          :total="Number(formData.sameMonth.returned.totalAmount || 0)"
+          @click="emitMetricChange('month-returned', formData.sameMonth.returned)"
+        >
+          <template #action>
+            <a-tooltip :title="metricDescriptorMap['month-returned'].description">
+              <InfoCircleOutlined />
+            </a-tooltip>
+          </template>
+          <div class="analysis-panel-card__meta">
+            <a-space class="analysis-panel-card__stat">
+              <span>{{ countLabel }}</span>
+              <span
+                ><count-to :startVal="0" :endVal="Number(formData.sameMonth.returned.totalNum || 0)"
+              /></span>
+            </a-space>
+            <p>{{ metricDescriptorMap['month-returned'].description }}</p>
           </div>
         </chart-card>
       </a-col>
@@ -111,8 +105,13 @@
   import { defineComponent } from 'vue';
   import ChartCard from '@/components/ChartCard';
   import { InfoCircleOutlined } from '@ant-design/icons-vue';
+  import { message } from 'ant-design-vue';
   import { CountTo } from '/@/components/CountTo';
   import * as api from '@/api/chart';
+  import {
+    ANALYSIS_CARD_COUNT_LABEL,
+    ANALYSIS_METRIC_DESCRIPTOR_MAP,
+  } from './analysisMetricDescriptor.mjs';
 
   export default defineComponent({
     components: {
@@ -123,6 +122,9 @@
     data() {
       return {
         loading: false,
+        activeMetricKey: 'today-order',
+        countLabel: ANALYSIS_CARD_COUNT_LABEL,
+        metricDescriptorMap: ANALYSIS_METRIC_DESCRIPTOR_MAP,
         formData: {
           today: {
             order: {
@@ -160,17 +162,48 @@
       this.loadData();
     },
     methods: {
-      handleSetLineChartData(title, type, bizType) {
-        this.$emit('handleSetLineChartData', title, type, bizType);
+      emitMetricChange(key, segment) {
+        const safeKey = this.metricDescriptorMap[key] ? key : 'today-order';
+        const descriptor = this.metricDescriptorMap[safeKey];
+        this.activeMetricKey = safeKey;
+        this.$emit('change', {
+          key: safeKey,
+          title: descriptor.title,
+          type: descriptor.type,
+          description: descriptor.description,
+          totalAmount: Number(segment?.totalAmount || 0),
+          totalNum: Number(segment?.totalNum || 0),
+          charts: Array.isArray(segment?.charts) ? segment.charts : [],
+        });
+      },
+      normalizeFormData(res) {
+        const safeRes = res || {};
+        const normalizeSegment = (segment) => ({
+          totalAmount: segment?.totalAmount ?? '',
+          totalNum: segment?.totalNum ?? '',
+          charts: Array.isArray(segment?.charts) ? segment.charts : [],
+        });
+        return {
+          today: {
+            order: normalizeSegment(safeRes?.today?.order),
+            returned: normalizeSegment(safeRes?.today?.returned),
+          },
+          sameMonth: {
+            order: normalizeSegment(safeRes?.sameMonth?.order),
+            returned: normalizeSegment(safeRes?.sameMonth?.returned),
+          },
+        };
       },
       loadData() {
         this.loading = true;
         api
           .orderChart()
           .then((res) => {
-            this.formData = res;
-
-            this.handleSetLineChartData('今日订单', 'today', this.formData.today.order.charts);
+            this.formData = this.normalizeFormData(res);
+            this.emitMetricChange('today-order', this.formData.today.order);
+          })
+          .catch(() => {
+            message.error('看板数据加载失败，请稍后重试');
           })
           .finally(() => {
             this.loading = false;
@@ -179,3 +212,27 @@
     },
   });
 </script>
+
+<style scoped lang="less">
+  .analysis-panel-card {
+    cursor: pointer;
+  }
+
+  .analysis-panel-card__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .analysis-panel-card__stat {
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .analysis-panel-card__meta p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #94a3b8;
+  }
+</style>

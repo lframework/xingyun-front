@@ -1,9 +1,15 @@
 <template>
-  <a-card :loading="loading" :body-style="{ padding: '20px 24px 8px' }" :bordered="true">
+  <a-card
+    :loading="loading"
+    :bordered="false"
+    :body-style="{ padding: '22px 24px 18px' }"
+    :class="['chart-card', { 'chart-card--active': active }]"
+    @click="$emit('click', $event)"
+  >
     <div class="chart-card-header">
       <div class="meta">
         <span class="chart-card-title">{{ title }}</span>
-        <span class="chart-card-action">
+        <span class="chart-card-action" @click.stop>
           <slot name="action"></slot>
         </span>
       </div>
@@ -28,6 +34,7 @@
 
   export default defineComponent({
     name: 'ChartCard',
+    emits: ['click'],
     components: {
       CountTo,
     },
@@ -44,55 +51,90 @@
         type: Boolean,
         default: false,
       },
+      active: {
+        type: Boolean,
+        default: false,
+      },
     },
   });
 </script>
 
 <style scoped lang="less">
+  .chart-card {
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+
+  .chart-card--active {
+    border-color: rgba(37, 99, 235, 0.5);
+    box-shadow: 0 14px 32px rgba(37, 99, 235, 0.18);
+    transform: translateY(-2px);
+  }
+
   .chart-card-header {
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     width: 100%;
   }
+
   .chart-card-header .meta {
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     width: 100%;
     color: @text-color-base;
-    line-height: 22px;
+    line-height: 1.4;
   }
+
+  .chart-card-title {
+    font-size: 14px;
+    color: #475569;
+    font-weight: 500;
+  }
+
   .chart-card-action {
     cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: 0;
+    color: #94a3b8;
+    line-height: 1;
   }
+
   .total {
     overflow: hidden;
     text-overflow: ellipsis;
     word-break: break-all;
     white-space: nowrap;
-    margin-top: 4px;
+    margin-top: 0;
     margin-bottom: 0;
-    font-size: 28px;
-    line-height: 38px;
-    height: 38px;
+    font-size: 32px;
+    line-height: 1.25;
+    min-height: 40px;
+    font-weight: 600;
+    color: #0f172a;
   }
+
   .chart-card-footer {
-    border-top: 1px solid @border-color-base;
+    border-top: 1px solid rgba(148, 163, 184, 0.28);
     padding-top: 9px;
-    margin-top: 8px;
+    margin-top: 12px;
   }
+
   .chart-card-content {
     margin-bottom: 12px;
+    min-height: 64px;
     position: relative;
-    height: 46px;
     width: 100%;
   }
+
   .chart-card-content .content-fix {
-    position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
   }
 </style>

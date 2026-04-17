@@ -60,6 +60,7 @@
   import * as siteMessageApi from '@/api/system/site-message';
   import NoticeDetail from '@/views/system/notice/detail.vue';
   import SiteMessageDetail from '@/views/system/site-message/detail.vue';
+  import { shouldClearSocketReference, shouldReconnectSocket } from './wsConnection.mjs';
 
   export default defineComponent({
     components: {
@@ -124,15 +125,18 @@
         }
         try {
           // 创建WebSocket连接
-          socket.value = new WebSocket(wsUrl + '?X-Auth-Token=' + token);
+          const ws = new WebSocket(wsUrl + '?X-Auth-Token=' + token);
+          socket.value = ws;
 
           // 监听WebSocket连接打开事件
-          socket.value.onopen = () => {
-            wsDaemonFlag.value = false;
+          ws.onopen = () => {
+            if (socket.value === ws) {
+              wsDaemonFlag.value = false;
+            }
           };
 
           // 监听WebSocket接收到消息事件
-          socket.value.onmessage = (event) => {
+          ws.onmessage = (event) => {
             const msg = event.data;
             const msgObj = JSON.parse(msg);
             let pullObj = msgObj.data;
@@ -145,9 +149,11 @@
           };
 
           // 监听WebSocket连接关闭事件
-          socket.value.onclose = () => {
-            // 这里重连ws
-            socket.value = undefined;
+          ws.onclose = () => {
+            if (shouldClearSocketReference(socket.value, ws)) {
+              socket.value = undefined;
+              wsDaemonFlag.value = false;
+            }
           };
         } catch {
           socket.value = undefined;
@@ -164,16 +170,16 @@
       }
 
       function wsConnectDaemon() {
-        if (socket.value === undefined || socket.value.readyState !== WebSocket.OPEN) {
-          disConnectWs();
-        }
-        if (wsDaemonFlag.value) {
+        if (!shouldReconnectSocket(socket.value, wsDaemonFlag.value)) {
           return;
         }
-        if (socket.value === undefined) {
-          wsDaemonFlag.value = true;
-          connectWs();
+
+        if (socket.value !== undefined) {
+          disConnectWs();
         }
+
+        wsDaemonFlag.value = true;
+        connectWs();
       }
 
       function onUserConnect(e) {
