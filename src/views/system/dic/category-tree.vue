@@ -1,46 +1,61 @@
 <template>
-  <a-card :body-style="{ height: height + 'px', padding: '10px' }">
-    <a-tree
-      :tree-data="treeData"
-      default-expand-all
-      show-line
-      :default-expanded-keys="expandedKeys"
-      v-model:selected-keys="selectedKeys"
-      :field-names="{
-        children: 'children',
-        title: 'name',
-        key: 'id',
-      }"
-      @select="onSelect"
+  <a-card
+    :body-style="{
+      height: '100%',
+      padding: '10px',
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+    }"
+  >
+    <div
+      class="category-tree__scroll"
+      style="flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden"
     >
-      <template #title="{ id: treeKey, name }">
-        <a-dropdown :trigger="['contextmenu']">
-          <span>{{ name }}</span>
-          <template #overlay>
-            <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
-              <a-menu-item
-                v-if="isEqualWithStr(0, treeKey)"
-                key="1"
-                v-permission="['system:dic-category:add']"
-                >新增子项</a-menu-item
-              >
-              <a-menu-item
-                v-if="!isEqualWithStr(0, treeKey)"
-                key="2"
-                v-permission="['system:dic-category:modify']"
-                >编辑</a-menu-item
-              >
-              <a-menu-item
-                v-if="!isEqualWithStr(0, treeKey)"
-                key="3"
-                v-permission="['system:dic-category:delete']"
-                >删除</a-menu-item
-              >
-            </a-menu>
-          </template>
-        </a-dropdown>
-      </template>
-    </a-tree>
+      <a-tree
+        class="category-tree__content"
+        :tree-data="treeData"
+        default-expand-all
+        show-line
+        :default-expanded-keys="expandedKeys"
+        v-model:selected-keys="selectedKeys"
+        :field-names="{
+          children: 'children',
+          title: 'name',
+          key: 'id',
+        }"
+        @select="onSelect"
+      >
+        <template #title="{ id: treeKey, name }">
+          <a-dropdown :trigger="['contextmenu']">
+            <span>{{ name }}</span>
+            <template #overlay>
+              <a-menu @click="({ key: menuKey }) => onContextMenuClick(treeKey, menuKey)">
+                <a-menu-item
+                  v-if="isEqualWithStr(0, treeKey)"
+                  key="1"
+                  v-permission="['system:dic-category:add']"
+                  >新增子项</a-menu-item
+                >
+                <a-menu-item
+                  v-if="!isEqualWithStr(0, treeKey)"
+                  key="2"
+                  v-permission="['system:dic-category:modify']"
+                  >编辑</a-menu-item
+                >
+                <a-menu-item
+                  v-if="!isEqualWithStr(0, treeKey)"
+                  key="3"
+                  v-permission="['system:dic-category:delete']"
+                  >删除</a-menu-item
+                >
+              </a-menu>
+            </template>
+          </a-dropdown>
+        </template>
+      </a-tree>
+    </div>
     <add-category :tenant-id="tenantId" ref="addCategoryDialog" @confirm="doSearch" />
     <modify-category
       :tenant-id="tenantId"
@@ -64,10 +79,6 @@
       ModifyCategory,
     },
     props: {
-      height: {
-        type: Number,
-        default: 100,
-      },
       tenantId: {
         type: Number,
         required: true,
@@ -122,3 +133,12 @@
     },
   });
 </script>
+<style scoped>
+  .category-tree__scroll {
+    width: 100%;
+  }
+
+  .category-tree__content {
+    min-width: max-content;
+  }
+</style>

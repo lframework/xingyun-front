@@ -14,22 +14,87 @@
   <body>
     <div id="app">
       <style>
+        html,
+        body,
+        #app {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+        }
+
         html[data-theme='dark'] .app-loading {
-          background-color: #2c344a;
+          background:
+            radial-gradient(circle at top left, rgb(59 130 246 / 18%), transparent 28%),
+            linear-gradient(180deg, #0f1727 0%, #111d31 100%);
+        }
+
+        html[data-theme='dark'] .app-loading::before {
+          background: radial-gradient(circle, rgb(56 189 248 / 16%) 0%, transparent 72%);
+        }
+
+        html[data-theme='dark'] .app-loading::after {
+          background: radial-gradient(circle, rgb(37 99 235 / 14%) 0%, transparent 75%);
+        }
+
+        html[data-theme='dark'] .app-loading .app-loading-panel {
+          border-color: rgb(148 163 184 / 14%);
+          background: rgb(10 19 32 / 68%);
+          box-shadow: 0 28px 70px rgb(0 0 0 / 28%);
+        }
+
+        html[data-theme='dark'] .app-loading .app-loading-badge {
+          background: rgb(30 41 59 / 82%);
+          color: #bfdbfe;
         }
 
         html[data-theme='dark'] .app-loading .app-loading-title {
-          color: rgb(255 255 255 / 85%);
+          color: rgb(255 255 255 / 92%);
+        }
+
+        html[data-theme='dark'] .app-loading .app-loading-desc {
+          color: rgb(191 219 254 / 72%);
+        }
+
+        html[data-theme='dark'] .app-loading .app-loading-bar {
+          background: rgb(15 23 42 / 88%);
         }
 
         .app-loading {
+          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           width: 100%;
           height: 100%;
-          background-color: #f4f7f9;
+          overflow: hidden;
+          background:
+            radial-gradient(circle at top right, rgb(96 165 250 / 14%), transparent 26%),
+            linear-gradient(180deg, #f7faff 0%, #eef4fb 100%);
+        }
+
+        .app-loading::before,
+        .app-loading::after {
+          content: '';
+          position: absolute;
+          border-radius: 999px;
+          pointer-events: none;
+        }
+
+        .app-loading::before {
+          top: 12%;
+          right: 12%;
+          width: 280px;
+          height: 280px;
+          background: radial-gradient(circle, rgb(125 211 252 / 24%) 0%, transparent 72%);
+        }
+
+        .app-loading::after {
+          left: 10%;
+          bottom: 12%;
+          width: 220px;
+          height: 220px;
+          background: radial-gradient(circle, rgb(59 130 246 / 10%) 0%, transparent 75%);
         }
 
         .app-loading .app-loading-wrap {
@@ -41,110 +106,105 @@
           align-items: center;
           justify-content: center;
           transform: translate3d(-50%, -50%, 0);
+          z-index: 1;
         }
 
-        .app-loading .dots {
+        .app-loading .app-loading-panel {
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 98px;
+          min-width: 360px;
+          padding: 34px 40px 30px;
+          border: 1px solid rgb(148 163 184 / 16%);
+          border-radius: 30px;
+          background: rgb(255 255 255 / 70%);
+          box-shadow: 0 28px 70px rgb(15 23 42 / 10%);
+          backdrop-filter: blur(18px);
+        }
+
+        .app-loading .app-loading-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 7px 12px;
+          border-radius: 999px;
+          background: rgb(224 242 254 / 90%);
+          color: #0369a1;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
         }
 
         .app-loading .app-loading-title {
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-top: 30px;
-          color: rgb(0 0 0 / 85%);
+          margin-top: 18px;
+          color: #0f172a;
           font-size: 30px;
+          font-weight: 700;
+          line-height: 1.2;
+        }
+
+        .app-loading .app-loading-desc {
+          margin-top: 10px;
+          color: #64748b;
+          font-size: 14px;
+          line-height: 1.7;
         }
 
         .app-loading .app-loading-logo {
           display: block;
-          width: 90px;
+          width: 82px;
           margin: 0 auto;
-          margin-bottom: 20px;
+          margin-top: 22px;
         }
 
-        .dot {
-          display: inline-block;
+        .app-loading .app-loading-bar {
           position: relative;
-          box-sizing: border-box;
-          width: 48px;
-          height: 48px;
-          margin-top: 30px;
-          transform: rotate(45deg);
-          animation: ant-rotate 1.2s infinite linear;
-          font-size: 32px;
+          width: 220px;
+          height: 8px;
+          margin-top: 24px;
+          overflow: hidden;
+          border-radius: 999px;
+          background: rgb(226 232 240 / 88%);
         }
 
-        .dot i {
+        .app-loading .app-loading-bar::before {
+          content: '';
           display: block;
           position: absolute;
-          width: 20px;
-          height: 20px;
-          transform: scale(0.75);
-          transform-origin: 50% 50%;
-          animation: ant-spin-move 1s infinite linear alternate;
-          border-radius: 100%;
-          opacity: 0.3;
-          background-color: #0065cc;
-        }
-
-        .dot i:nth-child(1) {
-          top: 0;
           left: 0;
-        }
-
-        .dot i:nth-child(2) {
           top: 0;
-          right: 0;
-          animation-delay: 0.4s;
+          width: 40%;
+          height: 100%;
+          border-radius: inherit;
+          background: linear-gradient(90deg, #2563eb 0%, #38bdf8 100%);
+          animation: app-loading-slide 1.45s ease-in-out infinite;
         }
 
-        .dot i:nth-child(3) {
-          right: 0;
-          bottom: 0;
-          animation-delay: 0.8s;
-        }
-
-        .dot i:nth-child(4) {
-          bottom: 0;
-          left: 0;
-          animation-delay: 1.2s;
-        }
-
-        @keyframes ant-rotate {
-          to {
-            transform: rotate(405deg);
+        @keyframes app-loading-slide {
+          0% {
+            transform: translateX(-110%);
           }
-        }
-
-        @keyframes ant-rotate {
-          to {
-            transform: rotate(405deg);
+          55% {
+            transform: translateX(170%);
           }
-        }
-
-        @keyframes ant-spin-move {
           to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes ant-spin-move {
-          to {
-            opacity: 1;
+            transform: translateX(170%);
           }
         }
       </style>
       <div class="app-loading">
         <div class="app-loading-wrap">
-          <img src="<%= VITE_PUBLIC_PATH %>logo.png" class="app-loading-logo" alt="Logo" />
-          <div class="app-loading-dots">
-            <span class="dot dot-spin"><i></i><i></i><i></i><i></i></span>
+          <div class="app-loading-panel">
+            <span class="app-loading-badge">工作台加载中</span>
+            <img src="<%= VITE_PUBLIC_PATH %>logo.png" class="app-loading-logo" alt="Logo" />
+            <div class="app-loading-title"><%= VITE_GLOB_APP_TITLE %></div>
+            <div class="app-loading-desc">正在初始化工作台</div>
+            <div class="app-loading-bar"></div>
           </div>
-          <div class="app-loading-title"><%= VITE_GLOB_APP_TITLE %></div>
         </div>
       </div>
     </div>

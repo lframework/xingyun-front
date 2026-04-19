@@ -30,7 +30,7 @@
                 <p class="chart-panel__desc">{{ activeMetric.scopeLabel }}{{ activeMetric.seriesLabel }}趋势</p>
               </div>
             </header>
-            <line-chart :chart-data="lineChartData" />
+            <line-chart :key="activeMetric.key" :chart-data="lineChartData" />
           </template>
         </article>
 
@@ -294,19 +294,27 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
+    min-width: 0;
     padding: 10px 0;
     border-top: 1px dashed rgba(100, 116, 139, 0.2);
   }
 
   .summary-panel__label {
+    min-width: 0;
+    flex: 0 1 auto;
     color: #64748b;
     font-size: 13px;
   }
 
   .summary-panel__value {
+    min-width: 0;
+    flex: 1 1 auto;
     color: #0f172a;
     font-size: 16px;
     font-weight: 600;
+    text-align: right;
+    overflow-wrap: anywhere;
   }
 
   @media (max-width: 1200px) {

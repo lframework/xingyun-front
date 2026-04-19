@@ -96,12 +96,14 @@
 }
 
 [data-theme='dark'] html[data-theme='dark'] .vben-login {
-  background-color: #293146;
+  background:
+    radial-gradient(circle at top left, rgb(59 130 246 / 24%), transparent 34%),
+    linear-gradient(135deg, #06101d 0%, #0c1b2f 48%, #0f1724 48%, #111c2d 100%);
 }
 
 [data-theme='dark'] html[data-theme='dark'] .vben-login .ant-input,
 [data-theme='dark'] html[data-theme='dark'] .vben-login .ant-input-password {
-  background-color: #232a3b;
+  background-color: #111c2d;
 }
 
 [data-theme='dark']
@@ -119,6 +121,66 @@
   color: #fff;
 }
 
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-shell__highlight-card {
+  border-color: rgb(148 189 239 / 12%);
+  background: linear-gradient(180deg, rgb(8 18 32 / 82%), rgb(8 20 38 / 56%));
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-shell__highlight-icon {
+  background: linear-gradient(135deg, rgb(59 130 246 / 26%), rgb(45 212 191 / 18%));
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-shell__form-card {
+  border-color: rgb(71 85 105 / 46%);
+  background: rgb(10 19 32 / 82%);
+  box-shadow: 0 32px 80px rgb(0 0 0 / 32%);
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-shell__form-tag {
+  background: rgb(8 47 73 / 82%);
+  color: #7dd3fc;
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-shell__form-intro h2,
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-form-panel :is(.login-form-panel__desc, .login-form-panel__footer),
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-shell__form-intro p {
+  color: #94a3b8;
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-form-panel__eyebrow {
+  background: rgb(30 41 59 / 82%);
+  color: #93c5fd;
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-form-panel :is(.ant-input-affix-wrapper, .ant-input) {
+  border-color: #243244;
+  background: #101b2c;
+  color: #e2e8f0;
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-form-panel :is(.ant-input-affix-wrapper:hover, .ant-input:hover) {
+  border-color: #3b82f6;
+  background: #132235;
+}
+
+[data-theme='dark']
+  html[data-theme='dark']
+  .vben-login
+  .login-form-panel
+  :is(.ant-input-affix-wrapper-focused, .ant-input-affix-wrapper:focus, .ant-input:focus) {
+  border-color: #60a5fa;
+  background: #132235;
+  box-shadow: 0 0 0 4px rgb(59 130 246 / 15%);
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-form-panel :is(.ant-input, .ant-input-password input) {
+  color: #e2e8f0;
+}
+
+[data-theme='dark'] html[data-theme='dark'] .vben-login .login-form-panel .ant-input-prefix {
+  color: #94a3b8;
+}
+
 [data-theme='dark'] html[data-theme='dark'] .fix-auto-fill input,
 [data-theme='dark'] html[data-theme='dark'] input.fix-auto-fill {
   -webkit-text-fill-color: #c9d1d9 !important;
@@ -131,7 +193,7 @@
 }
 
 [data-theme='dark'] .vben-login .vben-login-form {
-  background-color: #fff;
+  background-color: transparent;
 }
 
 [data-theme='dark'] .vben-login .vben-app-logo__title {
