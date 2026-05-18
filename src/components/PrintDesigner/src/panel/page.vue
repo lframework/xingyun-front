@@ -61,13 +61,23 @@
       </a-row>
       <a-row>
         <a-form-item label="纸张宽度">
-          <a-input-number v-model:value="pageInfo.pageWidth" :min="1" class="min-input" />
+          <a-input-number
+            v-model:value="pageInfo.pageWidth"
+            :min="1"
+            class="min-input"
+            @change="changePageSize"
+          />
           <span class="unit-text">(mm)</span>
         </a-form-item>
       </a-row>
       <a-row>
         <a-form-item label="纸张高度">
-          <a-input-number v-model:value="pageInfo.pageHeight" :min="1" class="min-input" />
+          <a-input-number
+            v-model:value="pageInfo.pageHeight"
+            :min="1"
+            class="min-input"
+            @change="changePageSize"
+          />
           <span class="unit-text">(mm)</span>
         </a-form-item>
       </a-row>
@@ -78,7 +88,7 @@
 <script>
   import { defineComponent } from 'vue';
   import { DownOutlined } from '@ant-design/icons-vue';
-  import { mm2px } from '../utils/calc';
+  import { createPagePxSize } from '../utils/calc';
   import { usePrintDesignerStore } from '../store/printDesigner';
 
   export default defineComponent({
@@ -148,19 +158,20 @@
         const model = this.pageSizeModels[key];
         this.pageInfo.pageWidth = model.width;
         this.pageInfo.pageHeight = model.height;
-        this.pageInfo.width = parseInt(mm2px(model.width));
-        this.pageInfo.height = parseInt(mm2px(model.height));
 
         this.pageInfo.pageDirection = 1;
+        this.updatePagePxSize();
       },
       changePageDirection() {
-        if (this.pageInfo.pageDirection === 1) {
-          this.pageInfo.width = parseInt(mm2px(this.pageInfo.pageWidth));
-          this.pageInfo.height = parseInt(mm2px(this.pageInfo.pageHeight));
-        } else {
-          this.pageInfo.width = parseInt(mm2px(this.pageInfo.pageHeight));
-          this.pageInfo.height = parseInt(mm2px(this.pageInfo.pageWidth));
-        }
+        this.updatePagePxSize();
+      },
+      changePageSize() {
+        this.updatePagePxSize();
+      },
+      updatePagePxSize() {
+        const pageSize = createPagePxSize(this.pageInfo);
+        this.pageInfo.width = pageSize.width;
+        this.pageInfo.height = pageSize.height;
       },
     },
   });

@@ -1,6 +1,6 @@
 import { CommonSettings } from '../CommonSettings';
 import { defaultStyle, LodopStyle } from '@/components/PrintDesigner/src/constants/LodopStyle';
-import { px2mm } from '../../utils/calc';
+import { createPx2mmByPage } from '../../utils/calc';
 
 export const widgetName: string = 'braid-txt';
 
@@ -66,13 +66,14 @@ export const settings: TxtWidgetSetting = {
 };
 
 export const parser = {
-  parse(LODOP: object, printItem: TxtWidgetSetting) {
+  parse(LODOP: any, printItem: TxtWidgetSetting) {
+    const px2mm = createPx2mmByPage(printItem.pageInfo);
     if (printItem.style.bordered) {
       LODOP.ADD_PRINT_RECT(
-        px2mm(printItem.top) + 'mm',
-        px2mm(printItem.left) + 'mm',
-        px2mm(printItem.width) + 'mm',
-        px2mm(printItem.height) + 'mm',
+        px2mm.y(printItem.top) + 'mm',
+        px2mm.x(printItem.left) + 'mm',
+        px2mm.width(printItem.width) + 'mm',
+        px2mm.height(printItem.height) + 'mm',
         printItem.style.intLineStyle,
         printItem.style.intLineWidth,
       );
@@ -80,10 +81,10 @@ export const parser = {
       LODOP.SET_PRINT_STYLEA(0, 'ItemType', printItem.style.ItemType);
     }
     LODOP.ADD_PRINT_TEXT(
-      px2mm(printItem.top + (printItem.style.topOffset || 0)) + 'mm',
-      px2mm(printItem.left + (printItem.style.leftOffset || 0)) + 'mm',
-      px2mm(printItem.width) + 'mm',
-      px2mm(printItem.height) + 'mm',
+      px2mm.y(printItem.top + (printItem.style.topOffset || 0)) + 'mm',
+      px2mm.x(printItem.left + (printItem.style.leftOffset || 0)) + 'mm',
+      px2mm.width(printItem.width) + 'mm',
+      px2mm.height(printItem.height) + 'mm',
       printItem.value,
     );
   },

@@ -1,7 +1,8 @@
 import { CommonSettings } from '../CommonSettings';
 import { defaultStyle, LodopStyle } from '@/components/PrintDesigner/src/constants/LodopStyle';
-import { px2mm, px2pt } from '../../utils/calc';
+import { createPx2mmByPage, px2pt } from '../../utils/calc';
 import { isEmpty } from '@/utils/utils';
+import { buildFooterRows } from './footer';
 
 export const widgetName: string = 'braid-table';
 
@@ -28,6 +29,8 @@ export interface TableWidgetSetting extends CommonSettings {
   columnsAttr: any[];
   columns: any[];
   selectCol: any[];
+  footerEnabled: boolean;
+  footerRows: any[];
   style: TableLodopStyle;
 }
 
@@ -46,6 +49,8 @@ export const settings: TableWidgetSetting = {
   columnsAttr: [], // 表格列选项
   columns: [], // 已选表格列表
   selectCol: [], // 已选表格列name数组（用于多选框双向绑定）
+  footerEnabled: false,
+  footerRows: [],
   name: '',
   style: {
     ...defaultStyle,
@@ -59,7 +64,8 @@ export const settings: TableWidgetSetting = {
 };
 
 export const parser = {
-  parse(LODOP: object, printItem: TableWidgetSetting) {
+  parse(LODOP: any, printItem: TableWidgetSetting) {
+    const px2mm = createPx2mmByPage(printItem.pageInfo);
     const tableTempTohtml = (columns, data, style) => {
       // 验证输入参数
       if (!Array.isArray(columns)) {
@@ -83,7 +89,7 @@ export const parser = {
       // 生成样式字符串
       const generateStyleString = (styleObj) => {
         return Object.entries(styleObj)
-          .filter(([key, value]) => value !== undefined && value !== null)
+          .filter(([_key, value]) => value !== undefined && value !== null)
           .map(([key, value]) => `${key}:${value}`)
           .join(';');
       };
@@ -152,6 +158,26 @@ export const parser = {
       }
 
       html += '</tbody>';
+
+      if (printItem.footerEnabled) {
+        const footerRows = buildFooterRows(printItem.footerRows, data);
+        if (footerRows.length > 0) {
+          html += '<tfoot>';
+          footerRows.forEach((row) => {
+            html += '<tr>';
+            row.forEach((cell) => {
+              html += `<td colspan="${cell.colspan}" style="text-align:${escapeHtml(
+                cell.align,
+              )};">`;
+              html += escapeHtml(cell.text);
+              html += '</td>';
+            });
+            html += '</tr>';
+          });
+          html += '</tfoot>';
+        }
+      }
+
       html += '</table>';
       return html;
     };
@@ -163,18 +189,18 @@ export const parser = {
     );
     if (printItem.style.autoHeight) {
       LODOP.ADD_PRINT_TABLE(
-        px2mm(printItem.top) + 'mm',
-        px2mm(printItem.left) + 'mm',
-        px2mm(printItem.width) + 'mm',
-        'BottomMargin:' + px2mm(printItem.style.BottomMargin) + 'mm',
+        px2mm.y(printItem.top) + 'mm',
+        px2mm.x(printItem.left) + 'mm',
+        px2mm.width(printItem.width) + 'mm',
+        'BottomMargin:' + px2mm.height(printItem.style.BottomMargin) + 'mm',
         html,
       );
     } else {
       LODOP.ADD_PRINT_TABLE(
-        px2mm(printItem.top) + 'mm',
-        px2mm(printItem.left) + 'mm',
-        px2mm(printItem.width) + 'mm',
-        px2mm(printItem.height) + 'mm',
+        px2mm.y(printItem.top) + 'mm',
+        px2mm.x(printItem.left) + 'mm',
+        px2mm.width(printItem.width) + 'mm',
+        px2mm.height(printItem.height) + 'mm',
         html,
       );
     }

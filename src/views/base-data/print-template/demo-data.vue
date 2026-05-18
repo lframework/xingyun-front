@@ -9,7 +9,9 @@
     :footer="null"
   >
     <div v-if="visible" v-loading="loading">
-      <code-editor v-model:value="formData" bordered />
+      <div class="demo-data-editor">
+        <code-editor v-model:value="formData" bordered />
+      </div>
 
       <div class="form-modal-footer">
         <a-space>
@@ -77,7 +79,7 @@
         this.loading = true;
         try {
           const { demoData } = await api.getSetting(this.id);
-          this.formData = JSON.stringify(demoData || {});
+          this.formData = JSON.stringify(demoData || {}, null, 2);
         } finally {
           this.loading = false;
         }
@@ -100,4 +102,9 @@
     },
   });
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+  .demo-data-editor {
+    height: 520px;
+    border: 1px solid #d9d9d9;
+  }
+</style>

@@ -6,10 +6,12 @@
     title="设置"
     :keyboard="false"
     :style="{ top: '5px' }"
+    :body-style="modalBodyStyle"
     :footer="null"
   >
     <div
       v-if="visible && inited"
+      class="print-template-setting-body"
       v-permission="['base-data:print-template:modify']"
       v-loading="loading"
     >
@@ -62,6 +64,15 @@
         widgets: [],
         demoData: {},
       };
+    },
+    computed: {
+      modalBodyStyle() {
+        return {
+          height: 'calc(100vh - 70px)',
+          padding: '0',
+          overflow: 'hidden',
+        };
+      },
     },
     created() {
       this.initFormData();
@@ -142,3 +153,9 @@
     },
   });
 </script>
+<style lang="scss" scoped>
+  .print-template-setting-body {
+    height: 100%;
+    overflow: hidden;
+  }
+</style>

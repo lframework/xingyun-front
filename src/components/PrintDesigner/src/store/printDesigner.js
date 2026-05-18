@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import { getDefaultProps } from '../libs/props.js';
+import { limitElementPosition, limitElementSize } from '../utils/bounds.mjs';
+import { getResizeSnapSize, getSnapPosition } from '../utils/snap.mjs';
 import printComponents from '../../install';
 
 const generate = () => {
@@ -28,6 +30,7 @@ export const usePrintDesignerStore = defineStore({
     startX: 0, // 鼠标摁下时的横坐标
     startY: 0, // 鼠标摁下时的纵坐标
     moving: false, // 是否正在移动元件（参考线仅在移动元件时显示）
+    guides: [], // 移动时的对齐辅助线
 
     activeElement: getDefaultProps(), // 选中对象，要么是元件，要么是页面
 
@@ -134,6 +137,7 @@ export const usePrintDesignerStore = defineStore({
     // 元件移动结束
     stopmove() {
       this.moving = false;
+      this.guides = [];
     },
 
     // 移动元件
@@ -143,9 +147,17 @@ export const usePrintDesignerStore = defineStore({
       const dy = track.y - this.startY;
       const left = this.originX + Math.floor((dx * 100) / this.zoom);
       const top = this.originY + Math.floor((dy * 100) / this.zoom);
+      const snapPosition = getSnapPosition({ ...target, left, top }, this.page.tempItems, {
+        page: this.page,
+      });
+      const position = limitElementPosition(
+        { ...target, left: snapPosition.left, top: snapPosition.top },
+        this.page,
+      );
 
-      target.left = left > 0 ? left : 0;
-      target.top = top > 0 ? top : 0;
+      target.left = position.left;
+      target.top = position.top;
+      this.guides = snapPosition.guides;
     },
 
     // 调整元件尺寸
@@ -153,32 +165,68 @@ export const usePrintDesignerStore = defineStore({
       const dx = track.x - this.startX;
       const dy = track.y - this.startY;
       let value;
+      let resizingElement;
+      let snapSize;
 
       if (track.type === 'right') {
         value = this.originX + Math.floor((dx * 100) / this.zoom);
-        this.activeElement.width = value > 10 ? value : 10;
+        resizingElement = { ...this.activeElement, width: value };
+        snapSize = getResizeSnapSize(resizingElement, this.page.tempItems, track.type, {
+          page: this.page,
+        });
+        this.activeElement.width = limitElementSize(
+          { ...resizingElement, ...snapSize },
+          this.page,
+        ).width;
+        this.guides = snapSize.guides;
         return;
       }
 
       if (track.type === 'down') {
         value = this.originX + Math.floor((dy * 100) / this.zoom);
-        this.activeElement.height = value > 10 ? value : 10;
+        resizingElement = { ...this.activeElement, height: value };
+        snapSize = getResizeSnapSize(resizingElement, this.page.tempItems, track.type, {
+          page: this.page,
+        });
+        this.activeElement.height = limitElementSize(
+          { ...resizingElement, ...snapSize },
+          this.page,
+        ).height;
+        this.guides = snapSize.guides;
         return;
       }
 
       if (track.type === 'left') {
         const left = this.originX + Math.floor((dx * 100) / this.zoom);
         const width = this.originY - Math.floor((dx * 100) / this.zoom);
-        this.activeElement.left = left > 0 ? left : 0;
-        this.activeElement.width = width > 10 ? width : 10;
+        resizingElement = { ...this.activeElement, left, width };
+        snapSize = getResizeSnapSize(resizingElement, this.page.tempItems, track.type, {
+          page: this.page,
+        });
+        const position = limitElementPosition({ ...resizingElement, ...snapSize }, this.page);
+        this.activeElement.left = position.left;
+        this.activeElement.width = limitElementSize(
+          { ...resizingElement, ...snapSize, left: position.left },
+          this.page,
+        ).width;
+        this.guides = snapSize.guides;
         return;
       }
 
       if (track.type === 'up') {
         const top = this.originX + Math.floor((dy * 100) / this.zoom);
         const height = this.originY - Math.floor((dy * 100) / this.zoom);
-        this.activeElement.top = top > 0 ? top : 0;
-        this.activeElement.height = height > 10 ? height : 10;
+        resizingElement = { ...this.activeElement, top, height };
+        snapSize = getResizeSnapSize(resizingElement, this.page.tempItems, track.type, {
+          page: this.page,
+        });
+        const position = limitElementPosition({ ...resizingElement, ...snapSize }, this.page);
+        this.activeElement.top = position.top;
+        this.activeElement.height = limitElementSize(
+          { ...resizingElement, ...snapSize, top: position.top },
+          this.page,
+        ).height;
+        this.guides = snapSize.guides;
       }
     },
 

@@ -1,6 +1,6 @@
 import { CommonSettings } from '../CommonSettings';
 import { defaultStyle, LodopStyle } from '@/components/PrintDesigner/src/constants/LodopStyle';
-import { px2mm } from '../../utils/calc';
+import { createPx2mmByPage } from '../../utils/calc';
 
 export const widgetName: string = 'braid-react';
 
@@ -39,12 +39,13 @@ export const settings: ReactWidgetSetting = {
 };
 
 export const parser = {
-  parse(LODOP: object, printItem: ReactWidgetSetting) {
+  parse(LODOP: any, printItem: ReactWidgetSetting) {
+    const px2mm = createPx2mmByPage(printItem.pageInfo);
     LODOP.ADD_PRINT_RECT(
-      px2mm(printItem.top) + 'mm',
-      px2mm(printItem.left) + 'mm',
-      px2mm(printItem.width) + 'mm',
-      px2mm(printItem.height) + 'mm',
+      px2mm.y(printItem.top) + 'mm',
+      px2mm.x(printItem.left) + 'mm',
+      px2mm.width(printItem.width) + 'mm',
+      px2mm.height(printItem.height) + 'mm',
       printItem.style.intLineStyle,
       printItem.style.intLineWidth,
     );

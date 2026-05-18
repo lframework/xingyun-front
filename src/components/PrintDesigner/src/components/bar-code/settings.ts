@@ -1,6 +1,6 @@
 import { CommonSettings } from '../CommonSettings';
 import { LodopStyle, defaultStyle } from '@/components/PrintDesigner/src/constants/LodopStyle';
-import { px2mm } from '../../utils/calc';
+import { createPx2mmByPage } from '../../utils/calc';
 
 export const widgetName: string = 'braid-barcode';
 
@@ -14,6 +14,7 @@ export interface BarCodeLodopStyle extends LodopStyle {
 }
 
 export interface BarCodeWidgetSetting extends CommonSettings {
+  value: string;
   style: BarCodeLodopStyle;
 }
 
@@ -27,6 +28,7 @@ export const settings: BarCodeWidgetSetting = {
   left: 50,
   top: 0,
   title: '条码',
+  value: '',
   name: '',
   style: {
     ...defaultStyle,
@@ -38,12 +40,13 @@ export const settings: BarCodeWidgetSetting = {
 };
 
 export const parser = {
-  parse(LODOP: object, printItem: BarCodeWidgetSetting) {
+  parse(LODOP: any, printItem: BarCodeWidgetSetting) {
+    const px2mm = createPx2mmByPage(printItem.pageInfo);
     LODOP.ADD_PRINT_BARCODE(
-      px2mm(printItem.top) + 'mm',
-      px2mm(printItem.left) + 'mm',
-      px2mm(printItem.width) + 'mm',
-      px2mm(printItem.height) + 'mm',
+      px2mm.y(printItem.top) + 'mm',
+      px2mm.x(printItem.left) + 'mm',
+      px2mm.width(printItem.width) + 'mm',
+      px2mm.height(printItem.height) + 'mm',
       printItem.style.CodeType,
       printItem.value,
     );

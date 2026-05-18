@@ -18,6 +18,7 @@ export default { print, preview, previewTemp };
  * @param {*Array} data 打印数据
  */
 function print(temp, data) {
+  const pageInfo = _CreatePageInfo(temp);
   let LODOP = _CreateLodop(
     temp.title,
     temp.pageDirection,
@@ -33,13 +34,13 @@ function print(temp, data) {
     printContent.forEach((aPrint, index) => {
       LODOP.NewPageA();
       aPrint.forEach((printItem) => {
-        _AddPrintItem(LODOP, printItem, index);
+        _AddPrintItem(LODOP, printItem, index, pageInfo);
       });
     });
   } else {
     // 单份
     printContent[0].forEach((printItem) => {
-      _AddPrintItem(LODOP, printItem);
+      _AddPrintItem(LODOP, printItem, 0, pageInfo);
     });
   }
 
@@ -53,6 +54,7 @@ function print(temp, data) {
  * @param {*Array} data 打印数据
  */
 function preview(temp, data) {
+  const pageInfo = _CreatePageInfo(temp);
   let LODOP = _CreateLodop(
     temp.title,
     temp.pageDirection,
@@ -68,13 +70,13 @@ function preview(temp, data) {
     printContent.forEach((aPrint, index) => {
       LODOP.NewPageA();
       aPrint.forEach((printItem) => {
-        _AddPrintItem(LODOP, printItem, index);
+        _AddPrintItem(LODOP, printItem, index, pageInfo);
       });
     });
   } else {
     // 单份
     printContent[0].forEach((printItem) => {
-      _AddPrintItem(LODOP, printItem);
+      _AddPrintItem(LODOP, printItem, 0, pageInfo);
     });
   }
 
@@ -87,6 +89,7 @@ function preview(temp, data) {
  * @param {*Object} temp 打印模板
  */
 function previewTemp(temp) {
+  const pageInfo = _CreatePageInfo(temp);
   let LODOP = _CreateLodop(
     temp.title,
     temp.pageDirection,
@@ -98,10 +101,20 @@ function previewTemp(temp) {
 
   let printContent = _TempParser(temp.tempItems);
   printContent[0].forEach((printItem) => {
-    _AddPrintItem(LODOP, printItem);
+    _AddPrintItem(LODOP, printItem, 0, pageInfo);
   });
   let flag = LODOP.PREVIEW();
   return flag;
+}
+
+function _CreatePageInfo(temp) {
+  return {
+    width: temp.width,
+    height: temp.height,
+    pageWidth: temp.pageWidth,
+    pageHeight: temp.pageHeight,
+    pageDirection: temp.pageDirection,
+  };
 }
 
 /**
@@ -194,9 +207,11 @@ function _TempParser(tempItem, data) {
  * @param {lodop} LODOP 打印实例
  * @param {Object} printItem 打印项内容
  * @param {Number} pageIndex 当前打印页的开始序号
+ * @param {Object} pageInfo 纸张信息，用于将设计区 px 坐标换算为 LODOP mm
  */
-function _AddPrintItem(LODOP, tempItem, pageIndex = 0) {
+function _AddPrintItem(LODOP, tempItem, pageIndex = 0, pageInfo = {}) {
   let printItem = cloneDeep(tempItem);
+  printItem.pageInfo = pageInfo;
   // TempItemStyle转换为LodopItemStyle
   let lodopStyle = _createLodopStyle(printItem.style);
 

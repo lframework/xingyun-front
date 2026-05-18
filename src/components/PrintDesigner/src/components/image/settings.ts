@@ -1,6 +1,6 @@
 import { CommonSettings } from '../CommonSettings';
 import { defaultStyle, LodopStyle } from '@/components/PrintDesigner/src/constants/LodopStyle';
-import { px2mm } from '../../utils/calc';
+import { createPx2mmByPage } from '../../utils/calc';
 
 export const widgetName: string = 'braid-image';
 
@@ -31,7 +31,8 @@ export const settings: ImageWidgetSetting = {
 };
 
 export const parser = {
-  parse(LODOP: object, printItem: ImageWidgetSetting) {
+  parse(LODOP: any, printItem: ImageWidgetSetting) {
+    const px2mm = createPx2mmByPage(printItem.pageInfo);
     const imageTempTohtml = (value) => {
       const html = "<img style='width:100%' src='" + value + "'/>";
 
@@ -40,10 +41,10 @@ export const parser = {
 
     const html = imageTempTohtml(printItem.value);
     LODOP.ADD_PRINT_IMAGE(
-      px2mm(printItem.top) + 'mm',
-      px2mm(printItem.left) + 'mm',
-      px2mm(printItem.width) + 'mm',
-      px2mm(printItem.height) + 'mm',
+      px2mm.y(printItem.top) + 'mm',
+      px2mm.x(printItem.left) + 'mm',
+      px2mm.width(printItem.width) + 'mm',
+      px2mm.height(printItem.height) + 'mm',
       html,
     );
   },

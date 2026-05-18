@@ -62,6 +62,31 @@
           v-html="item.value"
         ></td>
       </tr>
+      <tfoot v-if="footerRows.length > 0">
+        <tr
+          v-for="(row, rowIndex) in footerRows"
+          :key="rowIndex"
+          :style="{
+            borderColor: val.style.borderColor,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+          }"
+        >
+          <td
+            v-for="(cell, cellIndex) in row"
+            :key="cellIndex"
+            :colspan="cell.colspan"
+            :style="{
+              borderColor: val.style.borderColor,
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              fontSize: val.style.FontSize + 'px',
+              textAlign: cell.align,
+            }"
+            >{{ cell.text }}</td
+          >
+        </tr>
+      </tfoot>
     </table>
   </div>
 </template>
@@ -69,6 +94,7 @@
 <script>
   import { defineComponent } from 'vue';
   import { widgetName } from './settings';
+  import { buildFooterRows } from './footer';
 
   export default defineComponent({
     name: widgetName,
@@ -83,6 +109,23 @@
       columns() {
         let col = this.val.columns || [];
         return col;
+      },
+      footerRows() {
+        if (!this.val.footerEnabled) {
+          return [];
+        }
+
+        const previewRows = this.val.defaultValue?.length
+          ? this.val.defaultValue
+          : [this.previewRow];
+        return buildFooterRows(this.val.footerRows, previewRows);
+      },
+      previewRow() {
+        const row = {};
+        this.columns.forEach((column) => {
+          row[column.name] = column.value || '';
+        });
+        return row;
       },
     },
     methods: {},

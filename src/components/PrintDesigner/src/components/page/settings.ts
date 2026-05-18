@@ -1,6 +1,6 @@
 import { CommonSettings } from '../CommonSettings';
 import { defaultStyle, LodopStyle } from '@/components/PrintDesigner/src/constants/LodopStyle';
-import { px2mm, px2pt } from '../../utils/calc';
+import { createPx2mmByPage, px2pt } from '../../utils/calc';
 
 export const widgetName: string = 'braid-page';
 
@@ -48,7 +48,8 @@ export const settings: PageWidgetSetting = {
 };
 
 export const parser = {
-  parse(LODOP: object, printItem: PageWidgetSetting) {
+  parse(LODOP: any, printItem: PageWidgetSetting) {
+    const px2mm = createPx2mmByPage(printItem.pageInfo);
     const htmlTempTohtml = (style) => {
       let styleStr = 'text-align:' + style.Alignment + ';';
       styleStr += 'font-size:' + px2pt(style.FontSize) + 'pt;';
@@ -62,18 +63,18 @@ export const parser = {
     const html = htmlTempTohtml(printItem.style);
     if (printItem.style.autoHeight) {
       LODOP.ADD_PRINT_HTM(
-        px2mm(printItem.top) + 'mm',
-        px2mm(printItem.left) + 'mm',
-        px2mm(printItem.width) + 'mm',
-        'BottomMargin:' + px2mm(printItem.style.BottomMargin) + 'mm',
+        px2mm.y(printItem.top) + 'mm',
+        px2mm.x(printItem.left) + 'mm',
+        px2mm.width(printItem.width) + 'mm',
+        'BottomMargin:' + px2mm.height(printItem.style.BottomMargin) + 'mm',
         html,
       );
     } else {
       LODOP.ADD_PRINT_HTM(
-        px2mm(printItem.top) + 'mm',
-        px2mm(printItem.left) + 'mm',
-        px2mm(printItem.width) + 'mm',
-        px2mm(printItem.height) + 'mm',
+        px2mm.y(printItem.top) + 'mm',
+        px2mm.x(printItem.left) + 'mm',
+        px2mm.width(printItem.width) + 'mm',
+        px2mm.height(printItem.height) + 'mm',
         html,
       );
     }

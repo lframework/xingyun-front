@@ -96,28 +96,37 @@
     text-align: left;
     display: flex;
     flex-direction: row;
+    overflow: hidden;
     .kr-designer-view {
       flex: 1;
+      min-width: 0;
+      min-height: 0;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
     .kr-designer-tool {
-      width: 400px;
+      flex: 0 0 400px;
       height: 100%;
+      min-height: 0;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
       .a-scrollbar__wrap {
         overflow: auto;
       }
       &_con {
         flex: 1;
-        height: 100%;
+        min-height: 0;
         width: 100%;
-        overflow: hidden;
+        overflow: auto;
       }
       &_bar {
+        flex: 0 0 auto;
         padding: 10px;
         text-align: center;
+        border-top: 1px solid #f0f0f0;
+        background-color: #ffffff;
       }
     }
   }

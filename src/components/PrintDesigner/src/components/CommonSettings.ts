@@ -17,4 +17,12 @@ export interface CommonSettings {
   name: string;
 
   style: LodopStyle;
+
+  pageInfo?: {
+    width?: number;
+    height?: number;
+    pageWidth?: number;
+    pageHeight?: number;
+    pageDirection?: number;
+  };
 }
