@@ -1,17 +1,18 @@
 <template>
-  <div class="h-lg">
-    <CodeMirrorEditor
-      :value="getValue"
+  <div class="code-editor h-lg" :class="{ 'code-editor--bordered': bordered }">
+    <monaco-editor
+      v-model:value="editorValue"
+      :language="getMonacoLanguage"
+      :read-only="readonly"
+      :options="editorOptions"
       @change="handleValueChange"
-      :mode="mode"
-      :readonly="readonly"
-      :bordered="bordered"
     />
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed } from 'vue';
-  import CodeMirrorEditor from './codemirror/CodeMirror.vue';
+  import { computed, ref, watch } from 'vue';
+  import MonacoEditor from '@/components/MonacoEditor';
+  import type { Options } from '@/components/MonacoEditor/src/MonacoEditorType';
   import { isString } from '/@/utils/is';
   import { MODE } from './typing';
 
@@ -31,6 +32,7 @@
   });
 
   const emit = defineEmits(['change', 'update:value', 'format-error']);
+  const editorValue = ref('');
 
   const getValue = computed(() => {
     const { value, mode, autoFormat } = props;
@@ -49,8 +51,55 @@
     return JSON.stringify(result, null, 2);
   });
 
+  const getMonacoLanguage = computed(() => {
+    const languageMap = {
+      [MODE.JSON]: 'json',
+      [MODE.HTML]: 'html',
+      [MODE.JS]: 'javascript',
+    };
+    return languageMap[props.mode] || 'javascript';
+  });
+
+  const editorOptions = computed<Options>(() => ({
+    automaticLayout: true,
+    foldingStrategy: 'indentation',
+    renderLineHighlight: 'all',
+    selectOnLineNumbers: true,
+    minimap: {
+      enabled: false,
+    },
+    fontSize: 14,
+    scrollBeyondLastLine: false,
+    overviewRulerBorder: false,
+    tabSize: 2,
+    formatOnPaste: true,
+    formatOnType: props.mode === MODE.JSON,
+  }));
+
+  watch(
+    () => props.value,
+    () => {
+      if (editorValue.value !== getValue.value) {
+        editorValue.value = getValue.value;
+      }
+    },
+    {
+      immediate: true,
+    },
+  );
+
   function handleValueChange(v) {
     emit('update:value', v);
     emit('change', v);
   }
 </script>
+<style lang="less" scoped>
+  .code-editor {
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .code-editor--bordered {
+    border: 1px solid #d9d9d9;
+  }
+</style>

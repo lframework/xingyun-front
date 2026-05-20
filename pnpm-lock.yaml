@@ -50,9 +50,6 @@ importers:
       clipboard:
         specifier: ^2.0.11
         version: 2.0.11
-      codemirror:
-        specifier: ^5.65.12
-        version: 5.65.17
       cropperjs:
         specifier: ^1.5.13
         version: 1.6.2
@@ -137,9 +134,6 @@ importers:
       vue-i18n:
         specifier: ^9.2.2
         version: 9.14.0(vue@3.4.38(typescript@5.4.5))
-      vue-json-pretty:
-        specifier: ^2.2.4
-        version: 2.4.0(vue@3.4.38(typescript@5.4.5))
       vue-router:
         specifier: 4.0.14
         version: 4.0.14(vue@3.4.38(typescript@5.4.5))
@@ -177,9 +171,6 @@ importers:
       '@purge-icons/generated':
         specifier: ^0.9.0
         version: 0.9.0
-      '@types/codemirror':
-        specifier: ^5.60.8
-        version: 5.60.15
       '@types/crypto-js':
         specifier: ^4.1.1
         version: 4.2.2
@@ -1549,9 +1540,6 @@ packages:
   '@types/babel__traverse@7.20.6':
     resolution: {integrity: sha512-r1bzfrm0tomOI8g1SzvCaQHo6Lcv6zu0EA+W2kHrt8dyrHQxGzBBL4kdkzIS+jBMV+EYcMAEAqXqYaLJq5rOZg==}
 
-  '@types/codemirror@5.60.15':
-    resolution: {integrity: sha512-dTOvwEQ+ouKJ/rE9LT1Ue2hmP6H1mZv5+CCnNWu2qtiOe2LQa9lCprEY20HxiDmV/Bxh+dXjywmy5aKvoGjULA==}
-
   '@types/crypto-js@4.2.2':
     resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
 
@@ -1638,9 +1626,6 @@ packages:
 
   '@types/svgo@2.6.4':
     resolution: {integrity: sha512-l4cmyPEckf8moNYHdJ+4wkHvFxjyW6ulm9l4YGaOxeyBWPhBOT0gvni1InpFPdzx1dKf/2s62qGITwxNWnPQng==}
-
-  '@types/tern@0.23.9':
-    resolution: {integrity: sha512-ypzHFE/wBzh+BlH6rrBgS5I/Z7RD21pGhZ2rltb/+ZrVM1awdZwjx7hE5XfuYgHWk9uvV5HLZN3SloevCAp3Bw==}
 
   '@types/web-bluetooth@0.0.20':
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
@@ -2357,9 +2342,6 @@ packages:
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
     engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
-
-  codemirror@5.65.17:
-    resolution: {integrity: sha512-1zOsUx3lzAOu/gnMAZkQ9kpIHcPYOc9y1Fbm2UVk5UBPkdq380nhkelG0qUwm1f7wPvTbndu9ZYlug35EwAZRQ==}
 
   codepage@1.15.0:
     resolution: {integrity: sha512-3g6NUTPd/YtuuGrhMnOMRjFc+LJw/bnMp3+0r/Wcz3IXUuCosKRJvMphm5+Q+bvTVGcJJuRvVLuYba+WojaFaA==}
@@ -6225,6 +6207,7 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:
@@ -6339,12 +6322,6 @@ packages:
     engines: {node: '>= 16'}
     peerDependencies:
       vue: ^3.0.0
-
-  vue-json-pretty@2.4.0:
-    resolution: {integrity: sha512-e9bP41DYYIc2tWaB6KuwqFJq5odZ8/GkE6vHQuGcbPn37kGk4a3n1RNw3ZYeDrl66NWXgTlOfS+M6NKkowmkWw==}
-    engines: {node: '>= 10.0.0', npm: '>= 5.0.0'}
-    peerDependencies:
-      vue: '>=3.0.0'
 
   vue-router@4.0.14:
     resolution: {integrity: sha512-wAO6zF9zxA3u+7AkMPqw9LjoUCjSxfFvINQj3E/DceTt6uEz1XZLraDhdg2EYmvVwTBSGlLYsUw8bDmx0754Mw==}
@@ -7820,10 +7797,6 @@ snapshots:
     dependencies:
       '@babel/types': 7.25.4
 
-  '@types/codemirror@5.60.15':
-    dependencies:
-      '@types/tern': 0.23.9
-
   '@types/crypto-js@4.2.2': {}
 
   '@types/estree@1.0.5': {}
@@ -7900,10 +7873,6 @@ snapshots:
   '@types/svgo@2.6.4':
     dependencies:
       '@types/node': 20.16.1
-
-  '@types/tern@0.23.9':
-    dependencies:
-      '@types/estree': 1.0.5
 
   '@types/web-bluetooth@0.0.20': {}
 
@@ -8956,8 +8925,6 @@ snapshots:
   clone@2.1.2: {}
 
   co@4.6.0: {}
-
-  codemirror@5.65.17: {}
 
   codepage@1.15.0: {}
 
@@ -13464,10 +13431,6 @@ snapshots:
       '@intlify/core-base': 9.14.0
       '@intlify/shared': 9.14.0
       '@vue/devtools-api': 6.6.3
-      vue: 3.4.38(typescript@5.4.5)
-
-  vue-json-pretty@2.4.0(vue@3.4.38(typescript@5.4.5)):
-    dependencies:
       vue: 3.4.38(typescript@5.4.5)
 
   vue-router@4.0.14(vue@3.4.38(typescript@5.4.5)):

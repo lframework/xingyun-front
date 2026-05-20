@@ -9,11 +9,13 @@
     :footer="null"
   >
     <div v-if="visible" v-loading="loading">
-      <div v-if="!isEmpty(description)" style="padding: 10px 10px 5px 10px">
+      <div v-if="!isEmpty(description)" style="padding: 10px 10px 5px">
         <a-alert message="注意事项" :description="description" type="warning" show-icon />
       </div>
 
-      <textarea ref="editor"></textarea>
+      <div class="json-editor">
+        <code-editor v-model:value="editorValue" bordered />
+      </div>
 
       <div class="form-modal-footer">
         <a-space>
@@ -28,18 +30,13 @@
 </template>
 <script>
   import { defineComponent } from 'vue';
-  import 'codemirror/lib/codemirror.css';
-  import CodeMirror from 'codemirror/lib/codemirror';
-  import 'codemirror/mode/javascript/javascript';
+  import { CodeEditor } from '@/components/CodeEditor';
   import { isEmpty } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
 
   export default defineComponent({
-    components: {},
-    setup() {
-      return {
-        isEmpty,
-      };
+    components: {
+      CodeEditor,
     },
     props: {
       value: {
@@ -66,7 +63,7 @@
         visible: false,
         // 是否显示加载框
         loading: false,
-        editor: null,
+        editorValue: '',
       };
     },
     computed: {},
@@ -93,18 +90,10 @@
       open() {
         // 初始化表单数据
         this.initFormData();
-
-        this.editor = CodeMirror.fromTextArea(this.$refs.editor, {
-          mode: 'application/json',
-          lineNumbers: true,
-          tabSize: 2,
-          lineWrapping: true,
-        });
-
-        this.editor.setValue(this.value || '');
+        this.editorValue = this.value || '';
       },
       submit() {
-        const value = this.editor.getValue();
+        const value = this.editorValue;
         if (!isEmpty(value)) {
           try {
             JSON.parse(value);
@@ -114,10 +103,15 @@
           }
         }
 
-        this.$emit('update:value', this.editor.getValue());
+        this.$emit('update:value', this.editorValue);
         this.closeDialog();
       },
     },
   });
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+  .json-editor {
+    height: 420px;
+    border: 1px solid #d9d9d9;
+  }
+</style>

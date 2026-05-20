@@ -8,7 +8,7 @@ export interface Options {
   foldingStrategy: FoldingStrategy; // 折叠方式  auto | indentation
   renderLineHighlight: RenderLineHighlight; // 行亮
   selectOnLineNumbers: boolean; // 显示行号
-  placeholder: string;
+  placeholder?: string;
   minimap: {
     // 关闭小地图
     enabled: boolean;
@@ -17,6 +17,9 @@ export interface Options {
   fontSize: number; // 字体大小
   scrollBeyondLastLine: boolean; // 取消代码后面一大段空白
   overviewRulerBorder: boolean; // 不要滚动条的边框
+  tabSize?: number;
+  formatOnPaste?: boolean;
+  formatOnType?: boolean;
 }
 
 export const editorProps = {
