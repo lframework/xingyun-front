@@ -27,17 +27,17 @@ export interface UpdateProductPropertyVo {
   /**
    * 数据类型
    */
-  columnDataType: number;
+  columnDataType?: number;
 
   /**
    * 属性类别
    */
-  propertyType: number;
+  propertyType?: number;
 
   /**
    * 分类ID
    */
-  categoryIds: string[];
+  categoryIds?: string[];
 
   /**
    * 备注

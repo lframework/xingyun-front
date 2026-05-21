@@ -1,4 +1,9 @@
-export interface CreateProductPropertyVo {
+export interface CreateProductCategoryPropertyVo {
+  /**
+   * 分类ID
+   */
+  categoryId: string;
+
   /**
    * 编号
    */
@@ -18,21 +23,6 @@ export interface CreateProductPropertyVo {
    * 录入类型
    */
   columnType: number;
-
-  /**
-   * 数据类型
-   */
-  columnDataType?: number;
-
-  /**
-   * 属性类别
-   */
-  propertyType?: number;
-
-  /**
-   * 分类ID
-   */
-  categoryIds?: string[];
 
   /**
    * 备注

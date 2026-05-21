@@ -39,43 +39,6 @@
               >
             </a-select>
           </vxe-form-item>
-          <vxe-form-item
-            :visible="COLUMN_TYPE.CUSTOM.equalsCode(formData.columnType)"
-            title="数据类型"
-            field="columnDataType"
-            span="12"
-          >
-            <a-select v-model:value="formData.columnDataType" allow-clear>
-              <a-select-option
-                v-for="item in COLUMN_DATA_TYPE.values()"
-                :key="item.code"
-                :value="item.code"
-                >{{ item.desc }}</a-select-option
-              >
-            </a-select>
-          </vxe-form-item>
-          <vxe-form-item title="类别" field="propertyType" span="12">
-            <a-select v-model:value="formData.propertyType" allow-clear>
-              <a-select-option
-                v-for="item in PROPERTY_TYPE.values()"
-                :key="item.code"
-                :value="item.code"
-                >{{ item.desc }}</a-select-option
-              >
-            </a-select>
-          </vxe-form-item>
-          <vxe-form-item
-            :visible="PROPERTY_TYPE.APPOINT.equalsCode(formData.propertyType)"
-            title="商品分类"
-            span="12"
-          >
-            <product-category-selector
-              v-model:value="formData.categories"
-              :multiple="true"
-              :only-final="false"
-              :disabled="columnTypeDisabled"
-            />
-          </vxe-form-item>
         </vxe-form-group>
         <vxe-form-group span="24" title="扩展信息" title-bold vertical>
           <vxe-form-item title="备注" field="description" span="24">
@@ -100,22 +63,13 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/property';
-  import { isEmpty } from '@/utils/utils';
-  import { createSuccess, createError } from '@/hooks/web/msg';
-  import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
+  import { createSuccess } from '@/hooks/web/msg';
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
-  import { COLUMN_DATA_TYPE } from '@/enums/biz/columnDataType';
-  import { PROPERTY_TYPE } from '@/enums/biz/propertyType';
 
   export default defineComponent({
-    components: {
-      ProductCategorySelector,
-    },
     setup() {
       return {
         COLUMN_TYPE,
-        COLUMN_DATA_TYPE,
-        PROPERTY_TYPE,
       };
     },
     data() {
@@ -132,8 +86,6 @@
           name: [{ required: true, message: '请输入名称' }],
           isRequired: [{ required: true, message: '请选择是否必填' }],
           columnType: [{ required: true, message: '请选择字段类型' }],
-          columnDataType: [{ required: true, message: '请选择数据类型' }],
-          propertyType: [{ required: true, message: '请选择类别' }],
         },
       };
     },
@@ -161,20 +113,11 @@
           name: '',
           isRequired: '',
           columnType: '',
-          columnDataType: '',
-          propertyType: '',
           description: '',
-          categories: [],
         };
       },
       // 提交表单事件
       submit() {
-        if (PROPERTY_TYPE.APPOINT.equalsCode(this.formData.propertyType)) {
-          if (isEmpty(this.formData.categories)) {
-            createError('请选择商品分类');
-            return;
-          }
-        }
         this.$refs.form.validate().then((errMaps) => {
           if (!errMaps) {
             this.loading = true;
@@ -183,13 +126,8 @@
               name: this.formData.name,
               isRequired: this.formData.isRequired,
               columnType: this.formData.columnType,
-              columnDataType: this.formData.columnDataType,
-              propertyType: this.formData.propertyType,
               description: this.formData.description,
             };
-            if (!isEmpty(this.formData.categories)) {
-              params.categoryIds = this.formData.categories;
-            }
             api
               .create(params)
               .then(() => {

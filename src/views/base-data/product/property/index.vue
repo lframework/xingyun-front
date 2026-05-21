@@ -102,7 +102,6 @@
   import { createError } from '@/hooks/web/msg';
   import BatchHandler from '@/components/BatchHandler';
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
-  import { PROPERTY_TYPE } from '@/enums/biz/propertyType';
 
   export default defineComponent({
     name: 'ProductProperty',
@@ -161,16 +160,14 @@
               return COLUMN_TYPE.getDesc(cellValue);
             },
           },
-          {
-            field: 'propertyType',
-            title: '类别',
-            width: 100,
-            formatter: ({ cellValue }) => {
-              return PROPERTY_TYPE.getDesc(cellValue);
-            },
-          },
           { field: 'description', title: '备注', minWidth: 160 },
-          { title: '操作', field: 'action', width: 150, fixed: 'right', slots: { default: 'action_default' } },
+          {
+            title: '操作',
+            field: 'action',
+            width: 150,
+            fixed: 'right',
+            slots: { default: 'action_default' },
+          },
         ],
         // 请求接口配置
         proxyConfig: {

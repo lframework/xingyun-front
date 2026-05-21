@@ -80,6 +80,8 @@
     <!-- 新建子分类窗口 -->
     <add-children :id="id" ref="addChildrenDialog" @confirm="search" />
 
+    <category-property ref="propertyDialog" @confirm="search" />
+
     <product-category-importer ref="importer" @confirm="search" />
 
     <!-- 批量操作 -->
@@ -103,6 +105,7 @@
   import Add from './add.vue';
   import Modify from './modify.vue';
   import AddChildren from './add-children.vue';
+  import CategoryProperty from './property/index.vue';
   import {
     CheckOutlined,
     CloudUploadOutlined,
@@ -124,6 +127,7 @@
       Add,
       Modify,
       AddChildren,
+      CategoryProperty,
       DownOutlined,
       ProductCategoryImporter,
       BatchHandler,
@@ -179,7 +183,7 @@
           {
             field: 'action',
             title: '操作',
-            width: 160,
+            width: 210,
             slots: { default: 'action_default' },
             fixed: 'right',
           },
@@ -250,6 +254,9 @@
           {
             permission: ['base-data:product:category:add'],
             label: '新增子分类',
+            ifShow: () => {
+              return !row.hasProperty;
+            },
             onClick: () => {
               this.id = row.id;
               this.$nextTick(() => this.$refs.addChildrenDialog.openDialog());
@@ -261,6 +268,16 @@
             onClick: () => {
               this.id = row.id;
               this.$nextTick(() => this.$refs.updateDialog.openDialog());
+            },
+          },
+          {
+            permission: ['base-data:product:category:modify'],
+            label: '属性配置',
+            ifShow: () => {
+              return isEmpty(row.children);
+            },
+            onClick: () => {
+              this.$nextTick(() => this.$refs.propertyDialog.openDialog(row));
             },
           },
         ];

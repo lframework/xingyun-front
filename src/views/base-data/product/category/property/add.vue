@@ -3,11 +3,11 @@
     v-model:open="visible"
     :mask-closable="false"
     width="40%"
-    title="修改"
+    title="新增属性"
     :style="{ top: '20px' }"
     :footer="null"
   >
-    <div v-if="visible" v-permission="['base-data:product:property:modify']" v-loading="loading">
+    <div v-if="visible" v-loading="loading">
       <vxe-form
         border
         title-background
@@ -30,11 +30,7 @@
             </a-select>
           </vxe-form-item>
           <vxe-form-item title="字段类型" field="columnType" span="12">
-            <a-select
-              v-model:value="formData.columnType"
-              allow-clear
-              :disabled="columnTypeDisabled"
-            >
+            <a-select v-model:value="formData.columnType" allow-clear>
               <a-select-option
                 v-for="item in COLUMN_TYPE.values()"
                 :key="item.code"
@@ -66,13 +62,13 @@
 <script>
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
-  import * as api from '@/api/base-data/product/property';
+  import * as api from '@/api/base-data/product/category-property';
   import { createSuccess } from '@/hooks/web/msg';
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
 
   export default defineComponent({
     props: {
-      id: {
+      categoryId: {
         type: String,
         required: true,
       },
@@ -84,15 +80,9 @@
     },
     data() {
       return {
-        // 是否可见
         visible: false,
-        // 字段类型是否禁用
-        columnTypeDisabled: false,
-        // 是否显示加载框
         loading: false,
-        // 表单数据
         formData: {},
-        // 表单校验规则
         rules: {
           code: [{ required: true, message: '请输入编号' }, { validator: validCode }],
           name: [{ required: true, message: '请输入名称' }],
@@ -105,21 +95,15 @@
       this.initFormData();
     },
     methods: {
-      // 打开对话框 由父页面触发
       openDialog() {
         this.visible = true;
-
         this.$nextTick(() => this.open());
       },
-      // 关闭对话框
       closeDialog() {
         this.visible = false;
-        this.$emit('close');
       },
-      // 初始化表单数据
       initFormData() {
         this.formData = {
-          id: '',
           code: '',
           name: '',
           isRequired: '',
@@ -127,23 +111,24 @@
           description: '',
         };
       },
-      // 提交表单事件
+      open() {
+        this.initFormData();
+      },
       submit() {
         this.$refs.form.validate().then((errMaps) => {
           if (!errMaps) {
             this.loading = true;
-            const params = {
-              id: this.formData.id,
-              code: this.formData.code,
-              name: this.formData.name,
-              isRequired: this.formData.isRequired,
-              columnType: this.formData.columnType,
-              description: this.formData.description,
-            };
             api
-              .update(params)
+              .create({
+                categoryId: this.categoryId,
+                code: this.formData.code,
+                name: this.formData.name,
+                isRequired: this.formData.isRequired,
+                columnType: this.formData.columnType,
+                description: this.formData.description,
+              })
               .then(() => {
-                createSuccess('修改成功！');
+                createSuccess('新增成功！');
                 this.$emit('confirm');
                 this.visible = false;
               })
@@ -152,29 +137,6 @@
               });
           }
         });
-      },
-      // 页面显示时触发
-      open() {
-        // 初始化数据
-        this.initFormData();
-
-        // 查询数据
-        this.loadFormData();
-      },
-      // 查询数据
-      loadFormData() {
-        this.columnTypeDisabled = false;
-
-        this.loading = true;
-        api
-          .get(this.id)
-          .then((data) => {
-            this.formData = data;
-            this.columnTypeDisabled = COLUMN_TYPE.CUSTOM.equalsCode(this.formData.columnType);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
       },
     },
   });

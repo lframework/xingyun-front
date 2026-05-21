@@ -265,48 +265,17 @@
           <a-select
             v-else-if="COLUMN_TYPE.SINGLE.equalsCode(modelor.columnType)"
             v-model:value="modelor.text"
+            allow-clear
             placeholder="请选择"
           >
             <a-select-option v-for="item in modelor.items" :key="item.id" :value="item.id">{{
               item.name
             }}</a-select-option>
           </a-select>
-          <div v-else-if="COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)">
-            <a-input-number
-              v-if="COLUMN_DATA_TYPE.INT.equalsCode(modelor.columnDataType)"
-              v-model:value="modelor.text"
-              class="number-input"
-            />
-            <a-input-number
-              v-else-if="COLUMN_DATA_TYPE.FLOAT.equalsCode(modelor.columnDataType)"
-              v-model:value="modelor.text"
-              :precision="2"
-              class="number-input"
-            />
-            <a-input
-              v-else-if="COLUMN_DATA_TYPE.STRING.equalsCode(modelor.columnDataType)"
-              v-model:value="modelor.text"
-            />
-            <a-date-picker
-              v-else-if="COLUMN_DATA_TYPE.DATE.equalsCode(modelor.columnDataType)"
-              v-model:value="modelor.text"
-              placeholder=""
-              value-format="YYYY-MM-DD"
-            />
-            <a-time-picker
-              v-else-if="COLUMN_DATA_TYPE.TIME.equalsCode(modelor.columnDataType)"
-              v-model:value="modelor.text"
-              placeholder=""
-              value-format="HH:mm:ss"
-            />
-            <a-date-picker
-              v-else-if="COLUMN_DATA_TYPE.DATE_TIME.equalsCode(modelor.columnDataType)"
-              v-model:value="modelor.text"
-              placeholder=""
-              show-time
-              value-format="YYYY-MM-DD HH:mm:ss"
-            />
-          </div>
+          <a-input
+            v-else-if="COLUMN_TYPE.CUSTOM.equalsCode(modelor.columnType)"
+            v-model:value="modelor.text"
+          />
         </vxe-form-item>
         <vxe-form-item span="24">
           <div class="form-modal-footer">
@@ -355,7 +324,6 @@
   import ProductSelector from '@/components/Selector/ProductSelector.vue';
   import { PRODUCT_TYPE } from '@/enums/biz/productType';
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
-  import { COLUMN_DATA_TYPE } from '@/enums/biz/columnDataType';
   import { GENERATE_CODE_TYPE } from '@/enums/biz/generateCodeType';
   import MultiCode from './multi-code.vue';
 
@@ -376,7 +344,6 @@
         isEmpty,
         PRODUCT_TYPE,
         COLUMN_TYPE,
-        COLUMN_DATA_TYPE,
       };
     },
     data() {
