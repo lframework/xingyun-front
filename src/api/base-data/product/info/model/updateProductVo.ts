@@ -73,7 +73,7 @@ export interface UpdateProductVo {
   productBundles: ProductBundleVo[];
 
   /**
-   * 商品属性
+   * 分类属性
    */
   properties: ProductPropertyRelationVo[];
 

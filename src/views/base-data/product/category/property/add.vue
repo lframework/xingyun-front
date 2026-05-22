@@ -3,7 +3,7 @@
     v-model:open="visible"
     :mask-closable="false"
     width="40%"
-    title="新增属性"
+    title="新增分类属性"
     :style="{ top: '20px' }"
     :footer="null"
   >

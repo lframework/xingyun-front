@@ -67,7 +67,7 @@
     <!-- 修改窗口 -->
     <modify :id="id" ref="updateDialog" @confirm="search" />
 
-    <!-- 规格值窗口 -->
+    <!-- 分类属性值窗口 -->
     <item ref="itemDialog" :property-id="id" />
 
     <!-- 批量操作 -->
@@ -219,7 +219,7 @@
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (isEmpty(records)) {
-          createError('请选择要删除的属性！');
+          createError('请选择要删除的商品分类属性！');
           return;
         }
 
@@ -231,7 +231,7 @@
         return [
           {
             permission: ['base-data:product:property-item:query'],
-            label: '属性值管理',
+            label: '分类属性值管理',
             ifShow: () => {
               return !COLUMN_TYPE.CUSTOM.equalsCode(row.columnType);
             },

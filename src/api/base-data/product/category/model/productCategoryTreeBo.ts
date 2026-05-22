@@ -25,7 +25,7 @@ export interface ProductCategoryTreeBo {
   description: string;
 
   /**
-   * 是否已配置商品属性
+   * 是否已配置商品分类属性
    */
   hasProperty: boolean;
 }

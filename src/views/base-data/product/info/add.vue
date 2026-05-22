@@ -354,7 +354,7 @@
         formData: {},
         productType: undefined,
         productBundles: [],
-        // 属性列表
+        // 分类属性列表
         modelorList: [],
         // 表单校验规则
         rules: {

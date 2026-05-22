@@ -4,7 +4,7 @@
     :mask-closable="false"
     width="80%"
     :style="{ top: '20px' }"
-    title="属性值管理"
+    title="分类属性值管理"
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:product:property-item:query']">
@@ -211,7 +211,7 @@
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (isEmpty(records)) {
-          createError('请选择要删除的属性值！');
+          createError('请选择要删除的分类属性值！');
           return;
         }
 

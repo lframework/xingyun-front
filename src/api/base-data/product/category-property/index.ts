@@ -8,7 +8,7 @@ const baseUrl = '/basedata/product/category/property';
 const region = 'cloud-api';
 
 /**
- * 分类属性列表
+ * 商品分类属性配置列表
  */
 export function query(categoryId: string): Promise<ProductCategoryPropertyBo[]> {
   return defHttp.get<ProductCategoryPropertyBo[]>(
@@ -25,7 +25,7 @@ export function query(categoryId: string): Promise<ProductCategoryPropertyBo[]> 
 }
 
 /**
- * 绑定已有属性
+ * 绑定已有分类属性
  */
 export function bind(data: BindProductCategoryPropertyVo): Promise<void> {
   return defHttp.post<void>(
@@ -41,7 +41,7 @@ export function bind(data: BindProductCategoryPropertyVo): Promise<void> {
 }
 
 /**
- * 新增属性并绑定分类
+ * 新增分类属性并绑定分类
  */
 export function create(data: CreateProductCategoryPropertyVo): Promise<void> {
   return defHttp.post<void>(
@@ -57,7 +57,7 @@ export function create(data: CreateProductCategoryPropertyVo): Promise<void> {
 }
 
 /**
- * 移除分类属性
+ * 移除商品分类属性配置
  */
 export function remove(categoryId: string, propertyId: string): Promise<void> {
   return defHttp.delete<void>(

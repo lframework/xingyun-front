@@ -272,7 +272,7 @@
           },
           {
             permission: ['base-data:product:category:modify'],
-            label: '属性配置',
+            label: '分类属性配置',
             ifShow: () => {
               return isEmpty(row.children);
             },

@@ -3,7 +3,7 @@
     v-model:open="visible"
     :mask-closable="false"
     width="70%"
-    title="选择已有属性"
+    title="选择已有分类属性"
     :style="{ top: '20px' }"
     :footer="null"
   >
@@ -131,7 +131,7 @@
       submit() {
         const records = this.$refs.grid.getCheckboxRecords();
         if (isEmpty(records)) {
-          createError('请选择商品属性！');
+          createError('请选择分类属性！');
           return;
         }
 

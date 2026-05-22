@@ -22,13 +22,13 @@
         <template #toolbar_buttons>
           <a-space>
             <a-button type="primary" :icon="h(PlusOutlined)" @click="$refs.addDialog.openDialog()"
-              >新增属性</a-button
+              >新增分类属性</a-button
             >
             <a-button
               type="primary"
               :icon="h(CheckOutlined)"
               @click="$refs.selectDialog.openDialog()"
-              >选择已有属性</a-button
+              >选择已有分类属性</a-button
             >
             <a-button :icon="h(ReloadOutlined)" @click="search">刷新</a-button>
           </a-space>
@@ -118,7 +118,7 @@
     },
     computed: {
       title() {
-        return this.categoryName ? `属性配置 - ${this.categoryName}` : '属性配置';
+        return this.categoryName ? `分类属性配置 - ${this.categoryName}` : '分类属性配置';
       },
     },
     methods: {
@@ -147,7 +147,7 @@
         return [
           {
             permission: ['base-data:product:property-item:query'],
-            label: '属性值管理',
+            label: '分类属性值管理',
             ifShow: () => {
               return !COLUMN_TYPE.CUSTOM.equalsCode(row.columnType);
             },
@@ -169,7 +169,7 @@
             label: '移除',
             danger: true,
             onClick: () => {
-              createConfirm('是否确认从当前分类移除此属性？').then(() => {
+              createConfirm('是否确认从当前分类移除此分类属性？').then(() => {
                 api.remove(this.categoryId, row.id).then(() => {
                   createSuccess('移除成功！');
                   this.handleConfirm();
