@@ -1,4 +1,4 @@
-export interface QueryProductPropertyBo {
+export interface QueryProductSalePropertyBo {
   /**
    * ID
    */
@@ -13,21 +13,6 @@ export interface QueryProductPropertyBo {
    * 名称
    */
   name: string;
-
-  /**
-   * 是否必填
-   */
-  isRequired: boolean;
-
-  /**
-   * 录入类型
-   */
-  columnType: number;
-
-  /**
-   * 属性类别
-   */
-  propertyType: number;
 
   /**
    * 已关联商品分类数量

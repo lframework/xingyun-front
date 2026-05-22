@@ -28,4 +28,9 @@ export interface ProductCategoryTreeBo {
    * 是否已配置商品分类属性
    */
   hasProperty: boolean;
+
+  /**
+   * 是否已配置商品销售属性
+   */
+  hasSaleProperty: boolean;
 }

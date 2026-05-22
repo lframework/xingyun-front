@@ -22,18 +22,18 @@
         <template #toolbar_buttons>
           <a-space>
             <a-button
-              v-permission="['base-data:product:property:add']"
+              v-permission="['base-data:product:sale-property:add']"
               type="primary"
               :icon="h(PlusOutlined)"
               @click="$refs.addDialog.openDialog()"
-              >新增分类属性</a-button
+              >新增销售属性</a-button
             >
             <a-button
-              v-permission="['base-data:product:property:modify']"
+              v-permission="['base-data:product:sale-property:modify']"
               type="primary"
               :icon="h(CheckOutlined)"
               @click="$refs.selectDialog.openDialog()"
-              >选择已有分类属性</a-button
+              >选择已有销售属性</a-button
             >
             <a-button :icon="h(ReloadOutlined)" @click="search">刷新</a-button>
           </a-space>
@@ -56,12 +56,11 @@
   import { h, defineComponent } from 'vue';
   import Add from './add.vue';
   import SelectProperty from './select.vue';
-  import Modify from '../../property/modify.vue';
-  import Item from '../../property/item/index.vue';
-  import * as api from '@/api/base-data/product/category-property';
+  import Modify from '../../sale-property/modify.vue';
+  import Item from '../../sale-property/item/index.vue';
+  import * as api from '@/api/base-data/product/category-sale-property';
   import { CheckOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons-vue';
   import { createConfirm, createSuccess } from '@/hooks/web/msg';
-  import { COLUMN_TYPE } from '@/enums/biz/columnType';
 
   export default defineComponent({
     components: {
@@ -94,27 +93,11 @@
         tableColumn: [
           { field: 'code', title: '编号', width: 120 },
           { field: 'name', title: '名称', minWidth: 160 },
-          {
-            field: 'isRequired',
-            title: '是否必填',
-            width: 80,
-            formatter: ({ cellValue }) => {
-              return cellValue ? '是' : '否';
-            },
-          },
-          {
-            field: 'columnType',
-            title: '字段类型',
-            width: 100,
-            formatter: ({ cellValue }) => {
-              return COLUMN_TYPE.getDesc(cellValue);
-            },
-          },
           { field: 'description', title: '备注', minWidth: 160 },
           {
             title: '操作',
             field: 'action',
-            width: 180,
+            width: 200,
             fixed: 'right',
             slots: { default: 'action_default' },
           },
@@ -123,7 +106,7 @@
     },
     computed: {
       title() {
-        return this.categoryName ? `分类属性配置 - ${this.categoryName}` : '分类属性配置';
+        return this.categoryName ? `销售属性配置 - ${this.categoryName}` : '销售属性配置';
       },
     },
     methods: {
@@ -151,18 +134,15 @@
       createActions(row) {
         return [
           {
-            permission: ['base-data:product:property-item:query'],
+            permission: ['base-data:product:sale-property-item:query'],
             label: '属性值管理',
-            ifShow: () => {
-              return !COLUMN_TYPE.CUSTOM.equalsCode(row.columnType);
-            },
             onClick: () => {
               this.propertyId = row.id;
               this.$nextTick(() => this.$refs.itemDialog.openDialog());
             },
           },
           {
-            permission: ['base-data:product:property:modify'],
+            permission: ['base-data:product:sale-property:modify'],
             label: '修改',
             onClick: () => {
               this.propertyId = row.id;
@@ -170,11 +150,11 @@
             },
           },
           {
-            permission: ['base-data:product:property:modify'],
+            permission: ['base-data:product:sale-property:modify'],
             label: '移除',
             danger: true,
             onClick: () => {
-              createConfirm('是否确认从当前分类移除此分类属性？').then(() => {
+              createConfirm('是否确认从当前分类移除此销售属性？').then(() => {
                 api.remove(this.categoryId, row.id).then(() => {
                   createSuccess('移除成功！');
                   this.handleConfirm();

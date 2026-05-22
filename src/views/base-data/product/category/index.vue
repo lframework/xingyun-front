@@ -82,6 +82,8 @@
 
     <category-property ref="propertyDialog" @confirm="search" />
 
+    <category-sale-property ref="salePropertyDialog" @confirm="search" />
+
     <product-category-importer ref="importer" @confirm="search" />
 
     <!-- 批量操作 -->
@@ -106,6 +108,7 @@
   import Modify from './modify.vue';
   import AddChildren from './add-children.vue';
   import CategoryProperty from './property/index.vue';
+  import CategorySaleProperty from './sale-property/index.vue';
   import {
     CheckOutlined,
     CloudUploadOutlined,
@@ -128,6 +131,7 @@
       Modify,
       AddChildren,
       CategoryProperty,
+      CategorySaleProperty,
       DownOutlined,
       ProductCategoryImporter,
       BatchHandler,
@@ -183,7 +187,7 @@
           {
             field: 'action',
             title: '操作',
-            width: 210,
+            width: 240,
             slots: { default: 'action_default' },
             fixed: 'right',
           },
@@ -255,7 +259,7 @@
             permission: ['base-data:product:category:add'],
             label: '新增子分类',
             ifShow: () => {
-              return !row.hasProperty;
+              return !row.hasProperty && !row.hasSaleProperty;
             },
             onClick: () => {
               this.id = row.id;
@@ -271,13 +275,23 @@
             },
           },
           {
-            permission: ['base-data:product:category:modify'],
+            permission: ['base-data:product:property:*'],
             label: '分类属性配置',
             ifShow: () => {
               return isEmpty(row.children);
             },
             onClick: () => {
               this.$nextTick(() => this.$refs.propertyDialog.openDialog(row));
+            },
+          },
+          {
+            permission: ['base-data:product:sale-property:*'],
+            label: '销售属性配置',
+            ifShow: () => {
+              return isEmpty(row.children);
+            },
+            onClick: () => {
+              this.$nextTick(() => this.$refs.salePropertyDialog.openDialog(row));
             },
           },
         ];

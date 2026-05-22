@@ -1,9 +1,9 @@
 <template>
-  <div v-permission="['base-data:product:property:query']">
+  <div v-permission="['base-data:product:sale-property:query']">
     <page-wrapper content-full-height fixed-height>
       <!-- 数据列表 -->
       <vxe-grid
-        id="ProductProperty"
+        id="ProductSaleProperty"
         ref="grid"
         resizable
         show-overflow
@@ -35,7 +35,7 @@
           <a-space>
             <a-button type="primary" :icon="h(SearchOutlined)" @click="search">查询</a-button>
             <a-button
-              v-permission="['base-data:product:property:add']"
+              v-permission="['base-data:product:sale-property:add']"
               type="primary"
               :icon="h(PlusOutlined)"
               @click="$refs.addDialog.openDialog()"
@@ -47,7 +47,7 @@
                   <a-menu-item key="batchDelete" :icon="h(DeleteOutlined)"> 批量删除 </a-menu-item>
                 </a-menu>
               </template>
-              <a-button v-permission="['base-data:product:property:delete']"
+              <a-button v-permission="['base-data:product:sale-property:delete']"
                 >更多<DownOutlined
               /></a-button>
             </a-dropdown>
@@ -78,7 +78,7 @@
     <!-- 修改窗口 -->
     <modify :id="id" ref="updateDialog" @confirm="search" />
 
-    <!-- 分类属性值窗口 -->
+    <!-- 销售属性值窗口 -->
     <item ref="itemDialog" :property-id="id" />
 
     <!-- 已关联商品分类窗口 -->
@@ -105,9 +105,8 @@
   import Modify from './modify.vue';
   import Item from './item/index.vue';
   import RelatedCategoryDialog from '../components/RelatedCategoryDialog.vue';
-  import * as api from '@/api/base-data/product/property';
+  import * as api from '@/api/base-data/product/sale-property';
   import {
-    CheckOutlined,
     PlusOutlined,
     SearchOutlined,
     DeleteOutlined,
@@ -116,11 +115,10 @@
   import { isEmpty, buildSortPageVo } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
   import BatchHandler from '@/components/BatchHandler';
-  import { COLUMN_TYPE } from '@/enums/biz/columnType';
   import { usePermission } from '@/hooks/web/usePermission';
 
   export default defineComponent({
-    name: 'ProductProperty',
+    name: 'ProductSaleProperty',
     components: {
       Add,
       Modify,
@@ -135,7 +133,6 @@
       return {
         api,
         h,
-        CheckOutlined,
         PlusOutlined,
         SearchOutlined,
         DeleteOutlined,
@@ -165,22 +162,6 @@
           { type: 'checkbox', width: 45 },
           { field: 'code', title: '编号', width: 120, sortable: true },
           { field: 'name', title: '名称', minWidth: 160, sortable: true },
-          {
-            field: 'isRequired',
-            title: '是否必填',
-            width: 80,
-            formatter: ({ cellValue }) => {
-              return cellValue ? '是' : '否';
-            },
-          },
-          {
-            field: 'columnType',
-            title: '字段类型',
-            width: 100,
-            formatter: ({ cellValue }) => {
-              return COLUMN_TYPE.getDesc(cellValue);
-            },
-          },
           {
             field: 'categoryCount',
             title: '已关联商品分类',
@@ -215,7 +196,6 @@
         batchHandleDatas: [],
       };
     },
-    created() {},
     methods: {
       // 列表发生查询时的事件
       search() {
@@ -247,7 +227,7 @@
         const records = this.$refs.grid.getCheckboxRecords();
 
         if (isEmpty(records)) {
-          createError('请选择要删除的商品分类属性！');
+          createError('请选择要删除的商品销售属性！');
           return;
         }
 
@@ -263,18 +243,15 @@
       createActions(row) {
         return [
           {
-            permission: ['base-data:product:property-item:query'],
+            permission: ['base-data:product:sale-property-item:query'],
             label: '属性值管理',
-            ifShow: () => {
-              return !COLUMN_TYPE.CUSTOM.equalsCode(row.columnType);
-            },
             onClick: () => {
               this.id = row.id;
               this.$nextTick(() => this.$refs.itemDialog.openDialog());
             },
           },
           {
-            permission: ['base-data:product:property-item:modify'],
+            permission: ['base-data:product:sale-property:modify'],
             label: '修改',
             onClick: () => {
               this.id = row.id;

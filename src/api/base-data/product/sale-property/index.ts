@@ -1,22 +1,24 @@
 import { defHttp } from '/@/utils/http/axios';
 import { PageResult } from '@/api/model/pageResult';
 import { ContentTypeEnum } from '@/enums/httpEnum';
-import { ProductPropertyModelorBo } from '@/api/base-data/product/property/model/productPropertyModelorBo';
-import { UpdateProductPropertyVo } from '@/api/base-data/product/property/model/updateProductPropertyVo';
-import { CreateProductPropertyVo } from '@/api/base-data/product/property/model/createProductPropertyVo';
-import { GetProductPropertyBo } from '@/api/base-data/product/property/model/getProductPropertyBo';
-import { QueryProductPropertyVo } from '@/api/base-data/product/property/model/queryProductPropertyVo';
-import { QueryProductPropertyBo } from '@/api/base-data/product/property/model/queryProductPropertyBo';
+import { ProductSalePropertyModelorBo } from '@/api/base-data/product/sale-property/model/productSalePropertyModelorBo';
+import { UpdateProductSalePropertyVo } from '@/api/base-data/product/sale-property/model/updateProductSalePropertyVo';
+import { CreateProductSalePropertyVo } from '@/api/base-data/product/sale-property/model/createProductSalePropertyVo';
+import { GetProductSalePropertyBo } from '@/api/base-data/product/sale-property/model/getProductSalePropertyBo';
+import { QueryProductSalePropertyVo } from '@/api/base-data/product/sale-property/model/queryProductSalePropertyVo';
+import { QueryProductSalePropertyBo } from '@/api/base-data/product/sale-property/model/queryProductSalePropertyBo';
 import { RelatedProductCategoryBo } from '@/api/base-data/product/category/model/relatedProductCategoryBo';
 
-const baseUrl = '/basedata/product/property';
+const baseUrl = '/basedata/product/sale/property';
 const region = 'cloud-api';
 
 /**
  * 查询列表
  */
-export function query(params: QueryProductPropertyVo): Promise<PageResult<QueryProductPropertyBo>> {
-  return defHttp.get<PageResult<QueryProductPropertyBo>>(
+export function query(
+  params: QueryProductSalePropertyVo,
+): Promise<PageResult<QueryProductSalePropertyBo>> {
+  return defHttp.get<PageResult<QueryProductSalePropertyBo>>(
     {
       url: baseUrl + '/query',
       params,
@@ -31,8 +33,8 @@ export function query(params: QueryProductPropertyVo): Promise<PageResult<QueryP
  * 根据ID查询
  * @param id
  */
-export function get(id: string): Promise<GetProductPropertyBo> {
-  return defHttp.get<GetProductPropertyBo>(
+export function get(id: string): Promise<GetProductSalePropertyBo> {
+  return defHttp.get<GetProductSalePropertyBo>(
     {
       url: baseUrl,
       params: {
@@ -87,7 +89,7 @@ export function deleteById(id: string, showError: boolean = false): Promise<void
  * 新增
  * @param data
  */
-export function create(data: CreateProductPropertyVo): Promise<void> {
+export function create(data: CreateProductSalePropertyVo): Promise<void> {
   return defHttp.post<void>(
     {
       url: baseUrl,
@@ -104,7 +106,7 @@ export function create(data: CreateProductPropertyVo): Promise<void> {
  * 修改
  * @param data
  */
-export function update(data: UpdateProductPropertyVo): Promise<void> {
+export function update(data: UpdateProductSalePropertyVo): Promise<void> {
   return defHttp.put<void>(
     {
       url: baseUrl,
@@ -118,15 +120,12 @@ export function update(data: UpdateProductPropertyVo): Promise<void> {
 }
 
 /**
- * 属性模型
+ * 销售属性模型
  */
-export function getModelorByCategory(categoryId: string): Promise<ProductPropertyModelorBo[]> {
-  return defHttp.get<ProductPropertyModelorBo[]>(
+export function getModelor(): Promise<ProductSalePropertyModelorBo[]> {
+  return defHttp.get<ProductSalePropertyModelorBo[]>(
     {
-      url: baseUrl + '/modelor/category',
-      params: {
-        categoryId,
-      },
+      url: baseUrl + '/modelor',
     },
     {
       region,
