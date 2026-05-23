@@ -84,7 +84,9 @@ export function uploadImage(file: Blob): Promise<string> {
   return defHttp.post<string>(
     {
       url: baseUrl + '/upload/image',
-      data: file,
+      data: {
+        file: file,
+      },
     },
     {
       contentType: ContentTypeEnum.BLOB,
@@ -101,7 +103,9 @@ export function uploadVideo(file: Blob): Promise<string> {
   return defHttp.post<string>(
     {
       url: baseUrl + '/upload/video',
-      data: file,
+      data: {
+        file: file,
+      },
     },
     {
       contentType: ContentTypeEnum.BLOB,

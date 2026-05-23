@@ -18,13 +18,18 @@ let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
 
 // Dynamic introduction
 function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
-  dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../views/**/*.{vue,tsx}');
+  dynamicViewsModules =
+    dynamicViewsModules ||
+    ({
+      ...import.meta.glob('../../views/**/*.{vue,tsx}'),
+      ...import.meta.glob('../../../external/*/views/**/*.{vue,tsx}'),
+    } as Record<string, () => Promise<Recordable>>);
   if (!routes) return;
   routes.forEach((item) => {
     if (!item.component && item.meta?.frameSrc) {
       item.component = 'IFRAME';
     }
-    const { component, name, meta } = item;
+    const { component, name } = item;
     const { children } = item;
     if (component) {
       const layoutFound = LayoutMap.get(component.toUpperCase());
@@ -46,7 +51,7 @@ function dynamicImport(
 ) {
   const keys = Object.keys(dynamicViewsModules);
   const matchKeys = keys.filter((key) => {
-    const k = key.replace('../../views', '');
+    const k = key.replace('../../views', '').replace(/^..\/..\/..\/external\/[^/]+\/views/, '');
     const startFlag = component.startsWith('/');
     const endFlag = component.endsWith('.vue') || component.endsWith('.tsx');
     const startIndex = startFlag ? 0 : 1;

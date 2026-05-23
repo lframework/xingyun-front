@@ -199,7 +199,9 @@
         tableColumn: [
           { type: 'seq', width: 50 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           { field: 'productName', title: '商品名称', width: 260 },
+          { field: 'salePropertyText', title: '销售属性', width: 180 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -357,16 +359,18 @@
         this.tableData
           .filter((item) => isFloatGtZero(item.returnNum))
           .forEach((item) => {
-            if (checkStockNumArr.map((v) => item.productId).includes(item.productId)) {
+            if (checkStockNumArr.map((v) => v.skuId).includes(item.skuId)) {
               checkStockNumArr
-                .filter((v) => v.productId === item.productId)
+                .filter((v) => v.skuId === item.skuId)
                 .forEach((v) => {
                   v.returnNum = add(v.returnNum, item.returnNum);
                 });
             } else {
               checkStockNumArr.push({
                 productId: item.productId,
+                skuId: item.skuId,
                 productCode: item.productCode,
+                skuCode: item.skuCode,
                 productName: item.productName,
                 stockNum: item.stockNum,
                 returnNum: item.returnNum,
@@ -399,7 +403,7 @@
               id: this.id,
               description: this.formData.description,
             })
-            .then((res) => {
+            .then(() => {
               createSuccess('审核通过！');
 
               this.$emit('confirm');
@@ -435,7 +439,7 @@
       // 检查库存数量
       checkStockNum(row) {
         const checkArr = this.tableData
-          .filter((item) => item.productId === row.productId)
+          .filter((item) => item.skuId === row.skuId)
           .map((item) => item.returnNum);
         if (isEmpty(checkArr)) {
           checkArr.push(0);

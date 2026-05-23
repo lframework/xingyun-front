@@ -69,14 +69,37 @@
         <template #productName_default="{ row, rowIndex }">
           <a-auto-complete
             v-if="!row.isFixed && isEmpty(row.productId)"
+            :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
             style="width: 100%"
-            placeholder=""
-            value-key="productName"
+            placeholder="请输入商品编号/名称"
             :options="row.productOptions"
+            :dropdown-match-select-width="false"
+            :dropdown-style="{ width: '900px' }"
             @search="(e) => queryProduct(e, row)"
-            @select="(e) => handleSelectProduct(rowIndex, e, row)"
-          />
+          >
+            <template #dropdownRender>
+              <div v-if="!isEmpty(row.products)">
+                <vxe-table
+                  :data="row.products"
+                  max-height="500"
+                  class="cursor-pointer"
+                  highlight-hover-row
+                  show-overflow
+                  :row-config="{ isHover: true }"
+                  @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product, row)"
+                >
+                  <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="skuCode" title="SKU编号" width="120" />
+                  <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="salePropertyText" title="销售属性" min-width="180" />
+                  <vxe-column field="spec" title="规格" width="80" />
+                  <vxe-column field="unit" title="单位" width="80" />
+                  <vxe-column field="stockNum" title="库存数量" width="140" align="right" />
+                </vxe-table>
+              </div>
+            </template>
+          </a-auto-complete>
           <span v-else>{{ row.productName }}</span>
         </template>
 
@@ -177,12 +200,14 @@
         tableColumn: [
           { type: 'checkbox', width: 45 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           {
             field: 'productName',
             title: '商品名称',
             width: 260,
             slots: { default: 'productName_default' },
           },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -286,6 +311,7 @@
           products: this.tableData.map((item) => {
             return {
               productId: item.productId,
+              skuId: item.skuId || item.productId,
               takeNum: item.takeNum,
               description: item.description,
             };
@@ -375,7 +401,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -409,19 +438,22 @@
           row.productOptions = res.map((item) => {
             return {
               value: item.productId,
-              label: item.productCode + ' ' + item.productName,
+              label: (item.skuCode || item.productCode) + ' ' + item.productName,
             };
           });
         });
       },
       // 选择商品
       handleSelectProduct(index, value, row) {
-        value = row ? row.products.filter((item) => item.productId === value)[0] : value;
+        const product =
+          row && typeof value === 'string'
+            ? row.products.filter((item) => (item.skuId || item.productId) === value)[0]
+            : value;
         for (let i = 0; i < this.tableData.length; i++) {
           const data = this.tableData[i];
-          if (data.productId === value.productId) {
+          if ((data.skuId || data.productId) === (product.skuId || product.productId)) {
             if (i === index) {
-              this.tableData[index] = Object.assign(this.tableData[index], value);
+              this.tableData[index] = Object.assign(this.tableData[index], product);
               return;
             }
             createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
@@ -431,7 +463,7 @@
             return;
           }
         }
-        this.tableData[index] = Object.assign(this.tableData[index], value);
+        this.tableData[index] = Object.assign(this.tableData[index], product);
       },
       // 删除商品
       delProduct() {
@@ -461,7 +493,13 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
+          if (
+            isEmpty(
+              this.tableData.filter(
+                (data) => (item.skuId || item.productId) === (data.skuId || data.productId),
+              ),
+            )
+          ) {
             filterProductList.push(item);
           }
         });
@@ -531,7 +569,7 @@
           .getProducts(e, this.formData.takeStockPlanId)
           .then((products) => {
             products.forEach((item) => {
-              const tableData = this.tableData.filter((obj) => obj.productId === item.productId);
+              const tableData = this.tableData.filter((obj) => obj.skuId === item.skuId);
               if (!isEmpty(tableData)) {
                 tableData.forEach((obj) => {
                   obj.takeNum = item.takeNum;

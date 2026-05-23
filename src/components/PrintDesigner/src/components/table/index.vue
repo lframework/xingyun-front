@@ -23,45 +23,47 @@
         borderStyle: 'solid',
       }"
     >
-      <tr
-        :style="{
-          borderColor: val.style.borderColor,
-          borderWidth: '1px',
-          borderStyle: 'solid',
-        }"
-      >
-        <th
+      <tbody>
+        <tr
           :style="{
             borderColor: val.style.borderColor,
             borderWidth: '1px',
             borderStyle: 'solid',
-            fontSize: val.style.FontSize + 'px',
           }"
-          v-for="item in columns"
-          :key="item.name"
-          :width="item.name === '_seq' ? 40 : ''"
-          >{{ item.title }}</th
         >
-      </tr>
-      <tr
-        :style="{
-          borderColor: val.style.borderColor,
-          borderWidth: '1px',
-          borderStyle: 'solid',
-        }"
-      >
-        <td
+          <th
+            :style="{
+              borderColor: val.style.borderColor,
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              fontSize: val.style.FontSize + 'px',
+            }"
+            v-for="item in columns"
+            :key="item.name"
+            :width="item.name === '_seq' ? 40 : ''"
+            >{{ item.title }}</th
+          >
+        </tr>
+        <tr
           :style="{
             borderColor: val.style.borderColor,
             borderWidth: '1px',
             borderStyle: 'solid',
-            fontSize: val.style.FontSize + 'px',
           }"
-          v-for="item in columns"
-          :key="item.name"
-          v-html="item.value"
-        ></td>
-      </tr>
+        >
+          <td
+            :style="{
+              borderColor: val.style.borderColor,
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              fontSize: val.style.FontSize + 'px',
+            }"
+            v-for="item in columns"
+            :key="item.name"
+            v-html="item.value"
+          ></td>
+        </tr>
+      </tbody>
       <tfoot v-if="footerRows.length > 0">
         <tr
           v-for="(row, rowIndex) in footerRows"

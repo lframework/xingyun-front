@@ -29,7 +29,9 @@
             <a>菜单排序</a>
           </template>
           <template #description>
-            <span class="custom-setting-description">自定义左侧菜单显示顺序，支持同级菜单拖拽排序。</span>
+            <span class="custom-setting-description"
+              >自定义左侧菜单显示顺序，支持同级菜单拖拽排序。</span
+            >
           </template>
         </a-list-item-meta>
         <template #actions>

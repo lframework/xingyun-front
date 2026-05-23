@@ -1,4 +1,3 @@
-import list from '@/views/development/custom/list/index.vue';
 import { OrderPayTypeBo } from '@/api/sc/pay-type/model/orderPayTypeBo';
 
 export interface GetSaleOutSheetBo {
@@ -145,9 +144,24 @@ export interface OrderDetailBo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 商品编号
    */
   productCode: string;
+
+  /**
+   * SKU编号
+   */
+  skuCode: string;
+
+  /**
+   * 销售属性
+   */
+  salePropertyText: string;
 
   /**
    * 商品名称

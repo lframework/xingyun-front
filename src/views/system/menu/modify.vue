@@ -32,7 +32,11 @@
           <icon-picker v-model:value="formData.icon" />
         </a-form-item>
         <a-form-item label="父级菜单" name="parentId">
-          <sys-menu-selector v-model:value="formData.parentId" :tenant-id="tenantId" :only-final="false" />
+          <sys-menu-selector
+            v-model:value="formData.parentId"
+            :tenant-id="tenantId"
+            :only-final="false"
+          />
         </a-form-item>
         <a-form-item
           v-if="
@@ -279,7 +283,7 @@
       },
       doSubmit() {
         this.loading = true;
-        const params = Object.assign({}, this.formData, {tenantId: this.tenantId});
+        const params = Object.assign({}, this.formData, { tenantId: this.tenantId });
         api
           .update(params)
           .then(() => {

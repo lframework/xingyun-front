@@ -5,14 +5,44 @@ export interface ProductSelectorBo {
   id: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
+   * SKU编号
+   */
+  skuCode: string;
+
+  /**
    * 编号
    */
   code: string;
 
   /**
+   * 商品ID
+   */
+  productId: string;
+
+  /**
+   * 商品编号
+   */
+  productCode: string;
+
+  /**
    * 名称
    */
   name: string;
+
+  /**
+   * 商品名称
+   */
+  productName: string;
+
+  /**
+   * 销售属性
+   */
+  salePropertyText: string;
 
   /**
    * 分类ID

@@ -77,7 +77,7 @@
             :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
             style="width: 100%"
-            placeholder="请输入商品编号/名称"
+            placeholder="请输入商品编号/SKU编号/名称"
             :options="row.productOptions"
             :dropdown-match-select-width="false"
             :dropdown-style="{ width: '890px' }"
@@ -96,7 +96,9 @@
                   @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
                 >
                   <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="skuCode" title="SKU编号" width="120" />
                   <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="salePropertyText" title="销售属性" width="180" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
                   <vxe-column
@@ -202,7 +204,7 @@
             ref="scanInputRef"
             v-model:value.trim="scanCode"
             allow-clear
-            placeholder="请扫描商品条码/商品编号，回车确认"
+            placeholder="请扫描商品条码/商品编号/SKU编号，回车确认"
             :disabled="loading"
             @focus="handleScanInputFocus"
             @blur="handleScanInputBlur"
@@ -226,7 +228,9 @@
             @cell-click="({ row }) => selectScanCandidate(row)"
           >
             <vxe-column field="productCode" title="商品编号" width="120" />
+            <vxe-column field="skuCode" title="SKU编号" width="120" />
             <vxe-column field="productName" title="商品名称" min-width="200" />
+            <vxe-column field="salePropertyText" title="销售属性" width="180" />
             <vxe-column field="spec" title="规格" width="80" />
             <vxe-column field="unit" title="单位" width="80" />
             <vxe-column field="purchasePrice" title="采购价（元）" width="140" align="right" />
@@ -276,6 +280,7 @@
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
     applyScannedProductResult,
+    formatScannedProductDisplayName,
     beginNextScanConsumeState,
     openScanDialogState,
     closeScanDialogState,
@@ -349,12 +354,14 @@
         tableColumn: [
           { type: 'checkbox', width: 45 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           {
             field: 'productName',
             title: '商品名称',
             width: 260,
             slots: { default: 'productName_default' },
           },
+          { field: 'salePropertyText', title: '销售属性', width: 180 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -519,7 +526,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -546,9 +556,9 @@
           createError('请先选择采购收货单！');
           return;
         }
-        this.tableData.unshift(this.emptyProduct());
+        this.tableData.push(this.emptyProduct());
         this.$nextTick(() => {
-          const productInputRef = this.$refs.productInputRef0;
+          const productInputRef = this.$refs['productInputRef' + (this.tableData.length - 1)];
           if (productInputRef) {
             productInputRef.focus();
           }
@@ -567,7 +577,7 @@
           row.productOptions = res.map((item) => {
             return {
               value: item.productId,
-              label: item.productCode + ' ' + item.productName,
+              label: (item.skuCode || item.productCode) + ' ' + item.productName,
             };
           });
         });
@@ -640,20 +650,12 @@
 
         if (result.type === 'merged') {
           this.setScanMessage(
-            '商品【' +
-              product.productCode +
-              ' ' +
-              product.productName +
-              '】退货数量已 +1，可继续扫码',
+            '商品【' + formatScannedProductDisplayName(product) + '】退货数量已 +1，可继续扫码',
             'success',
           );
         } else {
           this.setScanMessage(
-            '已新增商品【' +
-              product.productCode +
-              ' ' +
-              product.productName +
-              '】，可继续扫码下一件',
+            '已新增商品【' + formatScannedProductDisplayName(product) + '】，可继续扫码下一件',
             'success',
           );
         }
@@ -677,7 +679,7 @@
         }
 
         if (isEmpty(this.scanCode)) {
-          this.setScanMessage('请先扫描商品条码或商品编号！', 'warning');
+          this.setScanMessage('请先扫描商品条码、商品编号或SKU编号！', 'warning');
           this.focusScanInput();
           return;
         }
@@ -798,13 +800,11 @@
       },
       // 批量新增商品
       batchAddProduct(productList) {
-        productList
-          .slice()
-          .reverse()
-          .forEach((item) => {
-            this.tableData.unshift(this.emptyProduct());
-            this.handleSelectProduct(0, item);
-          });
+        productList.forEach((item) => {
+          const rowIndex = this.tableData.length;
+          this.tableData.push(this.emptyProduct());
+          this.handleSelectProduct(rowIndex, item);
+        });
       },
       // 校验数据
       validData() {
@@ -938,6 +938,7 @@
             .map((t) => {
               const product = {
                 productId: t.productId,
+                skuId: t.skuId || t.productId,
                 returnNum: t.returnNum,
                 description: t.description,
               };
@@ -981,13 +982,15 @@
         this.tableData
           .filter((item) => isFloatGtZero(item.returnNum))
           .forEach((item) => {
-            const stockItem = checkStockNumArr.find((v) => v.productId === item.productId);
+            const stockItem = checkStockNumArr.find((v) => v.skuId === item.skuId);
             if (stockItem) {
               stockItem.returnNum = add(stockItem.returnNum, item.returnNum);
             } else {
               checkStockNumArr.push({
                 productId: item.productId,
+                skuId: item.skuId,
                 productCode: item.productCode,
+                skuCode: item.skuCode,
                 productName: item.productName,
                 stockNum: item.stockNum,
                 returnNum: item.returnNum,
@@ -1100,7 +1103,7 @@
       // 检查库存数量
       checkStockNum(row) {
         const checkArr = this.tableData
-          .filter((item) => item.productId === row.productId)
+          .filter((item) => item.skuId === row.skuId)
           .map((item) => item.returnNum);
         if (isEmpty(checkArr)) {
           checkArr.push(0);

@@ -2,7 +2,7 @@
   <div>
     <excel-importer
       ref="importer"
-      :tip-msg="'导入只支持新增商品信息。\n注：1、只支持导入普通商品。\n2、导入多个扩展编号，用英文逗号隔开。'"
+      :tip-msg="'导入只支持新增商品信息。\n注：1、只支持导入单SKU普通商品，不支持多SKU商品、组合商品。\n2、商品编号可不填，SKU编号必填，两者需分别填写。\n3、导入多个SKU扩展编号，用英文逗号隔开。'"
       :download-template-url="downloadTemplate"
       :upload-url="upload"
       @confirm="(e) => $emit('confirm', e)"

@@ -4,14 +4,16 @@
       ref="selector"
       :request="getList"
       :load="getLoad"
+      :column-option="{ label: PRODUCT_SELECTOR_LABEL_FIELD, value: 'id' }"
       :table-column="[
-        { field: 'code', title: '商品编号', width: 120 },
+        { field: 'productCode', title: '商品编号', width: 120 },
+        { field: 'skuCode', title: 'SKU编号', width: 120 },
         { field: 'name', title: '商品名称', minWidth: 260 },
+        { field: 'salePropertyText', title: '销售属性', width: 180 },
         { field: 'unit', title: '单位', width: 80 },
         { field: 'spec', title: '规格', width: 80 },
         { field: 'categoryName', title: '商品分类', width: 120 },
         { field: 'brandName', title: '商品品牌', width: 120 },
-        { field: 'available', title: '状态', width: 80, slots: { default: 'available_default' } },
       ]"
       :request-params="_requestParams"
       v-bind="$attrs"
@@ -63,16 +65,6 @@
                 >
               </a-select>
             </j-form-item>
-            <j-form-item v-if="isEmpty(requestParams.available)" label="状态">
-              <a-select v-model:value="searchParams.available" placeholder="全部" allow-clear>
-                <a-select-option
-                  v-for="item in AVAILABLE.values()"
-                  :key="item.code"
-                  :value="item.code"
-                  >{{ item.desc }}</a-select-option
-                >
-              </a-select>
-            </j-form-item>
           </j-form>
         </j-border>
       </template>
@@ -100,6 +92,10 @@
   import ProductCategorySelector from '@/components/Selector/ProductCategorySelector.vue';
   import { AVAILABLE } from '@/enums/biz/available';
   import { PRODUCT_TYPE } from '@/enums/biz/productType';
+  import {
+    PRODUCT_SELECTOR_LABEL_FIELD,
+    withProductSelectorLabels,
+  } from './productSelectorLabelHelper.mjs';
 
   export default defineComponent({
     name: 'ProductSelector',
@@ -121,6 +117,7 @@
         isEmpty,
         AVAILABLE,
         PRODUCT_TYPE,
+        PRODUCT_SELECTOR_LABEL_FIELD,
       };
     },
     data() {
@@ -135,15 +132,19 @@
     },
     methods: {
       getList(params) {
-        return api.selector({
-          ...params,
-          available: true,
-          ...this.searchParams,
-          ...this.requestParams,
-        });
+        return api
+          .selector({
+            ...params,
+            available: true,
+            ...this.searchParams,
+            ...this.requestParams,
+          })
+          .then((res) => {
+            return { ...res, datas: withProductSelectorLabels(res.datas) };
+          });
       },
       getLoad(ids) {
-        return api.loadProduct(ids);
+        return api.loadProduct(ids).then((res) => withProductSelectorLabels(res));
       },
     },
   });

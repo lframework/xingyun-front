@@ -1,6 +1,6 @@
 import { defHttp } from '/@/utils/http/axios';
 import { PageResult } from '@/api/model/pageResult';
-import { ContentTypeEnum } from '@/enums/httpEnum';
+import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
 import { ProductSalePropertyModelorBo } from '@/api/base-data/product/sale-property/model/productSalePropertyModelorBo';
 import { UpdateProductSalePropertyVo } from '@/api/base-data/product/sale-property/model/updateProductSalePropertyVo';
 import { CreateProductSalePropertyVo } from '@/api/base-data/product/sale-property/model/createProductSalePropertyVo';
@@ -128,6 +128,37 @@ export function getModelor(): Promise<ProductSalePropertyModelorBo[]> {
       url: baseUrl + '/modelor',
     },
     {
+      region,
+    },
+  );
+}
+
+/**
+ * 下载导入模板
+ */
+export function downloadImportTemplate(): Promise<void> {
+  return defHttp.get<void>(
+    {
+      url: baseUrl + '/import/template',
+    },
+    {
+      responseType: ResponseEnum.BLOB,
+      region,
+    },
+  );
+}
+
+/**
+ * 导入
+ */
+export function importExcel(data: { id: string; file: Blob }): Promise<void> {
+  return defHttp.post<void>(
+    {
+      url: baseUrl + '/import',
+      data,
+    },
+    {
+      contentType: ContentTypeEnum.BLOB,
       region,
     },
   );

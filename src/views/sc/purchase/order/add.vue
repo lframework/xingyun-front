@@ -89,7 +89,9 @@
                   @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
                 >
                   <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="skuCode" title="SKU编号" width="120" />
                   <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="salePropertyText" title="销售属性" min-width="180" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
                   <vxe-column
@@ -222,7 +224,9 @@
             @cell-click="({ row }) => selectScanCandidate(row)"
           >
             <vxe-column field="productCode" title="商品编号" width="120" />
+            <vxe-column field="skuCode" title="SKU编号" width="120" />
             <vxe-column field="productName" title="商品名称" min-width="200" />
+            <vxe-column field="salePropertyText" title="销售属性" min-width="180" />
             <vxe-column field="spec" title="规格" width="80" />
             <vxe-column field="unit" title="单位" width="80" />
             <vxe-column field="purchasePrice" title="采购价（元）" width="140" align="right" />
@@ -273,11 +277,11 @@
     UploadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/order';
-  import * as productApi from '@/api/base-data/product/info';
   import * as configApi from '@/api/sc/purchase/config';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
     applyScannedProductResult,
+    formatScannedProductDisplayName,
     beginNextScanConsumeState,
     openScanDialogState,
     closeScanDialogState,
@@ -355,12 +359,14 @@
         tableColumn: [
           { type: 'checkbox', width: 45 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           {
             field: 'productName',
             title: '商品名称',
             width: 260,
             slots: { default: 'productName_default' },
           },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -418,7 +424,7 @@
         isScanInputFocused: false,
         // EXCEL修改价格列定义
         excelModifyPriceColumns: [
-          { field: 'productCode', label: '商品编号', required: true },
+          { field: 'skuCode', label: 'SKU编号', required: true },
           { field: 'price', label: '采购价', required: false },
         ],
       };
@@ -510,7 +516,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -555,7 +564,7 @@
           row.productOptions = res.map((item) => {
             return {
               value: item.productId,
-              label: item.productCode + ' ' + item.productName,
+              label: (item.skuCode || item.productCode) + ' ' + item.productName,
             };
           });
         });
@@ -617,20 +626,12 @@
 
         if (result.type === 'merged') {
           this.setScanMessage(
-            '商品【' +
-              product.productCode +
-              ' ' +
-              product.productName +
-              '】采购数量已 +1，可继续扫码',
+            '商品【' + formatScannedProductDisplayName(product) + '】采购数量已 +1，可继续扫码',
             'success',
           );
         } else {
           this.setScanMessage(
-            '已新增商品【' +
-              product.productCode +
-              ' ' +
-              product.productName +
-              '】，可继续扫码下一件',
+            '已新增商品【' + formatScannedProductDisplayName(product) + '】，可继续扫码下一件',
             'success',
           );
         }
@@ -840,8 +841,8 @@
           let matchedCount = 0;
 
           for (const row of data) {
-            const productCode = row.productCode;
-            if (isEmpty(productCode)) {
+            const skuCode = row.skuCode;
+            if (isEmpty(skuCode)) {
               continue;
             }
             if (isEmpty(row.price)) {
@@ -850,17 +851,10 @@
 
             const price = row.price;
 
-            // 调用接口查询商品ID
-            const productId = await productApi.getIdByCode(productCode);
-            if (isEmpty(productId)) {
-              continue;
-            }
-
-            // 匹配列表中的商品并修改价格
             this.tableData
               .filter((item) => !item.isGift)
               .forEach((item) => {
-                if (item.productId === productId) {
+                if (item.skuCode === skuCode) {
                   item.purchasePrice = price;
                   matchedCount++;
                 }
@@ -985,6 +979,7 @@
           products: this.tableData.map((t) => {
             return {
               productId: t.productId,
+              skuId: t.skuId || t.productId,
               purchasePrice: t.purchasePrice,
               purchaseNum: t.purchaseNum,
               description: t.description,

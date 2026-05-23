@@ -1,9 +1,5 @@
 import { createConfirm } from '@/hooks/web/msg';
-import {
-  buildVersionRequestUrl,
-  isVersionAssetError,
-  isVersionChanged,
-} from './helper';
+import { buildVersionRequestUrl, isVersionAssetError, isVersionChanged } from './helper';
 
 const VERSION_FILE_PATH = '/version.json';
 const POLL_INTERVAL = 60 * 1000;
@@ -99,7 +95,9 @@ function isReloadNavigation(): boolean {
     return false;
   }
 
-  const [navigationEntry] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+  const [navigationEntry] = performance.getEntriesByType(
+    'navigation',
+  ) as PerformanceNavigationTiming[];
   return navigationEntry?.type === 'reload';
 }
 
@@ -117,7 +115,10 @@ function handlePageShow(event: PageTransitionEvent) {
 function handleWindowError(event: Event) {
   const errorEvent = event as ErrorEvent;
 
-  if (isStaticAssetLoadError(event) || isVersionAssetError(errorEvent.error ?? errorEvent.message)) {
+  if (
+    isStaticAssetLoadError(event) ||
+    isVersionAssetError(errorEvent.error ?? errorEvent.message)
+  ) {
     showUpdateConfirm();
   }
 }

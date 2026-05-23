@@ -32,6 +32,11 @@ export interface ProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 修改后盘点数量
    */
   takeNum: number;

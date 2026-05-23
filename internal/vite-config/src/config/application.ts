@@ -21,10 +21,7 @@ function defineApplicationConfig(defineOptions: DefineOptions = {}) {
   return defineConfig(async ({ command, mode }) => {
     const root = process.cwd();
     const isBuild = command === 'build';
-    const { VITE_PUBLIC_PATH, VITE_USE_MOCK, VITE_BUILD_COMPRESS, VITE_ENABLE_ANALYZE } = loadEnv(
-      mode,
-      root,
-    );
+    const { VITE_PUBLIC_PATH, VITE_BUILD_COMPRESS, VITE_ENABLE_ANALYZE } = loadEnv(mode, root);
 
     const defineData = await createDefineData(root);
     const plugins = await createPlugins({
@@ -48,6 +45,11 @@ function defineApplicationConfig(defineOptions: DefineOptions = {}) {
           {
             find: /\/@\//,
             replacement: pathResolve('src') + '/',
+          },
+          // /@external/xxxx => external/xxxx
+          {
+            find: /\/@external\//,
+            replacement: pathResolve('external') + '/',
           },
           // /#/xxxx => types/xxxx
           {

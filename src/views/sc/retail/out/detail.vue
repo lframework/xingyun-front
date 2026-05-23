@@ -144,15 +144,6 @@
       OrderTimeLine,
     },
     mixins: [printMix],
-    setup() {
-      return {
-        isEmpty,
-        isFloatGeZero,
-        getNumber,
-        mul,
-        RETAIL_OUT_SHEET_STATUS,
-      };
-    },
     props: {
       id: {
         type: String,
@@ -180,7 +171,9 @@
         tableColumn: [
           { type: 'seq', width: 50 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           { field: 'productName', title: '商品名称', width: 260 },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },

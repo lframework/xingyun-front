@@ -47,7 +47,9 @@ export function formatAmountAxisLabel(value) {
   const absValue = Math.abs(normalized);
   const matchedUnit = AMOUNT_AXIS_UNITS.find((item) => absValue >= item.value);
   if (matchedUnit) {
-    return `￥${formatLocalizedNumber(normalized / matchedUnit.value, { fixed: true })}${matchedUnit.label}`;
+    return `￥${formatLocalizedNumber(normalized / matchedUnit.value, { fixed: true })}${
+      matchedUnit.label
+    }`;
   }
 
   return formatFullAmountLabel(normalized);

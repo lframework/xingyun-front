@@ -55,19 +55,27 @@ export interface OrderDetailBo {
    */
   productCode: string;
   /**
+   * SKU编号
+   */
+  skuCode: string;
+  /**
+   * 销售属性
+   */
+  salePropertyText: string;
+  /**
    * 商品名称
    */
   productName: string;
   /**
-   * 收货数量
+   * 销售数量
    */
-  receiveNum: number;
+  orderNum: number;
   /**
-   * 采购价
+   * 现价
    */
-  purchasePrice: number;
+  taxPrice: number;
   /**
-   * 收货金额
+   * 销售金额
    */
-  receiveAmount: number;
+  orderAmount: number;
 }

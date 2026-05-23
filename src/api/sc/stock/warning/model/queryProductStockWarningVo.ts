@@ -7,9 +7,9 @@ export interface QueryProductStockWarningVo extends SortPageVo {
   scId: string;
 
   /**
-   * 商品ID
+   * SKU ID
    */
-  productId: string;
+  skuId: string;
 
   /**
    * 采购供应商ID

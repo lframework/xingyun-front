@@ -3,6 +3,12 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : 0;
 }
 
+export function formatScannedProductDisplayName(product = {}) {
+  return [product.productCode, product.skuCode, product.productName, product.salePropertyText]
+    .filter(Boolean)
+    .join(' ');
+}
+
 export function openScanDialogState(state = {}) {
   return {
     ...state,
@@ -92,11 +98,12 @@ export function applyScannedProductResult(tableData, product, options = {}) {
   const {
     purchaseStep = 1,
     quantityField = 'purchaseNum',
+    identityField = 'productId',
     createRow = (item, step) => ({ ...item, isGift: false, [quantityField]: step }),
   } = options;
   const nextTableData = tableData.map((item) => ({ ...item }));
   const normalRowIndex = nextTableData.findIndex(
-    (item) => item.productId === product.productId && !item.isGift,
+    (item) => item[identityField] === product[identityField] && !item.isGift,
   );
 
   if (normalRowIndex >= 0) {

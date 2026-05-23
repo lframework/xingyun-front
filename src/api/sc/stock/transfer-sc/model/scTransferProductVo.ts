@@ -5,6 +5,11 @@ export interface ScTransferProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 调拨数量
    */
   transferNum: number;

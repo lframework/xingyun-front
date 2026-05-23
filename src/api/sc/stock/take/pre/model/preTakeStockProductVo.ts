@@ -5,6 +5,11 @@ export interface PreTakeStockProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 初盘数量
    */
   firstNum: number;

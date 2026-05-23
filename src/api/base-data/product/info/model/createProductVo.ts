@@ -1,11 +1,12 @@
 import { ProductBundleVo } from '@/api/base-data/product/info/model/productBundleVo';
 import { ProductPropertyRelationVo } from '@/api/base-data/product/info/model/productPropertyRelationVo';
+import { ProductSkuVo } from '@/api/base-data/product/info/model/productSkuVo';
 
 export interface CreateProductVo {
   /**
    * 编号
    */
-  code: string;
+  code?: string;
 
   /**
    * 名称
@@ -53,6 +54,21 @@ export interface CreateProductVo {
   productType: number;
 
   /**
+   * 商品主图
+   */
+  mainImage?: string[];
+
+  /**
+   * 详情图片
+   */
+  detailImages?: string[];
+
+  /**
+   * SKU列表
+   */
+  skus?: ProductSkuVo[];
+
+  /**
    * 重量（kg）
    */
   weight: number;
@@ -71,19 +87,4 @@ export interface CreateProductVo {
    * 分类属性
    */
   properties: ProductPropertyRelationVo[];
-
-  /**
-   * 采购价
-   */
-  purchasePrice: number;
-
-  /**
-   * 销售价
-   */
-  salePrice: number;
-
-  /**
-   * 零售价
-   */
-  retailPrice: number;
 }

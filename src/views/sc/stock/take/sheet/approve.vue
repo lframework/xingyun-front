@@ -180,7 +180,9 @@
         tableColumn: [
           { type: 'seq', width: 50 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           { field: 'productName', title: '商品名称', width: 260 },
+          { field: 'salePropertyText', title: '销售属性', width: 180 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -279,7 +281,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -298,7 +303,7 @@
       handleSelectProduct(index, value) {
         for (let i = 0; i < this.tableData.length; i++) {
           const data = this.tableData[i];
-          if (data.productId === value.productId) {
+          if ((data.skuId || data.productId) === (value.skuId || value.productId)) {
             createError('新增商品与第' + (i + 1) + '行商品相同，请勿重复添加');
             this.tableData[index] = Object.assign(this.tableData[index], this.emptyProduct());
             return;
@@ -330,7 +335,13 @@
       batchAddProduct(productList) {
         const filterProductList = [];
         productList.forEach((item) => {
-          if (isEmpty(this.tableData.filter((data) => item.productId === data.productId))) {
+          if (
+            isEmpty(
+              this.tableData.filter(
+                (data) => (item.skuId || item.productId) === (data.skuId || data.productId),
+              ),
+            )
+          ) {
             filterProductList.push(item);
           }
         });

@@ -133,7 +133,9 @@
                   @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
                 >
                   <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="skuCode" title="SKU编号" width="120" />
                   <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="salePropertyText" title="销售属性" min-width="180" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
                   <vxe-column
@@ -256,7 +258,6 @@
     UploadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/purchase/order';
-  import * as productApi from '@/api/base-data/product/info';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
     isEmpty,
@@ -328,12 +329,14 @@
         tableColumn: [
           { type: 'checkbox', width: 45 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           {
             field: 'productName',
             title: '商品名称',
             width: 260,
             slots: { default: 'productName_default' },
           },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -380,7 +383,7 @@
         tableData: [],
         // EXCEL修改价格列定义
         excelModifyPriceColumns: [
-          { field: 'productCode', label: '商品编号', required: true },
+          { field: 'skuCode', label: 'SKU编号', required: true },
           { field: 'price', label: '采购价', required: false },
         ],
       };
@@ -478,7 +481,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -523,7 +529,7 @@
           row.productOptions = res.map((item) => {
             return {
               value: item.productId,
-              label: item.productCode + ' ' + item.productName,
+              label: (item.skuCode || item.productCode) + ' ' + item.productName,
             };
           });
         });
@@ -686,8 +692,8 @@
           let matchedCount = 0;
 
           for (const row of data) {
-            const productCode = row.productCode;
-            if (isEmpty(productCode)) {
+            const skuCode = row.skuCode;
+            if (isEmpty(skuCode)) {
               continue;
             }
 
@@ -697,15 +703,10 @@
 
             const price = row.price;
 
-            const productId = await productApi.getIdByCode(productCode);
-            if (isEmpty(productId)) {
-              continue;
-            }
-
             this.tableData
               .filter((item) => !item.isGift)
               .forEach((item) => {
-                if (item.productId === productId) {
+                if (item.skuCode === skuCode) {
                   item.purchasePrice = price;
                   matchedCount++;
                 }
@@ -835,6 +836,7 @@
           products: this.tableData.map((t) => {
             return {
               productId: t.productId,
+              skuId: t.skuId || t.productId,
               purchasePrice: t.purchasePrice,
               purchaseNum: t.purchaseNum,
               description: t.description,

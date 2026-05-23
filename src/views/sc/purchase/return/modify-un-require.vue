@@ -119,7 +119,7 @@
             :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
             style="width: 100%"
-            placeholder="请输入商品编号/名称"
+            placeholder="请输入商品编号/SKU编号/名称"
             :options="row.productOptions"
             :dropdown-match-select-width="false"
             :dropdown-style="{ width: '890px' }"
@@ -138,7 +138,9 @@
                   @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
                 >
                   <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="skuCode" title="SKU编号" width="120" />
                   <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="salePropertyText" title="销售属性" width="180" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
                   <vxe-column
@@ -263,7 +265,6 @@
   import SupplierSelector from '@/components/Selector/SupplierSelector.vue';
   import * as api from '@/api/sc/purchase/return';
   import * as purchaseApi from '@/api/sc/purchase/order';
-  import * as productApi from '@/api/base-data/product/info';
   import * as receiveApi from '@/api/sc/purchase/receive';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
@@ -335,12 +336,14 @@
         tableColumn: [
           { type: 'checkbox', width: 45 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           {
             field: 'productName',
             title: '商品名称',
             width: 260,
             slots: { default: 'productName_default' },
           },
+          { field: 'salePropertyText', title: '销售属性', width: 180 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -393,7 +396,7 @@
         tableData: [],
         // EXCEL修改价格列定义
         excelModifyPriceColumns: [
-          { field: 'productCode', label: '商品编号', required: true },
+          { field: 'skuCode', label: 'SKU编号', required: true },
           { field: 'price', label: '退货价', required: false },
         ],
       };
@@ -500,7 +503,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -546,7 +552,7 @@
           row.productOptions = res.map((item) => {
             return {
               value: item.productId,
-              label: item.productCode + ' ' + item.productName,
+              label: (item.skuCode || item.productCode) + ' ' + item.productName,
             };
           });
         });
@@ -586,10 +592,10 @@
         }
         this.$refs.batchAddProductDialog.openDialog();
       },
-      purchasePriceInput(row, value) {
+      purchasePriceInput(_row, _value) {
         this.calcSum();
       },
-      returnNumInput(value) {
+      returnNumInput(_value) {
         this.calcSum();
       },
       // 计算汇总数据
@@ -708,8 +714,8 @@
           let matchedCount = 0;
 
           for (const row of data) {
-            const productCode = row.productCode;
-            if (isEmpty(productCode)) {
+            const skuCode = row.skuCode;
+            if (isEmpty(skuCode)) {
               continue;
             }
 
@@ -719,15 +725,10 @@
 
             const price = row.price;
 
-            const productId = await productApi.getIdByCode(productCode);
-            if (isEmpty(productId)) {
-              continue;
-            }
-
             this.tableData
               .filter((item) => !item.isGift)
               .forEach((item) => {
-                if (item.productId === productId) {
+                if (item.skuCode === skuCode) {
                   item.purchasePrice = price;
                   matchedCount++;
                 }
@@ -843,6 +844,7 @@
             .map((t) => {
               const product = {
                 productId: t.productId,
+                skuId: t.skuId || t.productId,
                 purchasePrice: t.purchasePrice,
                 returnNum: t.returnNum,
                 description: t.description,
@@ -855,7 +857,7 @@
         this.loading = true;
         api
           .update(params)
-          .then((res) => {
+          .then((_res) => {
             createSuccess('保存成功！');
 
             this.$emit('confirm');
@@ -885,7 +887,7 @@
       // 检查库存数量
       checkStockNum(row) {
         const checkArr = this.tableData
-          .filter((item) => item.productId === row.productId)
+          .filter((item) => item.skuId === row.skuId)
           .map((item) => item.returnNum);
         if (isEmpty(checkArr)) {
           checkArr.push(0);

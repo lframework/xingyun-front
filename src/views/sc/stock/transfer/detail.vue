@@ -153,7 +153,9 @@
         tableColumn: [
           { type: 'seq', width: 50 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           { field: 'productName', title: '商品名称', width: 260 },
+          { field: 'salePropertyText', title: '销售属性', width: 180 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },

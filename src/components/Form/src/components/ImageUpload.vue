@@ -1,5 +1,5 @@
 <template>
-  <div class="clearfix">
+  <div ref="uploadWrapperRef" class="clearfix">
     <a-upload
       v-model:file-list="fileList"
       :list-type="listType"
@@ -25,16 +25,24 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType, reactive, ref, watch } from 'vue';
+  import { defineComponent, nextTick, onBeforeUnmount, PropType, reactive, ref, watch } from 'vue';
   import { message, Modal, Upload, UploadProps } from 'ant-design-vue';
   import { UploadFile } from 'ant-design-vue/lib/upload/interface';
+  import Sortablejs from 'sortablejs';
+  import type Sortable from 'sortablejs';
   import { useI18n } from '@/hooks/web/useI18n';
   import { join } from 'lodash-es';
   import { buildShortUUID } from '@/utils/uuid';
-  import { isArray, isNotEmpty, isUrl } from '@/utils/is';
   import { useRuleFormItem } from '@/hooks/component/useFormItem';
   import { useAttrs } from '@vben/hooks';
   import { PlusOutlined } from '@ant-design/icons-vue';
+  import {
+    buildImageFileList,
+    getDoneImageUrls,
+    moveImageFile,
+    removeImageFileByUid,
+    replaceImageFileByUid,
+  } from './imageUploadValueHelper.mjs';
 
   type ImageUploadType = 'text' | 'picture' | 'picture-card';
 
@@ -80,6 +88,10 @@
         type: Number,
         default: () => 2,
       },
+      sortable: {
+        type: Boolean,
+        default: () => false,
+      },
     },
     emits: ['change', 'update:value'],
     setup(props, { emit }) {
@@ -89,6 +101,8 @@
       const previewImage = ref('');
       const emitData = ref<any[] | any | undefined>();
       const fileList = ref<UploadFile[]>([]);
+      const uploadWrapperRef = ref<HTMLElement>();
+      let sortableInstance: Sortable | null = null;
 
       // Embedded in the form, just use the hook binding to perform form verification
       const [state] = useRuleFormItem(props, 'value', 'change', emitData);
@@ -106,11 +120,7 @@
       watch(
         () => fileList.value,
         (v) => {
-          fileState.newList = v
-            .filter((item: any) => {
-              return item?.url && item.status === 'done' && isUrl(item?.url);
-            })
-            .map((item: any) => item?.url);
+          fileState.newList = getDoneImageUrls(v);
           fileState.newStr = join(fileState.newList);
           // 不相等代表数据变更
           if (fileState.newStr !== fileState.oldStr) {
@@ -125,10 +135,23 @@
       );
 
       watch(
+        () => [props.sortable, fileList.value.length, props.multiple],
+        () => {
+          initSortable();
+        },
+        {
+          immediate: true,
+        },
+      );
+
+      watch(
         () => state.value,
         (v) => {
           changeFileValue(v);
           emit('update:value', v);
+        },
+        {
+          immediate: true,
         },
       );
 
@@ -136,31 +159,50 @@
         const stateStr = props.multiple ? join((value as string[]) || []) : value || '';
         if (stateStr !== fileState.oldStr) {
           fileState.oldStr = stateStr;
-          let list: string[] = [];
-          if (props.multiple) {
-            if (isNotEmpty(value)) {
-              if (isArray(value)) {
-                list = value as string[];
-              } else {
-                list.push(value as string);
-              }
-            }
-          } else {
-            if (isNotEmpty(value)) {
-              list.push(value as string);
-            }
-          }
-          fileList.value = list.map((item) => {
-            const uuid = buildShortUUID();
-            return {
-              uid: uuid,
-              name: uuid,
-              status: 'done',
-              url: item,
-            };
-          });
+          fileList.value = buildImageFileList(value, props.multiple, buildShortUUID);
         }
       }
+
+      function initSortable() {
+        if (!props.sortable || !props.multiple) {
+          destroySortable();
+          return;
+        }
+
+        nextTick(() => {
+          const uploadList = uploadWrapperRef.value?.querySelector(
+            '.ant-upload-list',
+          ) as HTMLElement;
+          if (!uploadList || sortableInstance) {
+            return;
+          }
+
+          sortableInstance = Sortablejs.create(uploadList, {
+            animation: 150,
+            draggable: '.ant-upload-list-item-container',
+            onEnd(evt: any) {
+              const oldIndex = evt.oldDraggableIndex;
+              const newIndex = evt.newDraggableIndex;
+              if (oldIndex === undefined || newIndex === undefined) {
+                return;
+              }
+              fileList.value = moveImageFile(fileList.value, oldIndex, newIndex);
+            },
+          });
+        });
+      }
+
+      function destroySortable() {
+        if (!sortableInstance) {
+          return;
+        }
+        sortableInstance.destroy();
+        sortableInstance = null;
+      }
+
+      onBeforeUnmount(() => {
+        destroySortable();
+      });
 
       /** 关闭查看 */
       const handleCancel = () => {
@@ -193,7 +235,7 @@
           message.error(t('component.upload.maxSizeMultiple', [props.maxSize]));
         }
         if (!(isPNG && isLt2M)) {
-          fileList.value.pop();
+          fileList.value = removeImageFileByUid(fileList.value, file);
         }
         return (isPNG && isLt2M) || Upload.LIST_IGNORE;
       };
@@ -206,11 +248,10 @@
           .then((url) => {
             file.url = url;
             file.status = 'done';
-            fileList.value.pop();
-            fileList.value.push(file);
+            fileList.value = replaceImageFileByUid(fileList.value, file);
           })
           .catch(() => {
-            fileList.value.pop();
+            fileList.value = removeImageFileByUid(fileList.value, file);
           });
       };
 
@@ -226,6 +267,7 @@
       return {
         previewOpen,
         fileList,
+        uploadWrapperRef,
         state,
         attrs,
         t,

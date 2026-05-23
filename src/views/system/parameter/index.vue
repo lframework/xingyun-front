@@ -85,7 +85,7 @@
   import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
   import { buildSortPageVo } from '@/utils/utils';
   import { createSuccess, createConfirm } from '@/hooks/web/msg';
-  import TenantList from "@/components/TenantList";
+  import TenantList from '@/components/TenantList';
 
   export default defineComponent({
     name: 'SysParameter',

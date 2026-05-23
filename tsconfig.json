@@ -8,6 +8,7 @@
     "types": ["vite/client"],
     "paths": {
       "/@/*": ["src/*"],
+      "/@external/*": ["external/*"],
       "/#/*": ["types/*"],
       "@/*": ["src/*"],
       "#/*": ["types/*"]
@@ -19,6 +20,10 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
+    "external/*/**/*.ts",
+    "external/*/**/*.d.ts",
+    "external/*/**/*.tsx",
+    "external/*/**/*.vue",
     "types/**/*.d.ts",
     "types/**/*.ts",
     "build/**/*.ts",

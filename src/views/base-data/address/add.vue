@@ -8,14 +8,7 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:address:add']" v-loading="loading">
-      <vxe-form
-        border
-        title-background
-        title-width="80"
-        ref="form"
-        :data="formData"
-        :rules="rules"
-      >
+      <vxe-form border title-background title-width="80" ref="form" :data="formData" :rules="rules">
         <vxe-form-group span="24" title="基础信息" title-bold vertical>
           <vxe-form-item title="实体类型" field="entityType" span="24">
             <a-select v-model:value="formData.entityType" allow-clear @change="changeEntityType">

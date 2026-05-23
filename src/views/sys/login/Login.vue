@@ -17,7 +17,11 @@
           </p>
 
           <div class="login-shell__highlights">
-            <article v-for="item in highlights" :key="item.title" class="login-shell__highlight-card">
+            <article
+              v-for="item in highlights"
+              :key="item.title"
+              class="login-shell__highlight-card"
+            >
               <div class="login-shell__highlight-icon">
                 <component :is="item.icon" />
               </div>
@@ -124,20 +128,23 @@
     position: relative;
     min-height: 100%;
     overflow: hidden;
-    background:
-      radial-gradient(circle at right top, rgb(59 130 246 / 12%), transparent 24%),
+    background: radial-gradient(circle at right top, rgb(59 130 246 / 12%), transparent 24%),
       linear-gradient(180deg, #f6f9fd 0%, #eef3f9 100%);
 
     &::before {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(circle at right top, rgb(14 165 233 / 8%), transparent 28%),
+      background: radial-gradient(circle at right top, rgb(14 165 233 / 8%), transparent 28%),
         linear-gradient(rgb(15 23 42 / 3%) 1px, transparent 1px),
         linear-gradient(90deg, rgb(15 23 42 / 3%) 1px, transparent 1px);
       background-size: auto, 36px 36px, 36px 36px;
-      mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 60%) 56%, rgb(0 0 0 / 100%) 100%);
+      mask-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgb(0 0 0 / 60%) 56%,
+        rgb(0 0 0 / 100%) 100%
+      );
       pointer-events: none;
     }
 
@@ -183,26 +190,31 @@
     color: #f5f9ff;
     overflow: hidden;
     border-radius: 40px 110px 110px 40px;
-    background:
-      radial-gradient(circle at top left, rgb(212 228 255 / 21%), transparent 34%),
+    background: radial-gradient(circle at top left, rgb(212 228 255 / 21%), transparent 34%),
       radial-gradient(circle at right center, rgb(216 235 255 / 11%), transparent 26%),
       linear-gradient(135deg, #6f96df 0%, #688dd1 58%, #5f87c6 100%);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 34%),
-      inset 0 18px 36px rgb(255 255 255 / 8%),
-      inset -24px -30px 52px rgb(31 65 133 / 24%),
-      0 26px 56px rgb(15 23 42 / 16%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 34%), inset 0 18px 36px rgb(255 255 255 / 8%),
+      inset -24px -30px 52px rgb(31 65 133 / 24%), 0 26px 56px rgb(15 23 42 / 16%);
 
     &::before {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(140deg, rgb(255 255 255 / 16%) 0%, rgb(255 255 255 / 0%) 34%, rgb(255 255 255 / 0%) 100%),
+      background: linear-gradient(
+          140deg,
+          rgb(255 255 255 / 16%) 0%,
+          rgb(255 255 255 / 0%) 34%,
+          rgb(255 255 255 / 0%) 100%
+        ),
         linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px),
         linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px);
       background-size: auto, 36px 36px, 36px 36px;
-      mask-image: linear-gradient(120deg, rgb(0 0 0 / 40%) 0%, rgb(0 0 0 / 18%) 52%, transparent 84%);
+      mask-image: linear-gradient(
+        120deg,
+        rgb(0 0 0 / 40%) 0%,
+        rgb(0 0 0 / 18%) 52%,
+        transparent 84%
+      );
       pointer-events: none;
     }
 
@@ -296,9 +308,7 @@
     border: 1px solid rgb(212 228 255 / 14%);
     border-radius: 24px;
     background: linear-gradient(180deg, rgb(255 255 255 / 14%), rgb(255 255 255 / 6%));
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 24%),
-      inset 0 10px 18px rgb(255 255 255 / 5%),
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 24%), inset 0 10px 18px rgb(255 255 255 / 5%),
       0 18px 50px rgb(29 78 216 / 16%);
     backdrop-filter: blur(14px);
 
@@ -326,9 +336,7 @@
     height: 46px;
     border-radius: 16px;
     background: linear-gradient(135deg, rgb(255 255 255 / 28%), rgb(191 219 254 / 16%));
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 22%),
-      0 8px 18px rgb(37 99 235 / 16%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 22%), 0 8px 18px rgb(37 99 235 / 16%);
     color: #eff6ff;
     font-size: 22px;
   }
@@ -366,8 +374,7 @@
     justify-content: center;
     padding: 0 24px 0 12px;
     overflow: hidden;
-    background:
-      radial-gradient(circle at top right, rgb(96 165 250 / 18%), transparent 26%),
+    background: radial-gradient(circle at top right, rgb(96 165 250 / 18%), transparent 26%),
       radial-gradient(circle at 72% 68%, rgb(14 165 233 / 9%), transparent 18%),
       linear-gradient(180deg, rgb(255 255 255 / 38%) 0%, rgb(255 255 255 / 0%) 100%);
   }
@@ -387,8 +394,7 @@
     position: absolute;
     inset: 16px -8px -20px 24px;
     border-radius: 38px;
-    background:
-      linear-gradient(145deg, rgb(59 130 246 / 20%), rgb(14 165 233 / 8%)),
+    background: linear-gradient(145deg, rgb(59 130 246 / 20%), rgb(14 165 233 / 8%)),
       radial-gradient(circle at top left, rgb(125 211 252 / 18%), transparent 56%);
     filter: blur(0);
   }
@@ -460,8 +466,7 @@
 
   @media (max-width: @screen-xl) {
     .@{prefix-cls} {
-      background:
-        radial-gradient(circle at top left, rgb(45 104 190 / 34%), transparent 34%),
+      background: radial-gradient(circle at top left, rgb(45 104 190 / 34%), transparent 34%),
         linear-gradient(180deg, #081426 0%, #0d223b 45%, #edf3fb 45%, #f8fafc 100%);
 
       &::before {

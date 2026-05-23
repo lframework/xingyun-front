@@ -5,6 +5,11 @@ export interface TakeStockSheetProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 盘点数量
    */
   takeNum: number;

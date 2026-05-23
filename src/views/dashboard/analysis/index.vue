@@ -4,7 +4,9 @@
       <section class="analysis-hero enter-y">
         <p class="analysis-hero__eyebrow">运营总览</p>
         <h2 class="analysis-hero__title">分析页</h2>
-        <p class="analysis-hero__subtitle">聚焦交易规模、趋势变化与核心指标，帮助你快速定位业务状态。</p>
+        <p class="analysis-hero__subtitle"
+          >聚焦交易规模、趋势变化与核心指标，帮助你快速定位业务状态。</p
+        >
         <a-alert v-if="isPreview" message="当前为预览版" type="warning" show-icon>
           <template #description>
             <div class="whitespace-pre-wrap">{{ previewDesc }}</div>
@@ -13,11 +15,7 @@
       </section>
 
       <section class="analysis-metrics">
-        <panel-group
-          class="enter-y"
-          @change="handleMetricChange"
-          @loading="(e) => (loading = e)"
-        />
+        <panel-group class="enter-y" @change="handleMetricChange" @loading="(e) => (loading = e)" />
       </section>
 
       <section class="analysis-content">
@@ -27,7 +25,9 @@
             <header class="chart-panel__header">
               <div>
                 <h3 class="chart-panel__title">{{ activeMetric.title }}</h3>
-                <p class="chart-panel__desc">{{ activeMetric.scopeLabel }}{{ activeMetric.seriesLabel }}趋势</p>
+                <p class="chart-panel__desc"
+                  >{{ activeMetric.scopeLabel }}{{ activeMetric.seriesLabel }}趋势</p
+                >
               </div>
             </header>
             <line-chart :key="activeMetric.key" :chart-data="lineChartData" />
@@ -186,8 +186,7 @@
 </script>
 <style lang="less" scoped>
   .analysis-dashboard-page {
-    background:
-      radial-gradient(circle at 12% 0%, rgba(59, 130, 246, 0.08), transparent 45%),
+    background: radial-gradient(circle at 12% 0%, rgba(59, 130, 246, 0.08), transparent 45%),
       radial-gradient(circle at 88% 10%, rgba(16, 185, 129, 0.08), transparent 42%),
       linear-gradient(180deg, #f8fafc 0%, #f4f7fb 100%);
   }

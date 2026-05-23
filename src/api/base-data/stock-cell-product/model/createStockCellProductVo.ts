@@ -4,7 +4,7 @@ export interface CreateStockCellProductVo {
    */
   stockCellId: string;
   /**
-   * 商品ID
+   * SKU ID
    */
-  productIds: string[];
+  skuIds: string[];
 }

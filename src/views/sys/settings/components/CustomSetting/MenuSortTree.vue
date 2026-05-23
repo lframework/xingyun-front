@@ -15,11 +15,7 @@
             <span class="menu-sort-tree__title">{{ element.title }}</span>
           </div>
           <div v-if="!isEmpty(element.children)" class="menu-sort-tree__children">
-            <menu-sort-tree
-              :list="element.children"
-              :parent-id="element.id"
-              :disabled="disabled"
-            />
+            <menu-sort-tree :list="element.children" :parent-id="element.id" :disabled="disabled" />
           </div>
         </div>
       </template>

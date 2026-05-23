@@ -5,6 +5,11 @@ export interface SaleReturnProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 原价
    */
   oriPrice: number;

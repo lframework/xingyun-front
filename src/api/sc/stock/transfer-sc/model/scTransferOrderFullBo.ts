@@ -91,9 +91,24 @@ export interface DetailBo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 编号
    */
   productCode: string;
+
+  /**
+   * SKU编号
+   */
+  skuCode: string;
+
+  /**
+   * 销售属性
+   */
+  salePropertyText: string;
 
   /**
    * 名称

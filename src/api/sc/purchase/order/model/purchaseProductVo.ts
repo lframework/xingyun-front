@@ -5,6 +5,11 @@ export interface PurchaseProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 采购价
    */
   purchasePrice: number;

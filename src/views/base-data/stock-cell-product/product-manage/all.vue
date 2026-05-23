@@ -41,8 +41,8 @@
                 <j-form-item label="仓位名称">
                   <a-input v-model:value="searchFormData.stockCellName" allow-clear />
                 </j-form-item>
-                <j-form-item label="商品编号">
-                  <a-input v-model:value="searchFormData.productCode" allow-clear />
+                <j-form-item label="SKU编号">
+                  <a-input v-model:value="searchFormData.skuCode" allow-clear />
                 </j-form-item>
                 <j-form-item label="商品名称">
                   <a-input v-model:value="searchFormData.productName" allow-clear />
@@ -100,7 +100,9 @@
           { field: 'stockCellCode', title: '仓位编号', width: 100, sortable: true },
           { field: 'stockCellName', title: '仓位名称', width: 180, sortable: true },
           { field: 'productCode', title: '商品编号', width: 100, sortable: true },
+          { field: 'skuCode', title: 'SKU编号', width: 100, sortable: true },
           { field: 'productName', title: '商品名称', minWidth: 180, sortable: true },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
         ]"
@@ -179,7 +181,9 @@
           { field: 'stockCellCode', title: '仓位编号', width: 100, sortable: true },
           { field: 'stockCellName', title: '仓位名称', width: 180, sortable: true },
           { field: 'productCode', title: '商品编号', width: 100, sortable: true },
+          { field: 'skuCode', title: 'SKU编号', width: 100, sortable: true },
           { field: 'productName', title: '商品名称', minWidth: 180, sortable: true },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           { title: '操作', width: 80, fixed: 'right', slots: { default: 'action_default' } },
@@ -225,7 +229,7 @@
       },
       initFormData() {
         this.searchFormData = {
-          productCode: '',
+          skuCode: '',
           productName: '',
           categoryId: '',
           brandId: '',

@@ -12,6 +12,11 @@ export interface QueryProductStockLogVo extends SortPageVo {
   productCode: string;
 
   /**
+   * SKU编号
+   */
+  skuCode: string;
+
+  /**
    * 商品名称
    */
   productName: string;

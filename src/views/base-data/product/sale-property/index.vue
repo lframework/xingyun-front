@@ -41,6 +41,12 @@
               @click="$refs.addDialog.openDialog()"
               >新增</a-button
             >
+            <a-button
+              v-permission="['base-data:product:sale-property:import']"
+              :icon="h(CloudUploadOutlined)"
+              @click="$refs.importer.openDialog()"
+              >导入Excel</a-button
+            >
             <a-dropdown>
               <template #overlay>
                 <a-menu @click="handleCommand">
@@ -84,6 +90,8 @@
     <!-- 已关联商品分类窗口 -->
     <related-category-dialog ref="relatedCategoryDialog" :query-fn="api.queryCategories" />
 
+    <product-sale-property-importer ref="importer" @confirm="search" />
+
     <!-- 批量操作 -->
     <batch-handler
       ref="batchDeleteHandlerDialog"
@@ -107,6 +115,7 @@
   import RelatedCategoryDialog from '../components/RelatedCategoryDialog.vue';
   import * as api from '@/api/base-data/product/sale-property';
   import {
+    CloudUploadOutlined,
     PlusOutlined,
     SearchOutlined,
     DeleteOutlined,
@@ -116,6 +125,7 @@
   import { createError } from '@/hooks/web/msg';
   import BatchHandler from '@/components/BatchHandler';
   import { usePermission } from '@/hooks/web/usePermission';
+  import ProductSalePropertyImporter from '@/components/Importor/ProductSalePropertyImporter.vue';
 
   export default defineComponent({
     name: 'ProductSaleProperty',
@@ -126,6 +136,7 @@
       RelatedCategoryDialog,
       DownOutlined,
       BatchHandler,
+      ProductSalePropertyImporter,
     },
     setup() {
       const { hasPermission } = usePermission();
@@ -133,6 +144,7 @@
       return {
         api,
         h,
+        CloudUploadOutlined,
         PlusOutlined,
         SearchOutlined,
         DeleteOutlined,

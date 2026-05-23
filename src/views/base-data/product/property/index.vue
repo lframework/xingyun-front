@@ -41,6 +41,12 @@
               @click="$refs.addDialog.openDialog()"
               >新增</a-button
             >
+            <a-button
+              v-permission="['base-data:product:property:import']"
+              :icon="h(CloudUploadOutlined)"
+              @click="$refs.importer.openDialog()"
+              >导入Excel</a-button
+            >
             <a-dropdown>
               <template #overlay>
                 <a-menu @click="handleCommand">
@@ -84,6 +90,8 @@
     <!-- 已关联商品分类窗口 -->
     <related-category-dialog ref="relatedCategoryDialog" :query-fn="api.queryCategories" />
 
+    <product-property-importer ref="importer" @confirm="search" />
+
     <!-- 批量操作 -->
     <batch-handler
       ref="batchDeleteHandlerDialog"
@@ -108,6 +116,7 @@
   import * as api from '@/api/base-data/product/property';
   import {
     CheckOutlined,
+    CloudUploadOutlined,
     PlusOutlined,
     SearchOutlined,
     DeleteOutlined,
@@ -118,6 +127,7 @@
   import BatchHandler from '@/components/BatchHandler';
   import { COLUMN_TYPE } from '@/enums/biz/columnType';
   import { usePermission } from '@/hooks/web/usePermission';
+  import ProductPropertyImporter from '@/components/Importor/ProductPropertyImporter.vue';
 
   export default defineComponent({
     name: 'ProductProperty',
@@ -128,6 +138,7 @@
       RelatedCategoryDialog,
       DownOutlined,
       BatchHandler,
+      ProductPropertyImporter,
     },
     setup() {
       const { hasPermission } = usePermission();
@@ -136,6 +147,7 @@
         api,
         h,
         CheckOutlined,
+        CloudUploadOutlined,
         PlusOutlined,
         SearchOutlined,
         DeleteOutlined,

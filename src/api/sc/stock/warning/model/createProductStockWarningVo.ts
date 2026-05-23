@@ -5,9 +5,9 @@ export interface CreateProductStockWarningVo {
   scId: string;
 
   /**
-   * 商品ID
+   * SKU ID
    */
-  productId: string;
+  skuId: string;
 
   /**
    * 预警下限

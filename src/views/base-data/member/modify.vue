@@ -8,7 +8,14 @@
     :footer="null"
   >
     <div v-if="visible" v-permission="['base-data:member:modify']" v-loading="loading">
-      <vxe-form border title-background title-width="120" ref="form" :data="formData" :rules="rules">
+      <vxe-form
+        border
+        title-background
+        title-width="120"
+        ref="form"
+        :data="formData"
+        :rules="rules"
+      >
         <vxe-form-group span="24" title="基础信息" title-bold vertical>
           <vxe-form-item title="编号" field="code" span="12">
             <a-input v-model:value.trim="formData.code" allow-clear />
@@ -22,7 +29,7 @@
                 v-for="item in GENDER.values()"
                 :key="item.code"
                 :value="item.code"
-              >{{ item.desc }}</a-select-option
+                >{{ item.desc }}</a-select-option
               >
             </a-select>
           </vxe-form-item>

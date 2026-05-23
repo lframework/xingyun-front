@@ -18,8 +18,8 @@
         <a-form-item label="仓库" name="scId">
           <store-center-selector v-model:value="formData.scId" />
         </a-form-item>
-        <a-form-item label="商品" name="productId">
-          <product-selector v-model:value="formData.productId" />
+        <a-form-item label="商品" name="skuId">
+          <product-selector v-model:value="formData.skuId" />
         </a-form-item>
         <a-form-item label="预警上限" name="maxLimit">
           <a-input v-model:value="formData.maxLimit" class="number-input" allow-clear />
@@ -86,7 +86,7 @@
         // 表单校验规则
         rules: {
           scId: [{ required: true, message: '请选择仓库' }],
-          productId: [{ required: true, message: '请选择商品' }],
+          skuId: [{ required: true, message: '请选择商品' }],
           minLimit: [
             { required: true, message: '请输入预警下限' },
             {
@@ -155,7 +155,7 @@
       initFormData() {
         this.formData = {
           scId: '',
-          productId: '',
+          skuId: '',
           maxLimit: '',
           minLimit: '',
           available: '',

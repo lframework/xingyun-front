@@ -293,13 +293,18 @@ export function batchDelete(id: string, showError: boolean = false): Promise<voi
 /**
  * 根据关键字查询商品
  */
-export function searchSaleProducts(scId: string, condition: string): Promise<SaleProductBo[]> {
+export function searchSaleProducts(
+  scId: string,
+  condition: string,
+  isReturn: boolean = false,
+): Promise<SaleProductBo[]> {
   return defHttp.get<SaleProductBo[]>(
     {
       url: baseUrl + '/product/search',
       params: {
         scId,
         condition,
+        isReturn,
       },
     },
     {

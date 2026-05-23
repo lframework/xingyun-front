@@ -2,7 +2,7 @@
 // ==本JS是加载Lodop插件或Web打印服务CLodop/Lodop7的综合示例，可直接使用，建议理解后融入自己程序==
 import { h } from 'vue';
 import * as msg from '@/hooks/web/msg';
-import {createErrorDialog} from "../../../../../hooks/web/msg";
+import { createErrorDialog } from '../../../../../hooks/web/msg';
 
 var CreatedOKLodopObject, CLodopIsLocal, CLodopJsState;
 

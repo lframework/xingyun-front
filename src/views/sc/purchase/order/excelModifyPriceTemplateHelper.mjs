@@ -3,14 +3,14 @@ export function buildExcelModifyPriceTemplateData(tableData = []) {
 
   return safeTableData
     .filter((item) => {
-      if (!item || item.productCode === null || item.productCode === undefined) {
+      if (!item || item.skuCode === null || item.skuCode === undefined) {
         return false;
       }
 
-      return String(item.productCode).trim() !== '';
+      return String(item.skuCode).trim() !== '';
     })
     .map((item) => ({
-      productCode: item.productCode,
+      skuCode: item.skuCode,
       price: item.purchasePrice,
     }));
 }

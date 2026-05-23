@@ -27,6 +27,9 @@
               <j-form-item label="商品编号">
                 <a-input v-model:value="searchFormData.productCode" allow-clear />
               </j-form-item>
+              <j-form-item label="SKU编号">
+                <a-input v-model:value="searchFormData.skuCode" allow-clear />
+              </j-form-item>
               <j-form-item label="商品名称">
                 <a-input v-model:value="searchFormData.productName" allow-clear />
               </j-form-item>
@@ -293,6 +296,7 @@
         searchFormData: {
           scId: '',
           productCode: '',
+          skuCode: '',
           productName: '',
           categoryId: '',
           brandId: '',
@@ -313,7 +317,9 @@
           { field: 'scCode', title: '仓库编号', width: 100, sortable: true },
           { field: 'scName', title: '仓库名称', minWidth: 160 },
           { field: 'productCode', title: '商品编号', width: 120, sortable: true },
+          { field: 'skuCode', title: 'SKU编号', width: 120, sortable: true },
           { field: 'productName', title: '商品名称', minWidth: 180 },
+          { field: 'salePropertyText', title: '销售属性', width: 180 },
           { field: 'categoryName', title: '商品分类', width: 120 },
           { field: 'brandName', title: '商品品牌', width: 120 },
           {

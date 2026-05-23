@@ -196,7 +196,9 @@
         tableColumn: [
           { type: 'seq', width: 50 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           { field: 'productName', title: '商品名称', width: 260 },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -355,16 +357,19 @@
         this.tableData
           .filter((item) => isFloatGtZero(item.outNum))
           .forEach((item) => {
-            if (checkStockNumArr.map((v) => item.productId).includes(item.productId)) {
+            const skuId = item.skuId || item.productId;
+            if (checkStockNumArr.map((v) => v.skuId).includes(skuId)) {
               checkStockNumArr
-                .filter((v) => v.productId === item.productId)
+                .filter((v) => v.skuId === skuId)
                 .forEach((v) => {
                   v.outNum = add(v.outNum, item.outNum);
                 });
             } else {
               checkStockNumArr.push({
                 productId: item.productId,
+                skuId,
                 productCode: item.productCode,
+                skuCode: item.skuCode,
                 productName: item.productName,
                 stockNum: item.stockNum,
                 outNum: item.outNum,
@@ -395,7 +400,7 @@
               id: this.id,
               description: this.formData.description,
             })
-            .then((res) => {
+            .then(() => {
               createSuccess('审核通过！');
 
               this.$emit('confirm');
@@ -430,8 +435,9 @@
       },
       // 检查库存数量
       checkStockNum(row) {
+        const skuId = row.skuId || row.productId;
         const checkArr = this.tableData
-          .filter((item) => item.productId === row.productId)
+          .filter((item) => (item.skuId || item.productId) === skuId)
           .map((item) => item.outNum);
         if (isEmpty(checkArr)) {
           checkArr.push(0);

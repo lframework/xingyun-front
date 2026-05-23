@@ -314,7 +314,7 @@ export function batchDelete(id: string, showError: boolean = false): Promise<voi
 export function searchRetailProducts(
   scId: string,
   condition: string,
-  isReturn: boolean,
+  isReturn: boolean = false,
 ): Promise<RetailProductBo[]> {
   return defHttp.get<RetailProductBo[]>(
     {

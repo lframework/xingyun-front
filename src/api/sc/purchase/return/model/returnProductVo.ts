@@ -5,6 +5,11 @@ export interface ReturnProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 退货价
    */
   purchasePrice: number;

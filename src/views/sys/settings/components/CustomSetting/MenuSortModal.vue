@@ -7,12 +7,7 @@
     :style="{ top: '20px' }"
   >
     <div v-if="visible" v-loading="loading" class="menu-sort-modal">
-      <a-alert
-        v-if="loadFailed"
-        type="error"
-        show-icon
-        message="用户菜单加载失败，请关闭后重试"
-      />
+      <a-alert v-if="loadFailed" type="error" show-icon message="用户菜单加载失败，请关闭后重试" />
       <a-empty v-else-if="!loading && isEmpty(menuTree)" description="暂无可排序菜单" />
       <div v-else class="menu-sort-modal__content">
         <div class="menu-sort-modal__tip">拖拽菜单项可调整显示顺序，仅支持同级菜单之间排序。</div>
@@ -102,10 +97,7 @@
           .then(() => {
             this.closeDialog();
             createSuccessTip('菜单排序保存成功');
-            return createConfirm(
-              '菜单排序已保存，是否立即刷新页面加载新的菜单顺序？',
-              '提示信息',
-            )
+            return createConfirm('菜单排序已保存，是否立即刷新页面加载新的菜单顺序？', '提示信息')
               .then(() => {
                 window.location.reload();
               })

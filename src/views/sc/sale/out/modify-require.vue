@@ -137,7 +137,9 @@
                   @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
                 >
                   <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="skuCode" title="SKU编号" width="120" />
                   <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="salePropertyText" title="销售属性" min-width="160" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
                   <vxe-column
@@ -313,12 +315,14 @@
         tableColumn: [
           { type: 'checkbox', width: 45 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           {
             field: 'productName',
             title: '商品名称',
             width: 260,
             slots: { default: 'productName_default' },
           },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -497,7 +501,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -545,8 +552,8 @@
           row.products = res;
           row.productOptions = res.map((item) => {
             return {
-              value: item.productId,
-              label: item.productCode + ' ' + item.productName,
+              value: item.skuId,
+              label: (item.skuCode || item.productCode) + ' ' + item.productName,
             };
           });
         });
@@ -593,10 +600,10 @@
         }
         this.$refs.batchAddProductDialog.openDialog();
       },
-      taxPriceInput(row, value) {
+      taxPriceInput(_row, _value) {
         this.calcSum();
       },
-      outNumInput(value) {
+      outNumInput(_value) {
         this.calcSum();
       },
       // 计算汇总数据
@@ -807,6 +814,7 @@
             .map((t) => {
               const product = {
                 productId: t.productId,
+                skuId: t.skuId || t.productId,
                 orderNum: t.outNum,
                 description: t.description,
                 oriPrice: t.salePrice,
@@ -823,7 +831,7 @@
         this.loading = true;
         api
           .update(params)
-          .then((res) => {
+          .then((_res) => {
             createSuccess('保存成功！');
 
             this.$emit('confirm');
@@ -853,8 +861,9 @@
       },
       // 检查库存数量
       checkStockNum(row) {
+        const skuId = row.skuId || row.productId;
         const checkArr = this.tableData
-          .filter((item) => item.productId === row.productId)
+          .filter((item) => (item.skuId || item.productId) === skuId)
           .map((item) => item.outNum);
         if (isEmpty(checkArr)) {
           checkArr.push(0);

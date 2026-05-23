@@ -29,7 +29,13 @@
         </vxe-form-group>
         <vxe-form-group span="24" title="扩展信息" title-bold vertical>
           <vxe-form-item title="Logo" field="logo" span="24">
-            <j-img-upload v-model:value="formData.logo" />
+            <image-upload
+              v-model:value="formData.logo"
+              :api="uploadBrandLogo"
+              accept="image/png, image/jpeg, image/bmp, image/jpg, image/gif"
+              :file-type="['image/png', 'image/jpeg', 'image/bmp', 'image/jpg', 'image/gif']"
+              :max-size="2"
+            />
           </vxe-form-item>
           <vxe-form-item title="简介" field="introduction" span="24">
             <a-textarea v-model:value.trim="formData.introduction" />
@@ -56,12 +62,13 @@
   import { defineComponent } from 'vue';
   import { validCode } from '@/utils/validate';
   import * as api from '@/api/base-data/product/brand';
+  import { uploadImage } from '@/api/components';
   import { createSuccess } from '@/hooks/web/msg';
-  import JImgUpload from '@/components/JImgUpload';
+  import { ImageUpload } from '@/components/Form';
 
   export default defineComponent({
     // 使用组件
-    components: { JImgUpload },
+    components: { ImageUpload },
     props: {
       id: {
         type: String,
@@ -150,6 +157,9 @@
           .finally(() => {
             this.loading = false;
           });
+      },
+      uploadBrandLogo({ file }) {
+        return uploadImage(file.originFileObj || file);
       },
     },
   });

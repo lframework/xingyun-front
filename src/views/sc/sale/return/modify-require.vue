@@ -134,7 +134,9 @@
                   @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
                 >
                   <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="skuCode" title="SKU编号" width="120" />
                   <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="salePropertyText" title="销售属性" min-width="160" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
                   <vxe-column
@@ -300,12 +302,14 @@
         tableColumn: [
           { type: 'checkbox', width: 45 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           {
             field: 'productName',
             title: '商品名称',
             width: 260,
             slots: { default: 'productName_default' },
           },
+          { field: 'salePropertyText', title: '销售属性', minWidth: 180 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -475,7 +479,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -521,8 +528,8 @@
           row.products = res;
           row.productOptions = res.map((item) => {
             return {
-              value: item.productId,
-              label: item.productCode + ' ' + item.productName,
+              value: item.skuId,
+              label: (item.skuCode || item.productCode) + ' ' + item.productName,
             };
           });
         });
@@ -569,10 +576,10 @@
         }
         this.$refs.batchAddProductDialog.openDialog();
       },
-      taxPriceInput(row, value) {
+      taxPriceInput(_row, _value) {
         this.calcSum();
       },
-      returnNumInput(value) {
+      returnNumInput(_value) {
         this.calcSum();
       },
       // 计算汇总数据
@@ -755,6 +762,7 @@
             .map((t) => {
               const product = {
                 productId: t.productId,
+                skuId: t.skuId || t.productId,
                 oriPrice: t.salePrice,
                 returnNum: t.returnNum,
                 description: t.description,
@@ -771,7 +779,7 @@
         this.loading = true;
         api
           .update(params)
-          .then((res) => {
+          .then((_res) => {
             createSuccess('保存成功！');
 
             this.$emit('confirm');

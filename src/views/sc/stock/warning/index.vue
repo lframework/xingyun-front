@@ -26,7 +26,7 @@
                   <store-center-selector v-model:value="searchFormData.scId" />
                 </j-form-item>
                 <j-form-item label="商品">
-                  <product-selector v-model:value="searchFormData.productId" />
+                  <product-selector v-model:value="searchFormData.skuId" />
                 </j-form-item>
                 <j-form-item label="操作日期" :content-nest="false">
                   <div class="date-range-container">
@@ -117,7 +117,9 @@
         { field: 'scCode', title: '仓库编号', width: 100, sortable: true },
         { field: 'scName', title: '仓库名称', width: 140 },
         { field: 'productCode', title: '商品编号', width: 100, sortable: true },
+        { field: 'skuCode', title: 'SKU编号', width: 100, sortable: true },
         { field: 'productName', title: '商品名称', width: 140 },
+        { field: 'salePropertyText', title: '销售属性', width: 160 },
         { field: 'maxLimit', title: '预警上限', width: 100, sortable: true, align: 'right' },
         { field: 'minLimit', title: '预警下限', width: 100, sortable: true, align: 'right' },
       ]"
@@ -183,7 +185,7 @@
         // 查询列表的查询条件
         searchFormData: {
           scId: '',
-          productId: '',
+          skuId: '',
           updateTimeStart: '',
           updateTimeEnd: '',
           available: AVAILABLE.ENABLE.code,
@@ -201,7 +203,9 @@
           { field: 'scCode', title: '仓库编号', width: 100, sortable: true },
           { field: 'scName', title: '仓库名称', width: 140 },
           { field: 'productCode', title: '商品编号', width: 100, sortable: true },
+          { field: 'skuCode', title: 'SKU编号', width: 100, sortable: true },
           { field: 'productName', title: '商品名称', width: 140 },
+          { field: 'salePropertyText', title: '销售属性', width: 160 },
           { field: 'maxLimit', title: '预警上限', width: 100, sortable: true, align: 'right' },
           { field: 'minLimit', title: '预警下限', width: 100, sortable: true, align: 'right' },
           { field: 'updateTime', title: '操作时间', width: 170, sortable: true },

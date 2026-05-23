@@ -1,4 +1,5 @@
 import { ProductBundleBo } from '@/api/base-data/product/info/model/productBundleBo';
+import { ProductSkuBo } from '@/api/base-data/product/info/model/productSkuBo';
 
 export interface GetProductBo {
   /**
@@ -9,7 +10,7 @@ export interface GetProductBo {
   /**
    * 编号
    */
-  code: string;
+  code?: string;
 
   /**
    * 名称
@@ -80,6 +81,26 @@ export interface GetProductBo {
    * 单品
    */
   productBundles: ProductBundleBo[];
+
+  /**
+   * SKU类型
+   */
+  skuType: number;
+
+  /**
+   * 商品主图
+   */
+  mainImage?: string[];
+
+  /**
+   * 详情图片
+   */
+  detailImages: string[];
+
+  /**
+   * SKU列表
+   */
+  skus: ProductSkuBo[];
 
   /**
    * 采购价

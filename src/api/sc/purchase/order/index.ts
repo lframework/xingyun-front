@@ -407,7 +407,7 @@ export function importPayTypeExcel(data: { id: string; file: Blob }): Promise<vo
 export function searchPurchaseProducts(
   scId: string,
   condition: string,
-  isReturn: boolean,
+  isReturn: boolean = false,
 ): Promise<PurchaseProductBo[]> {
   return defHttp.get<PurchaseProductBo[]>(
     {

@@ -5,6 +5,11 @@ export interface StockAdjustProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 调整库存数量
    */
   stockNum: number;

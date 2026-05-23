@@ -18,7 +18,9 @@
           <div class="analysis-panel-card__meta">
             <a-space class="analysis-panel-card__stat">
               <span>{{ countLabel }}</span>
-              <span><count-to :startVal="0" :endVal="Number(formData.today.order.totalNum || 0)" /></span>
+              <span
+                ><count-to :startVal="0" :endVal="Number(formData.today.order.totalNum || 0)"
+              /></span>
             </a-space>
             <p>{{ metricDescriptorMap['today-order'].description }}</p>
           </div>
@@ -66,7 +68,9 @@
           <div class="analysis-panel-card__meta">
             <a-space class="analysis-panel-card__stat">
               <span>{{ countLabel }}</span>
-              <span><count-to :startVal="0" :endVal="Number(formData.sameMonth.order.totalNum || 0)" /></span>
+              <span
+                ><count-to :startVal="0" :endVal="Number(formData.sameMonth.order.totalNum || 0)"
+              /></span>
             </a-space>
             <p>{{ metricDescriptorMap['month-order'].description }}</p>
           </div>
@@ -90,7 +94,9 @@
             <a-space class="analysis-panel-card__stat">
               <span>{{ countLabel }}</span>
               <span
-                ><count-to :startVal="0" :endVal="Number(formData.sameMonth.returned.totalNum || 0)"
+                ><count-to
+                  :startVal="0"
+                  :endVal="Number(formData.sameMonth.returned.totalNum || 0)"
               /></span>
             </a-space>
             <p>{{ metricDescriptorMap['month-returned'].description }}</p>

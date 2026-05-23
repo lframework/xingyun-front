@@ -5,6 +5,11 @@ export interface RetailOutProductVo {
   productId: string;
 
   /**
+   * SKU ID
+   */
+  skuId: string;
+
+  /**
    * 原价
    */
   oriPrice: number;

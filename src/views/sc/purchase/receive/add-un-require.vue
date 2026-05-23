@@ -87,7 +87,7 @@
             :ref="'productInputRef' + rowIndex"
             v-model:value="row.productName"
             style="width: 100%"
-            placeholder="请输入商品编号/名称"
+            placeholder="请输入商品编号/SKU编号/名称"
             :options="row.productOptions"
             :dropdown-match-select-width="false"
             :dropdown-style="{ width: '890px' }"
@@ -106,7 +106,9 @@
                   @cell-click="({ row: product }) => handleSelectProduct(rowIndex, product)"
                 >
                   <vxe-column field="productCode" title="商品编号" width="120" />
+                  <vxe-column field="skuCode" title="SKU编号" width="120" />
                   <vxe-column field="productName" title="商品名称" min-width="200" />
+                  <vxe-column field="salePropertyText" title="销售属性" width="180" />
                   <vxe-column field="spec" title="规格" width="80" />
                   <vxe-column field="unit" title="单位" width="80" />
                   <vxe-column
@@ -210,7 +212,7 @@
             ref="scanInputRef"
             v-model:value.trim="scanCode"
             allow-clear
-            placeholder="请扫描商品条码/商品编号，回车确认"
+            placeholder="请扫描商品条码/商品编号/SKU编号，回车确认"
             :disabled="loading"
             @focus="handleScanInputFocus"
             @blur="handleScanInputBlur"
@@ -234,7 +236,9 @@
             @cell-click="({ row }) => selectScanCandidate(row)"
           >
             <vxe-column field="productCode" title="商品编号" width="120" />
+            <vxe-column field="skuCode" title="SKU编号" width="120" />
             <vxe-column field="productName" title="商品名称" min-width="200" />
+            <vxe-column field="salePropertyText" title="销售属性" width="180" />
             <vxe-column field="spec" title="规格" width="80" />
             <vxe-column field="unit" title="单位" width="80" />
             <vxe-column field="purchasePrice" title="采购价（元）" width="140" align="right" />
@@ -284,10 +288,10 @@
   import UserSelector from '@/components/Selector/UserSelector.vue';
   import * as api from '@/api/sc/purchase/receive';
   import * as purchaseApi from '@/api/sc/purchase/order';
-  import * as productApi from '@/api/base-data/product/info';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
   import {
     applyScannedProductResult,
+    formatScannedProductDisplayName,
     beginNextScanConsumeState,
     openScanDialogState,
     closeScanDialogState,
@@ -363,12 +367,14 @@
         tableColumn: [
           { type: 'checkbox', width: 45 },
           { field: 'productCode', title: '商品编号', width: 120 },
+          { field: 'skuCode', title: 'SKU编号', width: 120 },
           {
             field: 'productName',
             title: '商品名称',
             width: 260,
             slots: { default: 'productName_default' },
           },
+          { field: 'salePropertyText', title: '销售属性', width: 180 },
           { field: 'spec', title: '规格', width: 80 },
           { field: 'unit', title: '单位', width: 80 },
           { field: 'categoryName', title: '商品分类', width: 120 },
@@ -425,7 +431,7 @@
         isScanInputFocused: false,
         // EXCEL修改价格列定义
         excelModifyPriceColumns: [
-          { field: 'productCode', label: '商品编号', required: true },
+          { field: 'skuCode', label: 'SKU编号', required: true },
           { field: 'price', label: '采购价', required: false },
         ],
       };
@@ -517,7 +523,10 @@
         return {
           id: uuid(),
           productId: '',
+          skuId: '',
           productCode: '',
+          skuCode: '',
+          salePropertyText: '',
           productName: '',
           unit: '',
           spec: '',
@@ -628,20 +637,12 @@
 
         if (result.type === 'merged') {
           this.setScanMessage(
-            '商品【' +
-              product.productCode +
-              ' ' +
-              product.productName +
-              '】收货数量已 +1，可继续扫码',
+            '商品【' + formatScannedProductDisplayName(product) + '】收货数量已 +1，可继续扫码',
             'success',
           );
         } else {
           this.setScanMessage(
-            '已新增商品【' +
-              product.productCode +
-              ' ' +
-              product.productName +
-              '】，可继续扫码下一件',
+            '已新增商品【' + formatScannedProductDisplayName(product) + '】，可继续扫码下一件',
             'success',
           );
         }
@@ -659,7 +660,7 @@
         }
 
         if (isEmpty(this.scanCode)) {
-          this.setScanMessage('请先扫描商品条码或商品编号！', 'warning');
+          this.setScanMessage('请先扫描商品条码、商品编号或SKU编号！', 'warning');
           this.focusScanInput();
           return;
         }
@@ -841,51 +842,39 @@
         this.$refs.excelModifyPriceDialog.openDialog();
       },
       // 处理EXCEL修改价格
-      async handleExcelModifyPrice({ data }) {
+      handleExcelModifyPrice({ data }) {
         if (isEmpty(data)) {
           createError('Excel中没有数据！');
           return;
         }
 
-        this.loading = true;
-        try {
-          let matchedCount = 0;
+        let matchedCount = 0;
 
-          for (const row of data) {
-            const productCode = row.productCode;
-            if (isEmpty(productCode)) {
-              continue;
-            }
-
-            if (isEmpty(row.price)) {
-              continue;
-            }
-
-            const price = row.price;
-
-            const productId = await productApi.getIdByCode(productCode);
-            if (isEmpty(productId)) {
-              continue;
-            }
-
-            this.tableData
-              .filter((item) => !item.isGift)
-              .forEach((item) => {
-                if (item.productId === productId) {
-                  item.purchasePrice = price;
-                  matchedCount++;
-                }
-              });
+        for (const row of data) {
+          const skuCode = row.skuCode;
+          if (isEmpty(skuCode)) {
+            continue;
           }
 
-          this.calcSum();
-          this.$refs.excelModifyPriceDialog.closeDialog();
-          createSuccess('成功修改' + matchedCount + '条商品的采购价！');
-        } catch (e) {
-          createError('修改价格失败：' + (e.message || e));
-        } finally {
-          this.loading = false;
+          if (isEmpty(row.price)) {
+            continue;
+          }
+
+          const price = row.price;
+
+          this.tableData
+            .filter((item) => !item.isGift)
+            .forEach((item) => {
+              if (item.skuCode === skuCode) {
+                item.purchasePrice = price;
+                matchedCount++;
+              }
+            });
         }
+
+        this.calcSum();
+        this.$refs.excelModifyPriceDialog.closeDialog();
+        createSuccess('成功修改' + matchedCount + '条商品的采购价！');
       },
       // 校验数据
       validData() {
@@ -988,6 +977,7 @@
             .map((t) => {
               const product = {
                 productId: t.productId,
+                skuId: t.skuId || t.productId,
                 purchasePrice: t.purchasePrice,
                 receiveNum: t.receiveNum,
                 description: t.description,

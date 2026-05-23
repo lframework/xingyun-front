@@ -16,8 +16,8 @@
         :data="formData"
         :rules="rules"
       >
-        <vxe-form-item title="商品" field="productIds" span="12">
-          <product-selector v-model:value="formData.productIds" multiple />
+        <vxe-form-item title="商品" field="skuIds" span="12">
+          <product-selector v-model:value="formData.skuIds" multiple />
         </vxe-form-item>
         <vxe-form-item span="24">
           <div class="form-modal-footer">
@@ -57,7 +57,7 @@
         formData: {},
         // 表单校验规则
         rules: {
-          productIds: [{ required: true, message: '请选择商品' }],
+          skuIds: [{ required: true, message: '请选择商品' }],
         },
       };
     },
@@ -81,7 +81,7 @@
       // 初始化表单数据
       initFormData() {
         this.formData = {
-          productIds: [],
+          skuIds: [],
         };
       },
       // 提交表单事件

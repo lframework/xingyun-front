@@ -187,7 +187,7 @@
           {
             field: 'action',
             title: '操作',
-            width: 240,
+            width: 320,
             slots: { default: 'action_default' },
             fixed: 'right',
           },
