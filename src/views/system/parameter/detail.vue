@@ -15,6 +15,9 @@
         <a-descriptions-item label="值" :span="2">
           <a @click="handleClipboard(formData.pmValue, $event)">{{ formData.pmValue }}</a>
         </a-descriptions-item>
+        <a-descriptions-item label="是否加密值" :span="2">
+          {{ formData.isEncrypt ? '是' : '否' }}
+        </a-descriptions-item>
         <a-descriptions-item label="备注" :span="4">
           {{ formData.description }}
         </a-descriptions-item>
@@ -71,6 +74,7 @@
           id: '',
           pmKey: '',
           pmValue: '',
+          isEncrypt: false,
           description: '',
         };
       },

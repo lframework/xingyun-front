@@ -31,6 +31,29 @@
       },
     });
   }
+
+  // 流式场景下 value 会逐 token 高频变化，Vditor 每次 preview 都是整篇重渲染，
+  // 直接 init 会造成重渲染风暴与闪烁。这里做“首次即时 + 尾随节流”：立即渲染一次，
+  // 节流窗口内的后续变化合并，并在窗口结束时补渲染一次，保证最终内容一定渲染到位。
+  const RENDER_THROTTLE_MS = 80;
+  let renderTimer: ReturnType<typeof setTimeout> | null = null;
+  let pendingRender = false;
+
+  function scheduleInit() {
+    if (renderTimer) {
+      pendingRender = true;
+      return;
+    }
+    init();
+    renderTimer = setTimeout(() => {
+      renderTimer = null;
+      if (pendingRender) {
+        pendingRender = false;
+        scheduleInit();
+      }
+    }, RENDER_THROTTLE_MS);
+  }
+
   watch(
     () => getDarkMode.value,
     (val) => {
@@ -43,11 +66,16 @@
   watch(
     () => props.value,
     (v, oldValue) => {
-      v !== oldValue && init();
+      v !== oldValue && scheduleInit();
     },
   );
 
   function destroy() {
+    if (renderTimer) {
+      clearTimeout(renderTimer);
+      renderTimer = null;
+    }
+    pendingRender = false;
     const vditorInstance = unref(vditorPreviewRef);
     if (!vditorInstance) return;
     try {

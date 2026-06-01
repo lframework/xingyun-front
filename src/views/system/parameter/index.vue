@@ -127,6 +127,14 @@
           { type: 'seq', width: 50 },
           { field: 'pmKey', title: '键', width: 120, sortable: true },
           { field: 'pmValue', title: '值', width: 220 },
+          {
+            field: 'isEncrypt',
+            title: '是否加密值',
+            width: 110,
+            formatter: ({ cellValue }) => {
+              return cellValue ? '是' : '否';
+            },
+          },
           { field: 'description', title: '备注', minWidth: 200 },
           { field: 'createBy', title: '创建人', width: 100 },
           { field: 'createTime', title: '创建时间', width: 170, sortable: true },

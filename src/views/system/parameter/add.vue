@@ -21,6 +21,13 @@
         <a-form-item label="值" name="pmValue">
           <a-textarea v-model:value="formData.pmValue" allow-clear />
         </a-form-item>
+        <a-form-item label="是否加密值" name="isEncrypt">
+          <a-switch
+            v-model:checked="formData.isEncrypt"
+            checked-children="是"
+            un-checked-children="否"
+          />
+        </a-form-item>
         <a-form-item label="备注" name="description">
           <a-textarea v-model:value="formData.description" allow-clear />
         </a-form-item>
@@ -86,6 +93,7 @@
         this.formData = {
           pmKey: '',
           pmValue: '',
+          isEncrypt: false,
           description: '',
         };
       },

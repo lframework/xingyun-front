@@ -18,8 +18,20 @@
         <a-form-item label="键" name="pmKey">
           <a-input v-model:value="formData.pmKey" disabled />
         </a-form-item>
+        <a-form-item label="是否加密值" name="isEncrypt">
+          <a-switch
+            v-model:checked="formData.isEncrypt"
+            checked-children="是"
+            un-checked-children="否"
+            disabled
+          />
+        </a-form-item>
         <a-form-item label="值" name="pmValue">
-          <a-textarea v-model:value="formData.pmValue" allow-clear />
+          <a-space v-if="formData.isEncrypt && !modifyPmValue">
+            <span>{{ oriPmValue }}</span
+            ><a @click="modifyPmValue = true">点此修改</a>
+          </a-space>
+          <a-textarea v-else v-model:value="formData.pmValue" allow-clear />
         </a-form-item>
         <a-form-item label="备注" name="description">
           <a-textarea v-model:value="formData.description" allow-clear />
@@ -63,6 +75,8 @@
         loading: false,
         // 表单数据
         formData: {},
+        oriPmValue: '',
+        modifyPmValue: false,
         // 表单校验规则
         rules: {
           pmKey: [{ required: true, message: '请输入键' }, { validator: validKey }],
@@ -90,8 +104,11 @@
           id: '',
           pmKey: '',
           pmValue: '',
+          isEncrypt: false,
           description: '',
         };
+        this.oriPmValue = '';
+        this.modifyPmValue = false;
       },
       // 提交表单事件
       submit() {
@@ -102,6 +119,11 @@
               ...this.formData,
               tenantId: this.tenantId,
             };
+            if (params.isEncrypt && !this.modifyPmValue) {
+              params.pmValue = '';
+            }
+            delete params.isEncrypt;
+            delete params.pmKey;
             api
               .update(params)
               .then(() => {
@@ -129,7 +151,11 @@
         api
           .get(this.id, this.tenantId)
           .then((data) => {
-            this.formData = data;
+            this.formData = Object.assign({}, data);
+            this.oriPmValue = data.pmValue;
+            if (data.isEncrypt) {
+              this.formData.pmValue = '';
+            }
           })
           .finally(() => {
             this.loading = false;
