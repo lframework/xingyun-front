@@ -102,7 +102,9 @@
       },
       // 初始化表单数据
       initFormData() {
-        this.formData = {};
+        this.formData = {
+          isPlatform: false,
+        };
       },
       // 提交表单事件
       submit() {
