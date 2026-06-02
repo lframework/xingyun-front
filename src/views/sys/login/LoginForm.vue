@@ -87,6 +87,7 @@
   import { createSuccessTip } from '@/hooks/web/msg';
   import { welcomeMsg, isEmpty } from '@/utils/utils';
   import { TenantRequireBo } from '@/api/sys/model/tenantRequireBo';
+  import { getLoginDefaultFormData } from './loginDefaults';
 
   const userStore = useUserStore();
   const { getLoginState } = useLoginState();
@@ -95,11 +96,7 @@
   const loading = ref(false);
   const requireTenant = ref({} as TenantRequireBo);
 
-  const formData = reactive({
-    tenantName: '测试租户',
-    username: 'admin',
-    password: 'admin',
-  });
+  const formData = reactive(getLoginDefaultFormData());
 
   const { validForm } = useFormValid(formRef);
 
