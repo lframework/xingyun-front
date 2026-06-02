@@ -124,7 +124,8 @@
     <batch-handler
       ref="batchDeleteHandlerDialog"
       :table-column="[
-        { field: 'code', title: '编号', width: 120 },
+        { field: 'code', title: '商品编号', width: 120 },
+        { field: 'skuCodes', title: 'SKU编号', width: 120 },
         { field: 'name', title: '名称', minWidth: 160 },
       ]"
       title="批量删除"
@@ -202,7 +203,8 @@
         // 列表数据配置
         tableColumn: [
           { type: 'checkbox', width: 45 },
-          { field: 'code', title: '编号', width: 120, sortable: true },
+          { field: 'code', title: '商品编号', width: 120, sortable: true },
+          { field: 'skuCodes', title: 'SKU编号', width: 120 },
           { field: 'name', title: '名称', minWidth: 160, sortable: true },
           { field: 'shortName', title: '简称', width: 140 },
           { field: 'categoryName', title: '分类', width: 120 },

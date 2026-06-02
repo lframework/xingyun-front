@@ -69,10 +69,7 @@
   import * as api from '@/api/components';
   import { isEmpty, uuid } from '@/utils/utils';
   import { createError } from '@/hooks/web/msg';
-  import {
-    getImportUploadErrorMessage,
-    isImportUploadTimeoutError,
-  } from './uploadError';
+  import { getImportUploadErrorMessage, isImportUploadTimeoutError } from './uploadError';
 
   export default defineComponent({
     name: 'ExcelImporter',
@@ -98,12 +95,17 @@
       // 表单数据
       formData: {
         type: Object,
-        default: (e) => {},
+        default: (_e) => {},
       },
       // 完成后是否关闭对话框
       closeAfterFinish: {
         type: Boolean,
         default: false,
+      },
+      // 上传前校验
+      beforeUpload: {
+        type: Function,
+        default: () => true,
       },
     },
     setup() {
@@ -125,9 +127,6 @@
         reqId: '',
       };
     },
-    beforeUnmount() {
-      this.clearTimer();
-    },
     computed: {
       processPercent() {
         if (this.totalProcess <= 0) {
@@ -143,6 +142,9 @@
 
         return Math.min(Math.floor((this.successProcess / this.totalProcess) * 100), 100);
       },
+    },
+    beforeUnmount() {
+      this.clearTimer();
     },
     methods: {
       initData() {
@@ -170,6 +172,10 @@
         });
       },
       doUpload(e) {
+        if (!this.beforeUpload(this.formData)) {
+          return;
+        }
+
         this.initData();
         this.loading = true;
         this.uploadUrl(

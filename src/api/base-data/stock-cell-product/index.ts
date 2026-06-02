@@ -60,7 +60,12 @@ export function downloadImportTemplate(): Promise<void> {
 /**
  * 导入
  */
-export function importExcel(data: { id: string; file: Blob }): Promise<void> {
+export function importExcel(data: {
+  id: string;
+  file: Blob;
+  autoCreateStockCell?: boolean;
+  stockCellType?: number;
+}): Promise<void> {
   return defHttp.post<void>(
     {
       url: baseUrl + '/import',

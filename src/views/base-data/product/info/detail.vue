@@ -24,25 +24,25 @@
             {{ PRODUCT_SKU_TYPE.getDesc(formData.skuType) }}
           </vxe-form-item>
           <vxe-form-item
-            v-if="PRODUCT_TYPE.NORMAL.equalsCode(formData.productType)"
+            :visible="PRODUCT_TYPE.NORMAL.equalsCode(formData.productType)"
             title="重量（kg）"
             field="weight"
             span="8"
           />
           <vxe-form-item
-            v-if="PRODUCT_TYPE.NORMAL.equalsCode(formData.productType)"
+            :visible="PRODUCT_TYPE.NORMAL.equalsCode(formData.productType)"
             title="体积（cm³）"
             field="volume"
             span="8"
           />
           <vxe-form-item
-            v-if="PRODUCT_TYPE.NORMAL.equalsCode(formData.productType)"
+            :visible="PRODUCT_TYPE.NORMAL.equalsCode(formData.productType)"
             title="进项税率（%）"
             field="taxRate"
             span="8"
           />
           <vxe-form-item
-            v-if="PRODUCT_TYPE.NORMAL.equalsCode(formData.productType)"
+            :visible="PRODUCT_TYPE.NORMAL.equalsCode(formData.productType)"
             title="销项税率（%）"
             field="saleTaxRate"
             span="8"

@@ -10,6 +10,11 @@ export interface QueryProductBo {
   code: string;
 
   /**
+   * SKU编号
+   */
+  skuCodes: string;
+
+  /**
    * 名称
    */
   name: string;
