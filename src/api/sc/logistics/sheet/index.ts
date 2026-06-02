@@ -240,6 +240,7 @@ export function importExcel(data: { id: string; file: Blob }): Promise<void> {
     },
     {
       contentType: ContentTypeEnum.BLOB,
+      hiddenError: true,
       region,
     },
   );
@@ -271,6 +272,7 @@ export function deliveryImportExcel(data: { id: string; file: Blob }): Promise<v
     },
     {
       contentType: ContentTypeEnum.BLOB,
+      hiddenError: true,
       region,
     },
   );

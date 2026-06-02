@@ -153,6 +153,7 @@ export function importExcel(data: { id: string; file: Blob }): Promise<void> {
     },
     {
       contentType: ContentTypeEnum.BLOB,
+      hiddenError: true,
       region,
     },
   );

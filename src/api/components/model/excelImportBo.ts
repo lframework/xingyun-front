@@ -5,7 +5,12 @@ export interface ExcelImportBo {
   id: string;
 
   /**
-   * 当前进度（条数）
+   * 总进度（条数）
+   */
+  totalProcess: number;
+
+  /**
+   * 解析进度（条数）
    */
   process: number;
 

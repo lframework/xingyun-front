@@ -41,8 +41,8 @@
         <div>
           <a-tooltip title="处理进度" placement="bottom">
             <a-progress
-              :percent="process"
-              :success-percent="successProcess"
+              :percent="processPercent"
+              :success-percent="successProcessPercent"
               title="处理进度"
               :status="status"
               style="margin-bottom: 5px"
@@ -68,6 +68,11 @@
   import { InboxOutlined } from '@ant-design/icons-vue';
   import * as api from '@/api/components';
   import { isEmpty, uuid } from '@/utils/utils';
+  import { createError } from '@/hooks/web/msg';
+  import {
+    getImportUploadErrorMessage,
+    isImportUploadTimeoutError,
+  } from './uploadError';
 
   export default defineComponent({
     name: 'ExcelImporter',
@@ -110,6 +115,7 @@
       return {
         visible: false,
         loading: false,
+        totalProcess: 0,
         process: 0,
         successProcess: 0,
         tipMsgs: [],
@@ -122,8 +128,25 @@
     beforeUnmount() {
       this.clearTimer();
     },
+    computed: {
+      processPercent() {
+        if (this.totalProcess <= 0) {
+          return 0;
+        }
+
+        return Math.min(Math.floor((this.process / this.totalProcess) * 100), 100);
+      },
+      successProcessPercent() {
+        if (this.totalProcess <= 0) {
+          return 0;
+        }
+
+        return Math.min(Math.floor((this.successProcess / this.totalProcess) * 100), 100);
+      },
+    },
     methods: {
       initData() {
+        this.totalProcess = 0;
         this.process = 0;
         this.tipMsgs = [];
         this.clearTimer();
@@ -157,12 +180,23 @@
             { id: this.taskId },
             this.formData,
           ),
-        ).then(() => {
-          if (this.status !== 'exception') {
-            this.process = 100;
-            this.successProcess = 100;
-          }
-        });
+        )
+          .then(() => {
+            if (this.status !== 'exception') {
+              this.process = this.totalProcess;
+              this.successProcess = this.totalProcess;
+            }
+          })
+          .catch((error) => {
+            if (isImportUploadTimeoutError(error)) {
+              return;
+            }
+
+            this.clearTimer();
+            this.loading = false;
+            this.status = 'exception';
+            createError(getImportUploadErrorMessage(error));
+          });
 
         this.timer = setInterval(this.doTimer, 500);
       },
@@ -173,6 +207,7 @@
         this.reqId = uuid();
         this.getTask()
           .then((res) => {
+            this.totalProcess = Math.max(this.totalProcess, res.totalProcess);
             this.process = Math.max(this.process, res.process);
             this.tipMsgs = res.tipMsgs;
             this.successProcess = Math.max(this.successProcess, res.successProcess);

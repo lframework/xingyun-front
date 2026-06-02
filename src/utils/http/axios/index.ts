@@ -79,7 +79,7 @@ const transform: AxiosTransform = {
       return data.data;
     }
 
-    throw new Error('网络请求错误，请稍后重试！');
+    throw new Error(data.msg || data.message || '网络请求错误，请稍后重试！');
   },
 
   // 请求之前处理config
@@ -220,6 +220,10 @@ const transform: AxiosTransform = {
     }
 
     handleErrorData(response?.data, errorMessageMode);
+
+    if (!response) {
+      return Promise.reject(error);
+    }
 
     return Promise.reject(response?.data);
   },

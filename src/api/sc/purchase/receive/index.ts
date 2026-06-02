@@ -362,6 +362,7 @@ export function importExcel(data: { id: string; file: Blob }): Promise<void> {
     },
     {
       contentType: ContentTypeEnum.BLOB,
+      hiddenError: true,
       region,
     },
   );
@@ -393,6 +394,7 @@ export function importPayTypeExcel(data: { id: string; file: Blob }): Promise<vo
     },
     {
       contentType: ContentTypeEnum.BLOB,
+      hiddenError: true,
       region,
     },
   );
