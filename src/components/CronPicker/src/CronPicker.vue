@@ -4,6 +4,7 @@
       ref="cronInput"
       v-model:value="cron"
       readonly
+      :disabled="disabled"
       @click="openModal"
       @change="handleCronChange"
       @keyup.enter="openModal"
@@ -12,7 +13,7 @@
         <ScheduleOutlined />
       </template>
       <template #suffix>
-        <CloseCircleOutlined v-if="cron && !disabled" @click="handleEmpty" />
+        <CloseCircleOutlined v-if="cron && !disabled" @click.stop="handleEmpty" />
       </template>
     </a-input>
     <a-form-item class="form-item-alone">
@@ -63,14 +64,14 @@
         this.$refs.innerVueCron.show();
       },
       // cron change
-      handleCronChange(val) {
+      handleCronChange() {
         // val inputEvent对象
         this.$emit('change', this.cron);
       },
-      handleOK(val, a) {
+      handleOK(val) {
         this.cron = val;
         this.$emit('update:value', this.cron);
-        // this.$emit("change", Object.assign({},  this.cron));
+        this.$emit('change', this.cron);
       },
       handleEmpty() {
         if (this.disabled) {
@@ -79,6 +80,7 @@
         this.cron = '';
 
         this.$emit('update:value', this.cron);
+        this.$emit('change', this.cron);
       },
     },
   });

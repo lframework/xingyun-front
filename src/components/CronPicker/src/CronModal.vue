@@ -15,7 +15,10 @@
           <template #tab>
             <span> <ScheduleOutlined />秒 </span>
           </template>
-          <a-radio-group v-model:value="result.second.cronEvery">
+          <a-radio-group
+            v-model:value="result.second.cronEvery"
+            @change="selectCronOption('second', result.second.cronEvery)"
+          >
             <a-row>
               <a-col :span="24">
                 <a-radio value="1">每一秒钟</a-radio>
@@ -31,12 +34,14 @@
                       size="small"
                       :min="0"
                       :max="59"
+                      @focus="selectCronOption('second', '2')"
                     />秒开始, 每隔
                     <a-input-number
                       v-model:value="result.second.incrementIncrement"
                       size="small"
                       :min="1"
                       :max="60"
+                      @focus="selectCronOption('second', '2')"
                     />秒执行
                   </a-space>
                 </a-radio>
@@ -52,6 +57,7 @@
                       style="width: 354px"
                       size="small"
                       mode="multiple"
+                      @focus="selectCronOption('second', '3')"
                     >
                       <a-select-option v-for="(val, index) in 60" :key="index" :value="index">{{
                         index
@@ -71,12 +77,14 @@
                       size="small"
                       :min="0"
                       :max="59"
+                      @focus="selectCronOption('second', '4')"
                     />到
                     <a-input-number
                       v-model:value="result.second.rangeEnd"
                       size="small"
                       :min="0"
                       :max="59"
+                      @focus="selectCronOption('second', '4')"
                     />秒
                   </a-space>
                 </a-radio>
@@ -88,7 +96,10 @@
           <template #tab>
             <span> <ScheduleOutlined />分 </span>
           </template>
-          <a-radio-group v-model:value="result.minute.cronEvery">
+          <a-radio-group
+            v-model:value="result.minute.cronEvery"
+            @change="selectCronOption('minute', result.minute.cronEvery)"
+          >
             <a-row
               ><a-col :span="24"> <a-radio value="1">每一分钟</a-radio></a-col>
             </a-row>
@@ -102,12 +113,14 @@
                       size="small"
                       :min="0"
                       :max="59"
+                      @focus="selectCronOption('minute', '2')"
                     />分开始, 每隔
                     <a-input-number
                       v-model:value="result.minute.incrementIncrement"
                       size="small"
                       :min="1"
                       :max="59"
+                      @focus="selectCronOption('minute', '2')"
                     />分执行
                   </a-space>
                 </a-radio></a-col
@@ -123,6 +136,7 @@
                       style="width: 340px"
                       size="small"
                       mode="multiple"
+                      @focus="selectCronOption('minute', '3')"
                     >
                       <a-select-option
                         v-for="(val, index) in Array(60)"
@@ -145,12 +159,14 @@
                       size="small"
                       :min="0"
                       :max="59"
+                      @focus="selectCronOption('minute', '4')"
                     />到
                     <a-input-number
                       v-model:value="result.minute.rangeEnd"
                       size="small"
                       :min="0"
                       :max="59"
+                      @focus="selectCronOption('minute', '4')"
                     />分
                   </a-space>
                 </a-radio></a-col
@@ -163,7 +179,10 @@
             <span> <ScheduleOutlined />时 </span>
           </template>
           <div class="tabBody">
-            <a-radio-group v-model:value="result.hour.cronEvery">
+            <a-radio-group
+              v-model:value="result.hour.cronEvery"
+              @change="selectCronOption('hour', result.hour.cronEvery)"
+            >
               <a-row
                 ><a-col :span="24"> <a-radio value="1">每一小时</a-radio></a-col>
               </a-row>
@@ -177,12 +196,14 @@
                         size="small"
                         :min="0"
                         :max="23"
+                        @focus="selectCronOption('hour', '2')"
                       />点开始, 每隔
                       <a-input-number
                         v-model:value="result.hour.incrementIncrement"
                         size="small"
-                        :min="0"
+                        :min="1"
                         :max="23"
+                        @focus="selectCronOption('hour', '2')"
                       />小时执行
                     </a-space>
                   </a-radio></a-col
@@ -198,10 +219,15 @@
                         style="width: 340px"
                         size="small"
                         mode="multiple"
+                        @focus="selectCronOption('hour', '3')"
                       >
-                        <a-select-option v-for="(val, index) in Array(24)" :key="index">{{
-                          index
-                        }}</a-select-option>
+                        <a-select-option
+                          v-for="(val, index) in Array(24)"
+                          :key="index"
+                          :value="index"
+                        >
+                          {{ index }}
+                        </a-select-option>
                       </a-select>
                     </a-space>
                   </a-radio></a-col
@@ -217,12 +243,14 @@
                         size="small"
                         :min="0"
                         :max="23"
+                        @focus="selectCronOption('hour', '4')"
                       />点到
                       <a-input-number
                         v-model:value="result.hour.rangeEnd"
                         size="small"
                         :min="0"
                         :max="23"
+                        @focus="selectCronOption('hour', '4')"
                       />点
                     </a-space>
                   </a-radio></a-col
@@ -235,7 +263,10 @@
           <template #tab>
             <span> <ScheduleOutlined />天 </span>
           </template>
-          <a-radio-group v-model:value="result.day.cronEvery">
+          <a-radio-group
+            v-model:value="result.day.cronEvery"
+            @change="selectCronOption('day', result.day.cronEvery)"
+          >
             <a-row
               ><a-col :span="24"> <a-radio value="1">每一天</a-radio></a-col>
             </a-row>
@@ -249,12 +280,14 @@
                       size="small"
                       :min="1"
                       :max="31"
+                      @focus="selectCronOption('day', '3')"
                     />号开始, 每隔
                     <a-input-number
                       v-model:value="result.day.incrementIncrement"
                       size="small"
                       :min="1"
                       :max="31"
+                      @focus="selectCronOption('day', '3')"
                     />天执行
                   </a-space>
                 </a-radio></a-col
@@ -270,6 +303,7 @@
                       style="width: 340px"
                       size="small"
                       mode="multiple"
+                      @focus="selectCronOption('day', '4')"
                     >
                       <a-select-option
                         v-for="(val, index) in Array(7)"
@@ -292,6 +326,7 @@
                       style="width: 354px"
                       size="small"
                       mode="multiple"
+                      @focus="selectCronOption('day', '5')"
                     >
                       <a-select-option
                         v-for="(val, index) in Array(31)"
@@ -315,7 +350,11 @@
                 <a-radio value="8">
                   <a-space>
                     在这个月的最后一个
-                    <a-select v-model:value="result.week.cronLastSpecificDomDay" size="small">
+                    <a-select
+                      v-model:value="result.week.cronLastSpecificDomDay"
+                      size="small"
+                      @focus="selectCronOption('day', '8')"
+                    >
                       <a-select-option
                         v-for="(val, index) in Array(7)"
                         :key="index"
@@ -337,6 +376,7 @@
                       size="small"
                       :min="1"
                       :max="31"
+                      @focus="selectCronOption('day', '9')"
                     />天
                   </a-space>
                 </a-radio></a-col
@@ -352,6 +392,7 @@
                       size="small"
                       :min="1"
                       :max="31"
+                      @focus="selectCronOption('day', '10')"
                     />日最近的工作日（周一至周五）
                   </a-space>
                 </a-radio></a-col
@@ -367,8 +408,13 @@
                       size="small"
                       :min="1"
                       :max="5"
+                      @focus="selectCronOption('day', '11')"
                     />个
-                    <a-select v-model:value="result.week.cronNthDayDay" size="small">
+                    <a-select
+                      v-model:value="result.week.cronNthDayDay"
+                      size="small"
+                      @focus="selectCronOption('day', '11')"
+                    >
                       <a-select-option
                         v-for="(val, index) in Array(7)"
                         :key="index"
@@ -386,7 +432,11 @@
                 <a-radio value="12">
                   <a-space>
                     周期从
-                    <a-select v-model:value="result.week.rangeStart" size="small">
+                    <a-select
+                      v-model:value="result.week.rangeStart"
+                      size="small"
+                      @focus="selectCronOption('day', '12')"
+                    >
                       <a-select-option
                         v-for="(val, index) in Array(7)"
                         :key="index"
@@ -395,7 +445,11 @@
                       >
                     </a-select>
                     到
-                    <a-select v-model:value="result.week.rangeEnd" size="small">
+                    <a-select
+                      v-model:value="result.week.rangeEnd"
+                      size="small"
+                      @focus="selectCronOption('day', '12')"
+                    >
                       <a-select-option
                         v-for="(val, index) in Array(7)"
                         :key="index"
@@ -418,6 +472,7 @@
                       size="small"
                       :min="1"
                       :max="31"
+                      @focus="selectCronOption('day', '13')"
                     />
                     号到
                     <a-input-number
@@ -425,6 +480,7 @@
                       size="small"
                       :min="1"
                       :max="31"
+                      @focus="selectCronOption('day', '13')"
                     />号
                   </a-space>
                 </a-radio></a-col
@@ -436,7 +492,10 @@
           <template #tab>
             <span> <ScheduleOutlined />月 </span>
           </template>
-          <a-radio-group v-model:value="result.month.cronEvery">
+          <a-radio-group
+            v-model:value="result.month.cronEvery"
+            @change="selectCronOption('month', result.month.cronEvery)"
+          >
             <a-row
               ><a-col :span="24"> <a-radio value="1">每一月</a-radio></a-col>
             </a-row>
@@ -448,14 +507,16 @@
                     <a-input-number
                       v-model:value="result.month.incrementStart"
                       size="small"
-                      :min="0"
+                      :min="1"
                       :max="12"
+                      @focus="selectCronOption('month', '2')"
                     />月开始, 每隔
                     <a-input-number
                       v-model:value="result.month.incrementIncrement"
                       size="small"
-                      :min="0"
+                      :min="1"
                       :max="12"
+                      @focus="selectCronOption('month', '2')"
                     />月执行
                   </a-space>
                 </a-radio></a-col
@@ -472,6 +533,7 @@
                       size="small"
                       filterable
                       mode="multiple"
+                      @focus="selectCronOption('month', '3')"
                     >
                       <a-select-option
                         v-for="(val, index) in Array(12)"
@@ -494,12 +556,14 @@
                       size="small"
                       :min="1"
                       :max="12"
+                      @focus="selectCronOption('month', '4')"
                     />月到
                     <a-input-number
                       v-model:value="result.month.rangeEnd"
                       size="small"
                       :min="1"
                       :max="12"
+                      @focus="selectCronOption('month', '4')"
                     />月
                   </a-space>
                 </a-radio></a-col
@@ -511,7 +575,10 @@
           <template #tab>
             <span> <ScheduleOutlined />年 </span>
           </template>
-          <a-radio-group v-model:value="result.year.cronEvery">
+          <a-radio-group
+            v-model:value="result.year.cronEvery"
+            @change="selectCronOption('year', result.year.cronEvery)"
+          >
             <a-row
               ><a-col :span="24"> <a-radio value="1">每一年</a-radio></a-col>
             </a-row>
@@ -525,12 +592,14 @@
                       size="small"
                       :min="2021"
                       :max="2121"
+                      @focus="selectCronOption('year', '2')"
                     />年开始, 每隔
                     <a-input-number
                       v-model:value="result.year.incrementIncrement"
                       size="small"
                       :min="1"
                       :max="99"
+                      @focus="selectCronOption('year', '2')"
                     />年执行
                   </a-space>
                 </a-radio></a-col
@@ -547,6 +616,7 @@
                       size="small"
                       filterable
                       mode="multiple"
+                      @focus="selectCronOption('year', '3')"
                     >
                       <a-select-option
                         v-for="(val, index) in Array(100)"
@@ -569,12 +639,14 @@
                       size="small"
                       :min="2021"
                       :max="2121"
+                      @focus="selectCronOption('year', '4')"
                     />年到
                     <a-input-number
                       v-model:value="result.year.rangeEnd"
                       size="small"
                       :min="2021"
                       :max="2121"
+                      @focus="selectCronOption('year', '4')"
                     />年
                   </a-space>
                 </a-radio></a-col
@@ -642,6 +714,14 @@
   import { defineComponent } from 'vue';
   import { ScheduleOutlined } from '@ant-design/icons-vue';
   import { isEmpty } from '@/utils/utils';
+  import {
+    applyCronSelection,
+    buildCronExpression,
+    buildCronFields,
+    createDefaultCronResult,
+    normalizeEverySelections,
+    normalizeCronExpression,
+  } from './cronUtils.mjs';
 
   export default defineComponent({
     name: 'CronModal',
@@ -669,71 +749,7 @@
           month: {},
           year: {},
         },
-        defaultValue: {
-          second: {
-            cronEvery: '',
-            incrementStart: 3,
-            incrementIncrement: 5,
-            rangeStart: 0,
-            rangeEnd: 0,
-            specificSpecific: [],
-          },
-          minute: {
-            cronEvery: '',
-            incrementStart: 3,
-            incrementIncrement: 5,
-            rangeStart: 0,
-            rangeEnd: '0',
-            specificSpecific: [],
-          },
-          hour: {
-            cronEvery: '',
-            incrementStart: 3,
-            incrementIncrement: 5,
-            rangeStart: '0',
-            rangeEnd: '0',
-            specificSpecific: [],
-          },
-          day: {
-            cronEvery: '',
-            incrementStart: 1,
-            incrementIncrement: '1',
-            rangeStart: 1,
-            rangeEnd: 1,
-            specificSpecific: [],
-
-            cronDaysBeforeEomMinus: 1,
-            cronDaysNearestWeekday: 1,
-          },
-          week: {
-            cronEvery: '',
-            // incrementStart: 1,
-            // incrementIncrement: 1,
-            specificSpecific: [],
-            cronNthDayDay: 1,
-            cronNthDayNth: 1,
-            cronLastSpecificDomDay: 1,
-            rangeStart: 1,
-            rangeEnd: 1,
-          },
-          month: {
-            cronEvery: '',
-            incrementStart: 3,
-            incrementIncrement: 5,
-            rangeStart: 1,
-            rangeEnd: 1,
-            specificSpecific: [],
-          },
-          year: {
-            cronEvery: '',
-            incrementStart: 2021,
-            incrementIncrement: 1,
-            rangeStart: 2021,
-            rangeEnd: 2021,
-            specificSpecific: [],
-          },
-          label: '',
-        },
+        defaultValue: createDefaultCronResult(),
         reserveText: '',
       };
     },
@@ -741,218 +757,56 @@
       modalWidth() {
         return 1000;
       },
+      cronFields() {
+        return buildCronFields(this.result);
+      },
       secondsText() {
-        let seconds = '';
-        const cronEvery = this.result.second.cronEvery || '';
-        switch (cronEvery.toString()) {
-          case '1':
-            seconds = '*';
-            break;
-          case '2':
-            seconds =
-              this.result.second.incrementStart + '/' + this.result.second.incrementIncrement;
-            break;
-          case '3':
-            this.result.second.specificSpecific.map((val) => {
-              seconds += val + ',';
-            });
-            seconds = seconds.slice(0, -1);
-            break;
-          case '4':
-            seconds = this.result.second.rangeStart + '-' + this.result.second.rangeEnd;
-            break;
-        }
-        return seconds;
+        return this.cronFields.seconds;
       },
       minutesText() {
-        let minutes = '';
-        const cronEvery = this.result.minute.cronEvery || '';
-        switch (cronEvery.toString()) {
-          case '1':
-            minutes = '*';
-            break;
-          case '2':
-            minutes =
-              this.result.minute.incrementStart + '/' + this.result.minute.incrementIncrement;
-            break;
-          case '3':
-            this.result.minute.specificSpecific.map((val) => {
-              minutes += val + ',';
-            });
-            minutes = minutes.slice(0, -1);
-            break;
-          case '4':
-            minutes = this.result.minute.rangeStart + '-' + this.result.minute.rangeEnd;
-            break;
-        }
-        return minutes;
+        return this.cronFields.minutes;
       },
       hoursText() {
-        let hours = '';
-        const cronEvery = this.result.hour.cronEvery || '';
-        switch (cronEvery.toString()) {
-          case '1':
-            hours = '*';
-            break;
-          case '2':
-            hours = this.result.hour.incrementStart + '/' + this.result.hour.incrementIncrement;
-            break;
-          case '3':
-            this.result.hour.specificSpecific.map((val) => {
-              hours += val + ',';
-            });
-            hours = hours.slice(0, -1);
-            break;
-          case '4':
-            hours = this.result.hour.rangeStart + '-' + this.result.hour.rangeEnd;
-            break;
-        }
-        return hours;
+        return this.cronFields.hours;
       },
       daysText() {
-        let days = '';
-        const cronEvery = this.result.day.cronEvery || '';
-        switch (cronEvery.toString()) {
-          case '1':
-            break;
-          case '2':
-          case '4':
-          case '8':
-          case '11':
-          case '12':
-            days = '?';
-            break;
-          case '3':
-            days = this.result.day.incrementStart + '/' + this.result.day.incrementIncrement;
-            break;
-          case '5':
-            this.result.day.specificSpecific.map((val) => {
-              days += val + ',';
-            });
-            days = days.slice(0, -1);
-            break;
-          case '6':
-            days = 'L';
-            break;
-          case '7':
-            days = 'LW';
-            break;
-          case '9':
-            days = 'L-' + this.result.day.cronDaysBeforeEomMinus;
-            break;
-          case '10':
-            days = this.result.day.cronDaysNearestWeekday + 'W';
-            break;
-          case '13':
-            days = this.result.day.rangeStart + '-' + this.result.day.rangeEnd;
-            break;
-        }
-        return days;
+        return this.cronFields.days;
       },
       weeksText() {
-        let weeks = '';
-        const cronEvery = this.result.day.cronEvery || '';
-        switch (cronEvery.toString()) {
-          case '1':
-          case '3':
-          case '5':
-          case '6':
-          case '7':
-          case '9':
-          case '10':
-          case '13':
-            weeks = '?';
-            break;
-          // case '2':
-          //   weeks = this.result.week.incrementStart + '/' + this.result.week.incrementIncrement;
-          //   break;
-          case '4':
-            this.result.week.specificSpecific.map((val) => {
-              weeks += val + ',';
-            });
-            weeks = weeks.slice(0, -1);
-            break;
-          case '8':
-            weeks = this.result.week.cronLastSpecificDomDay + 'L';
-            break;
-          case '11':
-            weeks = this.result.week.cronNthDayDay + '#' + this.result.week.cronNthDayNth;
-            break;
-          case '12':
-            weeks = this.result.week.rangeStart + '-' + this.result.week.rangeEnd;
-            break;
-        }
-        return weeks;
+        return this.cronFields.weeks;
       },
       monthsText() {
-        let months = '';
-        const cronEvery = this.result.month.cronEvery || '';
-        switch (cronEvery.toString()) {
-          case '1':
-            months = '*';
-            break;
-          case '2':
-            months = this.result.month.incrementStart + '/' + this.result.month.incrementIncrement;
-            break;
-          case '3':
-            this.result.month.specificSpecific.map((val) => {
-              months += val + ',';
-            });
-            months = months.slice(0, -1);
-            break;
-          case '4':
-            months = this.result.month.rangeStart + '-' + this.result.month.rangeEnd;
-            break;
-        }
-        return months;
+        return this.cronFields.months;
       },
       yearsText() {
-        let years = '';
-        const cronEvery = this.result.year.cronEvery || '';
-        switch (cronEvery.toString()) {
-          case '1':
-            years = '*';
-            break;
-          case '2':
-            years = this.result.year.incrementStart + '/' + this.result.year.incrementIncrement;
-            break;
-          case '3':
-            this.result.year.specificSpecific.map((val) => {
-              years += val + ',';
-            });
-            years = years.slice(0, -1);
-            break;
-          case '4':
-            years = this.result.year.rangeStart + '-' + this.result.year.rangeEnd;
-            break;
-        }
-        return years;
+        return this.cronFields.years;
       },
       cron() {
-        return `${this.secondsText || '*'} ${this.minutesText || '*'} ${this.hoursText || '*'} ${
-          this.daysText || '*'
-        } ${this.monthsText || '*'} ${this.weeksText || '?'} ${this.yearsText || '*'}`;
+        return buildCronExpression(this.result);
       },
     },
     watch: {
       visible: {
         handler() {
-          const label = this.data;
+          const label = normalizeCronExpression(this.data);
           if (label) {
             this.secondsReverseExp(label);
             this.minutesReverseExp(label);
             this.hoursReverseExp(label);
             this.daysReverseExp(label);
-            this.daysReverseExp(label);
             this.monthsReverseExp(label);
             this.yearReverseExp(label);
+            normalizeEverySelections(this.result, label);
           } else {
-            this.result = JSON.parse(JSON.stringify(this.defaultValue));
+            this.result = createDefaultCronResult();
           }
         },
       },
     },
     methods: {
+      selectCronOption(unit, cronEvery) {
+        applyCronSelection(this.result, unit, cronEvery);
+      },
       show() {
         this.visible = true;
       },
@@ -1273,14 +1127,16 @@
         this.result.year = year;
       },
       onReserveParse() {
-        if (!isEmpty(this.reserveText)) {
-          this.secondsReverseExp(this.reserveText);
-          this.minutesReverseExp(this.reserveText);
-          this.hoursReverseExp(this.reserveText);
-          this.daysReverseExp(this.reserveText);
-          this.daysReverseExp(this.reserveText);
-          this.monthsReverseExp(this.reserveText);
-          this.yearReverseExp(this.reserveText);
+        const label = normalizeCronExpression(this.reserveText);
+        if (!isEmpty(label)) {
+          this.reserveText = label;
+          this.secondsReverseExp(label);
+          this.minutesReverseExp(label);
+          this.hoursReverseExp(label);
+          this.daysReverseExp(label);
+          this.monthsReverseExp(label);
+          this.yearReverseExp(label);
+          normalizeEverySelections(this.result, label);
         }
       },
     },
