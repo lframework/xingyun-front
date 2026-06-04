@@ -89,6 +89,12 @@
                 >新增</a-button
               >
               <a-button
+                v-permission="['stock:adjust:import']"
+                :icon="h(CloudUploadOutlined)"
+                @click="$refs.importer.openDialog()"
+                >导入Excel</a-button
+              >
+              <a-button
                 v-permission="['stock:adjust:approve']"
                 :icon="h(CheckOutlined)"
                 @click="batchApprovePass"
@@ -128,6 +134,8 @@
     <detail :id="id" ref="viewDialog" />
 
     <approve-refuse ref="approveRefuseDialog" @confirm="doApproveRefuse" />
+
+    <stock-adjust-sheet-importer ref="importer" @confirm="search" />
 
     <!-- 批量操作 -->
     <batch-handler
@@ -185,6 +193,7 @@
     CloseOutlined,
     DeleteOutlined,
     DownloadOutlined,
+    CloudUploadOutlined,
   } from '@ant-design/icons-vue';
   import * as api from '@/api/sc/stock/adjust/stock';
   import { multiplePageMix } from '@/mixins/multiplePageMix';
@@ -200,6 +209,7 @@
   import { STOCK_ADJUST_SHEET_STATUS } from '@/enums/biz/stockAdjustSheetStatus';
   import { STOCK_ADJUST_SHEET_BIZ_TYPE } from '@/enums/biz/stockAdjustSheetBizType';
   import BatchHandler from '@/components/BatchHandler';
+  import StockAdjustSheetImporter from '@/components/Importor/StockAdjustSheetImporter.vue';
 
   export default defineComponent({
     name: 'StockAdjustSheet',
@@ -209,6 +219,7 @@
       StoreCenterSelector,
       UserSelector,
       BatchHandler,
+      StockAdjustSheetImporter,
     },
     mixins: [multiplePageMix],
     setup() {
@@ -220,6 +231,7 @@
         CloseOutlined,
         DeleteOutlined,
         DownloadOutlined,
+        CloudUploadOutlined,
         STOCK_ADJUST_SHEET_STATUS,
       };
     },

@@ -1,5 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import { ContentTypeEnum } from '@/enums/httpEnum';
+import { ContentTypeEnum, ResponseEnum } from '@/enums/httpEnum';
 import { PageResult } from '@/api/model/pageResult';
 import { QueryStockAdjustSheetVo } from '@/api/sc/stock/adjust/stock/model/queryStockAdjustSheetVo';
 import { QueryStockAdjustSheetBo } from '@/api/sc/stock/adjust/stock/model/queryStockAdjustSheetBo';
@@ -43,6 +43,38 @@ export function exportList(data: QueryStockAdjustSheetVo): Promise<void> {
     {
       region,
       contentType: ContentTypeEnum.FORM_URLENCODED,
+    },
+  );
+}
+
+/**
+ * 下载导入模板
+ */
+export function downloadImportTemplate(): Promise<void> {
+  return defHttp.get<void>(
+    {
+      url: baseUrl + '/import/template',
+    },
+    {
+      responseType: ResponseEnum.BLOB,
+      region,
+    },
+  );
+}
+
+/**
+ * 导入
+ */
+export function importExcel(data: { id: string; file: Blob }): Promise<void> {
+  return defHttp.post<void>(
+    {
+      url: baseUrl + '/import',
+      data,
+    },
+    {
+      contentType: ContentTypeEnum.BLOB,
+      hiddenError: true,
+      region,
     },
   );
 }
