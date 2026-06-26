@@ -154,7 +154,7 @@
   import BatchHandler from '@/components/BatchHandler';
 
   export default defineComponent({
-    name: 'SysGenerateCode',
+    name: 'StockWarning',
     components: {
       StoreCenterSelector,
       ProductSelector,

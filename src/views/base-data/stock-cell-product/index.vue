@@ -90,13 +90,12 @@
     DeleteOutlined,
     CloudUploadOutlined,
   } from '@ant-design/icons-vue';
-  import BatchHandler from '@/components/BatchHandler';
   import ProductManage from './product-manage/index.vue';
   import AllProduct from './product-manage/all.vue';
 
   export default defineComponent({
+    name: 'StockCellProduct',
     components: {
-      BatchHandler,
       ProductManage,
       AllProduct,
     },
