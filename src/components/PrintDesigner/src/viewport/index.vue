@@ -281,8 +281,10 @@
 <style scoped>
   .holder {
     display: flex;
-    justify-content: center;
+    box-sizing: border-box;
     align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
     height: 100%;
     min-height: 0;
     overflow: auto;
@@ -299,7 +301,8 @@
     display: grid;
     grid-template-columns: 44px 1fr;
     grid-template-rows: 34px 1fr;
-    margin: 25px auto 25px;
+    flex: 0 0 auto;
+    margin: 25px auto;
   }
 
   .ruler-corner {

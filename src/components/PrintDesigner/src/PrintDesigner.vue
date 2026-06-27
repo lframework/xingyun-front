@@ -98,12 +98,13 @@
     flex-direction: row;
     overflow: hidden;
     .kr-designer-view {
+      display: flex;
       flex: 1;
+      flex-direction: column;
       min-width: 0;
       min-height: 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      // 左侧设计区需要独立滚动，避免大纸张被父级容器裁剪。
+      overflow: auto;
     }
     .kr-designer-tool {
       flex: 0 0 400px;
